@@ -441,10 +441,10 @@ topics:
             solution_sketch: 'Each solution gives the value $10$ on the left side. Adding the two gives $10+10=20$, not $10$, so the sum is not a solution.'
         constraints: 'conceptual: superposition holds exactly for homogeneous linear equations; the constants are fixed by initial values'
     diagnostic_exemplar:
-      problem: 'Show that $y_1 = e^{2x}$ and $y_2 = e^{-3x}$ form a fundamental set of solutions of $y'''' + y'' - 6y = 0$, and write the general solution.'
-      answer: 'Both solve the equation (the characteristic roots are $2$ and $-3$), and $W = y_1 y_2'' - y_1'' y_2 = -5e^{-x} \neq 0$, so they are independent: the general solution is $y = c_1 e^{2x} + c_2 e^{-3x}$.'
-      answer_contract: {kind: none}
-      solution_sketch: '$r^2 + r - 6 = (r-2)(r+3)$; the Wronskian is $e^{2x}(-3e^{-3x}) - 2e^{2x}e^{-3x} = -5e^{-x}$, never zero.'
+      problem: 'Let $y_1=e^{2x}$ and $y_2=e^{5x}$. Compute the Wronskian $W=y_1y_2''-y_1''y_2$ at $x=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$W=e^{2x}\cdot 5e^{5x}-2e^{2x}\cdot e^{5x}=3e^{7x}$. At $x=0$ this is $3$.'
     anki_seeds:
       - front: "Wronskian of two solutions y_1, y_2?"
         back: "$W = y_1 y_2' - y_1' y_2$"
@@ -599,10 +599,10 @@ topics:
             solution_sketch: 'Here $p=4$, so $e^{-\int p\,dx}=e^{-4x}$. Also $y_1^2=e^{-4x}$, so the integrand is $1$.'
         constraints: 'divide to standard form before reading p; integrals reduce to powers or ln; single steps of the formula (p, the exponential factor, the integrand) are also asked'
     diagnostic_exemplar:
-      problem: 'Given that $y_1 = x$ solves $x^2 y'''' - xy'' + y = 0$ ($x > 0$), find a second independent solution.'
-      answer: '$y_2 = x\ln x$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Put $y = vx$: then $y'' = v''x + v$ and $y'''' = v''''x + 2v''$, and the equation collapses to $x^3 v'''' + x^2 v'' = 0$, i.e. $(xv'')'' = 0$. Hence $v'' = C/x$ and $v = \ln x$, giving $y_2 = x\ln x$.'
+      problem: 'The function $y_1=x$ solves $x^2y''''-4xy''+4y=0$ for $x>0$. A second independent solution has the form $y_2=x^n$. Find $n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Put $y=x^r$ to get $r(r-1)-4r+4=r^2-5r+4=(r-1)(r-4)=0$. The root $r=1$ gives $y_1$. The other root gives $n=4$.'
     anki_seeds:
       - front: "Reduction-of-order formula for a second solution of y'' + py' + qy = 0 given y_1?"
         back: '$y_2 = y_1 \int \dfrac{e^{-\int p\,dx}}{y_1^2}\,dx$'
@@ -751,10 +751,10 @@ topics:
             solution_sketch: 'The characteristic polynomial r^2 - 3r + 2 has the value 16 - 12 + 2 = 6 at r = 4. Trying y = Ae^(4x) gives 6Ae^(4x) = 8e^(4x), so A = 8/6 = 4/3. Hence y = (4/3)e^(4x).'
         constraints: 'single e^{kx} forcing (also in spring and circuit contexts); k never a characteristic root here; A = (forcing coeff)/(char. polynomial at k)'
     diagnostic_exemplar:
-      problem: 'Find the general solution of $y'''' + 3y'' + 2y = 20e^{3x}$.'
-      answer: '$y = c_1 e^{-x} + c_2 e^{-2x} + e^{3x}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The homogeneous roots are $-1$ and $-2$. Trying $y_p = Ae^{3x}$ gives $(9 + 9 + 2)A = 20A = 20$, so $A = 1$.'
+      problem: 'The function $y_p=Ax+B$ solves $y''''+3y''+2y=4x+7$. Find $y_p(0)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/2'
+      solution_sketch: 'Here $y_p''=A$ and $y_p''''=0$. So $3A+2Ax+2B=4x+7$. Then $A=2$ and $6+2B=7$, so $B=1/2$.'
     anki_seeds:
       - front: "General solution of a nonhomogeneous linear ODE?"
         back: "$y = y_h + y_p$: the full homogeneous family plus any one particular solution."
@@ -903,10 +903,10 @@ topics:
             solution_sketch: 'Since 1/C = 3, the equation is q'''' + 4q'' + 3q = 9t + 4e^(-2t). For 9t, try At + B: 4A + 3At + 3B = 9t gives A = 3 and B = -4. For 4e^(-2t), try Ce^(-2t): (4 - 8 + 3)C = 4 gives C = -4. Adding gives q_p = 3t - 4 - 4e^(-2t).'
         constraints: 'sums of forcings split by superposition; products take polynomial-coefficient trials; the item asks for y_p as a function (also in spring and circuit contexts)'
     diagnostic_exemplar:
-      problem: 'Find a particular solution of $y'''' - y = 4e^{x} + 3$.'
-      answer: '$y_p = 2xe^{x} - 3$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The homogeneous roots are $\pm 1$, so $e^x$ is resonant and the trial form is $Axe^x$: then $y'''' - y = 2Ae^x = 4e^x$ gives $A = 2$. For the constant forcing, $y_p = B$ with $-B = 3$, so $B = -3$. Superpose.'
+      problem: 'The function $y_p=Ae^{4x}$ solves $y''''+y''-6y=28e^{4x}$. Find $A$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Substitution gives $(16+4-6)Ae^{4x}=14Ae^{4x}$. Then $14A=28$, so $A=2$.'
     anki_seeds:
       - front: "Undetermined coefficients: what do you do when the trial solution solves the homogeneous equation?"
         back: "Multiply the trial by x (by x^2 for a double root)."
@@ -1047,10 +1047,10 @@ topics:
             solution_sketch: 'The equation is x'''' + 2x'' + x = e^(-t)/t, with x1 = e^(-t), x2 = te^(-t) and W = e^(-2t). Then u1'' = -1 and u2'' = 1/t, so x = c1 e^(-t) + c2 te^(-t) + te^(-t) ln t. The conditions x(1) = 0 and x''(1) = 0 give c1 = 1 and c2 = -1, so x = (1 - t + t ln t)e^(-t).'
         constraints: 'forcing e^{kx}/x or duplicating exponentials; items are initial-value problems, so the answer is unique and homogeneous terms are fixed by the initial values'
     diagnostic_exemplar:
-      problem: 'Use variation of parameters to solve $y'''' - 2y'' + y = \dfrac{e^x}{x^2}$ for $x > 0$.'
-      answer: '$y = c_1 e^{x} + c_2 x e^{x} - e^{x}\ln x$'
-      answer_contract: {kind: none}
-      solution_sketch: 'With $y_1 = e^x$, $y_2 = xe^x$ and $W = e^{2x}$: $u_1'' = -\frac{y_2 g}{W} = -\frac{1}{x}$ and $u_2'' = \frac{y_1 g}{W} = \frac{1}{x^2}$, so $u_1 = -\ln x$ and $u_2 = -\frac{1}{x}$. Then $y_p = -e^x\ln x - e^x$, and the $-e^x$ is absorbed into $c_1 e^x$.'
+      problem: 'Use variation of parameters for $y''''-3y''+2y=6e^{3x}$ with $y_1=e^{x}$ and $y_2=e^{2x}$. Find $u_2''(0)$, where $u_2''=y_1g/W$ and $g=6e^{3x}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: '$W=y_1y_2''-y_1''y_2=2e^{3x}-e^{3x}=e^{3x}$. So $u_2''=e^x\cdot6e^{3x}/e^{3x}=6e^x$. At $x=0$ this is $6$.'
     anki_seeds:
       - front: "Variation of parameters formulas for y'' + py' + qy = g?"
         back: '$u_1'' = -\dfrac{y_2 g}{W}$, $u_2'' = \dfrac{y_1 g}{W}$; then $y_p = u_1 y_1 + u_2 y_2$.'
@@ -1361,10 +1361,10 @@ topics:
             solution_sketch: 'The greatest distance is the amplitude $R = \sqrt{8^2 + 15^2}$. So $R = \sqrt{64 + 225} = \sqrt{289} = 17$ m.'
         constraints: 'amplitudes from Pythagorean pairs (3,4,5), (5,12,13), (6,8,10), (8,15,17), (1,sqrt3,2); phase angles at standard unit-circle values'
     diagnostic_exemplar:
-      problem: 'A mass satisfies $x'''' + 9x = 0$ with $x(0) = 3$ and $x''(0) = -12$. Solve the initial value problem and find the amplitude of the motion.'
-      answer: '$x = 3\cos 3t - 4\sin 3t$; amplitude $5$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The natural frequency is $\omega = 3$, so $x = c_1\cos 3t + c_2\sin 3t$ with $c_1 = 3$ and $3c_2 = -12$, i.e. $c_2 = -4$. The amplitude is $\sqrt{3^2 + 4^2} = 5$.'
+      problem: 'A mass moves by $x''''+4x=0$ with $x(0)=6$ and $x''(0)=16$. What is the amplitude of the motion?'
+      answer_contract: {"kind":"exact"}
+      answer: '10'
+      solution_sketch: 'Here $\omega=2$, so $x=c_1\cos 2t+c_2\sin 2t$. Then $c_1=6$ and $2c_2=16$, so $c_2=8$. The amplitude is $\sqrt{6^2+8^2}=10$.'
     anki_seeds:
       - front: "Natural frequency of the undamped oscillator mx'' + kx = 0?"
         back: '$\omega = \sqrt{k/m}$'
@@ -1516,10 +1516,10 @@ topics:
             solution_sketch: 'The equation of motion is $3x'''' + 27x = 6\cos 3t$, which is $x'''' + 9x = 2\cos 3t$. The forcing frequency $3$ equals the natural frequency, so try $x_p = t(A\cos 3t + B\sin 3t)$. Then $6B = 2$ and $A = 0$, so $x_p = \frac{1}{3}t\sin 3t$.'
         constraints: 'undamped forced oscillators only; resonance iff forcing frequency equals sqrt(k/m); labels at most two per KP'
     diagnostic_exemplar:
-      problem: 'Does $x'''' + 16x = 8\cos 4t$ exhibit resonance? Find a particular solution.'
-      answer: 'Yes: the forcing frequency $4$ equals the undamped natural frequency. $x_p = t\sin 4t$, whose amplitude grows without bound.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Since $\cos 4t$ solves the homogeneous equation, the trial form is $x_p = t(A\cos 4t + B\sin 4t)$; substituting gives $-8A\sin 4t + 8B\cos 4t = 8\cos 4t$, so $A = 0$ and $B = 1$.'
+      problem: 'A $4$ kg mass hangs on a spring of stiffness $k=25$ N/m with damping constant $c$ in $4x''''+cx''+25x=0$. For what $c$ in N s/m is the damping critical?'
+      answer_contract: {"kind":"exact"}
+      answer: '20'
+      solution_sketch: 'Critical damping needs a zero discriminant: $c^2-4mk=0$. So $c^2=4\cdot4\cdot25=400$ and $c=20$.'
     anki_seeds:
       - front: "Damped oscillator mx'' + cx' + kx = 0: the motion is underdamped when..."
         back: "the discriminant c^2 - 4mk is negative (complex roots: oscillation in a decaying envelope)."
@@ -1647,10 +1647,10 @@ topics:
             solution_sketch: 'In the steady state $Q'''' = Q'' = 0$, so $Q/C = E$ and $Q = EC$. Then $C = Q/E = 6/24 = \frac{1}{4}$ F.'
         constraints: 'steady state = the particular solution that persists after transients decay; constant or sinusoidal sources with small integer frequency'
     diagnostic_exemplar:
-      problem: 'A series circuit has $L = 1$ H, $R = 2\ \Omega$, $C = \tfrac{1}{5}$ F and a constant source $E = 10$ V. Write the differential equation for the charge $Q(t)$ and find the steady-state charge.'
-      answer: '$Q'''' + 2Q'' + 5Q = 10$; steady-state charge $Q = 2$.'
-      answer_contract: {kind: none}
-      solution_sketch: '$LQ'''' + RQ'' + Q/C = E$ gives $Q'''' + 2Q'' + 5Q = 10$. The homogeneous part decays (roots $-1 \pm 2i$), so the steady state is the constant particular solution $5Q = 10$, i.e. $Q = 2$.'
+      problem: 'A series circuit has $L=2$ H, $R=6\ \Omega$, $C=\tfrac14$ F and a constant source $E=12$ V. What is the steady-state charge $Q$ in coulombs?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The equation $LQ''''+RQ''+Q/C=E$ is $2Q''''+6Q''+4Q=12$. The homogeneous roots are $-1$ and $-2$, so they decay. The steady state is constant: $4Q=12$, so $Q=3$.'
     anki_seeds:
       - front: "Series RLC circuit ODE for the charge Q?"
         back: "$LQ'' + RQ' + Q/C = E(t)$, with current $I = Q'$."
@@ -1795,10 +1795,10 @@ topics:
             solution_sketch: 'The eigenvalues of this problem are $\lambda = n^2$, that is $1, 4, 9, \ldots$. The number $2$ is not on this list, so it is not an eigenvalue.'
         constraints: 'Dirichlet conditions only; eigenvalues (n pi / L)^2 with L in {1, pi, 2, 3}; one label item at most'
     diagnostic_exemplar:
-      problem: 'Find all values $\lambda > 0$ for which $y'''' + \lambda y = 0$ with $y(0) = y(2) = 0$ has nonzero solutions, and give those solutions.'
-      answer: '$\lambda_n = \dfrac{n^2\pi^2}{4}$ for $n = 1, 2, 3, \ldots$, with $y = \sin\dfrac{n\pi x}{2}$ (up to a constant multiple).'
-      answer_contract: {kind: none}
-      solution_sketch: 'For $\lambda > 0$ the general solution is $y = c_1\cos\sqrt{\lambda}\,x + c_2\sin\sqrt{\lambda}\,x$. Then $y(0) = 0$ forces $c_1 = 0$, and $y(2) = c_2\sin 2\sqrt{\lambda} = 0$ has a nonzero solution only when $2\sqrt{\lambda} = n\pi$.'
+      problem: 'The function $y$ solves $y''''+y=0$ with $y(0)=1$ and $y(\pi/2)=4$. Find $y(\pi)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-1'
+      solution_sketch: 'The general solution is $y=c_1\cos x+c_2\sin x$. The conditions give $c_1=1$ and $c_2=4$. So $y(\pi)=-c_1=-1$.'
     anki_seeds:
       - front: "A boundary value problem differs from an IVP in that..."
         back: "conditions are imposed at two different points — and a solution may be unique, nonexistent, or non-unique."

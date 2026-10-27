@@ -280,6 +280,31 @@ export interface TeachResponse {
   try_first?: { problem: string; choices?: string[] };
 }
 
+/** One neighbor topic of the read page. */
+export interface TopicLink { id: string; name: string | null }
+
+/** `GET /api/topics/{topic_id}/teach`: the approved lesson text of one topic, read outside a task. */
+export interface TopicTeachResponse {
+  topic: string;
+  name: string | null;
+  module: string;
+  course: string;
+  course_name: string | null;
+  /** The 1-based place of the topic in its course, by load index. */
+  position: number;
+  count: number;
+  previous: TopicLink | null;
+  next: TopicLink | null;
+  learn_first: TopicLink[];
+  opens_next: TopicLink[];
+  points: {
+    kp: string;
+    name: string;
+    /** `null` when the point has no approved page. */
+    page: { concept: string; worked_example: TeachResponse['worked_example'] } | null;
+  }[];
+}
+
 /** The body of `POST /api/task/{task_id}/teach/check`. */
 export type TeachCheckRequest = { part: 'try_first'; answer: string };
 
@@ -319,6 +344,8 @@ type TaskStatus =
   | 'kp_advance'
   | 'task_passed'
   | 'task_inconclusive'
+  /** D-RV1: the review met the pass rule on one problem; one new problem follows. */
+  | 'task_needs_variety'
   | 'task_failed'
   /** D-PR1: a lesson proof waits for its verdict; the point closes on a pass. */
   | 'proof_pending'

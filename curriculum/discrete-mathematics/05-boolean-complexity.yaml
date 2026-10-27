@@ -226,10 +226,10 @@ topics:
             solution_sketch: 'The term $(x+y)z$ is not a product of literals, so the sum is not a disjunctive normal form. The whole expression is a sum, not a product of clauses, so it is not a conjunctive normal form either.'
         constraints: '2-4 variables; translate between truth table, DNF, and simple CNF'
     diagnostic_exemplar:
-      problem: 'A function on $x, y, z$ equals $1$ exactly when exactly one of the inputs is $1$. Give its disjunctive normal form, and state how many clauses its full conjunctive normal form has.'
-      answer: 'DNF: $x\bar{y}\bar{z} + \bar{x}y\bar{z} + \bar{x}\bar{y}z$; the full CNF has 5 clauses'
-      answer_contract: {kind: none}
-      solution_sketch: 'One minterm per $1$-row — the rows $(1,0,0)$, $(0,1,0)$, $(0,0,1)$ — and one maxterm per $0$-row, of which there are $8 - 3 = 5$.'
+      problem: 'A function of $x$, $y$ and $z$ equals $1$ exactly when $x=1$ and $y=1$. How many minterms does its full disjunctive normal form have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The function is $1$ on the rows $110$ and $111$. Each such row gives one minterm, so there are $2$.'
     anki_seeds:
       - front: "Minterm for the row $x=1, y=0, z=1$"
         back: '$x\bar{y}z$ — complement exactly the variables that are 0 in the row.'
@@ -328,10 +328,10 @@ topics:
             solution_sketch: 'First, $x$ OR $y$ is $1$ and NOT $z$ is $\bar{0}=1$. The first AND gives $1\cdot1=1$. The second AND with $y=1$ gives $1\cdot1=1$.'
         constraints: 'circuits of 2-5 gates on 2-3 inputs; evaluate at given inputs or translate circuit <-> expression'
     diagnostic_exemplar:
-      problem: 'Using only AND, OR, NOT gates, give an expression that computes XNOR of $x$ and $y$ (output $1$ exactly when $x = y$), and evaluate it at $x = 0$, $y = 0$.'
-      answer: '$xy + \bar{x}\bar{y}$; output $1$ at $x = y = 0$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Equal inputs satisfy one of the two terms; at $(0,0)$ the term $\bar{x}\bar{y}$ is $1$.'
+      problem: 'A circuit computes ($x$ XOR $y$) AND $z$. What is its output at $x=1$, $y=0$, $z=1$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: '$1$ XOR $0$ is $1$. Then $1$ AND $1$ is $1$.'
     anki_seeds:
       - front: "NAND gate output is 0 exactly when..."
         back: "both inputs are 1."
@@ -567,10 +567,10 @@ topics:
             solution_sketch: 'Since $9 = 3^2$ we have $\log_9 n = \frac{1}{2}\log_3 n$. So $\log_3 n = 2\log_9 n$ and $c = 2$.'
         constraints: 'shifts and multiples in exponents of 2^n, 3^n, 4^n; change of base between logarithms; learner decides membership in O or computes the constant factor'
     diagnostic_exemplar:
-      problem: 'Is $2^{n+2}$ in $O(2^n)$? Is $4^n$? Justify both.'
-      answer: '$2^{n+2} = 4 \cdot 2^n$: yes, a constant multiple. $4^n = 2^n \cdot 2^n$: no — the ratio $2^n$ is unbounded.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Additive shifts in the exponent scale by a constant; doubling the exponent does not.'
+      problem: 'What is the smallest integer $C$ with $5n^2 + 3n \le Cn^2$ for every $n \ge 1$?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'Divide by $n^2$: $5 + 3/n \le C$. The left side is largest at $n=1$, where it is $8$.'
     anki_seeds:
       - front: '$f$ is $\Theta(g)$ means...'
         back: '$f$ is both $O(g)$ and $\Omega(g)$ — the same growth rate up to constant factors.'
@@ -736,10 +736,10 @@ topics:
             solution_sketch: 'Each level halves the list size, and $1024 = 2^{10}$. So ten halvings reach size $1$, and the recursion has $10$ levels of splitting.'
         constraints: 'named algorithms with their recurrences stated in the problem; irrational critical exponents are asked to two decimals or through a doubling factor'
     diagnostic_exemplar:
-      problem: 'Use the Master Theorem: what is the growth order of $T(n) = 4T(n/2) + n$?'
-      answer: '$\Theta(n^2)$: the critical exponent is $\log_2 4 = 2$ and $f(n) = n$ grows strictly slower than $n^2$, so the leaves dominate (case 1).'
-      answer_contract: {kind: none}
-      solution_sketch: '$n^{\log_2 4} = n^2 \succ f(n) = n$: case 1, $T(n) = \Theta(n^{\log_b a}) = \Theta(n^2)$.'
+      problem: 'Find the critical exponent $\log_b a$ for $T(n) = 9T(n/3) + n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Here $a=9$ and $b=3$. So $\log_3 9 = 2$.'
     anki_seeds:
       - front: 'Master Theorem setup $T(n) = a\,T(n/b) + f(n)$: the critical exponent to compare $f$ against?'
         back: '$\log_b a$ — compare $f(n)$ with $n^{\log_b a}$ (the total work at the leaves).'

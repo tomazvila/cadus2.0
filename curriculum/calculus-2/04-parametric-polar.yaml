@@ -144,10 +144,10 @@ topics:
             solution_sketch: 'Divide to get $\cos t = x/3$ and $\sin t = y/8$. The identity gives $x^2/9 + y^2/64 = 1$. The denominators $9$ and $64$ differ, so the curve is an ellipse.'
         constraints: "use the Pythagorean identity; radii and semi-axes are small integers"
     diagnostic_exemplar:
-      problem: 'Eliminate the parameter: $x = 4\cos t$, $y = 3\sin t$. What curve is it, and what point corresponds to $t = \frac{\pi}{2}$?'
-      answer: '$\frac{x^2}{16} + \frac{y^2}{9} = 1$, an ellipse; at $t = \frac{\pi}{2}$ the point is $(0, 3)$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Use $\cos^2t + \sin^2t = 1$ with $\cos t = x/4$ and $\sin t = y/3$.'
+      problem: 'A curve has $x=t^2-2t$ and $y=t^3-4t$. Find the point $(x,y)$ for $t=3$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(3, 15)'
+      solution_sketch: 'Put $t=3$ in both formulas. $x=9-6=3$ and $y=27-12=15$.'
     anki_seeds:
       - front: "Standard parametrization of a circle of radius a centered at the origin?"
         back: '$x = a\cos t$, $y = a\sin t$, $0 \le t \le 2\pi$'
@@ -298,10 +298,10 @@ topics:
             solution_sketch: 'First $\frac{dy}{dx} = \frac{3t^2 - 3}{2t}$. Then $\frac{d^2y}{dx^2} = \frac{3t^2 + 3}{4t^3}$. The numerator is always positive, so the sign is the sign of $t$, and the curve is concave up for $t > 0$.'
         constraints: "second derivative via d(dy/dx)/dt divided by dx/dt; polynomial parametrizations only"
     diagnostic_exemplar:
-      problem: 'For $x = t^2$, $y = t^3 - 3t$, find $\frac{d^2y}{dx^2}$ as a function of $t$, and say whether the curve is concave up at $t = 2$.'
-      answer: '$\frac{d^2y}{dx^2} = \frac{3t^2 + 3}{4t^3}$, which is $\frac{15}{32}$ at $t = 2$; positive, so the curve is concave up there'
-      answer_contract: {kind: none}
-      solution_sketch: '$\frac{dy}{dx} = \frac{3t^2 - 3}{2t}$; differentiate that in $t$ and divide by $\frac{dx}{dt} = 2t$.'
+      problem: 'For $x=t^2+1$ and $y=t^3-3t$, find $\frac{dy}{dx}$ at $t=2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9/4'
+      solution_sketch: '$\frac{dy}{dx}=\frac{3t^2-3}{2t}$. At $t=2$ this is $\frac{9}{4}$.'
     anki_seeds:
       - front: "Slope of a parametric curve (x(t), y(t))?"
         back: '$\frac{dy}{dx} = \frac{dy/dt}{dx/dt}$ (where $dx/dt \neq 0$)'
@@ -452,10 +452,10 @@ topics:
             solution_sketch: 'The area is $\int_0^3 kt \cdot 2t\,dt = \frac{2kt^3}{3}$ evaluated from $0$ to $3$, which is $18k$. Setting $18k = 54$ gives $k = 3$.'
         constraints: "exponential-trig spirals with perfect-square speed; area via int y(t) x'(t) dt with polynomial integrand"
     diagnostic_exemplar:
-      problem: 'Find the length of the curve $x = 3t^2$, $y = 2t^3$ for $0 \le t \le 2$, and the speed at $t = 2$.'
-      answer: 'length $2(5\sqrt{5} - 1)$; speed at $t = 2$ is $12\sqrt{5}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The speed is $\sqrt{36t^2 + 36t^4} = 6t\sqrt{1+t^2}$, so the length is $\left[2(1+t^2)^{3/2}\right]_0^2 = 2(5\sqrt5 - 1)$.'
+      problem: 'Find the length of the curve $x=t^2$, $y=\frac{2}{3}t^3$ for $0\le t\le\sqrt{3}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '14/3'
+      solution_sketch: 'The speed is $\sqrt{4t^2+4t^4}=2t\sqrt{1+t^2}$. The antiderivative is $\frac{2}{3}(1+t^2)^{3/2}$. The length is $\frac{2}{3}(8-1)=\frac{14}{3}$.'
     anki_seeds:
       - front: "Parametric arc length formula on [a, b]?"
         back: '$L = \int_a^b \sqrt{\left(\frac{dx}{dt}\right)^2 + \left(\frac{dy}{dt}\right)^2} \, dt$'
@@ -598,10 +598,10 @@ topics:
             solution_sketch: 'Here $x''(t) = 2t$ and $y''(t) = 2t\sqrt{t^2 + 3}$, so the speed is $2t\sqrt{t^2 + 4}$. With $u = t^2 + 4$ the distance is $\int_4^8 \sqrt{u}\,du = \frac{2}{3}(16\sqrt{2} - 8)$.'
         constraints: "distance via the speed integral; displacement via endpoints; integrals fall to one u-substitution"
     diagnostic_exemplar:
-      problem: 'A particle traces $x = t^2 - 4t$, $y = t^2$ for $0 \le t \le 4$. When is it moving left, and what is the magnitude of its displacement over the interval?'
-      answer: 'It moves left for $t < 2$ (where $dx/dt = 2t - 4 < 0$); the displacement is $(0, 16)$, of magnitude $16$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Horizontal motion is governed by the sign of $\frac{dx}{dt} = 2t - 4$; displacement compares only the endpoints $(0, 0)$ and $(0, 16)$.'
+      problem: 'A particle has position $x=t^3-3t$, $y=3t^2$. Find its speed at $t=2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: '$x''=3t^2-3=9$ and $y''=6t=12$ at $t=2$. The speed is $\sqrt{81+144}=15$.'
     anki_seeds:
       - front: "A parametric particle is at rest when..."
         back: "both dx/dt = 0 and dy/dt = 0 at the same time"
@@ -927,10 +927,10 @@ topics:
             solution_sketch: 'Multiply by $r$ to get $x^2+y^2=6x$. Complete the square: $(x-3)^2+y^2=9$. The radius is $3$, which is half of the coefficient $6$.'
         constraints: 'circles through the origin (r = 2a cos theta or 2a sin theta), constant-r circles, and lines only'
     diagnostic_exemplar:
-      problem: 'Convert the circle $x^2 + y^2 = 6y$ to a polar equation, and identify the curve.'
-      answer: '$r = 6\sin\theta$: a circle of radius $3$ centered at $(0, 3)$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Substitute $x^2 + y^2 = r^2$ and $y = r\sin\theta$, then divide by $r$; completing the square gives $x^2 + (y-3)^2 = 9$.'
+      problem: 'The polar curve $r=10\sin\theta$ is a circle. Find its radius.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Multiply by $r$: $x^2+y^2=10y$. Then $x^2+(y-5)^2=25$, so the radius is $5$.'
     anki_seeds:
       - front: 'The polar equation $r = 2a\cos\theta$ is always a...'
         back: 'circle of radius $|a|$ centered at $(a, 0)$ (through the origin)'
@@ -1082,10 +1082,10 @@ topics:
             solution_sketch: 'Set $3-3\cos\theta=0$, so $\cos\theta=1$. In $[0,2\pi)$ the only solution is $\theta=0$. The cusp of the cardioid is at the pole when $\theta=0$.'
         constraints: 'symmetry via even/odd trig; zeros of r locate petal boundaries and cusps'
     diagnostic_exemplar:
-      problem: 'For $r = 4\cos 3\theta$, how many petals does the graph have, and at which $\theta$ in $[0, \pi)$ does the curve pass through the pole?'
-      answer: '$3$ petals; it reaches the pole at $\theta = \frac{\pi}{6}, \frac{\pi}{2}, \frac{5\pi}{6}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'For $r = a\cos(n\theta)$ with $n$ odd there are $n$ petals; $r = 0$ when $\cos 3\theta = 0$, i.e. $3\theta = \frac{\pi}{2} + k\pi$.'
+      problem: 'How many petals does the curve $r=2\sin 4\theta$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'For $r=a\sin(n\theta)$ with $n$ even, the graph has $2n$ petals. Here $n=4$, so there are $8$ petals.'
     anki_seeds:
       - front: 'Petal count of $r = a\cos(n\theta)$?'
         back: '$n$ petals if $n$ is odd, $2n$ petals if $n$ is even'
@@ -1234,10 +1234,10 @@ topics:
             solution_sketch: 'At $\theta=0$ we have $r=2$, so that point is far from the pole. The curve is at the pole when $2\cos\theta=0$, so $\theta=\frac{\pi}{2}$. The tangent line at the pole is the line $\theta=\frac{\pi}{2}$, the $y$-axis.'
         constraints: 'pole tangents read off from the zeros of r; angles of lines taken in [0, pi)'
     diagnostic_exemplar:
-      problem: 'Find the points where the circle $r = 2\sin\theta$ has a horizontal tangent, and give the tangent line to the curve at the pole.'
-      answer: 'Horizontal tangents at the pole ($\theta = 0$) and at $(0, 2)$ ($\theta = \frac{\pi}{2}$); the tangent line at the pole is $\theta = 0$, the $x$-axis'
-      answer_contract: {kind: none}
-      solution_sketch: 'With $x = \sin 2\theta$ and $y = 1 - \cos 2\theta$, $\frac{dy}{d\theta} = 2\sin 2\theta$ vanishes at $\theta = 0, \frac{\pi}{2}$ while $\frac{dx}{d\theta} \ne 0$ there; the pole is reached at $\theta = 0$, which gives the tangent line there.'
+      problem: 'Find the slope $\frac{dy}{dx}$ of the curve $r=1+\cos\theta$ at $\theta=\frac{\pi}{2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Use $x=r\cos\theta$ and $y=r\sin\theta$. At $\theta=\frac{\pi}{2}$, $r=1$ and $r''=-1$. Then $\frac{dy}{d\theta}=-1$ and $\frac{dx}{d\theta}=-1$, so the slope is $1$.'
     anki_seeds:
       - front: "Slope of a polar curve r = f(theta)?"
         back: '$\frac{dy}{dx} = \frac{\frac{dr}{d\theta}\sin\theta + r\cos\theta}{\frac{dr}{d\theta}\cos\theta - r\sin\theta}$ (parametrize $x = r\cos\theta$, $y = r\sin\theta$)'

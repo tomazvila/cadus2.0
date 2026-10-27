@@ -346,4 +346,32 @@ mod tests {
         }
         assert!(Event::from_json("{").is_err());
     }
+
+    const REVIEW_BASE: &str = r#""type":"review_result","ts":"2026-03-02T09:00:00Z","session":"s","topic":"x","passed":true,"weighted_score":1.0,"quality_tier":"perfect""#;
+
+    #[test]
+    fn variety_waived_off_is_absent_and_old_rows_read_false() {
+        let old = Event::from_json(&format!("{{{REVIEW_BASE}}}")).expect("an old row reads");
+        let Event::ReviewResult(body) = &old else {
+            panic!("a review result")
+        };
+        assert!(!body.variety_waived);
+        let written = old.to_canonical_json().expect("the body writes");
+        assert!(!written.contains("variety_waived"));
+        let minimal = MINIMAL[7];
+        assert_eq!(Event::from_json(minimal).expect("reads"), old);
+    }
+
+    #[test]
+    fn variety_waived_on_round_trips() {
+        let text = format!("{{{REVIEW_BASE},\"variety_waived\":true}}");
+        let event = Event::from_json(&text).expect("a waived row reads");
+        let Event::ReviewResult(body) = &event else {
+            panic!("a review result")
+        };
+        assert!(body.variety_waived);
+        let written = event.to_canonical_json().expect("the body writes");
+        assert!(written.contains("\"variety_waived\":true"));
+        assert_eq!(Event::from_json(&written).expect("reads"), event);
+    }
 }

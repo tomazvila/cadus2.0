@@ -337,6 +337,11 @@ pub struct ReviewResult {
     /// Skills that require one independent confirmation (D-F7).
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub confirmation_skills: Vec<String>,
+    /// The two-distinct-problems requirement was waived: the topic serves fewer than two
+    /// distinct problems (D-RV1). The writer skips it when it is off, so an old row keeps
+    /// its bytes (C2).
+    #[serde(default, skip_serializing_if = "is_off")]
+    pub variety_waived: bool,
 }
 
 /// A quiz closed.

@@ -450,10 +450,10 @@ topics:
             solution_sketch: 'The total is $3(1 + 2 + \cdots + 10)$. Since $1 + 2 + \cdots + 10 = 55$, the tank has gained $3 \cdot 55 = 165$ litres.'
         constraints: "divergence exhibited directly from a closed-form or oscillating partial-sum sequence"
     diagnostic_exemplar:
-      problem: 'A series has partial sums $S_N = \frac{N}{N+1}$. Does it converge, and to what?'
-      answer: 'yes; the sum is $1$'
-      answer_contract: {kind: none}
-      solution_sketch: 'By definition the sum is $\lim_{N\to\infty} S_N = 1$.'
+      problem: 'Find the sum of the series $\sum_{n=1}^{\infty} \frac{1}{n(n+1)}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Write $\frac{1}{n(n+1)}=\frac{1}{n}-\frac{1}{n+1}$. The partial sum $S_N=1-\frac{1}{N+1}$ tends to $1$.'
     anki_seeds:
       - front: "A series converges means, precisely, that..."
         back: "its sequence of partial sums converges"
@@ -1015,10 +1015,10 @@ topics:
             solution_sketch: 'As $n$ grows, $n^2$ grows without bound, so $\frac{1}{n^2}$ tends to $0$. The divergence test is silent for this series, which in fact converges.'
         constraints: "conceptual questions distinguishing the test from its false converse"
     diagnostic_exemplar:
-      problem: 'Does $\sum_{n=1}^{\infty} \frac{2n}{3n + 5}$ converge? And does the divergence test settle $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$?'
-      answer: 'The first diverges (its terms tend to $\frac{2}{3} \ne 0$); the test says nothing about the second, whose terms do tend to $0$ (it in fact diverges, as a $p$-series with $p = \frac12$)'
-      answer_contract: {kind: none}
-      solution_sketch: 'The divergence test can only prove divergence: $a_n \to 0$ is necessary but not sufficient for convergence.'
+      problem: 'Find $\lim_{n\to\infty} a_n$ for $a_n=\frac{3n^2+1}{n^2+5n}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Divide the top and the bottom by $n^2$. The limit is $\frac{3}{1}=3$.'
     anki_seeds:
       - front: 'The $n$th-term divergence test says:'
         back: 'if $a_n \not\to 0$, then $\sum a_n$ diverges (it can NEVER prove convergence)'
@@ -1169,10 +1169,10 @@ topics:
             solution_sketch: 'An antiderivative of $x^{-4}$ is $-\frac{1}{3x^3}$. So $\int_{5}^{\infty} \frac{dx}{x^4} = \frac{1}{3 \cdot 125} = \frac{1}{375}$.'
         constraints: "hypothesis questions list all three conditions; remainder bounds for p = 2 or p = 3 only"
     diagnostic_exemplar:
-      problem: 'Use the integral test to decide whether $\sum_{n=1}^{\infty} \frac{n}{n^2 + 1}$ converges, stating the hypotheses you checked.'
-      answer: 'Diverges: $f(x) = \frac{x}{x^2+1}$ is positive, continuous and decreasing for $x \ge 1$, and $\int_1^{\infty} \frac{x\,dx}{x^2+1} = \lim_{b\to\infty}\frac12\ln(b^2+1) - \frac12\ln 2 = \infty$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The substitution $u = x^2 + 1$ turns the integral into $\frac12\ln u$, which is unbounded, so the series diverges with the integral.'
+      problem: 'Find the least integer $p$ for which $\sum_{n=1}^{\infty} \frac{1}{n^{p/2}}$ converges.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'A p-series converges when its exponent is above $1$. So $\frac{p}{2}>1$ and $p>2$. The least integer is $3$.'
     anki_seeds:
       - front: 'The $p$-series $\sum 1/n^p$ converges exactly when...'
         back: '$p > 1$'
@@ -1302,10 +1302,10 @@ topics:
             solution_sketch: 'The condition means $C\ge\frac{2^n}{2^n-1}$ for all $n\ge1$. This fraction decreases with $n$, and at $n=1$ it equals $\frac{2}{1}=2$. So the smallest integer is $C=2$.'
         constraints: "denominators shrunk by a subtraction; repair with a constant multiple of the natural comparator"
     diagnostic_exemplar:
-      problem: 'Decide whether $\sum_{n=2}^{\infty} \frac{1}{n^2 - n}$ converges. Note that the naive bound $\frac{1}{n^2 - n} > \frac{1}{n^2}$ points the wrong way.'
-      answer: 'Converges: for $n \ge 2$, $n^2 - n \ge \frac{n^2}{2}$, so $\frac{1}{n^2-n} \le \frac{2}{n^2}$, and $\sum \frac{2}{n^2}$ is a convergent $p$-series'
-      answer_contract: {kind: none}
-      solution_sketch: 'A comparison that bounds the terms from below by a convergent series proves nothing; halving the denominator restores a usable upper bound.'
+      problem: 'For $n\ge 1$, $0<\frac{1}{3^n+n}\le\frac{1}{3^n}$. The comparison test bounds $\sum_{n=1}^{\infty}\frac{1}{3^n+n}$ from above by the sum of the larger series. Find that upper bound.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/2'
+      solution_sketch: 'The larger series is $\sum_{n=1}^{\infty}(1/3)^n$, a geometric series with first term $1/3$ and ratio $1/3$. Its sum is $(1/3)/(1-1/3)=1/2$.'
     anki_seeds:
       - front: "Direct comparison proves convergence when your positive terms are..."
         back: "bounded above, termwise, by the terms of a convergent series"
@@ -1430,10 +1430,10 @@ topics:
             solution_sketch: 'The geometric series has first term $\frac{1}{3}$ and ratio $\frac{1}{3}$. Its sum is $\frac{1/3}{1-1/3}=\frac{1}{2}$, so the total payout is at most half a dollar.'
         constraints: "one problem where limit comparison is essential, one where a direct bound is quicker"
     diagnostic_exemplar:
-      problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{2n + 1}{n^3 + 4}$ converges.'
-      answer: 'converges (limit comparison with $\sum \frac{1}{n^2}$: $L = 2$)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Dominant behavior $\frac{2n}{n^3} = \frac{2}{n^2}$; the ratio tends to $2 \in (0, \infty)$.'
+      problem: 'Find $\lim_{n\to\infty} \dfrac{(2n+1)/(n^3+4)}{1/n^2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The quotient is $\frac{(2n+1)n^2}{n^3+4}$. Divide by $n^3$ to get the limit $2$.'
     anki_seeds:
       - front: 'Limit comparison test: if $\lim a_n/b_n = L$ with $0 < L < \infty$, then...'
         back: '$\sum a_n$ and $\sum b_n$ both converge or both diverge'
@@ -1558,10 +1558,10 @@ topics:
             solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{1}{3}\left(\frac{n+1}{n}\right)^3$. As $n\to\infty$ the bracket tends to $1$, so $L=\frac{1}{3}$.'
         constraints: "products of polynomial, exponential, and factorial factors; state L exactly"
     diagnostic_exemplar:
-      problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{n^2 3^n}{n!}$.'
-      answer: 'converges ($L = \lim \frac{3(n+1)}{n^2} = 0 < 1$)'
-      answer_contract: {kind: none}
-      solution_sketch: 'The ratio is $\frac{(n+1)^2 3^{n+1} n!}{n^2 3^n (n+1)!} = \frac{3(n+1)}{n^2} \to 0$.'
+      problem: 'Find $L=\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|$ for $a_n=\frac{n^2}{4^n}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/4'
+      solution_sketch: 'The ratio is $\frac{(n+1)^2}{4n^2}$. As $n\to\infty$ it tends to $\frac{1}{4}$.'
     anki_seeds:
       - front: 'Ratio test: with $L = \lim |a_{n+1}/a_n|$, the series converges when..., diverges when..., and when $L = 1$...'
         back: 'converges (absolutely) if $L < 1$; diverges if $L > 1$; inconclusive if $L = 1$'
@@ -1688,10 +1688,10 @@ topics:
             solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=2\left(\frac{n}{n+1}\right)^n=2\left(1+\frac{1}{n}\right)^{-n}$. This tends to $\frac{2}{e}\approx0.74$, so $L=\frac{2}{e}<1$ and the total oil use is finite.'
         constraints: "root test when a_n is an nth power; ratio test when factorials appear; verdicts state L"
     diagnostic_exemplar:
-      problem: 'Decide whether $\sum_{n=1}^{\infty} \frac{n! \, 2^n}{n^n}$ converges, choosing the more natural test.'
-      answer: 'converges (ratio test: $L = \lim 2\left(\frac{n}{n+1}\right)^n = \frac{2}{e} < 1$)'
-      answer_contract: {kind: none}
-      solution_sketch: 'The factorial makes the ratio test natural; the ratio simplifies to $2/(1 + 1/n)^n \to 2/e \approx 0.74 < 1$.'
+      problem: 'Find $\lim_{n\to\infty}\sqrt[n]{a_n}$ for $a_n=\left(\frac{2n}{3n+1}\right)^n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2/3'
+      solution_sketch: 'The $n$th root of $a_n$ is $\frac{2n}{3n+1}$. Its limit is $\frac{2}{3}$.'
     anki_seeds:
       - front: 'Root test: with $L = \lim \sqrt[n]{|a_n|}$, the conclusions are...'
         back: 'converges (absolutely) if $L < 1$; diverges if $L > 1$; inconclusive if $L = 1$'
@@ -1792,10 +1792,10 @@ topics:
             solution_sketch: 'Divide the numerator and the denominator by $k$ to get $\frac{5+2/k}{4+7/k}$, which tends to $\frac54$. So the corrections approach $\frac54$ mm, which is not $0$. The total of the corrections therefore cannot converge.'
         constraints: 'check decreasing and limit explicitly; include term-test failures and a late-decreasing case; contexts with vibration, correction or sensor sizes; at most two label items'
     diagnostic_exemplar:
-      problem: 'Does $\sum_{n=1}^{\infty} (-1)^n \frac{n}{2n + 1}$ converge? Name the test that decides it.'
-      answer: 'no: $|a_n| \to \frac12 \ne 0$, so the alternating series test does not apply and the series diverges by the term test'
-      answer_contract: {kind: none}
-      solution_sketch: 'The AST needs terms decreasing to $0$; here they approach $\frac12$, so the hypothesis fails and divergence follows from the $n$-th term test.'
+      problem: 'Let $b_n=\frac{n}{n^2+8}$. Find the least positive integer $N$ such that $b_{n+1}<b_n$ for all $n\ge N$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The inequality $b_{n+1}<b_n$ reduces to $n^2+n-8>0$. This is false for $n=2$ and true for $n\ge 3$. So $N=3$.'
     anki_seeds:
       - front: "Alternating series test hypotheses on b_n?"
         back: '$b_n > 0$, $b_n$ decreasing, and $b_n \to 0$'
@@ -1929,10 +1929,10 @@ topics:
             solution_sketch: 'We have $\frac{n/(3n^2+1)}{1/n}=\frac{n^2}{3n^2+1}$, which tends to $\frac13$. This is finite and positive, and $\sum\frac1n$ diverges, so the absolute series diverges. The first choice $\sum\frac{1}{n^2}$ was too small to compare with.'
         constraints: 'absolute series needs a limit comparison, a ratio test or a term test; include one term-test divergence; contexts with a comparison constant; at most two label items'
     diagnostic_exemplar:
-      problem: 'Classify $\sum_{n=1}^{\infty} \frac{(-1)^n n}{n^2 + 4}$ as absolutely convergent, conditionally convergent, or divergent.'
-      answer: 'conditionally convergent (the AST applies since $\frac{n}{n^2+4}$ decreases to $0$, but the absolute series behaves like $\sum \frac{1}{n}$, which diverges)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Limit comparison of $\frac{n}{n^2+4}$ with $\frac1n$ gives $L = 1$, so the absolute series diverges while the alternating one converges.'
+      problem: 'Find the largest value of $p$ for which $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^p}$ converges conditionally but not absolutely.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'The series converges for $p>0$. It converges absolutely only for $p>1$. So conditional convergence holds for $0<p\le 1$, and the largest $p$ is $1$.'
     anki_seeds:
       - front: "Conditionally convergent means..."
         back: "the series converges but the series of absolute values diverges"
@@ -2076,10 +2076,10 @@ topics:
             solution_sketch: 'Gains count as positive and losses as negative, so the total is $120\left(1-\frac12+\frac13-\frac14+\frac15\right)=120\cdot\frac{47}{60}=94$. The trader is $94$ dollars ahead after $5$ days.'
         constraints: 'add the first terms exactly; pair an estimate with its bound where the question needs both; two direction items (larger or smaller) with different answers; contexts with 1/e and a probe'
     diagnostic_exemplar:
-      problem: 'Approximate $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ by its first $4$ terms and bound the error.'
-      answer: '$\frac{115}{144}$, with error at most $b_5 = \frac{1}{25}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$1 - \frac14 + \frac19 - \frac1{16} = \frac{115}{144}$; for an alternating series the error is at most the first omitted term.'
+      problem: 'The error of the partial sum $S_N$ of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ is at most $\frac{1}{(N+1)^2}$. Find the least integer $N$ with $\frac{1}{(N+1)^2}<0.01$.'
+      answer_contract: {"kind":"exact"}
+      answer: '10'
+      solution_sketch: 'The inequality needs $(N+1)^2>100$, so $N+1>10$. The least integer is $N=10$.'
     anki_seeds:
       - front: "Alternating series error bound: the error after n terms is at most..."
         back: '$b_{n+1}$, the first omitted term'
@@ -2211,10 +2211,10 @@ topics:
             solution_sketch: 'We have $\frac{|a_{n+1}|}{|a_n|}=\frac{(n+1)^2/3^{n+1}}{n^2/3^n}=\frac{(n+1)^2}{3n^2}$. This tends to $\frac13$, which is less than $1$, so the sum of the pulse sizes is finite.'
         constraints: 'three-way classification with the deciding test named in the sketch; one term-test divergence; contexts with comparison constants'
     diagnostic_exemplar:
-      problem: 'Classify $\sum_{n=2}^{\infty} \frac{(-1)^n}{\sqrt{n} + 1}$ as absolutely convergent, conditionally convergent, or divergent, naming the tests you use.'
-      answer: 'conditionally convergent (AST: $\frac{1}{\sqrt n + 1}$ decreases to $0$; limit comparison of the absolute series with $\sum n^{-1/2}$ gives $L = 1$, and that $p$-series diverges)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Read the form: alternating with terms decreasing to zero, so it converges; the absolute series is a $p$-series comparison with $p = \frac12 \le 1$.'
+      problem: 'Find the largest integer $k$ for which $\sum_{n=1}^{\infty} \frac{n^k}{n^6+1}$ converges.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Limit comparison with $\sum \frac{1}{n^{6-k}}$ applies. This converges when $6-k>1$, so $k<5$. The largest integer is $4$.'
     anki_seeds:
       - front: "Series strategy: factorials or c^n suggest ..., nth powers suggest ..., rational terms suggest ..."
         back: "ratio test; root test; (limit) comparison with a p-series"

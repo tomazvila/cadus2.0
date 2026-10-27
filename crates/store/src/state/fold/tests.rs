@@ -130,6 +130,7 @@ fn a_projector_error_stops_the_forward_fold() {
         task_id: Some("s_1970-01-01a-review-addition".to_string()),
         inconclusive: false,
         confirmation_skills: Vec::new(),
+        variety_waived: false,
     }));
     assert!(fold_over(Some(SessionView::default()), rows).is_err());
 }

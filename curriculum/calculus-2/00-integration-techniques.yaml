@@ -997,10 +997,10 @@ topics:
             solution_sketch: 'Split the numerator by the derivative $2x-2$ of the denominator: $4x + 7 = 2(2x - 2) + 11$. So the integral is $2\ln(x^2 - 2x + 5) + 11 \cdot \frac{1}{2}\arctan\frac{x - 1}{2} + C$.'
         constraints: 'numerator of degree 1 over an irreducible quadratic; write the numerator as (a multiple of the derivative of the denominator) + a constant, then split into a logarithm and an arctangent'
     diagnostic_exemplar:
-      problem: 'Evaluate $\int \frac{2x + 6}{x^2 + 4x + 5} \, dx$.'
-      answer: '$\ln(x^2 + 4x + 5) + 2\arctan(x + 2) + C$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Write $2x + 6 = (2x + 4) + 2$: the first part is a logarithm, the second is $2\int \frac{dx}{(x+2)^2 + 1}$.'
+      problem: 'Evaluate $\int_3^4 \frac{dx}{x^2-6x+10}$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'pi/4'
+      solution_sketch: 'Complete the square: $x^2-6x+10=(x-3)^2+1$. The antiderivative is $\arctan(x-3)$. The value is $\arctan 1-\arctan 0=\pi/4$.'
     anki_seeds:
       - front: '$\int \frac{du}{u^2 + a^2} = $ ?'
         back: '$\frac{1}{a}\arctan\left(\frac{u}{a}\right) + C$'
@@ -1477,10 +1477,10 @@ topics:
             solution_sketch: 'A constant over $x^2 + 1$ cannot supply the $x$ term, so the numerator must be $Bx + C$. Clearing the denominators gives $1 = A(x^2 + 1) + (Bx + C)x$. Setting $x = 0$ gives $A = 1$. Matching the $x^2$ coefficients gives $A + B = 0$, so $B = -1$, and matching the $x$ coefficients gives $C = 0$.'
         constraints: "at most one irreducible quadratic factor (x^2 + 1 or x^2 + 4); Bx + C numerator handled by u = the quadratic"
     diagnostic_exemplar:
-      problem: 'Evaluate $\int \frac{x^2 + 2}{x(x^2 + 1)} \, dx$.'
-      answer: '$2\ln|x| - \frac{1}{2}\ln(x^2 + 1) + C$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The irreducible quadratic needs $\frac{A}{x} + \frac{Bx + C}{x^2+1}$; matching coefficients gives $A = 2$, $B = -1$, $C = 0$.'
+      problem: 'Evaluate $\int_2^3 \frac{dx}{x^2-1}$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'ln(3/2)/2'
+      solution_sketch: 'Write $\frac{1}{x^2-1}=\frac12\left(\frac{1}{x-1}-\frac{1}{x+1}\right)$. The antiderivative is $\frac12\ln\frac{x-1}{x+1}$. The value is $\frac12(\ln\frac12-\ln\frac13)=\frac12\ln\frac32$.'
     anki_seeds:
       - front: "Partial fraction form for a repeated factor (x - a)^2?"
         back: '$\frac{A}{x - a} + \frac{B}{(x - a)^2}$'
@@ -1615,10 +1615,10 @@ topics:
             solution_sketch: 'Let $t = \tan(x/2)$. Then $3 + \cos x = \frac{4 + 2t^2}{1 + t^2}$, and the integral becomes $\int \frac{dt}{2 + t^2}$. This is the arctangent pattern with $a = \sqrt{2}$, so it equals $\frac{1}{\sqrt{2}}\arctan\frac{t}{\sqrt{2}}$. Putting back $t = \tan(x/2)$ gives $\frac{1}{\sqrt{2}}\arctan\left(\frac{\tan(x/2)}{\sqrt{2}}\right) + C$.'
         constraints: "integrand rational in sin x and cos x with small integer coefficients; the t-integral is an arctan pattern or splits over distinct linear factors"
     diagnostic_exemplar:
-      problem: 'Evaluate $\int \frac{dx}{2 + \cos x}$.'
-      answer: '$\frac{2}{\sqrt{3}}\arctan\left(\frac{\tan(x/2)}{\sqrt{3}}\right) + C$'
-      answer_contract: {kind: none}
-      solution_sketch: 'With $t = \tan(x/2)$ the integrand becomes $\frac{2\,dt}{3 + t^2}$.'
+      problem: 'Evaluate $\int_0^{\pi/2} \frac{dx}{1+\cos x}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'With $t=\tan(x/2)$, $1+\cos x=\frac{2}{1+t^2}$ and $dx=\frac{2\,dt}{1+t^2}$. The integrand becomes $dt$, and the bounds are $0$ and $1$. The value is $1$.'
     anki_seeds:
       - front: 'Weierstrass substitution $t = \tan(x/2)$: the three replacement formulas?'
         back: '$\sin x = \frac{2t}{1+t^2}$, $\cos x = \frac{1-t^2}{1+t^2}$, $dx = \frac{2\,dt}{1+t^2}$'
@@ -2060,10 +2060,10 @@ topics:
             solution_sketch: 'For $x\geq1$ we have $0<\frac{2+\cos x}{x^3}\leq\frac{3}{x^3}$. Then $\int_1^{\infty}3x^{-3}\,dx=\left[-\frac{3}{2x^2}\right]_1^{\infty}=\frac32$. So the integral is at most $\frac32$.'
         constraints: "comparisons against p-integrals or e^{-x}; the inequality must hold on the whole interval and be stated; questions ask for the verdict, the comparison bound, or a quantity read from the bound; context items: reservoir and server"
     diagnostic_exemplar:
-      problem: 'Determine whether $\int_1^{\infty} \frac{dx}{\sqrt{x^6 + 1}}$ converges.'
-      answer: 'converges — $\frac{1}{\sqrt{x^6 + 1}} \le \frac{1}{x^3}$ and $\int_1^{\infty} x^{-3}\,dx$ converges'
-      answer_contract: {kind: none}
-      solution_sketch: '$\sqrt{x^6 + 1} \ge x^3$, so the integrand is dominated by a convergent $p = 3$ integral.'
+      problem: 'Evaluate $\int_1^{\infty} \frac{8}{x^5}\,dx$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The antiderivative is $-2x^{-4}$. It tends to $0$ at infinity and equals $-2$ at $1$. The value is $0-(-2)=2$.'
     anki_seeds:
       - front: '$\int_1^{\infty} x^{-p} \, dx$ converges exactly when...'
         back: '$p > 1$'
@@ -2223,10 +2223,10 @@ topics:
             solution_sketch: 'Use parts with $u=\ln(x^2+1)$ and $dv=x^2\,dx$, so $v=\frac{x^3}{3}$. This gives $\frac{x^3}{3}\ln(x^2+1)-\frac23\int\frac{x^4}{x^2+1}\,dx$, and $\frac{x^4}{x^2+1}=x^2-1+\frac{1}{x^2+1}$. At $x=1$ the value is $\frac{\ln2}{3}-\frac23\left(\frac13-1+\frac{\pi}{4}\right)=\frac{\ln2}{3}+\frac49-\frac{\pi}{6}$, and at $x=0$ it is $0$.'
         constraints: "exactly two techniques chained; the follow-up integral must be an improper-fraction split or an arctan pattern; context items: distance and average value"
     diagnostic_exemplar:
-      problem: 'Evaluate $\int x \sec^2 x \, dx$.'
-      answer: '$x \tan x + \ln|\cos x| + C$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Parts with $u = x$, $dv = \sec^2 x\,dx$: $x\tan x - \int \tan x\,dx = x\tan x + \ln|\cos x| + C$.'
+      problem: 'Evaluate $\int_0^1 x e^{2x}\,dx$.'
+      answer_contract: {"kind":"exact"}
+      answer: '(e^2+1)/4'
+      solution_sketch: 'Use parts with $u=x$, $dv=e^{2x}dx$. The antiderivative is $\frac{x e^{2x}}{2}-\frac{e^{2x}}{4}$. The value is $\frac{e^2}{2}-\frac{e^2}{4}+\frac14=\frac{e^2+1}{4}$.'
     anki_seeds:
       - front: "First question to ask before choosing an integration technique?"
         back: "Is the derivative of an inner function present (up to a constant)? If so, u-substitution first."

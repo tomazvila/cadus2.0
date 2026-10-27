@@ -150,10 +150,10 @@ topics:
             solution_sketch: 'A class size is the index of a centralizer, so it divides the group order $8$. The sizes $1$ and $2$ divide $8$, but $3$ does not. So $3$ is the impossible size.'
         constraints: "p in {2, 3, 5, 7}; the G/Z(G)-cyclic lemma is proved once, then may be cited"
     diagnostic_exemplar:
-      problem: 'A group $G$ of order $8$ has conjugacy class sizes $1, 1, 2, 2, 2$. Find $|Z(G)|$, and explain why no group of order $8$ can have a trivial center.'
-      answer: '$|Z(G)| = 2$ (two singleton classes). A group of order $8 = 2^3$ is a $2$-group, and the class equation forces $2 \mid |Z(G)|$, so $|Z(G)| \ge 2$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Central elements are exactly the singleton classes; the $p$-group center argument rules out $|Z| = 1$.'
+      problem: 'A group has order $18$. Its non-central conjugacy classes have sizes $3$, $3$ and $6$. Find the order of its center.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The class sizes add to the group order. So $|Z|+3+3+6=18$ and $|Z|=6$.'
     anki_seeds:
       - front: "The class equation?"
         back: "$|G| = |Z(G)| + \\sum_i [G : C(x_i)]$, summing over representatives of the nontrivial conjugacy classes."
@@ -303,10 +303,10 @@ topics:
             solution_sketch: 'We have $|X| = 10^4 = 10000$. The fixed tuples are $(x, x, x, x, x)$ with $5x = 0$ in $\mathbb{Z}_{10}$, which gives $5$ of them. The other $9995$ tuples fall into orbits of size $5$, so there are $9995/5 = 1999$ such orbits.'
         constraints: "the tuple-counting argument in guided steps; rotation-invariance of the product-e condition may be quoted"
     diagnostic_exemplar:
-      problem: 'Let $G$ be an abelian group with $|G| = 21$. Use Cauchy''s theorem to prove that $G$ is cyclic.'
-      answer: 'Since $21 = 3 \cdot 7$, Cauchy gives $a$ with $|a| = 3$ and $b$ with $|b| = 7$. As $G$ is abelian, $(ab)^{n} = a^{n}b^{n}$, so $(ab)^{21} = e$ and $|ab|$ divides $21$. If $|ab| = 3$ then $e = (ab)^3 = a^3b^3 = b^3$, forcing $7 \mid 3$ — impossible; if $|ab| = 7$ then $e = a^7b^7 = a^7 = a$, contradicting $|a| = 3$; and $|ab| = 1$ would give $a = b^{-1}$, whose order is both $3$ and $7$. Hence $|ab| = 21$ and $G = \langle ab \rangle$ is cyclic.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Cauchy supplies elements of order $3$ and $7$; in an abelian group elements of coprime orders multiply to an element of order the product, which here exhausts $G$.'
+      problem: 'A group has order $105$. Cauchy''s theorem gives an element of each prime order $p$ that divides $105$. Find the sum of these primes.'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'Factor $105=3\cdot5\cdot7$. The primes are $3,5,7$ and the sum is $15$.'
     anki_seeds:
       - front: "Cauchy's theorem?"
         back: "If a prime $p$ divides $|G|$, then $G$ has an element (hence a subgroup) of order $p$."
@@ -477,9 +477,10 @@ topics:
             solution_sketch: 'The Klein four-subgroup $V = \{e, (1\,2)(3\,4), (1\,3)(2\,4), (1\,4)(2\,3)\}$ has order $4$. Conjugation by any element of $A_4$ permutes the three double transpositions, so it maps $V$ to itself and $V$ is normal. Since $1 < 4 < 12$, $V$ is a proper nontrivial normal subgroup.'
         constraints: "refutations via index-2 subgroups, abelian subgroups, or named normal subgroups (A_n, rotation subgroup, center); groups of order <= 12; no Sylow counting (taught later)"
     diagnostic_exemplar:
-      problem: 'Decide, with proof, whether each of $\mathbb{Z}_{11}$ and $D_6$ (the symmetries of a regular hexagon, order $12$) is simple.'
-      answer: '$\mathbb{Z}_{11}$ is simple: it is nontrivial, and by Lagrange every subgroup has order dividing the prime $11$, so the only subgroups at all are $\{0\}$ and $\mathbb{Z}_{11}$. $D_6$ is not simple: the rotation subgroup $\langle r \rangle$ has order $6$, so its index is $12/6 = 2$; a subgroup of index $2$ is always normal, and $1 < 6 < 12$, so it is a proper nontrivial normal subgroup.'
-      solution_sketch: 'For prime order, Lagrange leaves no room for proper nontrivial subgroups. For $D_6$, exhibit a normal subgroup — index $2$ forces normality.'
+      problem: 'Find the smallest order of a non-abelian simple group.'
+      answer_contract: {"kind":"exact"}
+      answer: '60'
+      solution_sketch: 'Every group of smaller order is abelian-simple (prime order) or has a proper normal subgroup. The first non-abelian simple group is $A_5$, of order $60$.'
     anki_seeds:
       - front: "Simple group?"
         back: "A nontrivial group whose only normal subgroups are $\\{e\\}$ and the whole group."
@@ -656,10 +657,10 @@ topics:
             solution_sketch: 'There are $n_3 = 1$ or $n_3 = 7$ Sylow $3$-subgroups, since $n_3$ divides $7$ and $n_3 \equiv 1 \pmod 3$. When $n_3 = 7$ the Sylow $3$-subgroup is not normal and the group is not abelian. Such a group of order $21$ exists, so not every group of order $21$ is cyclic.'
         constraints: "orders pq or p^2 q with p, q <= 11; the internal-direct-product recognition step may be quoted after one worked instance"
     diagnostic_exemplar:
-      problem: 'Let $|G| = 20$. Give the order of a Sylow $5$-subgroup, determine $n_5$, and deduce that $G$ has a normal subgroup of order $5$.'
-      answer: 'Sylow $5$-subgroups have order $5$; $n_5 \mid 4$ and $n_5 \equiv 1 \pmod 5$ force $n_5 = 1$; the unique Sylow $5$-subgroup is normal.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Factor $20 = 2^2 \cdot 5$, run the two counting conditions, and use uniqueness $\implies$ normality.'
+      problem: 'Find the number of Sylow $3$-subgroups of $S_4$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The number divides $8$ and is $1$ mod $3$, so it is $1$ or $4$. The $8$ three-cycles give $4$ subgroups of order $3$, so the number is $4$.'
     anki_seeds:
       - front: "Constraints on $n_p$, the number of Sylow $p$-subgroups (with $|G| = p^n m$, $p \\nmid m$)?"
         back: "$n_p \\mid m$ and $n_p \\equiv 1 \\pmod p$."
@@ -810,10 +811,10 @@ topics:
             solution_sketch: 'With exactly one element of order $2$, the group is cyclic, so it is $\mathbb{Z}_{16}$. The elements of order $16$ are the generators, and there are $\varphi(16) = 8$ of them.'
         constraints: "orders <= 36; distinguish candidate decompositions by counts of elements of a given order"
     diagnostic_exemplar:
-      problem: 'An abelian group $G$ of order $36$ has exactly one element of order $2$ and exactly two elements of order $3$. Identify $G$ up to isomorphism and give its invariant-factor form.'
-      answer: 'By the classification, $G$ is the product of its $2$-primary and $3$-primary parts, of orders $4$ and $9$. The order-$4$ part is $\mathbb{Z}_4$ or $\mathbb{Z}_2 \times \mathbb{Z}_2$; the latter has three elements of order $2$, so it must be $\mathbb{Z}_4$. The order-$9$ part is $\mathbb{Z}_9$ or $\mathbb{Z}_3 \times \mathbb{Z}_3$; the latter has eight elements of order $3$, so it must be $\mathbb{Z}_9$. Hence $G \cong \mathbb{Z}_4 \times \mathbb{Z}_9 \cong \mathbb{Z}_{36}$, and the invariant-factor form is the single factor $\mathbb{Z}_{36}$ (since $\gcd(4,9) = 1$).'
-      answer_contract: {kind: none}
-      solution_sketch: 'Split into $p$-primary parts, then use the counts of elements of order $p$ to pick the right partition; coprime orders merge into one invariant factor.'
+      problem: 'How many abelian groups of order $72$ exist up to isomorphism?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Factor $72=2^3\cdot3^2$. There are $p(3)=3$ choices for the $2$-part and $p(2)=2$ for the $3$-part, so $3\cdot2=6$.'
     anki_seeds:
       - front: "Fundamental theorem of finite abelian groups?"
         back: "Every finite abelian group is a direct product of cyclic groups of prime-power order, uniquely up to reordering."
@@ -976,10 +977,10 @@ topics:
             solution_sketch: 'The group $G$ is abelian, so every conjugation map is the identity. The center is all of $G$, of order $12$, and $G/Z(G)$ has order $1$. So $G$ has $1$ inner automorphism.'
         constraints: "the G/Z(G) = Inn(G) derivation reproduced, not quoted; Inn computations for S_3, D_4, abelian groups (Inn trivial); centers may be quoted from class-equation work"
     diagnostic_exemplar:
-      problem: 'Identify $\mathrm{Aut}(\mathbb{Z}_9)$ up to isomorphism, and compute $|\mathrm{Inn}(\mathbb{Z}_9)|$.'
-      answer: 'Every endomorphism of $\mathbb{Z}_n$ is multiplication by $a = \varphi(1)$, and it is an automorphism exactly when $\gcd(a,n) = 1$, so $\mathrm{Aut}(\mathbb{Z}_9) \cong U(9) = \{1,2,4,5,7,8\}$, of order $\varphi(9) = 6$. That group is cyclic, generated by $2$ (powers $2, 4, 8, 7, 5, 1$), so $\mathrm{Aut}(\mathbb{Z}_9) \cong \mathbb{Z}_6$. Since $\mathrm{Inn}(G) \cong G/Z(G)$ and $\mathbb{Z}_9$ is abelian ($Z(G) = G$), $\mathrm{Inn}(\mathbb{Z}_9)$ is trivial: $|\mathrm{Inn}(\mathbb{Z}_9)| = 1$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Use $\mathrm{Aut}(\mathbb{Z}_n) \cong U(n)$ and exhibit a primitive root mod $9$; then apply $\mathrm{Inn}(G) \cong G/Z(G)$ to an abelian group.'
+      problem: 'Find the order of the automorphism group of $\mathbb{Z}_{15}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'An automorphism of $\mathbb{Z}_{15}$ sends $1$ to a unit. The number of units is $\varphi(15)=\varphi(3)\varphi(5)=2\cdot 4=8$.'
     anki_seeds:
       - front: "$\\mathrm{Aut}(\\mathbb{Z}_n) \\cong $ ?"
         back: "$U(n)$ — the automorphism $x \\mapsto ax$ corresponds to the unit $a$."

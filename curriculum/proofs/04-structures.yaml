@@ -129,10 +129,10 @@ topics:
             solution_sketch: 'The number of tiles is $4s \cdot 4t = 16st = 4(4st)$, so $m = 4st$, which is a whole number. So the product of two multiples of $4$ is again a multiple of $4$.'
         constraints: "closure arguments via a parametric form ($2k$, $2k+1$, $2^k$, $5k$)"
     diagnostic_exemplar:
-      problem: 'Is the set $\{3k : k \in \mathbb{Z}\}$ of multiples of $3$ closed under addition? Under multiplication? And is $\mathbb{N} = \{0, 1, 2, \dots\}$ closed under subtraction?'
-      answer_contract: {kind: none}
-      answer: 'Multiples of $3$ are closed under addition: $3a + 3b = 3(a+b)$, again of that form. They are closed under multiplication too: $(3a)(3b) = 3(3ab)$. But $\mathbb{N}$ is not closed under subtraction: $1 - 2 = -1 \notin \mathbb{N}$.'
-      solution_sketch: 'For a described set, substitute the general form and check the result still has that form; for a number system, a single counterexample settles failure.'
+      problem: 'Let $S=\{1,2,3\}$ with ordinary multiplication. For how many ordered pairs $(a,b)$ in $S\times S$ is the product $ab$ not in $S$?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The products are 1,2,3,2,4,6,3,6,9. The four products 4, 6, 6, 9 are not in $S$.'
     anki_seeds:
       - front: 'To show $S$ is NOT closed under an operation...'
         back: 'exhibit $a, b \in S$ with $a * b \notin S$.'
@@ -259,10 +259,10 @@ topics:
             solution_sketch: 'The identity is $4$, since row $4$ and column $4$ repeat the headings. Row $1$ reads $2, 3, 4, 0, 1$, and the identity $4$ is in the column of $2$, so the inverse of $1$ is $2$.'
         constraints: "Read identity and inverse information from an explicit modular-operation table, possibly with relabelled elements. Require both product orders; do not replace the table by a supplied modular-inverse equation."
     diagnostic_exemplar:
-      problem: 'In the addition-mod-$6$ table on $\{0, 1, \dots, 5\}$: give the entry for $4 + 5$, the identity element and the inverse of $2$, and say how the table shows the operation is commutative.'
-      answer_contract: {kind: none}
-      answer: 'The entry for $4 + 5$ is $9 \bmod 6 = 3$. The identity is $0$, since its row and column simply repeat the headings. The inverse of $2$ is $4$, because $2 + 4 = 6 \equiv 0$, the identity. Commutativity appears as symmetry of the table across its main diagonal: the entry in row $i$, column $j$ equals the entry in row $j$, column $i$.'
-      solution_sketch: 'Reduce mod $6$ for the entry; find the identity as the row repeating the headings, the inverse as the entry giving $0$, and read commutativity off the diagonal symmetry.'
+      problem: 'In the multiplication table modulo $8$ on $\{0,1,\dots,7\}$, how many entries equal $0$?'
+      answer_contract: {"kind":"exact"}
+      answer: '20'
+      solution_sketch: 'Count the pairs $(a,b)$ with $8\mid ab$. The rows $0,1,\dots,7$ hold $8,1,2,1,4,1,2,1$ zeros, and the sum is $20$.'
     anki_seeds:
       - front: 'Commutativity in an operation table looks like...'
         back: 'symmetry across the main diagonal.'
@@ -409,9 +409,10 @@ topics:
             solution_sketch: 'The operation is commutative, because $a * b = a + b - ab = b + a - ba = b * a$. For every real $a$ we have $a * 0 = a + 0 - 0 = a$, and by commutativity $0 * a = a$, so $0$ is an identity element. Now we prove both directions. Suppose $a \neq 1$ and put $x = a/(a - 1)$, which is defined. Then $a * x = a + \frac{a}{a-1} - \frac{a^2}{a-1} = a + \frac{a(1 - a)}{a - 1} = a - a = 0$. By commutativity $x * a = 0$ as well, so $x$ is an inverse of $a$. Conversely suppose that $a$ has an inverse $x$, so $a + x - ax = 0$. Then $a = ax - x = x(a - 1)$. If $a = 1$ this reads $1 = 0$, which is false. So $a \neq 1$. Hence $a$ has an inverse exactly when $a \neq 1$, and then the inverse is $a/(a - 1)$.'
         constraints: "solve $a * x = e$ for $x$; identify any non-invertible elements"
     diagnostic_exemplar:
-      problem: 'On $\mathbb{R}$ define $a * b = a + b + ab$. Show that $*$ is commutative, find its identity element, and determine exactly which elements have inverses.'
-      answer: 'Commutative: $a * b = a + b + ab = b + a + ba = b * a$. Identity: $a * e = a + e + ae = a$ forces $e(1 + a) = 0$ for every $a$, so $e = 0$; and indeed $a * 0 = a = 0 * a$. Inverses: $a * x = 0$ means $a + x + ax = 0$, i.e. $x(1 + a) = -a$. If $a \ne -1$ this has the unique real solution $x = \dfrac{-a}{1 + a}$, so $a$ is invertible; if $a = -1$ the equation becomes $0 = 1$, so $-1$ has no inverse. Exactly the elements $a \ne -1$ are invertible.'
-      solution_sketch: 'Symmetry of the formula gives commutativity; solve $a * e = a$ for the identity and $a * x = 0$ for inverses, watching the case $1 + a = 0$.'
+      problem: 'On $\mathbb{Z}$ define $a*b=a+b-3$. What is the identity element of $*$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The identity $e$ satisfies $a+e-3=a$ for all $a$. So $e=3$.'
     anki_seeds:
       - front: 'A binary operation on a set $S$ is...'
         back: 'a function $* : S \times S \to S$ (so $S$ is closed under $*$).'
@@ -552,9 +553,10 @@ topics:
             solution_sketch: 'Let $S$ be the set of positive integers with ordinary addition. For closure, let $a, b \in S$. Then $a + b$ is an integer, and $a + b \ge 1 + 1 = 2 > 0$, so $a + b \in S$. For associativity, $(a + b) + c = a + (b + c)$ holds for all integers, hence for all elements of $S$. So $S$ is a semigroup. Now suppose, for contradiction, that $S$ has an identity element $e \in S$. Then $e + 1 = 1$, since $1 \in S$, so $e = 0$. But $0$ is not a positive integer, so $e \notin S$, which contradicts $e \in S$. Hence $S$ has no identity, and $S$ is a semigroup but not a monoid.'
         constraints: "verify closure and associativity, then show the forced identity lies outside the set Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Is $a * b = \min(a, b)$ on $\mathbb{Z}$ associative? Commutative? Does it have an identity?'
-      answer: 'Associative and commutative; no identity.'
-      solution_sketch: 'Both groupings give the smallest of the three; symmetry gives commutativity. An identity would need $\min(a, e) = a$ for all $a$, i.e. $e$ above every integer — impossible. $\square$'
+      problem: 'On $\{1,2,3,4\}$ define $a*b=\max(a,b)$. What is the identity element of $*$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'An identity $e$ needs $\max(a,e)=a$ for all $a$. Only $e=1$ does this.'
     anki_seeds:
       - front: 'Standard way to refute associativity?'
         back: 'One concrete triple where $(a * b) * c \ne a * (b * c)$.'
@@ -696,9 +698,10 @@ topics:
             solution_sketch: 'A monoid needs an associative operation, so it is enough to show that subtraction on $\mathbb{Z}$ is not associative. Take $a = 3$, $b = 2$ and $c = 1$. Then $(3 * 2) * 1 = (3 - 2) - 1 = 1 - 1 = 0$. On the other side $3 * (2 * 1) = 3 - (2 - 1) = 3 - 1 = 2$. Since $0 \neq 2$, the two groupings differ, so $*$ is not associative. Hence $(\mathbb{Z}, *)$ is not a monoid. The identity axiom fails as well. If $e$ were a two-sided identity, then $0 * e = 0$ would give $0 - e = 0$, so $e = 0$. But $0 * 1 = 0 - 1 = -1 \neq 1$, so $0$ is not a left identity.'
         constraints: "check the axioms; a single failure rules out a monoid Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Show that the set of functions $X \to X$ under composition, with $\mathrm{id}_X$, is a monoid, and prove that the identity element of any monoid is unique.'
-      answer: 'Closure: the composite of two functions $X \to X$ is again a function $X \to X$. Associativity: for every $x$, $((f \circ g) \circ h)(x) = f(g(h(x))) = (f \circ (g \circ h))(x)$, so the two composites agree. Identity: $(\mathrm{id}_X \circ f)(x) = f(x) = (f \circ \mathrm{id}_X)(x)$ for all $x$, so $\mathrm{id}_X$ is a two-sided identity. Hence this is a monoid. Uniqueness in general: if $e_1$ and $e_2$ are both identities of a monoid, then $e_1 = e_1 * e_2 = e_2$ — the first equality because $e_2$ is an identity, the second because $e_1$ is.'
-      solution_sketch: 'Check closure, associativity and neutrality for composition; the uniqueness argument multiplies the two candidate identities together.'
+      problem: 'How many elements does the monoid of all functions from $\{1,2,3\}$ to $\{1,2,3\}$ under composition have?'
+      answer_contract: {"kind":"exact"}
+      answer: '27'
+      solution_sketch: 'Each of the 3 inputs goes to one of 3 outputs. So there are $3^3=27$ functions.'
     anki_seeds:
       - front: 'Definition of a monoid?'
         back: 'A set with an associative binary operation and a two-sided identity element.'
@@ -847,9 +850,10 @@ topics:
             solution_sketch: 'Fix $a \in M$ and an integer $m \ge 0$. We prove $(a^{m})^{n} = a^{mn}$ by induction on $n$. Base case $n = 0$: by the definition of the zeroth power, $(a^{m})^{0} = e$, and $a^{m \cdot 0} = a^{0} = e$. So both sides equal $e$. Inductive hypothesis: assume $(a^{m})^{k} = a^{mk}$ for some integer $k \ge 0$. Inductive step: the definition of powers, applied to the element $a^{m}$, gives $(a^{m})^{k+1} = (a^{m})^{k} a^{m}$. The hypothesis replaces the first factor, so $(a^{m})^{k} a^{m} = a^{mk} a^{m}$. The law $a^{p} a^{q} = a^{p+q}$ with $p = mk$ and $q = m$ gives $a^{mk} a^{m} = a^{mk+m}$, and $mk + m = m(k + 1)$. Hence $(a^{m})^{k+1} = a^{m(k+1)}$, the claim for $k + 1$. By induction, $(a^{m})^{n} = a^{mn}$ for every $n \ge 0$, and $m$ was arbitrary.'
         constraints: 'the law $(a^{m})^{n} = a^{mn}$ as exponent arithmetic, the induction step, and the failure of $(ab)^{n} = a^{n} b^{n}$ without commutativity; one induction proof'
     diagnostic_exemplar:
-      problem: 'In an arbitrary monoid, prove by induction on $n$ that $a^{m}a^{n} = a^{m+n}$ for all integers $m, n \ge 0$, and use it to show $(a^{2})^{3} = a^{6}$.'
-      answer: 'Powers are defined by $a^{0} = e$ and $a^{k+1} = a^{k}a$. Fix $m \ge 0$ and induct on $n$. Base $n = 0$: $a^{m}a^{0} = a^{m}e = a^{m} = a^{m+0}$. Step: assume $a^{m}a^{n} = a^{m+n}$; then $a^{m}a^{n+1} = a^{m}(a^{n}a) = (a^{m}a^{n})a = a^{m+n}a = a^{m+n+1}$, using associativity and the definition. So the law holds for all $n \ge 0$, and $m$ was arbitrary. Consequently $(a^{2})^{3} = a^{2}a^{2}a^{2} = a^{4}a^{2} = a^{6}$.'
-      solution_sketch: 'Induct on the second exponent, peeling one factor with $a^{n+1} = a^{n}a$ and re-associating; then apply the law twice.'
+      problem: 'In the monoid $(\mathbb{Z}_{12},+)$ the power $a^n$ means the sum of $n$ copies of $a$. Find $a^7$ for $a=5$.'
+      answer_contract: {"kind":"exact"}
+      answer: '11'
+      solution_sketch: 'The sum is $7\cdot5=35$. Since $35=2\cdot12+11$, the result is $11$.'
     anki_seeds:
       - front: '$a^{0}$ in a monoid?'
         back: 'The identity $e$ (by convention/recursive definition).'
@@ -985,9 +989,10 @@ topics:
             solution_sketch: 'Existence. Put $x = a^{-1} * b$. Then $a * x = a * (a^{-1} * b) = (a * a^{-1}) * b = e * b = b$, using associativity, the inverse law $a * a^{-1} = e$ and the identity law. So $x$ is a solution. Uniqueness. Let $x$ be any solution, so $a * x = b$. Multiply both sides on the left by $a^{-1}$ to get $a^{-1} * (a * x) = a^{-1} * b$. By associativity and the inverse law $a^{-1} * a = e$, the left side is $(a^{-1} * a) * x = e * x = x$. Hence $x = a^{-1} * b$, so every solution equals this one. Therefore the equation has exactly one solution.'
         constraints: 'solve $a x = b$ with the inverse of $a$ in residues mod n and in abstract monoids; contexts of ciphers and dials; one proof'
     diagnostic_exemplar:
-      problem: 'Prove that if $a$ is invertible in a monoid $(M, *, e)$ then $a * x = b$ has the unique solution $x = a^{-1} * b$, and use this to solve $3x \equiv 5 \pmod 7$.'
-      answer: 'Existence: $a * (a^{-1} * b) = (a * a^{-1}) * b = e * b = b$, so $x = a^{-1} * b$ solves the equation. Uniqueness: if $a * x = b$, multiply on the left by $a^{-1}$ and use associativity: $x = e * x = (a^{-1} * a) * x = a^{-1} * (a * x) = a^{-1} * b$. For $3x \equiv 5 \pmod 7$: in multiplication mod $7$ the element $3$ is invertible with $3^{-1} = 5$, since $3 \cdot 5 = 15 \equiv 1$; hence $x \equiv 5 \cdot 5 = 25 \equiv 4 \pmod 7$, and indeed $3 \cdot 4 = 12 \equiv 5$.'
-      solution_sketch: 'Substitute for existence and left-multiply by the inverse for uniqueness; then find the inverse of $3$ mod $7$ and apply the formula.'
+      problem: 'In the monoid $(\mathbb{Z}_{15},\cdot)$, find the inverse of $7$.'
+      answer_contract: {"kind":"exact"}
+      answer: '13'
+      solution_sketch: 'We need $7x\equiv1\pmod{15}$. Since $7\cdot13=91=6\cdot15+1$, the inverse is $13$.'
     anki_seeds:
       - front: 'Invertible elements of $(\mathbb{Z}, \cdot)$?'
         back: 'Only $\pm 1$.'
@@ -1120,9 +1125,10 @@ topics:
             solution_sketch: 'Let $G$ be a group with identity $e$ and suppose $ba = ca$. The element $a$ has an inverse $a^{-1}$ with $aa^{-1} = e$. Multiply both sides of $ba = ca$ on the right by $a^{-1}$ to get $(ba)a^{-1} = (ca)a^{-1}$. By associativity, $(ba)a^{-1} = b(aa^{-1}) = be = b$. In the same way $(ca)a^{-1} = c(aa^{-1}) = ce = c$. Hence $b = c$.'
         constraints: 'cancellation by multiplying both sides with an inverse; residues mod n, ciphers, and the failure in monoids; one proof'
     diagnostic_exemplar:
-      problem: 'Prove that in any group, $(ab)^{-1} = b^{-1}a^{-1}$.'
-      answer: 'Check $(ab)(b^{-1}a^{-1}) = e$.'
-      solution_sketch: '$(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aea^{-1} = aa^{-1} = e$, and similarly $(b^{-1}a^{-1})(ab) = e$. By uniqueness of inverses, $(ab)^{-1} = b^{-1}a^{-1}$. $\square$'
+      problem: 'In the group $(\mathbb{Z}_{12},+)$, what is the order of the element $8$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The multiples of 8 modulo 12 are 8, 4, 0. So the order is 3.'
     anki_seeds:
       - front: 'The four group axioms?'
         back: 'Closure, associativity, an identity element, and an inverse for every element.'
@@ -1265,9 +1271,10 @@ topics:
             solution_sketch: '($\Rightarrow$) Suppose $G$ is abelian and let $a, b \in G$. Then $(ab)^{2} = abab = a(ba)b$. Since $ba = ab$, this equals $a(ab)b$. By associativity $a(ab)b = (aa)(bb) = a^{2} b^{2}$. So $(ab)^{2} = a^{2} b^{2}$. ($\Leftarrow$) Suppose $(ab)^{2} = a^{2} b^{2}$ for all $a, b \in G$, and let $a, b \in G$. Then $abab = aabb$. Multiply on the left by $a^{-1}$: $a^{-1}(abab) = a^{-1}(aabb)$. Associativity and $a^{-1}a = e$ give $bab = abb$. Multiply on the right by $b^{-1}$: $(bab)b^{-1} = (abb)b^{-1}$, which gives $ba = ab$. Since $a$ and $b$ were arbitrary, $G$ is abelian.'
         constraints: 'reasoning inside abelian groups: the laws $(ab)^{n} = a^{n} b^{n}$ and $(ab)^{-1} = a^{-1} b^{-1}$, what a single commuting pair does not prove; one iff proof'
     diagnostic_exemplar:
-      problem: 'Prove that a group $G$ is abelian if and only if $(ab)^{-1} = a^{-1}b^{-1}$ for all $a, b \in G$.'
-      answer: 'In any group $(ab)^{-1} = b^{-1}a^{-1}$, since $(ab)(b^{-1}a^{-1}) = a(bb^{-1})a^{-1} = aa^{-1} = e$ and inverses are unique. ($\Rightarrow$) If $G$ is abelian then $b^{-1}a^{-1} = a^{-1}b^{-1}$, so $(ab)^{-1} = a^{-1}b^{-1}$. ($\Leftarrow$) Suppose $(ab)^{-1} = a^{-1}b^{-1}$ for all $a, b$. Comparing with the general formula gives $b^{-1}a^{-1} = a^{-1}b^{-1}$ for all $a, b$. Given arbitrary $x, y \in G$, apply this with $a = x^{-1}$ and $b = y^{-1}$ (every element is the inverse of its own inverse): $yx = xy$. Hence $G$ is abelian.'
-      solution_sketch: 'Start from the socks-shoes formula $(ab)^{-1} = b^{-1}a^{-1}$; the hypothesis then says inverses commute, and every element of a group is an inverse.'
+      problem: 'Let $S_3$ be the group of permutations of $\{1,2,3\}$. For how many ordered pairs $(a,b)$ in $S_3\times S_3$ is $ab=ba$?'
+      answer_contract: {"kind":"exact"}
+      answer: '18'
+      solution_sketch: 'For each $a$, count the $b$ that commute with $a$. The six elements give $6+2+2+2+3+3=18$ pairs.'
     anki_seeds:
       - front: 'A group is abelian when...'
         back: '$ab = ba$ for all elements $a, b$ (the operation is commutative; named after Niels Henrik Abel).'
@@ -1401,10 +1408,10 @@ topics:
             solution_sketch: 'We have $\psi(1 + 3) = \psi(4) = 16$ and $\psi(1)\psi(3) = 1 \cdot 9 = 9$. The difference is $16 - 9 = 7$. The pair $(2, 2)$ is a coincidence: $(x + y)^{2} = x^{2}y^{2}$ holds only for special pairs.'
         constraints: 'the two operations differ between source and target; verdicts, values forced by the condition, contexts of decibels'
     diagnostic_exemplar:
-      problem: 'Decide, with justification: (a) is $\varphi(n) = n \bmod 3$ a homomorphism $(\mathbb{Z}, +) \to (\mathbb{Z}_3, +)$? (b) is $\psi(x) = x^2$ a homomorphism $(\mathbb{R}, +) \to (\mathbb{R}, +)$?'
-      answer_contract: {kind: none}
-      answer: '(a) Yes: reduction mod $3$ satisfies $(m + n) \bmod 3 = (m \bmod 3) + (n \bmod 3)$ in $\mathbb{Z}_3$, which is exactly the homomorphism condition — note the operation is ordinary addition on the left and addition mod $3$ on the right. (b) No: the condition would read $(x + y)^2 = x^2 + y^2$, which fails at $x = y = 1$ ($4 \ne 2$); the cross term $2xy$ spoils it.'
-      solution_sketch: 'Test $\varphi(x \ast y) = \varphi(x) \ast \varphi(y)$ with the correct operation on each side; one numerical counterexample refutes.'
+      problem: 'The map $\varphi(n)=5n+c$ is a homomorphism from $(\mathbb{Z},+)$ to $(\mathbb{Z},+)$ for exactly one integer $c$. Find $c$.'
+      answer_contract: {"kind":"exact"}
+      answer: '0'
+      solution_sketch: 'A homomorphism sends $0$ to $0$. So $\varphi(0)=c=0$. Then $\varphi(m+n)=5m+5n$ holds.'
     anki_seeds:
       - front: 'Fast first check when testing whether $\varphi$ is a group homomorphism?'
         back: 'Whether $\varphi(e_G) = e_H$ — if not, it cannot be a homomorphism.'
@@ -1548,9 +1555,10 @@ topics:
             solution_sketch: 'Proof. First we recall that $\varphi(e_G) = e_H$. Put $d = \varphi(e_G)$. From $e_G e_G = e_G$ we get $d = \varphi(e_G e_G) = d\,d$, and multiplying on the left by $d^{-1}$ in $H$ gives $e_H = d$. Inverses. Let $x \in G$. Then $\varphi(x)\varphi(x^{-1}) = \varphi(x x^{-1}) = \varphi(e_G) = e_H$ and $\varphi(x^{-1})\varphi(x) = \varphi(x^{-1}x) = \varphi(e_G) = e_H$. So $\varphi(x^{-1})$ is an inverse of $\varphi(x)$ in $H$. An element of a group has only one inverse, so $\varphi(x^{-1}) = \varphi(x)^{-1}$. Powers. We prove $\varphi(x^n) = \varphi(x)^n$ by induction on $n \geq 1$. Base case $n = 1$: $\varphi(x^1) = \varphi(x) = \varphi(x)^1$. Inductive hypothesis: assume $\varphi(x^k) = \varphi(x)^k$ for some integer $k \geq 1$. Then $x^{k+1} = x^k x$, so $\varphi(x^{k+1}) = \varphi(x^k)\,\varphi(x) = \varphi(x)^k\,\varphi(x) = \varphi(x)^{k+1}$, where the middle step is the inductive hypothesis. By induction the formula holds for all $n \geq 1$. Consequence. If $x^k = e_G$, then $\varphi(x)^k = \varphi(x^k) = \varphi(e_G) = e_H$. $\square$'
         constraints: 'Inverses and powers: phi(x^-1) = phi(x)^-1 and phi(x^n) = phi(x)^n by induction; values, verdicts, one written proof; contexts with amplifier gains that need division and multiplication'
     diagnostic_exemplar:
-      problem: 'Let $\varphi : (\mathbb{Z}, +) \to (\mathbb{Z}, +)$ be a homomorphism with $\varphi(1) = 3$. Prove $\varphi(n) = 3n$ for all $n \in \mathbb{Z}$.'
-      answer: 'Additivity forces $\varphi(n) = n\varphi(1) = 3n$.'
-      solution_sketch: 'For $n \ge 0$, $\varphi(n) = \varphi(1 + \cdots + 1) = n\varphi(1) = 3n$ by induction; $\varphi(0) = 0$ and $\varphi(-n) = -\varphi(n) = -3n$. So $\varphi(n) = 3n$ for all $n$. $\square$'
+      problem: 'A homomorphism $\varphi\colon(\mathbb{Z},+)\to(\mathbb{Z}_9,+)$ has $\varphi(1)=4$. Find $\varphi(7)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'We have $\varphi(7)=7\varphi(1)=28$. Since $28=3\cdot9+1$, the value is $1$.'
     anki_seeds:
       - front: 'Definition of a group homomorphism?'
         back: 'A map $\varphi : G \to H$ with $\varphi(xy) = \varphi(x)\varphi(y)$ for all $x, y \in G$.'
@@ -1688,9 +1696,10 @@ topics:
             solution_sketch: 'Proof. By the definition of size there are bijections $f : \{1, \dots, m\} \to A$ and $g : \{1, \dots, n\} \to B$. Define $h : \{1, \dots, m+n\} \to A \cup B$ by $h(i) = f(i)$ if $1 \leq i \leq m$, and $h(i) = g(i - m)$ if $m + 1 \leq i \leq m + n$. In the second case $1 \leq i - m \leq n$, so $g(i - m)$ is defined, and $h$ takes values in $A \cup B$. Injective: suppose $h(i) = h(j)$. If $i, j \leq m$, then $f(i) = f(j)$, so $i = j$ because $f$ is injective. If $i, j > m$, then $g(i - m) = g(j - m)$, so $i - m = j - m$ and $i = j$. If $i \leq m < j$, then $h(i) \in A$ and $h(j) \in B$, which cannot be equal because $A \cap B = \varnothing$; so this case does not occur, and the case $j \leq m < i$ is the same with $i$ and $j$ exchanged. Surjective: let $z \in A \cup B$. If $z \in A$, then $z = f(i)$ for some $i \leq m$, so $z = h(i)$. If $z \in B$, then $z = g(j)$ for some $1 \leq j \leq n$, and $m + 1 \leq m + j \leq m + n$ with $h(m + j) = g(j) = z$. Hence $h$ is a bijection, and $|A \cup B| = m + n$. $\square$'
         constraints: 'Cardinality of unions and products: build the new bijection from given ones; counts of unions, products and quotients, verdicts, one written proof; contexts with clubs, menus and seat grids'
     diagnostic_exemplar:
-      problem: 'Let $A = \{10, 11, \dots, 99\}$ and $B = \{200, 201, \dots, 209\}$. Prove that $|A| = 90$ and that $|A \cup B| = 100$.'
-      answer: 'The map $k \mapsto k + 9$ sends $\{1, \dots, 90\}$ into $A$; it is injective (adding $9$ is) and onto ($a \in A$ equals $(a-9) + 9$ with $1 \le a - 9 \le 90$), so it is a bijection and $|A| = 90$. Likewise $k \mapsto k + 199$ is a bijection $\{1, \dots, 10\} \to B$, so $|B| = 10$. The sets are disjoint, since every element of $A$ is at most $99$ and every element of $B$ is at least $200$. Concatenating the two counting bijections gives $h : \{1, \dots, 100\} \to A \cup B$ with $h(j) = j + 9$ for $1 \le j \le 90$ and $h(j) = j + 109$ for $91 \le j \le 100$ (so $h(91) = 200$ and $h(100) = 209$); $h$ is a bijection, hence $|A \cup B| = 100 = |A| + |B|$.'
-      solution_sketch: 'Exhibit a shift bijection from an initial segment for each set, then glue the two bijections — legitimate because the sets are disjoint.'
+      problem: 'How many integers $n$ with $20\le n\le300$ are divisible by $7$?'
+      answer_contract: {"kind":"exact"}
+      answer: '40'
+      solution_sketch: 'The map $k\mapsto7k$ is a bijection from $\{3,\dots,42\}$ onto these integers. The set $\{3,\dots,42\}$ has $40$ elements.'
     anki_seeds:
       - front: '"$A$ has $n$ elements" formally means...'
         back: 'there is a bijection $\{1, 2, \dots, n\} \to A$.'
@@ -1823,9 +1832,10 @@ topics:
             solution_sketch: 'Proof. First, $F \subseteq E$: an element $4k$ of $F$ equals $2(2k)$ and $2k \in \mathbb{Z}$, so $4k \in E$. The inclusion is proper: $2 = 2 \cdot 1$ is in $E$, but if $2 = 4k$ for an integer $k$, then $k = 1/2$, which is not an integer, so $2 \notin F$. Next, $f$ maps into $F$: if $x \in E$, then $x = 2k$ for some integer $k$, so $f(x) = 4k \in F$. Injective: if $f(x) = f(y)$, then $2x = 2y$, so $x = y$. Surjective: let $w \in F$, say $w = 4k$ with $k \in \mathbb{Z}$. Then $2k \in E$ and $f(2k) = 4k = w$. Hence $f$ is a bijection from $E$ onto its proper subset $F$. $\square$'
         constraints: 'Pairing an infinite set with a proper subset: shift and scaling bijections, preimages, Hilbert-hotel contexts, verdicts, one written proof'
     diagnostic_exemplar:
-      problem: 'Prove that the set $E = \{2k : k \in \mathbb{Z}\}$ of even integers is infinite, and exhibit a bijection from $E$ onto its proper subset $\{4k : k \in \mathbb{Z}\}$.'
-      answer: 'The map $k \mapsto 2k$ is a bijection $\mathbb{Z} \to E$ (injective since $2k = 2l$ forces $k = l$, onto by definition of $E$). Now $\mathbb{Z}$ is infinite: it contains $\mathbb{N}$, which is infinite, and subsets of finite sets are finite. If $E$ were finite, composing the bijection with a counting bijection would make $\mathbb{Z}$ finite too — so $E$ is infinite. For the second part, $f : E \to \{4k : k \in \mathbb{Z}\}$, $f(x) = 2x$, is injective ($2x = 2y \Rightarrow x = y$) and onto (any $4k$ is $2 \cdot 2k$ with $2k \in E$), and the containment is proper since $2 \in E$ but $2 \notin \{4k\}$.'
-      solution_sketch: 'Transport infiniteness along a bijection with $\mathbb{Z}$, then double every even integer — pairing a set with a proper subset is the hallmark of infinity.'
+      problem: 'Define $f\colon\mathbb{N}\to\mathbb{N}$ by $f(n)=n+3$, where $\mathbb{N}=\{0,1,2,\dots\}$. How many elements of $\mathbb{N}$ are not in the image of $f$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The image is $\{3,4,5,\dots\}$. The elements $0,1,2$ are missing.'
     anki_seeds:
       - front: 'A set is infinite when...'
         back: 'it is not finite: no bijection with $\{1, \dots, n\}$ for any $n$.'
@@ -1969,9 +1979,10 @@ topics:
             solution_sketch: 'Proof. For an integer $k \geq 2$ put $T_k = (k-1)(k-2)/2$, so that $T_2 = 0$ and $T_{k+1} - T_k = \frac{k(k-1) - (k-1)(k-2)}{2} = k - 1$. Hence $T_2 < T_3 < \cdots$, the sequence is unbounded, and the blocks $B_k = \{T_k + 1, \dots, T_{k+1}\}$, each with $k - 1$ elements, are disjoint and together cover $\mathbb{N}$: every positive integer $N$ lies in exactly one block $B_k$. Note that $f(m, n) = T_{m+n} + m$. For a pair $(m, n)$ with $m + n = k$ we have $1 \leq m \leq k - 1$, so $T_k + 1 \leq f(m, n) \leq T_k + k - 1 = T_{k+1}$, that is, $f(m, n) \in B_k$. Injective: suppose $f(m, n) = f(m'', n'') = N$. Then $N$ lies in exactly one block $B_k$, and by the previous sentence $m + n = k = m'' + n''$. So $T_k + m = T_k + m''$, giving $m = m''$ and then $n = n''$. Surjective: let $N \in \mathbb{N}$ and let $k$ be the index with $N \in B_k$. Put $m = N - T_k$, so $1 \leq m \leq k - 1$, and $n = k - m \geq 1$. Then $m + n = k$ and $f(m, n) = T_k + m = N$. So $f$ is a bijection from $\mathbb{N} \times \mathbb{N}$ onto $\mathbb{N}$, and $\mathbb{N} \times \mathbb{N}$ is countable. $\square$'
         constraints: 'Countability of products and rationals: diagonal listing of pairs, positions, repeated fractions, verdicts, one written proof; usher and grid contexts'
     diagnostic_exemplar:
-      problem: 'Prove $\mathbb{N} \times \mathbb{N}$ is countable.'
-      answer: 'The map $(m, n) \mapsto 2^{m} 3^{n}$ is injective into $\mathbb{N}$.'
-      solution_sketch: 'The map $(m, n) \mapsto 2^{m} 3^{n}$ is injective by unique factorization, so $\mathbb{N} \times \mathbb{N}$ injects into $\mathbb{N}$; being infinite, it is countable. $\square$'
+      problem: 'List the pairs $(a,b)$ of natural numbers in order of $a+b$. Pairs with equal $a+b$ go in order of increasing $a$. The pair $(0,0)$ has position $0$. What is the position of $(2,1)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'Sums 0,1,2 hold $1+2+3=6$ pairs, at positions 0 to 5. In the group with sum 3 the order is $(0,3),(1,2),(2,1)$, so $(2,1)$ has position $6+2=8$.'
     anki_seeds:
       - front: 'When do two sets have the same cardinality?'
         back: 'When there is a bijection between them.'
@@ -2122,9 +2133,10 @@ topics:
             solution_sketch: 'Proof. Maps into $\mathbb{R}$: for $x \in (0, 1)$ we have $x > 0$ and $1 - x > 0$, so $\dfrac{x}{1-x} > 0$ and its natural logarithm is a real number. Injective: suppose $h(a) = h(b)$. Since $\ln$ is injective on $(0, \infty)$, we get $\dfrac{a}{1 - a} = \dfrac{b}{1 - b}$. Cross-multiplying gives $a(1 - b) = b(1 - a)$, that is, $a - ab = b - ab$, so $a = b$. Surjective: let $y \in \mathbb{R}$ and put $x = \dfrac{e^y}{1 + e^y}$. Since $0 < e^y < 1 + e^y$, we have $0 < x < 1$. Also $1 - x = \dfrac{1}{1 + e^y}$, so $\dfrac{x}{1 - x} = e^y$ and $h(x) = \ln e^y = y$. Hence $h$ is a bijection from $(0, 1)$ onto $\mathbb{R}$, and its inverse is $h^{-1}(y) = \dfrac{e^y}{1 + e^y}$. $\square$'
         constraints: 'Composing bijections to reach R: inverses of composites, affine step onto (0,1), verdicts, one written proof; probability and log-odds contexts'
     diagnostic_exemplar:
-      problem: 'Give a bijection $(0, 1) \to (3, \infty)$, prove that it is one, and state its inverse.'
-      answer: 'Take $f(x) = \dfrac{1}{x} + 2$. For $x \in (0,1)$ we have $1/x \in (1, \infty)$, so $f(x) \in (3, \infty)$: the map lands in the target. Injective: $\dfrac1a + 2 = \dfrac1b + 2$ gives $\dfrac1a = \dfrac1b$, hence $a = b$. Surjective: given $y > 3$, set $x = \dfrac{1}{y - 2}$; since $y - 2 > 1$ we get $x \in (0,1)$, and $f(x) = (y-2) + 2 = y$. So $f$ is a bijection, with inverse $f^{-1}(y) = \dfrac{1}{y - 2}$.'
-      solution_sketch: 'Compose the reciprocal bijection $(0,1) \to (1,\infty)$ with a shift by $2$; check the image, injectivity, and a formula for the preimage.'
+      problem: 'An increasing linear bijection $f$ maps the interval $(0,1)$ onto the interval $(3,11)$. Find $f(1/4)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Linear and increasing means $f(x)=3+8x$. So $f(1/4)=3+2=5$.'
     anki_seeds:
       - front: 'Why is "same cardinality" transitive?'
         back: 'Compositions of bijections are bijections.'
@@ -2264,9 +2276,10 @@ topics:
             solution_sketch: 'Let $A$ be any set. Injection: define $i : A \to \mathcal{P}(A)$ by $i(a) = \{a\}$. If $i(a) = i(b)$, then $a \in \{a\} = \{b\}$, so $a = b$; hence $i$ is injective. No surjection: let $f : A \to \mathcal{P}(A)$ be any function and define $D = \{a \in A : a \notin f(a)\}$. Then $D \subseteq A$, so $D \in \mathcal{P}(A)$. Suppose, for contradiction, that $f$ is onto. Then there is $x \in A$ with $f(x) = D$. By the definition of $D$, $x \in D$ if and only if $x \notin f(x)$. Since $f(x) = D$, this gives $x \in D$ if and only if $x \notin D$, a contradiction. So $f$ is not onto. Because $f$ was arbitrary, no function from $A$ onto $\mathcal{P}(A)$ exists, and there is no bijection between $A$ and $\mathcal{P}(A)$. An injection exists and a bijection does not, so $|A| < |\mathcal{P}(A)|$. $\square$'
         constraints: 'an arbitrary set A with explicit finite images or a rule on the real numbers, subset counting with powers of two in contexts, and a negation of surjectivity; the proof item is Cantor''s theorem for an arbitrary set'
     diagnostic_exemplar:
-      problem: 'Prove by a diagonal argument that the set $\{0,1\}^{\mathbb{N}}$ of infinite binary sequences is uncountable.'
-      answer: 'Let $f : \mathbb{N} \to \{0,1\}^{\mathbb{N}}$ be any map, and write $f(n) = (f(n)_0, f(n)_1, f(n)_2, \dots)$. Define a sequence $s$ by $s_n = 1 - f(n)_n$; each $s_n$ is $0$ or $1$, so $s \in \{0,1\}^{\mathbb{N}}$. For every $n$, $s$ differs from $f(n)$ in position $n$, so $s \ne f(n)$; hence $s$ is not in the image and $f$ is not surjective. Since no map $\mathbb{N} \to \{0,1\}^{\mathbb{N}}$ is surjective, none is a bijection, so the set is uncountable.'
-      solution_sketch: 'Take an arbitrary indexing, flip the $n$-th bit of the $n$-th sequence, and observe that the new sequence is missed by every index.'
+      problem: 'Four binary sequences start with $s_1=0110$, $s_2=1010$, $s_3=1100$, $s_4=0001$. The sequence $d$ has digit $n$ equal to $1$ minus digit $n$ of $s_n$. What are the first four digits of $d$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1110'
+      solution_sketch: 'The diagonal digits are 0, 0, 0, 1. Flip each one to get 1, 1, 1, 0.'
     anki_seeds:
       - front: 'What does Cantor''s diagonal argument show?'
         back: 'That $(0, 1)$ (hence $\mathbb{R}$) is uncountable: any proposed list of reals misses a number built to differ on the diagonal.'
@@ -2414,9 +2427,10 @@ topics:
             solution_sketch: 'Write $N = \{1, 2, 3, \dots\}$. We exhibit an injection in each direction and then apply the Schröder–Bernstein theorem. Injection from $\mathcal{P}(N)$ into $(0,1)$: for $S \subseteq N$ let $d_n = 5$ if $n \in S$ and $d_n = 4$ if $n \notin S$, and define $F(S) = \sum_{n=1}^{\infty} d_n 10^{-n}$. Because every digit is $4$ or $5$, no digit is $0$ or $9$, so $F(S)$ is a decimal that does not end in $0000\dots$ or $9999\dots$ and has only one decimal expansion. Since $4 \le d_n \le 5$, we get $\frac{4}{9} \le F(S) \le \frac{5}{9}$, so $F(S) \in (0, 1)$. Now let $S \ne T$, and let $k$ be the least element that lies in exactly one of the two sets, say $k \in T$ and $k \notin S$. The digits agree before position $k$, the digit at position $k$ is $5$ for $T$ and $4$ for $S$, and each later digit differs by at most $1$. Hence $F(T) - F(S) \ge 10^{-k} - \sum_{n > k} 10^{-n} = 10^{-k} - \frac{10^{-k}}{9} > 0$, so $F(S) \ne F(T)$ and $F$ is injective. Injection from $(0,1)$ into $\mathcal{P}(N)$: the set $\mathbb{Q}$ is countably infinite, so there is a bijection $\varphi : N \to \mathbb{Q}$. Define $G(x) = \{n \in N : \varphi(n) < x\}$. Let $x < y$ in $(0, 1)$. By the density of $\mathbb{Q}$ there is a rational $q$ with $x < q < y$, and $q = \varphi(n)$ for some $n \in N$. Then $n \in G(y)$ but $n \notin G(x)$, so $G(x) \ne G(y)$ and $G$ is injective. We have an injection from $\mathcal{P}(N)$ into $(0,1)$ and an injection from $(0,1)$ into $\mathcal{P}(N)$. By the Schröder–Bernstein theorem there is a bijection between them, so $|\mathcal{P}(\mathbb{N})| = |(0,1)|$. $\square$'
         constraints: 'indicator sequences, decimal digit codes with the digits 4 and 5, binary expansions that name one real twice, and the map from a real number to the rationals below it; the proof item uses both injections and the Schröder–Bernstein theorem'
     diagnostic_exemplar:
-      problem: 'Using injections in both directions and the Schröder–Bernstein theorem, prove $|(0, 1)| = |[0, 1]|$.'
-      answer: 'Inclusion $(0,1) \to [0,1]$; $x \mapsto x/2 + 1/4$ from $[0,1]$ into $(0,1)$; the theorem gives a bijection.'
-      solution_sketch: 'Both maps are injective (inclusion trivially; the affine map is strictly increasing and lands in $[\tfrac14, \tfrac34]$). Schröder–Bernstein turns the two injections into a bijection. $\square$'
+      problem: 'A finite set $A$ has $7$ elements. There is an injection from $A$ to $B$ and an injection from $B$ to $A$. How many elements does $B$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'The first injection gives $|A|\le|B|$. The second gives $|B|\le|A|$. So $|B|=7$.'
     anki_seeds:
       - front: 'The Schröder–Bernstein theorem?'
         back: 'If injections $A \to B$ and $B \to A$ both exist, then a bijection $A \to B$ exists ($|A| \le |B|$ and $|B| \le |A|$ imply $|A| = |B|$).'

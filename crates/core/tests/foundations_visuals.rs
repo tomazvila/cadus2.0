@@ -35,12 +35,15 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
     // knowledge-point figures and 53 item-level figures) in 51 knowledge points;
     // 2026-10-08, figures that make sense: 81 figures (42 + 39 item-level) in 50
     // (was 153 entries and 164 figures). The manifest is the dump of the tree.
-    assert_eq!(entries.len(), 50);
+    // 2026-10-27, reference figures wave: 256 figures in 225 Foundations
+    // knowledge points (was 81 in 50). Geometry and precalculus hold 132 more
+    // knowledge points with figures, so the whole tree has 357.
+    assert_eq!(entries.len(), 225);
     assert_eq!(
         cadus_core::curriculum::canonical_dump(&curriculum)
             .matches("\"visuals\"")
             .count(),
-        50
+        357
     );
     let mut count = 0;
     let mut broken: Vec<String> = Vec::new();
@@ -80,8 +83,8 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
         }
     }
     assert_eq!(broken, Vec::<String>::new(), "figures that fail validation");
-    assert_eq!(count, 81);
-    assert_eq!(families.len(), 5);
+    assert_eq!(count, 256);
+    assert_eq!(families.len(), 6); // 2026-10-27: was 5
 }
 
 #[test]

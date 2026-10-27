@@ -152,9 +152,10 @@ topics:
             solution_sketch: 'Since $e_2$ is a right unit, applying its law to the arrow $e_1\colon A\to A$ gives $e_1 \circ e_2=e_1$. Since $e_1$ is a left unit, applying its law to the arrow $e_2$ gives $e_1 \circ e_2=e_2$. Both expressions equal the same composite, so $e_1=e_2$.'
         constraints: 'Both unit laws are used with correctly typed identity arrows: which identity belongs on which side of an arrow, identities in Set, in one-object categories given by a rule or table, and in contexts of conversion rates and clock hours. Verdict items name their options in the question.'
     diagnostic_exemplar:
-      problem: "For $f(x)=x+2$, $g(x)=3x$, and $h(x)=x-1$ on $\\mathbb Z$, compute $(h\\circ g)\\circ f$ and $h\\circ(g\\circ f)$ explicitly, and state which axiom guarantees the results agree."
-      answer: "$(g\\circ f)(x)=3x+6$, so $h\\circ(g\\circ f)$ sends $x\\mapsto 3x+5$; $(h\\circ g)(x)=3x-1$, so $(h\\circ g)\\circ f$ sends $x\\mapsto 3(x+2)-1=3x+5$. Both bracketings give $x\\mapsto 3x+5$, as the associativity axiom guarantees."
-      solution_sketch: "Build the two inner composites $g\\circ f$ and $h\\circ g$ first, then bracket each way; both routes land on $x\\mapsto 3x+5$. Associativity is the axiom that makes the agreement automatic rather than a coincidence of these three particular formulas."
+      problem: 'Let $f(x)=x+2$, $g(x)=3x$ and $h(x)=x^2$ on $\mathbb Z$. Find $(h\circ(g\circ f))(1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '81'
+      solution_sketch: 'First, $f(1)=3$. Then $g(3)=9$ and $h(9)=81$. Associativity gives the same value for $((h\circ g)\circ f)(1)$.'
     anki_seeds:
       - front: "State the associativity axiom for composition in a category."
         back: "$(h\\circ g)\\circ f = h\\circ(g\\circ f)$."
@@ -372,9 +373,10 @@ topics:
             solution_sketch: 'Reflexivity $x \le x$ gives the identity arrows, and transitivity gives a composite arrow $x \to z$ for arrows $x \to y$ and $y \to z$. Each hom-set has at most one arrow, so associativity and the unit laws hold because both sides lie in one hom-set. For the same reason two parallel paths are equal, so every diagram commutes.'
         constraints: 'A preorder is read as a thin category: arrows counted from a relation or from generating arrows (closure under identities and composites), arrows out of an object in divisibility, composites of named arrows, the missing arrow of a relation, and arrows both ways between two objects. Antisymmetry is not required.'
     diagnostic_exemplar:
-      problem: "Take as objects all integers, with a single arrow $m\\to n$ whenever $|n-m|\\le 1$ (and no other arrows). Is this a category? Check the axioms and name the one that fails, if any."
-      answer: "Not a category. Identities exist since $|m-m|=0\\le 1$, but composition is not total: there are arrows $0\\to 1$ and $1\\to 2$, yet no arrow $0\\to 2$ since $|2-0|=2>1$, so the composite of two arrows need not exist."
-      solution_sketch: "Identities are fine, since $|m-m|=0\\le 1$, so hunt for an axiom that can fail: look for a composable pair whose composite arrow is missing. The pair $0\\to 1$ and $1\\to 2$ with no arrow $0\\to 2$ breaks totality of composition."
+      problem: 'The objects of a category are the divisors of $12$. There is exactly one morphism $a\to b$ if $a$ divides $b$, and no other morphism. How many morphisms does this category have?'
+      answer_contract: {"kind":"exact"}
+      answer: '18'
+      solution_sketch: 'Count the pairs $(a,b)$ with $a\mid b$. The divisors $1,2,3,4,6,12$ have $1,2,2,3,4,6$ divisors each, and the sum is $18$.'
     anki_seeds:
       - front: "In a category, each ordered pair of objects $(A,B)$ has a set of what?"
         back: "morphisms (arrows) $A\\to B$."
@@ -552,9 +554,10 @@ topics:
             solution_sketch: 'Given a monoid $M$, the one-object category $BM$ has arrows the elements of $M$, composition the product and identity the unit. Conversely, in a category with one object $*$ every pair of arrows composes, composition is associative, and $1_*$ is a unit, so $\mathrm{Hom}(*,*)$ is a monoid. The two constructions undo each other.'
         constraints: 'The two dictionaries are used in both directions with explicit data: composites in BM computed from the monoid rule, the preorder read off a thin category (and its antisymmetry), a monoid read off a one-object category (size, units), and groupoid or isomorphism questions. Contexts with changes and scale factors fix the convention for the composite.'
     diagnostic_exemplar:
-      problem: "Let $M$ be a monoid, viewed as the one-object category $BM$. Prove that the isomorphisms of $BM$ are exactly the units of $M$, and deduce that $BM$ is a groupoid iff $M$ is a group."
-      answer: "A morphism of $BM$ is an element $m\\in M$ with composition the monoid product, so a two-sided categorical inverse for $m$ is exactly $n$ with $nm=e=mn$ — a two-sided inverse in $M$. Hence the isomorphisms are the units of $M$; every morphism is invertible iff every element of $M$ is a unit, i.e. iff $M$ is a group, which is exactly when $BM$ is a groupoid."
-      solution_sketch: "Unwind the dictionary rather than proving anything new: a morphism of $BM$ is an element of $M$ and composition is the monoid product, so a two-sided categorical inverse and a two-sided inverse in $M$ are literally the same condition. The groupoid claim then reads off as: every element is a unit."
+      problem: 'The monoid $(\mathbb Z_8,+)$ is a category with one object. Its morphisms are the elements of $\mathbb Z_8$. How many morphisms $f$ satisfy $f\circ f=\mathrm{id}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Composition is addition, and the identity is $0$. Solve $2k\equiv 0 \pmod 8$. This gives $k=0$ and $k=4$.'
     anki_seeds:
       - front: "A category with exactly one object is the same thing as..."
         back: "a monoid (its morphisms under composition, with $1_*$ the unit)."
@@ -748,9 +751,10 @@ topics:
             solution_sketch: 'A functor $F$ sends the arrow $0 \to 1$ to a morphism $F(0) \to F(1)$ of $\mathbf C$, and sends the identities to identities. Conversely a morphism $m\colon A \to B$ defines $F$ by $0 \mapsto A$, $1 \mapsto B$, $0 \to 1 \mapsto m$ and identities to identities, and no composites need checking. The two assignments are inverse to each other.'
         constraints: 'Shape categories are small and given in full (the arrow, parallel-pair, chain, span and square shapes). Functors out of a shape are counted from their object and arrow assignments, diagrams in Set are counted or evaluated on the composite arrow of a chain, and an assignment is tested against the typing of arrows. Contexts use production chains and conversions.'
     diagnostic_exemplar:
-      problem: "In the indiscrete category $\\mathrm{indisc}(S)$ (exactly one arrow between each ordered pair of objects of $S$), prove that every morphism is an isomorphism."
-      answer: "Let $u\\colon x\\to y$ be the unique arrow and $v\\colon y\\to x$ the unique arrow back. Then $v\\circ u$ is an arrow $x\\to x$; since $\\mathrm{Hom}(x,x)$ has exactly one element, which must be $1_x$, we get $v\\circ u=1_x$. Likewise $u\\circ v=1_y$. So $u$ has a two-sided inverse and is an isomorphism."
-      solution_sketch: "The whole argument is a counting step: $\\mathrm{Hom}(x,x)$ has exactly one element and $1_x$ lies in it, so any arrow $x\\to x$ — in particular each round trip $v\\circ u$ and $u\\circ v$ — must be an identity."
+      problem: 'Let $D$ be the discrete category on $\{1,2,3,4,5\}$. Let $I$ be the indiscrete category on the same objects. How many more morphisms does $I$ have than $D$?'
+      answer_contract: {"kind":"exact"}
+      answer: '20'
+      solution_sketch: '$D$ has only the $5$ identities. $I$ has one morphism for each ordered pair, so $25$. The difference is $20$.'
     anki_seeds:
       - front: "The discrete category on a set $S$ has which morphisms?"
         back: "only the identities $1_x$ — one for each $x\\in S$."
@@ -908,9 +912,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'A morphism from f to f'' is a pair (a,b) with b f = f'' a. The pair (1_A,1_B) is an identity because f 1_A = f = 1_B f. The composite of two pairs is the pair of composites, and its square commutes by pasting; associativity and the identity laws hold in each component because they hold in C.'
     diagnostic_exemplar:
-      problem: "In the arrow category $\\mathcal{C}^{\\to}$, a morphism from $f\\colon A\\to B$ to $f'\\colon A'\\to B'$ is a pair $(a\\colon A\\to A',\\,b\\colon B\\to B')$ with $f'\\circ a=b\\circ f$. Prove that the componentwise composite of two such morphisms is again a morphism of $\\mathcal{C}^{\\to}$."
-      answer: "Given $(a,b)\\colon f\\to f'$ and $(a',b')\\colon f'\\to f''$, compute $f''\\circ(a'\\circ a)=(f''\\circ a')\\circ a=(b'\\circ f')\\circ a=b'\\circ(f'\\circ a)=b'\\circ(b\\circ f)=(b'\\circ b)\\circ f$, using associativity and the two given squares. So $(a'\\circ a,\\,b'\\circ b)$ makes the outer square commute and is a morphism $f\\to f''$."
-      solution_sketch: "Paste the two commuting squares: start from $f''\\circ(a'\\circ a)$ and push $f''$ across the second square, then across the first, until it emerges as $(b'\\circ b)\\circ f$. Only associativity and the two given squares are used."
+      problem: 'In the category $\mathbf{Ab}$ of abelian groups, how many morphisms are there from $\mathbb Z_{12}$ to $\mathbb Z_{18}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'A homomorphism is fixed by the image of $1$. That image must have order dividing $12$ and $18$, so it lies in the subgroup of order $\gcd(12,18)=6$. This gives $6$ morphisms.'
     anki_seeds:
       - front: "$\\mathbf{Set}$: objects and morphisms?"
         back: "sets; functions."
@@ -1078,9 +1083,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Terminality gives one morphism f from T to T'' and one morphism g back. The composite g f goes from T to T, and only one morphism T to T exists, so g f is the identity; likewise f g is the identity of T''. So f is an isomorphism, and every isomorphism from T to T'' is a morphism T to T'', of which only one exists, so it is unique.'
     diagnostic_exemplar:
-      problem: "Let $f\\colon A\\to B$ and $g\\colon B\\to C$ be isomorphisms in a category. Prove that $g\\circ f$ is an isomorphism and identify its inverse."
-      answer: "$(f^{-1}\\circ g^{-1})\\circ(g\\circ f)=f^{-1}\\circ(g^{-1}\\circ g)\\circ f=f^{-1}\\circ 1_B\\circ f=1_A$, and $(g\\circ f)\\circ(f^{-1}\\circ g^{-1})=g\\circ(f\\circ f^{-1})\\circ g^{-1}=g\\circ 1_B\\circ g^{-1}=1_C$. So $g\\circ f$ has the two-sided inverse $f^{-1}\\circ g^{-1}$ (note the reversed order) and is an isomorphism."
-      solution_sketch: "Guess the inverse in reversed order, $f^{-1}\\circ g^{-1}$, then verify both composites by cancelling the inner pair with the identity law. The reversal is forced by the typing, not chosen."
+      problem: 'In the category $\mathbf{Grp}$, how many isomorphisms are there from $\mathbb Z_{15}$ to $\mathbb Z_{15}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'An isomorphism sends $1$ to a generator. $\mathbb Z_{15}$ has $\varphi(15)=8$ generators.'
     anki_seeds:
       - front: "An isomorphism in a category is a morphism $f$ such that..."
         back: "there exists $g$ with $g\\circ f=1_A$ and $f\\circ g=1_B$ (a two-sided inverse)."
@@ -1180,9 +1186,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Start from c p f and replace c p by r b, using the right square. Then replace b f by q a, using the left square. This gives c p f = r b f = r q a, so the outer rectangle commutes, and only associativity and the two squares were used.'
     diagnostic_exemplar:
-      problem: "A triangle $f\\colon A\\to B$, $g\\colon B\\to C$, $h\\colon A\\to C$ commutes, and $k\\colon C\\to D$ is a further arrow. Write the equation saying the two routes $A\\to D$ agree, and justify it."
-      answer: "$k\\circ g\\circ f = k\\circ h$, by post-composing the triangle's equation $g\\circ f = h$ with $k$."
-      solution_sketch: "The triangle gives $g\\circ f = h$; post-composing with $k$ preserves equality, and associativity lets the composite be written unbracketed, so $k\\circ(g\\circ f) = k\\circ h$."
+      problem: 'Let $f(x)=x+1$, $g(x)=2x$ and $h(x)=2x$ be functions on $\mathbb Z$. A function $k$ makes the square commute: $k\circ h=g\circ f$. Find $k(6)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'We have $g(f(x))=2x+2$. So $k(2x)=2x+2$. For $2x=6$, take $x=3$. Hence $k(6)=8$.'
     anki_seeds:
       - front: "A diagram 'commutes' means..."
         back: "any two directed paths with the same source and target compose to the same morphism."
@@ -1286,9 +1293,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'The universal property of P gives exactly one arrow X to P with the pair of composites p u and q u. The arrow u has this pair, and v has the same pair because p u = p v and q u = q v. Only one arrow has this pair, so u = v.'
     diagnostic_exemplar:
-      problem: "Let $m\\colon P\\to A$ be a monomorphism and $f\\colon X\\to A$ any morphism. Prove that $f$ factors through $m$ in at most one way: there is at most one $u\\colon X\\to P$ with $m\\circ u=f$."
-      answer: "Suppose $m\\circ u=f=m\\circ u'$ for $u,u'\\colon X\\to P$. Then $m\\circ u=m\\circ u'$, and since $m$ is a monomorphism (left-cancellable) this forces $u=u'$. Hence a factorization through $m$, if it exists, is unique."
-      solution_sketch: "Uniqueness of a factorization is left-cancellation in disguise: two factorizations give $m\\circ u=m\\circ u'$, and $m$ mono forces $u=u'$. Nothing more is needed, since the claim is only at most one, so existence is not at issue."
+      problem: 'Let $p\colon\{1,2,3,4\}\to\{a,b\}$ have $p(1)=p(2)=a$ and $p(3)=p(4)=b$. How many functions $r\colon\{1,2,3,4\}\to\{x,y,z\}$ have the form $r=q\circ p$ for some $q\colon\{a,b\}\to\{x,y,z\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'Such an $r$ must take equal values on $1,2$ and on $3,4$. Then $q$ is unique and is fixed by two values, each from $3$ choices. This gives $3\cdot 3=9$.'
     anki_seeds:
       - front: "To prove two maps into a universally-defined object are equal, use..."
         back: "the uniqueness clause of the object's universal property."
@@ -1435,9 +1443,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Let $f$ have inverse $f^{-1}$. If $f\circ a=f\circ b$, apply $f^{-1}$ on the left to get $a=b$. If $c\circ f=d\circ f$, apply $f^{-1}$ on the right to get $c=d$. The inclusion of $\mathbb{Z}$ into $\mathbb{Q}$ is mono and epi, but a ring map back would send $1/2$ to an integer $k$ with $2k=1$, which is impossible.'
     diagnostic_exemplar:
-      problem: "In $\\mathbf{Set}$, show that the inclusion $m\\colon\\{1,2\\}\\hookrightarrow\\{1,2,3\\}$ is a monomorphism but not an epimorphism."
-      answer: "Mono: if $m\\circ f=m\\circ g$ for $f,g\\colon X\\to\\{1,2\\}$, then $f(x)=m(f(x))=m(g(x))=g(x)$ for every $x$, so $f=g$. Not epi: define $f,g\\colon\\{1,2,3\\}\\to\\{0,1\\}$ by $f\\equiv 0$ and $g(1)=g(2)=0$, $g(3)=1$; then $f\\circ m=g\\circ m$ (both vanish on $1,2$) but $f\\ne g$, so $m$ is not right-cancellable."
-      solution_sketch: "Mono is injectivity of $m$ applied pointwise to $f$ and $g$. Failure of epi has to be produced: exhibit two maps out of $\\{1,2,3\\}$ that agree on $\\{1,2\\}$ but differ at $3$ — all the freedom lives at the element $m$ misses."
+      problem: 'In $\mathbf{Set}$, how many monomorphisms are there from $\{1,2\}$ to $\{a,b,c,d\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'In $\mathbf{Set}$ the monomorphisms are the injective functions. There are $4$ choices for the image of $1$ and then $3$ for the image of $2$, so $12$.'
     anki_seeds:
       - front: "Define a monomorphism (mono)."
         back: "a map $m$ with $m\\circ f=m\\circ g\\Rightarrow f=g$ (left-cancellable)."
@@ -1597,9 +1606,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Given a thin groupoid, put $x\sim y$ when an arrow $x\to y$ exists. Identities give reflexivity, inverses give symmetry and composition gives transitivity. Conversely, from an equivalence relation build one arrow $x\to y$ for each related pair; the three properties give identities, inverses and composites, and thinness makes the laws hold.'
     diagnostic_exemplar:
-      problem: "Let $x$ be an object of a groupoid $\\mathcal G$. Prove that $\\mathrm{Aut}(x)=\\mathrm{Hom}(x,x)$ is a group under composition."
-      answer: "Any two arrows $x\\to x$ are composable, so composition is a binary operation on $\\mathrm{Hom}(x,x)$; it is associative and has $1_x$ as a two-sided unit by the category axioms. By the groupoid axiom every $a\\colon x\\to x$ has a two-sided inverse $a^{-1}$, which is again an arrow $x\\to x$. Hence every element is invertible and $\\mathrm{Aut}(x)$ is a group."
-      solution_sketch: "Check the group axioms one at a time against the category axioms: closure because any two arrows $x\\to x$ are composable, associativity and the unit $1_x$ from the category axioms, and inverses from the groupoid hypothesis."
+      problem: 'A groupoid has exactly two objects $X$ and $Y$, and $X\cong Y$. The group $\mathrm{Aut}(X)$ has $4$ elements. How many morphisms does the groupoid have?'
+      answer_contract: {"kind":"exact"}
+      answer: '16'
+      solution_sketch: 'Each of the four hom-sets $\mathrm{Hom}(X,X)$, $\mathrm{Hom}(X,Y)$, $\mathrm{Hom}(Y,X)$, $\mathrm{Hom}(Y,Y)$ is in bijection with $\mathrm{Aut}(X)$. So there are $4\cdot 4=16$ morphisms.'
     anki_seeds:
       - front: "Define a groupoid."
         back: "a category in which every morphism is an isomorphism."
@@ -1706,9 +1716,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Let $m\circ s=1_B$. Then $m\circ(s\circ m)=(m\circ s)\circ m=m=m\circ 1_A$. Since $m$ is a monomorphism, it cancels on the left, so $s\circ m=1_A$. Together with $m\circ s=1_B$ this makes $s$ a two-sided inverse of $m$.'
     diagnostic_exemplar:
-      problem: "Let $m\\colon A\\to B$ be a split monomorphism (some $r\\colon B\\to A$ satisfies $r\\circ m=1_A$) which is also an epimorphism. Prove that $m$ is an isomorphism."
-      answer: "$(m\\circ r)\\circ m=m\\circ(r\\circ m)=m\\circ 1_A=m=1_B\\circ m$. Since $m$ is an epimorphism, right-cancel it to get $m\\circ r=1_B$. Together with $r\\circ m=1_A$, $r$ is a two-sided inverse, so $m$ is an isomorphism."
-      solution_sketch: "You have $r\\circ m=1_A$ and want $m\\circ r=1_B$. Manufacture an equation with $m$ on the right — $(m\\circ r)\\circ m=m=1_B\\circ m$ — and then right-cancel $m$ using the epi hypothesis."
+      problem: 'Let $p\colon\{1,2,3,4,5\}\to\{a,b\}$ have $p(1)=p(2)=p(3)=a$ and $p(4)=p(5)=b$. How many sections of $p$ are there, that is, functions $s$ with $p\circ s=\mathrm{id}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The value $s(a)$ must lie in $\{1,2,3\}$, and $s(b)$ must lie in $\{4,5\}$. This gives $3\cdot 2=6$.'
     anki_seeds:
       - front: "If $r\\circ s=1$: which map is the section, which the retraction?"
         back: "$s$ is the section (right inverse); $r$ is the retraction (left inverse)."
@@ -1864,9 +1875,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Reflexivity holds with $t=1_S$. If $m=m_2\circ t$ and $m_2=m_3\circ s$, then $m=m_3\circ(s\circ t)$, which is transitivity. If $m_2\circ t=m_2\circ t_2$, then $t=t_2$ because $m_2$ is a monomorphism.'
     diagnostic_exemplar:
-      problem: "In $\\mathbf{Set}$, suppose $v\\circ e=m\\circ u$ with $e\\colon A\\to X$ surjective and $m\\colon Y\\to B$ injective. Construct a diagonal $d\\colon X\\to Y$ with $d\\circ e=u$ and $m\\circ d=v$, and prove it is the only one."
-      answer: "For $x\\in X$ pick $a\\in A$ with $e(a)=x$ (possible: $e$ is surjective) and set $d(x)=u(a)$. Well defined: if $e(a)=e(a')$ then $m(u(a))=v(e(a))=v(e(a'))=m(u(a'))$, and $m$ injective gives $u(a)=u(a')$. By construction $d\\circ e=u$, and $m(d(x))=m(u(a))=v(e(a))=v(x)$, so $m\\circ d=v$. Uniqueness: if $m\\circ d=v=m\\circ d'$ then injectivity of $m$ forces $d=d'$."
-      solution_sketch: "Define $d$ by choosing a preimage under the surjection $e$; the real work is showing the choice does not matter, and that is where injectivity of $m$ is spent. Uniqueness of $d$ then follows from injectivity of $m$ again."
+      problem: 'Let $f\colon\{1,2,3,4,5\}\to\{a,b,c,d\}$ have $f(1)=f(2)=a$, $f(3)=f(5)=b$ and $f(4)=c$. The image factorization is $f=m\circ e$ with $e$ epi and $m$ mono. How many elements does the middle object have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The middle object is the image of $f$. The image is $\{a,b,c\}$, so it has $3$ elements.'
     anki_seeds:
       - front: "Every function factors as which two kinds of map, in which order?"
         back: "a surjection onto its image, followed by an injection into the codomain."
@@ -2028,9 +2040,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: "Step 1: Define the candidate. Let 1 denote the trivial group containing only the identity e. Step 2: Show terminal. For any group G, a homomorphism f: G to 1 must send every element to e, since 1 has only e; this constant map is a homomorphism, so there is exactly one homomorphism G to 1. Thus 1 is terminal. Step 3: Show initial. For any group G, a homomorphism h: 1 to G is determined by the image of e; the identity of G is the only choice that preserves the identity, so h(e) equals the identity of G is the unique homomorphism 1 to G. Thus 1 is initial. Step 4: Conclude. Since 1 is both initial and terminal, it is a zero object in Grp. Step 5: Contrast with Set. The empty set is initial and singletons are terminal, but no set is both, so Set has no zero object. Therefore the trivial group is a zero object in Grp."
     diagnostic_exemplar:
-      problem: "Prove that any two terminal objects of a category are isomorphic by a unique isomorphism."
-      answer: "Let $1,1'$ be terminal. Terminality of $1'$ gives a unique $u\\colon 1\\to 1'$, and terminality of $1$ a unique $v\\colon 1'\\to 1$. Both $v\\circ u$ and $1_1$ are arrows $1\\to 1$, and terminality of $1$ says there is only one, so $v\\circ u=1_1$; symmetrically $u\\circ v=1_{1'}$. Hence $u$ is an isomorphism, and it is the unique morphism $1\\to 1'$ at all, so the isomorphism is unique."
-      solution_sketch: "Terminality gives an arrow each way; then note that each round trip is an arrow from a terminal object to itself, competing with the identity, and terminality says there is only one such arrow. Uniqueness of the isomorphism is free, since the hom-set between the two terminal objects is already a singleton."
+      problem: 'The objects of a category are the divisors of $36$ that are multiples of $3$. There is one morphism $a\to b$ if $a$ divides $b$, and no other morphism. Find the initial object.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The initial object has a morphism to every object, so it divides all of them. The multiples of $3$ that divide $36$ are $3,6,9,12,18,36$, and $3$ divides all of them.'
     anki_seeds:
       - front: "Define an initial object of a category."
         back: "an object with exactly one morphism to every object."
@@ -2187,9 +2200,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: "Step 1 (translate the objects): let C be any category; a terminal object t of C is exactly an initial object of C^op, because morphisms from t to x in C^op are morphisms from x to t in C, and terminality of t in C provides exactly one of those for every object x. Step 2 (apply the known theorem): the theorem that initial objects are unique up to a unique isomorphism holds in every category, hence in particular in C^op, so any two initial objects of C^op are related by exactly one isomorphism. Step 3 (translate back): the terminal objects of C are precisely the initial objects of C^op, and an isomorphism in C^op is exactly an isomorphism of C with reversed direction, since taking opposites reverses composites and inverses stay inverses. Step 4 (conclusion): therefore any two terminal objects of C are isomorphic through exactly one isomorphism, which proves that terminal objects are unique up to a unique isomorphism. Step 5 (check the constraint): the argument only applied a known theorem inside C^op and translated the statement back, with no fresh diagram chase or cancellation argument."
     diagnostic_exemplar:
-      problem: "You know that a composite of two monomorphisms is a monomorphism. Using duality — not a fresh cancellation argument — prove that a composite of two epimorphisms is an epimorphism."
-      answer: "A morphism is epi in $\\mathcal C$ iff it is mono in $\\mathcal C^{op}$ (reversing arrows turns right-cancellation into left-cancellation), and the composite $g\\circ f$ in $\\mathcal C$ is the composite $f\\circ^{op}g$ in $\\mathcal C^{op}$. Let $f,g$ be epis in $\\mathcal C$; they are monos in $\\mathcal C^{op}$, and the mono theorem, valid in every category, applies to $\\mathcal C^{op}$: their composite is mono there. Translating back, $g\\circ f$ is epi in $\\mathcal C$."
-      solution_sketch: "Do not re-run the cancellation argument. Translate instead: epi in $\\mathcal C$ is mono in $\\mathcal C^{op}$ and composition order reverses, so apply the mono theorem inside $\\mathcal C^{op}$, where it holds because it holds in every category, and translate the conclusion back."
+      problem: 'Let $\mathcal C$ be the poset of subsets of $\{1,2,3\}$ ordered by inclusion, as a category. The opposite category $\mathcal C^{op}$ has an initial object $S$. How many elements does $S$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'An initial object of $\mathcal C^{op}$ is a terminal object of $\mathcal C$. The terminal object of $\mathcal C$ is $\{1,2,3\}$, so $S$ has $3$ elements.'
     anki_seeds:
       - front: "The opposite category $\\mathcal{C}^{op}$ has..."
         back: "the same objects, morphisms $A\\to B$ = $\\mathcal{C}$-morphisms $B\\to A$, and reversed composition."
@@ -2312,9 +2326,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1: an object of the slice is an arrow f: X -> C. Step 2: a morphism from f to 1_C is an arrow h: X -> C with 1_C after h = f. Step 3: the identity law simplifies this to h = f, so the only candidate is f itself. Step 4: hence every object has exactly one morphism to 1_C, and 1_C is terminal in the slice. Step 5: by duality, reverse all arrows. In the coslice the objects are arrows g: C -> Y, and a morphism from 1_C to g is an arrow k: C -> Y with k after 1_C = g. Step 6: the identity law forces k = g, so 1_C is initial in the coslice. The full proof is complete.'
     diagnostic_exemplar:
-      problem: "Prove that the identity $1_C\\colon C\\to C$ is a terminal object of the slice category $\\mathcal{C}/C$."
-      answer: "Let $f\\colon X\\to C$ be any object of $\\mathcal{C}/C$. A morphism $f\\to 1_C$ is a map $h\\colon X\\to C$ with $1_C\\circ h=f$, i.e. $h=f$. So exactly one morphism $f\\to 1_C$ exists (namely $f$ itself), which is the definition of $1_C$ being terminal."
-      solution_sketch: "Unfold what a morphism $f\\to 1_C$ in $\\mathcal C/C$ is: a map $h$ with $1_C\\circ h=f$, i.e. $h=f$. The triangle condition pins $h$ down completely, so that hom-set is a singleton for every object $f$."
+      problem: 'Let $X=\{1,2,3\}$. In the slice category $\mathbf{Set}/X$, an object is a function into $X$. Let $p\colon\{a,b\}\to X$ have $p(a)=1$ and $p(b)=2$. Let $q\colon\{c,d,e\}\to X$ have $q(c)=q(d)=1$ and $q(e)=2$. How many morphisms are there from $p$ to $q$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'A morphism is a function $h$ with $q\circ h=p$. So $h(a)\in\{c,d\}$ and $h(b)=e$. This gives $2$ morphisms.'
     anki_seeds:
       - front: "Objects of the slice category $\\mathcal{C}/C$?"
         back: "the morphisms $f\\colon X\\to C$ (arrows into $C$)."

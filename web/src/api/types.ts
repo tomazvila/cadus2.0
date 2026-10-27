@@ -225,6 +225,8 @@ export interface StatusResponse {
   session_open?: boolean;
   /** What "Continue studying" brings: the summed task budget and the first topic. */
   plan_preview?: PlanPreview | null;
+  /** The Today card: the local date, the study-day number, the planned set, one read, this week's pace. */
+  today?: TodayCard | null;
 }
 
 /** The size and the first topic of the plan the dashboard button starts. */
@@ -232,6 +234,35 @@ export interface PlanPreview {
   /** Seconds, or null when no planned task carries a budget. */
   budget_secs: number | null;
   first_topic: { id: string; name: string | null } | null;
+}
+
+/** One line of the set of the day. It carries no statement, no answer and no solution. */
+export interface TodayItem {
+  task_id: string;
+  task_type: string;
+  topic: { id: string; name: string | null } | null;
+  n_problems: number | null;
+  time_budget_secs: number | null;
+  progress: { answered: number; done: boolean };
+}
+
+/** The topic the Today card offers to read. */
+export interface TodayRead {
+  topic: { id: string; name: string | null };
+  kp: string | null;
+  source: 'lesson' | 'review';
+}
+
+/** The Today card of `GET /api/status` (D-DP1). */
+export interface TodayCard {
+  /** The local day, `YYYY-MM-DD`. */
+  date: string;
+  day_number: number;
+  set: TodayItem[];
+  read: TodayRead | null;
+  week: { study_days: number; topics_passed: number };
+  /** True when the set comes from the row frozen at the first session start of the day. */
+  frozen: boolean;
 }
 
 /**

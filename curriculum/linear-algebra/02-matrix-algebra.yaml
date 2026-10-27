@@ -140,10 +140,10 @@ topics:
             solution_sketch: 'Call the known matrix on the left $A$ and the matrix on the right $B$. Adding $A$ to both sides would double $A$ on the left instead of removing it. To remove $A$ we must subtract it from both sides, so $X = B - A$. Row 1, column 1: $3 - 1 = 2$. Row 1, column 2: $1 - 4 = -3$. Row 2, column 1: $2 - 2 = 0$. Row 2, column 2: $5 - 0 = 5$. The matrix is $X = \begin{pmatrix}2&-3\\0&5\end{pmatrix}$.'
         constraints: "solve-for-X problems use addition, subtraction and one scalar factor; size items ask whether a sum is defined"
     diagnostic_exemplar:
-      problem: 'Solve for $X$: $2X + \begin{pmatrix}1&-1\\0&2\end{pmatrix} = \begin{pmatrix}5&3\\4&0\end{pmatrix}$.'
-      answer: '$X = \begin{pmatrix}2&2\\2&-1\end{pmatrix}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$2X = \begin{pmatrix}4&4\\4&-2\end{pmatrix}$ entrywise, then multiply by $\frac{1}{2}$.'
+      problem: 'Let $A=\begin{pmatrix}1&-2\\3&0\end{pmatrix}$ and $B=\begin{pmatrix}4&1\\-2&5\end{pmatrix}$. What is the entry in row 1, column 2 of $3A-B$?'
+      answer_contract: {"kind":"exact"}
+      answer: '-7'
+      solution_sketch: 'Use only the entries in row 1, column 2. They give $3(-2)-1=-7$.'
     anki_seeds:
       - front: 'How do matrices add?'
         back: 'Entrywise, and only when the two matrices have exactly the same size.'
@@ -303,10 +303,10 @@ topics:
             solution_sketch: 'The second column of $AB$ is $A$ times the second column of $B$. The column of $B$ is $(2, 4)$. Row 1 of $A$ gives $4 \cdot 2 + 1 \cdot 4 = 12$ and row 2 of $A$ gives $2 \cdot 2 + 3 \cdot 4 = 16$. The column is $(12, 16)$.'
         constraints: "verify the column view against the row-column rule on 2x2 matrices; in-context items use price tables"
     diagnostic_exemplar:
-      problem: 'Compute $\begin{pmatrix}1&0&2\\3&1&0\end{pmatrix}\begin{pmatrix}2&1\\0&4\\1&3\end{pmatrix}$, and state the size of the product.'
-      answer: '$\begin{pmatrix}4&7\\6&7\end{pmatrix}$, a $2 \times 2$ matrix'
-      answer_contract: {kind: none}
-      solution_sketch: 'Row $1$: $(2 + 0 + 2, 1 + 0 + 6) = (4, 7)$; row $2$: $(6 + 0 + 0, 3 + 4 + 0) = (6, 7)$. A $2\times3$ times a $3\times2$ is $2\times2$.'
+      problem: 'Let $A=\begin{pmatrix}1&2&0\\3&-1&4\end{pmatrix}$ and $B=\begin{pmatrix}2&1\\0&3\\1&-2\end{pmatrix}$. What is the entry in row 1, column 2 of $AB$?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'Take row 1 of $A$ and column 2 of $B$: $1\cdot1+2\cdot3+0\cdot(-2)=7$.'
     anki_seeds:
       - front: 'Entry $(i, j)$ of the product $AB$ is computed how?'
         back: 'Dot product of row $i$ of $A$ with column $j$ of $B$.'
@@ -462,10 +462,10 @@ topics:
             solution_sketch: 'The first column of $AB$ is $A(2, 2) = (2 - 2, -4 + 4) = (0, 0)$. The second column is $A(y, 3) = (y - 3, -2y + 6)$, and both entries equal $0$ exactly when $y = 3$. So $y = 3$.'
         constraints: "2x2 counterexamples with small integer entries; one 3x3 nilpotent matrix"
     diagnostic_exemplar:
-      problem: 'Compute $AB$ for $A = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $B = \begin{pmatrix}0&0\\3&1\end{pmatrix}$. What does the result show?'
-      answer: '$AB = \begin{pmatrix}0&0\\0&0\end{pmatrix}$: a product of two nonzero matrices can be the zero matrix, so $AB = O$ does not force $A = O$ or $B = O$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Each entry of $AB$ pairs a zero of $A$ with a nonzero of $B$ or vice versa, so every entry vanishes even though $A \ne O$ and $B \ne O$.'
+      problem: 'Let $A=\begin{pmatrix}1&2\\3&4\end{pmatrix}$, let $I_2$ be the $2\times2$ identity matrix and let $O$ be the $2\times2$ zero matrix. What is the entry in row 2, column 2 of $(A+O)I_2-I_2$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$A+O=A$ and $AI_2=A$. So the matrix is $A-I_2$, and its entry in row 2, column 2 is $4-1=3$.'
     anki_seeds:
       - front: 'The identity matrix $I_n$ looks like...'
         back: '$1$s on the main diagonal, $0$s everywhere else; $AI = IA = A$.'
@@ -616,10 +616,10 @@ topics:
             solution_sketch: 'The combined matrix is $M_2 M_1$, with the matrix used last on the left. The units of product 2 from one unit of raw material 1 form its entry in row 2, column 1, which is row 2 of $M_2$ dotted with column 1 of $M_1$: $4 \cdot 2 + 2 \cdot 1 = 10$.'
         constraints: "2x2 upper and lower triangular matrices with entries in -4..4, one 3x3 product; in-context items use two-stage production"
     diagnostic_exemplar:
-      problem: 'Compute $\begin{pmatrix}2&5\\0&3\end{pmatrix}\begin{pmatrix}4&1\\0&2\end{pmatrix}$, and classify the result as diagonal, upper triangular, or lower triangular.'
-      answer: '$\begin{pmatrix}8&12\\0&6\end{pmatrix}$; upper triangular (not diagonal)'
-      answer_contract: {kind: none}
-      solution_sketch: 'The product of upper triangular matrices is upper triangular, with diagonal entries $2\cdot4 = 8$ and $3\cdot2 = 6$.'
+      problem: 'Let $D=\begin{pmatrix}2&0&0\\0&-3&0\\0&0&1\end{pmatrix}$. What is the entry in row 2, column 2 of $D^3$?'
+      answer_contract: {"kind":"exact"}
+      answer: '-27'
+      solution_sketch: 'Powers of a diagonal matrix raise each diagonal entry to that power. So the entry is $(-3)^3=-27$.'
     anki_seeds:
       - front: 'How do two diagonal matrices multiply?'
         back: 'Entrywise along the diagonal; the product is again diagonal.'
@@ -923,10 +923,10 @@ topics:
             solution_sketch: 'Each extra factor of $A$ adds $1$ to the top-right entry, so the pattern is $A^n = \begin{pmatrix}1&n\\0&1\end{pmatrix}$. For $n = 5$ the result is $\begin{pmatrix}1&5\\0&1\end{pmatrix}$.'
         constraints: 'patterns that show after computing two or three powers: shears, quarter turns, swaps, idempotent and nilpotent matrices'
     diagnostic_exemplar:
-      problem: 'For $A = \begin{pmatrix}1&2\\0&1\end{pmatrix}$, compute $A^2$ and $A^3$, then give a formula for $A^n$.'
-      answer: '$A^2 = \begin{pmatrix}1&4\\0&1\end{pmatrix}$, $A^3 = \begin{pmatrix}1&6\\0&1\end{pmatrix}$, $A^n = \begin{pmatrix}1&2n\\0&1\end{pmatrix}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Each multiplication by $A$ adds $2$ to the top-right entry and leaves the rest fixed.'
+      problem: 'Let $A=\begin{pmatrix}0&1\\1&1\end{pmatrix}$. What is the entry in row 2, column 2 of $A^4$?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: '$A^2=\begin{pmatrix}1&1\\1&2\end{pmatrix}$. Then $A^4=(A^2)^2=\begin{pmatrix}2&3\\3&5\end{pmatrix}$, so the entry is $5$.'
     anki_seeds:
       - front: '$A^n$ makes sense only for what kind of matrix?'
         back: 'A square matrix (sizes must chain: $A \cdot A$ needs columns = rows).'
@@ -1069,10 +1069,10 @@ topics:
             solution_sketch: 'The transpose applies to the whole difference, so $(A - 2B)^T = A^T - 2B^T$. Here $A - 2B = \begin{pmatrix}2&-5\\-4&0\end{pmatrix}$, and its transpose is $\begin{pmatrix}2&-4\\-5&0\end{pmatrix}$.'
         constraints: '2x2 matrices with small integer entries, with 2x3 sales tables in the context items; compute one transpose of a sum, difference or scalar multiple'
     diagnostic_exemplar:
-      problem: 'For $A = \begin{pmatrix}1&5&0\\-2&0&3\end{pmatrix}$ and $B = \begin{pmatrix}0&1&2\\1&0&-1\end{pmatrix}$, compute $(A + 2B)^T$ and state its size.'
-      answer: '$\begin{pmatrix}1&0\\7&0\\4&1\end{pmatrix}$, a $3 \times 2$ matrix'
-      answer_contract: {kind: none}
-      solution_sketch: '$A + 2B = \begin{pmatrix}1&7&4\\0&0&1\end{pmatrix}$; transposing turns its $2\times3$ shape into $3\times2$ (equivalently $A^T + 2B^T$).'
+      problem: 'Let $A=\begin{pmatrix}1&2&3\\4&5&6\end{pmatrix}$. What is the entry in row 3, column 2 of $A^T$?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Entry $(3,2)$ of $A^T$ is entry $(2,3)$ of $A$. That entry is $6$.'
     anki_seeds:
       - front: 'The transpose $A^T$ is formed by...'
         back: 'turning the rows of $A$ into columns (entry $(i,j)$ moves to $(j,i)$).'
@@ -1219,10 +1219,10 @@ topics:
             solution_sketch: 'The transpose $A^T$ is $6 \times 4$, so $A^T A$ is $(6 \times 4)(4 \times 6)$, which is $6 \times 6$. A $6 \times 6$ matrix has $36$ entries, and the matrix is symmetric.'
         constraints: '2x2 integer matrices, with 2x3 data tables in the context items; the result must visibly satisfy A = A^T'
     diagnostic_exemplar:
-      problem: 'Compute $A^TA$ for $A = \begin{pmatrix}1&3\\0&2\end{pmatrix}$, and explain why the result had to be symmetric.'
-      answer: '$A^TA = \begin{pmatrix}1&3\\3&13\end{pmatrix}$; it is symmetric because $(A^TA)^T = A^T(A^T)^T = A^TA$'
-      answer_contract: {kind: none}
-      solution_sketch: '$A^T = \begin{pmatrix}1&0\\3&2\end{pmatrix}$, so $A^TA = \begin{pmatrix}1&3\\3&13\end{pmatrix}$; the reversal rule $(XY)^T = Y^TX^T$ makes $A^TA$ its own transpose.'
+      problem: 'The matrix $\begin{pmatrix}1&a&3\\5&2&b\\3&-4&0\end{pmatrix}$ equals its transpose. What is $a+b$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Symmetry gives $a=5$ and $b=-4$. So $a+b=1$.'
     anki_seeds:
       - front: '$(AB)^T = $ ?'
         back: '$B^T A^T$ — the order reverses.'
@@ -1357,10 +1357,10 @@ topics:
             solution_sketch: 'The move is multiplication by $\begin{pmatrix}3&-2\\k&4\end{pmatrix}$, and it can be undone only if this matrix has an inverse. The determinant is $3\cdot 4 - (-2)k = 12 + 2k$, which is $0$ when $k = -6$.'
         constraints: "singularity via proportional rows or ad - bc = 0; integer k answers"
     diagnostic_exemplar:
-      problem: 'Find $A^{-1}$ for $A = \begin{pmatrix}4&2\\3&4\end{pmatrix}$, and state the value of $k$ for which $\begin{pmatrix}4&2\\3&k\end{pmatrix}$ would have no inverse.'
-      answer: '$A^{-1} = \begin{pmatrix}2/5&-1/5\\-3/10&2/5\end{pmatrix}$; no inverse when $k = 3/2$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\det A = 16 - 6 = 10$, so $A^{-1} = \frac{1}{10}\begin{pmatrix}4&-2\\-3&4\end{pmatrix}$; the determinant $4k - 6$ vanishes at $k = 3/2$.'
+      problem: 'Find the entry in row 1, column 2 of the inverse of $\begin{pmatrix}2&1\\4&3\end{pmatrix}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-1/2'
+      solution_sketch: 'The determinant is $6-4=2$. The inverse is $\frac12\begin{pmatrix}3&-1\\-4&2\end{pmatrix}$, so the entry is $-1/2$.'
     anki_seeds:
       - front: 'Inverse of $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ (when $ad - bc \neq 0$)?'
         back: '$\dfrac{1}{ad - bc}\begin{pmatrix}d&-b\\-c&a\end{pmatrix}$.'
@@ -1503,10 +1503,10 @@ topics:
             solution_sketch: 'The converter is multiplication by $\begin{pmatrix}3&h\\1&2\end{pmatrix}$, and recovery needs an inverse. The determinant is $3\cdot 2 - h = 6 - h$, which is $0$ when $h = 6$. Then the rows $(3, 6)$ and $(1, 2)$ are proportional and the reduction of $[A \mid I]$ produces a zero row.'
         constraints: "singular examples have visibly proportional rows"
     diagnostic_exemplar:
-      problem: 'Use the $[A \mid I]$ method to find $A^{-1}$ for $A = \begin{pmatrix}1&3\\2&7\end{pmatrix}$, then use it to solve $A\mathbf{x} = (4, 9)$.'
-      answer: '$A^{-1} = \begin{pmatrix}7&-3\\-2&1\end{pmatrix}$; $\mathbf{x} = (1, 1)$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Row reducing $[A \mid I]$ gives $A^{-1} = \begin{pmatrix}7&-3\\-2&1\end{pmatrix}$; then $\mathbf{x} = A^{-1}(4, 9) = (28 - 27, -8 + 9) = (1, 1)$.'
+      problem: 'Let $A^{-1}=\begin{pmatrix}1&1\\0&1\end{pmatrix}$ and $B^{-1}=\begin{pmatrix}1&0\\2&1\end{pmatrix}$. What is the entry in row 2, column 2 of $(AB)^{-1}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$(AB)^{-1}=B^{-1}A^{-1}=\begin{pmatrix}1&1\\2&3\end{pmatrix}$. Its entry in row 2, column 2 is $3$.'
     anki_seeds:
       - front: 'How does the $[A \mid I]$ method compute $A^{-1}$?'
         back: 'Row reduce $[A \mid I]$ until the left block is $I$; the right block is then $A^{-1}$.'
@@ -1651,10 +1651,10 @@ topics:
             solution_sketch: 'Multiply both sides on the left by $A^{-1}$ to get $BX = A^{-1}C$. Then multiply on the left by $B^{-1}$ to get $X = B^{-1}A^{-1}C$, with the factors in reverse order.'
         constraints: "give the inverses or make them easy to find; never state which side the inverse multiplies on"
     diagnostic_exemplar:
-      problem: 'Given $A^{-1} = \begin{pmatrix}1&-2\\0&1\end{pmatrix}$, solve $XA = \begin{pmatrix}2&4\\1&3\end{pmatrix}$.'
-      answer: '$X = \begin{pmatrix}2&0\\1&1\end{pmatrix}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$A$ multiplies on the right, so multiply on the right: $X = BA^{-1} = \begin{pmatrix}2&4\\1&3\end{pmatrix}\begin{pmatrix}1&-2\\0&1\end{pmatrix} = \begin{pmatrix}2&0\\1&1\end{pmatrix}$.'
+      problem: 'Solve $3X-\begin{pmatrix}2&1\\0&4\end{pmatrix}=\begin{pmatrix}4&2\\6&8\end{pmatrix}$ for $X$. What is the entry in row 2, column 2 of $X$?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Add the matrix to both sides: $3X=\begin{pmatrix}6&3\\6&12\end{pmatrix}$. Divide by $3$. The entry in row 2, column 2 is $12/3=4$.'
     anki_seeds:
       - front: 'Solution of $AX = B$ versus $XA = B$ (invertible $A$)?'
         back: '$X = A^{-1}B$ for $AX = B$; $X = BA^{-1}$ for $XA = B$ — the side matters.'
@@ -1802,10 +1802,10 @@ topics:
             solution_sketch: 'The undoing operation subtracts $3R_1$ from row 2, that is, $R_2 \to R_2 - 3R_1$. Its matrix is the inverse of $\begin{pmatrix}1&0\\3&1\end{pmatrix}$, which is $E^{-1} = \begin{pmatrix}1&0\\-3&1\end{pmatrix}$.'
         constraints: "symbolic identities plus 2x2 numeric checks"
     diagnostic_exemplar:
-      problem: 'Write the $2 \times 2$ elementary matrix $E$ for $R_2 \to R_2 - 4R_1$ and its inverse, then use $E$ to decide for which $h$ the matrix $A = \begin{pmatrix}1&3\\4&h\end{pmatrix}$ fails to be invertible.'
-      answer: '$E = \begin{pmatrix}1&0\\-4&1\end{pmatrix}$, $E^{-1} = \begin{pmatrix}1&0\\4&1\end{pmatrix}$; $A$ fails to be invertible when $h = 12$'
-      answer_contract: {kind: none}
-      solution_sketch: '$EA = \begin{pmatrix}1&3\\0&h - 12\end{pmatrix}$, which has a second pivot exactly when $h \ne 12$; the inverse operation is $R_2 \to R_2 + 4R_1$.'
+      problem: 'Let $E$ be the $3\times3$ matrix that adds $4$ times row 1 to row 3 of any matrix. What is the entry in row 3, column 1 of $E^{-1}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '-4'
+      solution_sketch: 'The inverse of this row operation subtracts $4$ times row 1 from row 3. So $E^{-1}$ has $-4$ in row 3, column 1.'
     anki_seeds:
       - front: 'An elementary matrix is obtained by applying one row operation to...'
         back: 'the identity matrix $I$.'

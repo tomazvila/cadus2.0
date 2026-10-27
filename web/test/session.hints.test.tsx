@@ -21,11 +21,21 @@ describe('HintPanel', () => {
   });
 
   it('names the reference lesson one time', () => {
-    render(<HintPanel hints={[]} referenceLesson="Fractions" hintsAvailable taskType="review" />);
+    const lesson = { topic: 'fractions', name: 'Fractions' };
+    render(<HintPanel hints={[]} referenceLesson={lesson} hintsAvailable taskType="review" />);
     const notes = [...document.querySelectorAll('.reference-lesson')].map((n) => n.textContent);
     expect(notes).toEqual([
       'Still stuck? Read the lesson “Fractions” again, then answer as well as you can.',
     ]);
+    expect(screen.queryByRole('button', { name: /Open the lesson/ })).toBeNull();
+  });
+
+  it('opens the reference lesson by its topic id', () => {
+    const onRead = vi.fn();
+    const lesson = { topic: 'fractions', name: 'Fractions' };
+    render(<HintPanel hints={[]} referenceLesson={lesson} hintsAvailable taskType="review" onRead={onRead} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Open the lesson “Fractions”' }));
+    expect(onRead).toHaveBeenCalledWith('fractions');
   });
 
   it('tells a review with no hint ladder to study the lesson again', () => {

@@ -197,7 +197,7 @@ fn lesson_point(
 }
 
 /// The current approved teach page of `key`, or `409 no_instruction`.
-async fn teach_page(
+pub(crate) async fn teach_page(
     state: &AppState,
     content: &Content,
     tx: &mut Transaction<'static, Postgres>,

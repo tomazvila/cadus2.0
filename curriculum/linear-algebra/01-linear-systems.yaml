@@ -277,10 +277,10 @@ topics:
             solution_sketch: 'The new row 1 is $(-4k, 8k)$, and it must equal $(1, -2)$. So $-4k = 1$ gives $k = -\frac{1}{4}$, and $8(-\frac{1}{4}) = -2$ agrees.'
         constraints: "identify-the-operation problems use a single replacement, swap, or scaling; include safety questions and contexts from systems"
     diagnostic_exemplar:
-      problem: 'Which two row operations, applied in order, turn $\begin{pmatrix}1&3&2\\4&5&1\end{pmatrix}$ into $\begin{pmatrix}1&3&2\\0&1&1\end{pmatrix}$?'
-      answer: '$R_2 \to R_2 - 4R_1$, then $R_2 \to -\frac{1}{7}R_2$'
-      answer_contract: {kind: none}
-      solution_sketch: '$R_2 - 4R_1 = (0, -7, -7)$; scaling that row by $-\frac{1}{7}$ gives $(0, 1, 1)$.'
+      problem: 'Apply $R_2 \to R_2 - 4R_1$ to the augmented matrix $\begin{pmatrix}1&3&2\\4&5&7\end{pmatrix}$. What is the new matrix?'
+      answer_contract: {"kind":"matrix","rows":2,"cols":3}
+      answer: '[[1,3,2],[0,-7,-1]]'
+      solution_sketch: 'Row 2 changes entry by entry: $4-4(1)=0$, $5-4(3)=-7$ and $7-4(2)=-1$. Row 1 stays $(1,3,2)$.'
     anki_seeds:
       - front: 'The three elementary row operations?'
         back: 'Swap two rows; multiply a row by a nonzero scalar; add a multiple of one row to another.'
@@ -554,10 +554,10 @@ topics:
             solution_sketch: 'Scale row 2 by $\frac{1}{3}$ to get $(0, 1, 2)$, and scale row 1 by $\frac{1}{2}$ to get $(1, 2, 5)$. Then $R_1 \to R_1 - 2R_2$ gives $(1, 0, 1)$, so the result has the rows $(1, 0, 1)$ and $(0, 1, 2)$.'
         constraints: "one to three operations away from reduced row echelon form; integer entries; include pivot columns, pivot counts and contexts from systems"
     diagnostic_exemplar:
-      problem: 'Is $\begin{pmatrix}1&2&5\\0&1&3\end{pmatrix}$ in reduced row echelon form? If not, bring it to RREF.'
-      answer: 'No (the entry above the second pivot is not $0$); the RREF is $\begin{pmatrix}1&0&-1\\0&1&3\end{pmatrix}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'It is in echelon form with leading $1$s, but RREF also needs zeros above each pivot: $R_1 \to R_1 - 2R_2$ gives $(1, 0, -1)$.'
+      problem: 'The matrix $\begin{pmatrix}2&1&0&5\\0&0&0&3\\0&0&0&0\end{pmatrix}$ is in echelon form. In which column does the leading entry of row 2 lie?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The first nonzero entry of row 2 is $3$. It is in column 4.'
     anki_seeds:
       - front: 'What extra conditions does reduced row echelon form (RREF) add to echelon form?'
         back: 'Every pivot is 1 and is the only nonzero entry in its column.'
@@ -850,10 +850,10 @@ topics:
             solution_sketch: 'The lines meet in exactly one point when the system has a unique solution. Subtracting $3R_2$ from $R_1$ gives $(h - 6)y = -7$, so the solution is unique unless $h = 6$. For $h = 6$ the lines are parallel and never meet, so $h = 6$.'
         constraints: 'systems with one parameter and a single integer answer; asked as consistent, inconsistent, no solution, infinitely many solutions or no unique solution; two word problems'
     diagnostic_exemplar:
-      problem: 'For which $h$ does the system $x + 2y = 3$, $2x + hy = 7$ have no solution, for which $h$ does it have exactly one solution, and for which $h$ does it have infinitely many?'
-      answer: 'No solution when h = 4; exactly one solution for every h other than 4; infinitely many for no value of h'
-      answer_contract: {kind: none}
-      solution_sketch: 'For $h \ne 4$ the coefficient matrix has two pivots, so the solution is unique. For $h = 4$ row reduction gives $0 = 7 - 6 = 1$, which is inconsistent; the constants never match, so infinitely many solutions never occur.'
+      problem: 'For which value of $h$ does the system $x + 2y = 5$, $3x + 6y = h$ have infinitely many solutions?'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'The second equation must be $3$ times the first. So $h=3\cdot 5=15$.'
     anki_seeds:
       - front: 'An echelon row $(0\ \cdots\ 0 \mid b)$ with $b \neq 0$ means the system is...'
         back: 'inconsistent (no solutions).'
@@ -983,10 +983,10 @@ topics:
             solution_sketch: 'The cost gives $2n + 4r + 6c = 24$, so $n + 2r + 3c = 12$. With $r = s$ and $c = t$ this gives $n = 12 - 2s - 3t$, so the mixes are $(12 - 2s - 3t, s, t)$.'
         constraints: 'two free variables named in the question; every coefficient an integer; three word problems'
     diagnostic_exemplar:
-      problem: 'The RREF of an augmented matrix is $\begin{pmatrix}1&3&0&2&5\\0&0&1&4&1\end{pmatrix}$ with variables $x_1, x_2, x_3, x_4$. Which variables are free, and what is the general solution with $x_2 = s$ and $x_4 = t$?'
-      answer: 'x2 and x4 are free; x1 = 5 - 3s - 2t, x2 = s, x3 = 1 - 4t, x4 = t'
-      answer_contract: {kind: none}
-      solution_sketch: 'Pivots sit in columns $1$ and $3$, so $x_2, x_4$ are free; the rows read $x_1 = 5 - 3x_2 - 2x_4$ and $x_3 = 1 - 4x_4$.'
+      problem: 'A $4 \times 7$ coefficient matrix has $4$ pivots. How many free variables does $A\mathbf{x} = \mathbf{0}$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Each column without a pivot gives a free variable. There are $7-4=3$ such columns.'
     anki_seeds:
       - front: 'A variable of a linear system is free when its column in echelon form...'
         back: 'contains no pivot.'
@@ -1262,10 +1262,10 @@ topics:
             solution_sketch: 'The equations are $x + z = 4$, $2y + z = 7$ and $x + y = 3$. From the first and third, $z = 4 - x$ and $y = 3 - x$. Then $2(3 - x) + 4 - x = 7$ gives $-3x = -3$, so $x = 1$, $y = 2$ and $z = 3$.'
         constraints: "unique integer solutions in -5..5; prices and rates up to 20"
     diagnostic_exemplar:
-      problem: 'Express $\mathbf{b} = (3, 5)$ as a linear combination of $\mathbf{a}_1 = (1, 1)$ and $\mathbf{a}_2 = (1, -1)$.'
-      answer: "b = 4a1 - 1a2 (c1 = 4, c2 = -1)"
-      answer_contract: {kind: none}
-      solution_sketch: '$c_1 + c_2 = 3$, $c_1 - c_2 = 5$; adding gives $c_1 = 4$, so $c_2 = -1$.'
+      problem: 'Find $\mathbf{x}$ such that $\begin{pmatrix}1&1\\1&-1\end{pmatrix}\mathbf{x} = (10, 4)$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(7, 3)'
+      solution_sketch: 'The equations are $x+y=10$ and $x-y=4$. Add them to get $2x=14$, so $x=7$ and $y=3$.'
     anki_seeds:
       - front: '$A\mathbf{x} = \mathbf{b}$ is consistent exactly when $\mathbf{b}$ lies in...'
         back: 'the span of the columns of $A$.'
@@ -1397,10 +1397,10 @@ topics:
             solution_sketch: 'Only the trivial solution means that no unknown is free. Every one of the $6$ unknowns is then a pivot variable, so the matrix has $6$ pivots.'
         constraints: "reason from pivot counts; no computation beyond counting"
     diagnostic_exemplar:
-      problem: 'A homogeneous system in $x, y, z$ consists of the single equation $x + 3y - z = 0$. Must it have nonzero solutions? Give all solutions, taking $y = s$ and $z = t$.'
-      answer: 'Yes (1 equation, 3 unknowns leaves free variables); x = -3s + t, y = s, z = t'
-      answer_contract: {kind: none}
-      solution_sketch: 'With more unknowns than equations there is at least one free variable, so nontrivial solutions exist; solving for the pivot variable gives $x = -3y + z$.'
+      problem: 'For which value of $k$ does the system $x + 5y = 0$, $3x + ky = 0$ have a solution other than $(0,0)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'A nonzero solution exists when the second row is a multiple of the first. Row 2 is $3$ times row 1, so $k=15$.'
     anki_seeds:
       - front: 'A homogeneous system $A\mathbf{x} = \mathbf{0}$ is always consistent because...'
         back: '$\mathbf{x} = \mathbf{0}$ (the trivial solution) always works.'
@@ -1675,10 +1675,10 @@ topics:
             solution_sketch: 'The mixture holds $0.20 \times 10 + 0.40 \times 30 = 2 + 12 = 14$ L of acid. The mixture has $10 + 30 = 40$ L in all, so the concentration is $14 / 40 = 0.35$, which is $35\%$.'
         constraints: "3 unknowns; percentages in easy decimals; integer answers; one concentration of a given mixture"
     diagnostic_exemplar:
-      problem: 'Tickets cost €12 (adult), €7 (student), and €5 (child). $24$ tickets were sold for €244, and three times as many student tickets as child tickets were sold. How many of each were sold?'
-      answer: '16 adult, 6 student, 2 child'
-      answer_contract: {kind: none}
-      solution_sketch: 'With $s = 3c$ and $a + s + c = 24$ we get $a = 24 - 4c$; then $12(24 - 4c) + 21c + 5c = 244$ gives $c = 2$, so $s = 6$ and $a = 16$.'
+      problem: 'Pens cost $2$ dollars each and notebooks cost $5$ dollars each. A buyer takes $9$ items and pays $33$ dollars. How many notebooks does the buyer take?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Let $p+n=9$ and $2p+5n=33$. Subtract $2$ times the first from the second to get $3n=15$, so $n=5$.'
     anki_seeds:
       - front: 'The conservation law used at each node of a network-flow model?'
         back: 'Flow in equals flow out.'

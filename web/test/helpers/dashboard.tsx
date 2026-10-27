@@ -42,6 +42,25 @@ const STATUS: StatusResponse = {
   nearly_due: 1,
   ungraded_attempts: {},
   ungraded: 0,
+  today: {
+    date: '2026-08-30',
+    day_number: 12,
+    set: [
+      {
+        task_id: 's-lesson-fractions', task_type: 'lesson',
+        topic: { id: 'fractions', name: 'Fractions' }, n_problems: 5, time_budget_secs: 900,
+        progress: { answered: 0, done: false },
+      },
+      {
+        task_id: 's-review-whole-numbers', task_type: 'review',
+        topic: { id: 'whole-numbers', name: 'Whole numbers' }, n_problems: null,
+        time_budget_secs: 300, progress: { answered: 0, done: false },
+      },
+    ],
+    read: { topic: { id: 'fractions', name: 'Fractions' }, kp: 'kp1', source: 'lesson' },
+    week: { study_days: 4, topics_passed: 3 },
+    frozen: false,
+  },
 };
 
 export const status = (over: Partial<StatusResponse> = {}): StatusResponse => ({ ...STATUS, ...over });
@@ -115,6 +134,7 @@ const nav = () => ({
   onDiagnostic: vi.fn(),
   onMap: vi.fn(),
   onProofs: vi.fn(),
+  onRead: vi.fn(),
 });
 
 /** Mount into the `<main>` the shell owns, and settle the status fetch. */

@@ -134,10 +134,10 @@ topics:
             solution_sketch: 'The velocity is $v(t) = 20 - 10t$ and the acceleration is $a(t) = -10$. The ball speeds up when $v$ and $a$ have the same sign, so when $v(t) < 0$, which means $t > 2$. The ball hits the sea at $t = 7$, so it speeds up for $2 < t < 7$.'
         constraints: "test times where neither v nor a is zero"
     diagnostic_exemplar:
-      problem: 'A particle has position $s(t) = t^3 - 9t^2 + 24t$ (meters, seconds). Is it speeding up or slowing down at $t = 1$?'
-      answer: "slowing down — v(1) = 9 > 0 but a(1) = -12 < 0 (opposite signs)"
-      answer_contract: {kind: none}
-      solution_sketch: '$v(t) = 3t^2 - 18t + 24$, $v(1) = 9$; $a(t) = 6t - 18$, $a(1) = -12$.'
+      problem: 'A particle has position $s(t)=t^3-6t^2+9t$ for $t\ge 0$. Find the first time $t>0$ at which its velocity is zero.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'The velocity is $v(t)=3t^2-12t+9=3(t-1)(t-3)$. It is zero at $t=1$ and $t=3$, and the first time is $t=1$.'
     anki_seeds:
       - front: "Position s(t): velocity = ? and acceleration = ?"
         back: "v(t) = s'(t); a(t) = v'(t) = s''(t)"
@@ -278,10 +278,10 @@ topics:
             solution_sketch: 'The base area is $3 \cdot 7 = 21$ m$^2$, so $\frac{dV}{dt} = 21\,\frac{dh}{dt}$. Then $14 = 21\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{3}$.'
         constraints: "constant cross-section (cylinder or prism) so dV/dt = (base area)·dh/dt; exact answers"
     diagnostic_exemplar:
-      problem: 'Water pours into a cylindrical tank of radius $2$ m at $12$ m³/min. Using $V = \pi r^2 h$, how fast is the water level rising?'
-      answer: "3/π m/min"
-      answer_contract: {kind: none}
-      solution_sketch: '$V = 4\pi h$, so $\frac{dV}{dt} = 4\pi \frac{dh}{dt} = 12$ gives $\frac{dh}{dt} = \frac{3}{\pi}$.'
+      problem: 'The radius of a circle grows at $4$ cm/s. At what rate in square centimeters per second does the area $A=\pi r^2$ grow when $r=6$ cm?'
+      answer_contract: {"kind":"exact"}
+      answer: '48pi'
+      solution_sketch: 'Differentiate to get $\frac{dA}{dt}=2\pi r\frac{dr}{dt}$. Then $2\pi(6)(4)=48\pi$.'
     anki_seeds:
       - front: "Related-rates procedure in four steps:"
         back: "write an equation relating the quantities; differentiate both sides in t; substitute known values and rates; solve for the unknown rate"
@@ -418,10 +418,10 @@ topics:
             solution_sketch: 'Similar triangles with lamp height $L$ give a tip at $x + s = \frac{Lx}{L - 1.5}$. So the tip speed is $\frac{L}{L - 1.5}\cdot 2 = 3$, which gives $2L = 3L - 4.5$ and $L = 4.5$ m.'
         constraints: "two changing quantities; similar-triangle or product-rule relationships; integer data"
     diagnostic_exemplar:
-      problem: 'Water pours at $3$ m³/min into an inverted cone of height $8$ m and top radius $4$ m (so $r = h/2$ at depth $h$). How fast is the depth rising when $h = 4$ m?'
-      answer: "3/(4π) m/min"
-      answer_contract: {kind: none}
-      solution_sketch: '$V = \frac{1}{3}\pi (h/2)^2 h = \frac{\pi h^3}{12}$; $\frac{dV}{dt} = \frac{\pi h^2}{4}\frac{dh}{dt}$; at $h = 4$: $3 = 4\pi \frac{dh}{dt}$.'
+      problem: 'One car drives east at $30$ km/h and another car drives north at $40$ km/h. Both leave the same intersection at the same time. At what rate in km/h does the distance between them grow?'
+      answer_contract: {"kind":"unit","quantity":"speed","unit":"km/h","allow_omitted":true}
+      answer: '50'
+      solution_sketch: 'The distance is $d=\sqrt{x^2+y^2}$, so $d''=\frac{xx''+yy''}{d}$. With $x=30t$ and $y=40t$ this is $\frac{2500t}{50t}=50$.'
     anki_seeds:
       - front: "In a conical-tank problem, how do you get V in terms of h alone?"
         back: "use similar triangles (r = kh from the tank's dimensions) to eliminate r before differentiating"
@@ -899,10 +899,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $f''(x) = 3x^2$, the start $x_0 = 0$ gives $f''(0) = 0$, so it fails. From $x_0 = 1$ we get $f(1) = -4$ and $f''(1) = 3$, so $x_1 = 1 - \frac{-4}{3} = \frac{7}{3}$.'
     diagnostic_exemplar:
-      problem: 'Apply two steps of Newton''s method to $f(x) = x^2 - 3$ starting at $x_0 = 2$. What are $x_1$ and $x_2$?'
-      answer: 'x₁ = 7/4; x₂ = 97/56'
-      answer_contract: {kind: none}
-      solution_sketch: '$x_1 = 2 - \frac{1}{4} = \frac{7}{4}$; then $f(7/4) = \frac{1}{16}$ and $f''(7/4) = \frac{7}{2}$, so $x_2 = \frac{7}{4} - \frac{1/16}{7/2} = \frac{7}{4} - \frac{1}{56} = \frac{97}{56}$.'
+      problem: 'Apply one step of Newton''s method to $f(x)=x^2-5$ with $x_0=2$. Find $x_1$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9/4'
+      solution_sketch: 'Here $x_1=x_0-\frac{f(x_0)}{f''(x_0)}=2-\frac{-1}{4}=\frac{9}{4}$.'
     anki_seeds:
       - front: "Newton's method iteration: x_{n+1} = ?"
         back: "xₙ - f(xₙ)/f'(xₙ)"
@@ -1062,10 +1062,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3(x - 1)(x + 1)$, and its signs are $+, -, +$. The change from $+$ to $-$ is at $x = -1$, so that is the local maximum, and $f(-1) = -1 + 3 = 2$. The point $x = 1$ is a local minimum.'
     diagnostic_exemplar:
-      problem: 'For $f(x) = x + \frac{9}{x}$, find the critical points and classify each as a local maximum or minimum.'
-      answer: "x = -3 is a local max (f(-3) = -6) and x = 3 is a local min (f(3) = 6); x = 0 is not a critical point (not in the domain)"
-      answer_contract: {kind: none}
-      solution_sketch: '$f''(x) = 1 - \frac{9}{x^2} = 0$ at $x = \pm 3$; $f''''(x) = \frac{18}{x^3}$ is negative at $-3$, positive at $3$.'
+      problem: 'Find the local maximum value of $f(x)=x^3-3x^2-9x$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Here $f''(x)=3(x-3)(x+1)$, so the critical points are $x=-1$ and $x=3$. The sign of $f''$ changes from plus to minus at $x=-1$, so $f(-1)=-1-3+9=5$ is the local maximum.'
     anki_seeds:
       - front: "A critical point of f is a point in the domain where..."
         back: "f'(x) = 0 or f'(x) does not exist"
@@ -1218,10 +1218,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The heights are $f(-\sqrt{3}) = f(\sqrt{3}) = 0$. The slope is $f''(x) = 3x^2 - 3 = 0$, so $x = -1$ or $x = 1$, and both lie in $(-\sqrt{3}, \sqrt{3})$.'
     diagnostic_exemplar:
-      problem: 'Verify that $f(x) = x^3 - 9x$ satisfies the hypotheses of Rolle''s theorem on $[0, 3]$ and find the $c$ in $(0, 3)$ with $f''(c) = 0$.'
-      answer: 'f is a polynomial (continuous and differentiable) with f(0) = f(3) = 0; c = √3'
-      answer_contract: {kind: none}
-      solution_sketch: '$f(0) = 0$ and $f(3) = 27 - 27 = 0$; $f''(x) = 3x^2 - 9 = 0$ gives $x = \sqrt{3} \approx 1.73$, which lies in $(0, 3)$.'
+      problem: 'Rolle''s theorem applies to $f(x)=x^2-4x$ on $[0,4]$. Find the value $c$ in $(0,4)$ with $f''(c)=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Here $f''(x)=2x-4$. It is zero at $x=2$, so $c=2$.'
     anki_seeds:
       - front: "Rolle's theorem: if f is continuous on [a,b], differentiable on (a,b), and f(a) = f(b), then..."
         back: "some c in (a,b) has f'(c) = 0"
@@ -1555,10 +1555,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative $f''(x) = 4x(x - 1)(x + 1)$ is zero at $x = -1$, $0$ and $1$. Compare $f(-2) = 8$, $f(-1) = -1$, $f(0) = 0$ and $f(1) = -1$. The least value is $-1$, reached at $x = -1$ and at $x = 1$.'
     diagnostic_exemplar:
-      problem: 'Find the absolute maximum and minimum of $f(x) = x^4 - 8x^2$ on $[-1, 3]$.'
-      answer: 'absolute max 9 at x = 3; absolute min -16 at x = 2'
-      answer_contract: {kind: none}
-      solution_sketch: '$f''(x) = 4x(x^2 - 4)$ gives interior critical points $x = 0$ and $x = 2$ (note $x = -2$ is outside the interval); compare $f(-1) = -7$, $f(0) = 0$, $f(2) = -16$, $f(3) = 9$.'
+      problem: 'Find the absolute maximum value of $f(x)=x^3-3x$ on $[0,3]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '18'
+      solution_sketch: 'Here $f''(x)=3x^2-3=0$ gives $x=1$ in the interval. Compare $f(0)=0$, $f(1)=-2$ and $f(3)=18$. The largest value is $18$.'
     anki_seeds:
       - front: "To find absolute extrema of a continuous f on [a, b], compare f at..."
         back: "all interior critical points and the two endpoints"
@@ -1717,10 +1717,10 @@ topics:
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'By the product rule the derivative is $f''(x) = e^{-x} - xe^{-x} = e^{-x}(1 - x)$. Since $e^{-x} > 0$, $f''$ is positive exactly when $x < 1$.'
     diagnostic_exemplar:
-      problem: 'Find the intervals of increase and decrease of $f(x) = x^2 e^{-x}$.'
-      answer: "increasing on (0, 2); decreasing on (-∞, 0) and (2, ∞)"
-      answer_contract: {kind: none}
-      solution_sketch: '$f''(x) = e^{-x}(2x - x^2) = e^{-x} x(2 - x)$, positive exactly for $0 < x < 2$.'
+      problem: 'Find the length of the interval on which $f(x)=x^3-12x$ is decreasing.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Here $f''(x)=3(x^2-4)$, which is negative for $-2<x<2$. The interval has length $2-(-2)=4$.'
     anki_seeds:
       - front: "f' > 0 on an interval means f is ___ there; f' < 0 means f is ___."
         back: "increasing; decreasing"
@@ -1885,10 +1885,10 @@ topics:
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'The derivative $f''(x) = 3(x - 1)(x - 3)$ is positive for $x < 1$ or $x > 3$. The second derivative $f''''(x) = 6x - 12$ is negative for $x < 2$. Both hold only for $x < 1$.'
     diagnostic_exemplar:
-      problem: 'Find the intervals of concavity of $f(x) = x^3 - 6x^2$ and give its inflection point as an ordered pair.'
-      answer: 'concave down on (-∞, 2), concave up on (2, ∞); inflection point (2, -16)'
-      answer_contract: {kind: none}
-      solution_sketch: '$f''''(x) = 6x - 12$ is negative for $x < 2$ and positive for $x > 2$; $f(2) = 8 - 24 = -16$.'
+      problem: 'Find the $x$-coordinate of the inflection point of $f(x)=x^3-6x^2+5x$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Here $f''''(x)=6x-12$. It is zero at $x=2$ and changes sign there, so the inflection point is at $x=2$.'
     anki_seeds:
       - front: "f'' > 0 on an interval means the graph of f is ___ there."
         back: "concave up (bending upward, f' increasing)"
@@ -2024,10 +2024,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $f''(x) = 15x^4 - 15x^2 = 15x^2(x - 1)(x + 1)$, so the critical points are $x = -1$, $x = 0$ and $x = 1$. Since $f''''(x) = 60x^3 - 30x$, we get $f''''(-1) = -30 < 0$, a local maximum, and $f''''(1) = 30 > 0$. At $x = 0$ the second derivative is $0$ and $f''$ is negative on both sides. The local maximum value is $f(-1) = -3 + 5 = 2$.'
     diagnostic_exemplar:
-      problem: 'The function $f(x) = x^4 + 4x^3$ has critical points $x = 0$ and $x = -3$. Classify each (use whichever test works at each point).'
-      answer: "x = -3 is a local min (f''(-3) = 36 > 0); x = 0 is not an extremum (f''(0) = 0 and f' = 4x²(x + 3) does not change sign at 0)"
-      answer_contract: {kind: none}
-      solution_sketch: '$f''''(x) = 12x^2 + 24x$ is $36 > 0$ at $x = -3$, a local min. At $x = 0$ it is $0$, so the test is inconclusive and the first derivative decides: the $4x^2$ factor of $f''(x) = 4x^2(x+3)$ keeps the sign positive on both sides of $0$.'
+      problem: 'Find $f''''(x)$ at the point where $f(x)=x^3-6x^2+9x+1$ has a local minimum.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Here $f''(x)=3(x-1)(x-3)$ and $f''''(x)=6x-12$. Since $f''''(1)=-6<0$ and $f''''(3)=6>0$, the local minimum is at $x=3$, where $f''''=6$.'
     anki_seeds:
       - front: "Second derivative test: at a critical point c with f'(c) = 0, f''(c) > 0 means ___ and f''(c) < 0 means ___."
         back: "local minimum; local maximum (f''(c) = 0 is inconclusive)"
@@ -2188,10 +2188,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The zeros of $f''$ are $x = 0$ and $x = 4$. Since $x^2 \ge 0$, the sign of $f''$ is the sign of $x - 4$, which is negative on both sides of $0$. So $f''$ does not change sign at $0$, and the sign changes from negative to positive only at $x = 4$, the local minimum.'
     diagnostic_exemplar:
-      problem: 'For $f(x) = x^3 - 12x$, give the local extrema and the inflection point.'
-      answer: "local max f(-2) = 16; local min f(2) = -16; inflection at (0, 0)"
-      answer_contract: {kind: none}
-      solution_sketch: '$f'' = 3(x-2)(x+2)$, $f'''' = 6x$.'
+      problem: 'How many inflection points does $f(x)=x^4-4x^3$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Here $f''''(x)=12x^2-24x=12x(x-2)$. It changes sign at $x=0$ and at $x=2$, so there are $2$ inflection points.'
     anki_seeds:
       - front: "Complete curve-analysis checklist (from f' and f''):"
         back: "critical points; increase/decrease intervals; local extrema; concavity intervals; inflection points"
@@ -2336,10 +2336,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A critical point is only a candidate, so we also compare the endpoint values. We have $f(0) = 0$, $f(1) = -2$ and $f(3) = 27 - 9 = 18$. The largest is $18$, at the endpoint $x = 3$, while $f(1) = -2$ is the absolute minimum.'
     diagnostic_exemplar:
-      problem: 'A rectangular pen uses a wall as one side, with $60$ m of fence for the other three sides. What dimensions maximize the area, and what is that area?'
-      answer: "15 m (each side perpendicular to the wall) × 30 m (parallel side); area 450 m²"
-      answer_contract: {kind: none}
-      solution_sketch: '$2x + y = 60$; $A = x(60 - 2x)$; $A'' = 60 - 4x = 0$ at $x = 15$, $y = 30$.'
+      problem: 'Find the largest possible area of a rectangle with perimeter $36$ m.'
+      answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
+      answer: '81'
+      solution_sketch: 'With sides $x$ and $18-x$, the area is $A(x)=18x-x^2$. Then $A''(x)=18-2x=0$ gives $x=9$, so the area is $9\cdot 9=81$.'
     anki_seeds:
       - front: "Optimization procedure in four steps:"
         back: "name the variables and constraint; write the objective in one variable; find critical points; check them (and endpoints) for the true optimum"
@@ -2767,11 +2767,10 @@ topics:
         solution_sketch: Set $P'(x) = -2x + 120 = 0$, so $x = 60$ cakes. Since $P''(x) = -2 < 0$ this is a maximum, and $P(60) = -3600 + 7200 - 2000 = 1600$ dollars.
       constraints: quadratic profit with an integer vertex; marginal revenue equal to marginal cost; direction decision; profit per item; units in the question
     diagnostic_exemplar:
-      problem: Revenue is $R(x) = 120x$ and cost is $C(x) = x^2 + 20x + 800$, both in euros. How many items maximize the profit $P = R - C$, and what is the maximum profit?
-      answer: x = 50 items; maximum profit €1700
-      answer_contract:
-        kind: none
-      solution_sketch: $P(x) = -x^2 + 100x - 800$; $P'(x) = -2x + 100 = 0$ at $x = 50$; $P(50) = 1700$.
+      problem: 'A factory makes $x$ units at a cost of $C(x)=0.02x^2+5x+300$ dollars. Find the marginal cost at $x=50$.'
+      answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+      answer: '7'
+      solution_sketch: 'The marginal cost is $C''(x)=0.04x+5$. At $x=50$ it is $2+5=7$ dollars.'
     anki_seeds:
     - front: Marginal cost is defined as...
       back: C'(x) — the derivative of cost, approximating the cost of the next item

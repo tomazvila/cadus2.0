@@ -50,6 +50,7 @@ import { MoreMenu } from './dashboard/MoreMenu';
 import { ProgressDetails } from './dashboard/ProgressDetails';
 import { PrimaryAction } from './dashboard/PrimaryAction';
 import { RetentionCard } from './dashboard/RetentionCard';
+import { TodayCard } from './dashboard/TodayCard';
 import '../styles/fix-dashboard.css';
 import type { ApiClient, JourneyCourse, PlanTask, StatusResponse, XpState } from '@/api/types';
 
@@ -69,6 +70,8 @@ export interface DashboardProps {
   onMap: () => void;
   /** Go to "Your proofs" (D-PR1). */
   onProofs: () => void;
+  /** Open the lesson text of a topic, with the dashboard as the screen to return to. */
+  onRead: (topic: string, name: string) => void;
 }
 
 /**
@@ -180,6 +183,7 @@ export function Dashboard({
   onDiagnostic,
   onMap,
   onProofs,
+  onRead,
 }: DashboardProps) {
   const life = useLifetime();
   const dialogs = useDialogs();
@@ -343,6 +347,9 @@ export function Dashboard({
         />
         <ProgressDetails status={status} />
       </div>
+
+      {/* D-DP1: the Today card. It adds no primary action (W-C2). */}
+      <TodayCard status={status} onRead={onRead} />
 
       {/* f19-retention: the delayed-probe report, loaded with the dashboard (D-F11). */}
       <RetentionCard api={api} call={call} />

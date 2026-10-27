@@ -219,6 +219,25 @@ describe('the demo payloads, literally', () => {
       last_active_at: '2026-08-29T16:30:00Z',
       session_open: false,
       plan_preview: { budget_secs: 1500, first_topic: { id: 'fractions', name: 'Fractions' } },
+      today: {
+        date: '2026-08-30',
+        day_number: 12,
+        set: [
+          {
+            task_id: 'demo-lesson-fractions', task_type: 'lesson',
+            topic: { id: 'fractions', name: 'Fractions' }, n_problems: 5, time_budget_secs: 900,
+            progress: { answered: 0, done: false },
+          },
+          {
+            task_id: 'demo-review-whole-numbers', task_type: 'review',
+            topic: { id: 'whole-numbers', name: 'Whole numbers' }, n_problems: null,
+            time_budget_secs: 300, progress: { answered: 0, done: false },
+          },
+        ],
+        read: { topic: { id: 'fractions', name: 'Fractions' }, kp: 'kp1', source: 'lesson' },
+        week: { study_days: 4, topics_passed: 3 },
+        frozen: false,
+      },
       ungraded_attempts: {},
       mastery: { to_confirm: ['whole-numbers'], total: 50, inferred: 6, practiced: 9 },
       nearly_due: 1,

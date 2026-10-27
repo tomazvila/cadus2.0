@@ -41,7 +41,7 @@ Auth column: **S** = session required, **P** = public.
 | GET `/api/health` | P | — | `{ok, fake_llm, model, engine, providers}` (`docs/WEB_SERVICE.md:86-88`) | 200 | keep, drop `fake_llm` |
 | GET `/api/ready` | P | — | `{ok, db, redis, worker:{heartbeat_age_secs, stale}}` (`cadus_web/health.py:139-167`) | 200/503 | keep; drop `redis` (D8) |
 | GET `/metrics` | P | — | Prometheus text (`cadus_web/metrics.py:303-307`) | 200 | keep |
-| GET `/api/status` | S | — | `{course, placed, courses, test_prep, xp, velocity, quiz, pending_remediation, quiz_due, drill_due, **counts}` (`cadus_web/api.py:787-799`) | 200 | keep |
+| GET `/api/status` | S | — | `{course, placed, courses, test_prep, xp, velocity, quiz, pending_remediation, quiz_due, drill_due, today, **counts}` (`cadus_web/api.py:787-799`). `today` is `{date, day_number, set, read, week, frozen}` (D-DP1): the local day, the study-day number, the planned tasks with no statement or answer, one topic to read or null, the week counts, and whether the set comes from the frozen row | 200 | keep |
 | GET `/api/graph` | S | `?scope=` | `{now, scope, courses, modules, counts, nodes, edges}` (`docs/WEB_SERVICE.md:94`) | 200/404 `unknown_course` | keep |
 | POST `/api/enroll` | S | `{course}` | `{enrolled, mastery_floor, floor_size}` | 200/404/422 | keep |
 | POST `/api/session/start` | S | `{}` | `{session, reopened, xp, frontier, due_reviews}` (`:874-880`) | 200 | keep |
@@ -52,6 +52,7 @@ Auth column: **S** = session required, **P** = public.
 | POST `/api/task/{id}/answer` | S | `{problem_id, answer, work?, assisted?}` | see below | 200/404 `unknown_problem`/409 `task_complete`/413 `answer_too_large`/422 `invalid_request` | **change (A3/A4)** |
 | POST `/api/task/{id}/hint` | S | `{problem_id}` | `{hint, hint_number, reference_lesson?}` (`:1849-1864`) | 200/404/409 `no_hints_in_quiz`/422 | keep; body from the authored hint ladder (L5) |
 | POST `/api/task/{id}/teach` | S | `{}` | `{kp, concept, worked_example:{problem, steps, figure?}}` (`:1096-1103`) | 200/409 `no_instruction` | keep; body from `content_store` kind `teach` (L4); `worked_example.figure` is `{kind, svg, text}` and the key is absent when the page names no figure or the figure fails the check at serve time (D-V1) |
+| GET `/api/topics/{topic_id}/teach` | S | — | `{topic, name, module, course, course_name, position, count, previous, next, learn_first, opens_next, points[]}`; a point is `{kp, name, page}` and `page` is `{concept, worked_example}` or `null` | 200/404 `not_found`/409 `no_instruction` | new in 2.0 (D-TR1); a pure read of the approved teach pages of one topic; no event, no `web_states` write |
 | POST `/api/task/{id}/abort` | S | `{}` | close payload `{task_id, task_type, aborted, xp, state_delta, …}` (`:686-710`) | 200/404 | keep |
 | POST `/api/diag/start` | S | `{course?}` | `{probe:{topic, problem_id, text}, asked, cap}` (`:1977-1981`) | 200/400 `no_course`/404 `unknown_course` | keep; an open run of the same course resumes, a named other course replaces; `asked` counts first and second probes; the probe set holds each topic whose probe gives a verdict under `Exemplar::verdict_policy` |
 | GET `/api/diag/current` | S | — | `{open:false}` or `{open:true, course, asked, cap, probe\|null}` | 200 | new; a pure read of the open run; `asked` counts first and second probes |
@@ -82,6 +83,7 @@ returns the whole verdict from local CPU and hands the prose off:
   "solution":     "…worked solution…",        // revealed after the attempt commits
   "re_solve":     "…the stock instruction, §5.5…",
   "task_status":  "continue" | "kp_advance" | "task_passed" | "task_failed"
+                  | "task_inconclusive" | "task_needs_variety"
                   | "already_recorded",
   "remediation":  [ {kind, targets} ],
   "next":         { …serve shape… } | null,
@@ -236,6 +238,12 @@ answerable, a re-serve overwrites, a stale `problem_id` 404s. Keying by a fresh 
 left superseded problems answerable, and since `attempt_id` derived from `problem_id` the FR-14
 dedup could not catch the double record — a stale quiz id appended a second answer and advanced
 the cursor twice.
+
+The row `session_plans` holds the set of the local day (D-DP1). `POST /api/session/start` writes it
+when it opens a new session and the row holds no set of today: `{day, set, read}`, with the task type, the
+topic, the question count and the time budget of each task. A later session of the same day keeps the row.
+`GET /api/status` reads the row and writes nothing. The row is a scratch row: no event carries it and no
+replay reads it.
 
 ### 4.2 The advisory-lock pattern
 

@@ -193,5 +193,6 @@ pub fn review(ts: Timestamp, xp: f64) -> Event {
         task_id: Some("s_2026-01-01a-review-addition".to_string()),
         inconclusive: false,
         confirmation_skills: Vec::new(),
+        variety_waived: false,
     })
 }

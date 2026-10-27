@@ -157,9 +157,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'A functor would send a homomorphism $\varphi\colon G\to H$ to the restriction of $\varphi$ to the center of $G$, with values in the center of $H$. This needs $\varphi$ to carry the center of $G$ into the center of $H$ for every $\varphi$. Take $G=\mathbb{Z}/2$, which is abelian, so its center is all of $G$, and $H=S_3$, whose center is trivial. Let $\varphi$ send $1$ to the transposition $(1\,2)$. Then $(1\,2)$ does not commute with $(1\,3)$, so it is not central in $S_3$, the restriction is not a map into the center of $S_3$, and the assignment is not a functor.'
     diagnostic_exemplar:
-      problem: "Define $F\\colon\\mathbf{Set}\\to\\mathbf{Set}$ by $F(A)=A\\times\\{0,1\\}$ and $F(f)=f\\times 1_{\\{0,1\\}}$. Give the domain and codomain of $F(f)$ for $f\\colon A\\to B$, and verify both functor laws."
-      answer: "$F(f)\\colon A\\times\\{0,1\\}\\to B\\times\\{0,1\\}$, $(a,i)\\mapsto(f(a),i)$. Identity law: $F(1_A)(a,i)=(a,i)$, so $F(1_A)=1_{FA}$. Composition law: $F(g\\circ f)(a,i)=(g(f(a)),i)=F(g)(f(a),i)=F(g)(F(f)(a,i))$, so $F(g\\circ f)=Fg\\circ Ff$. Both laws hold, so $F$ is a functor."
-      solution_sketch: "Type $F(f)$ first — it must run $A\\times\\{0,1\\}\\to B\\times\\{0,1\\}$ — then check both laws elementwise on a pair $(a,i)$. The tag $i$ is carried untouched, so each law collapses to the corresponding fact about $f$ alone."
+      problem: 'A functor $F\colon\mathbf{B}\mathbb{Z}_{12}\to\mathbf{B}\mathbb{Z}_{12}$ has one object. Its morphisms are the numbers $0,\dots,11$, and composition is addition mod $12$. The functor $F$ sends the morphism $1$ to $5$. What does $F$ send the morphism $7$ to?'
+      answer_contract: {"kind":"exact"}
+      answer: '11'
+      solution_sketch: 'The morphism $7$ is $1$ composed with itself $7$ times. The composition law gives $F(7)=7\cdot 5=35$, and $35\equiv 11 \pmod{12}$.'
     anki_seeds:
       - front: "On morphisms, a functor $F$ sends each $f\\colon A\\to B$ to..."
         back: "a morphism $Ff\\colon FA\\to FB$."
@@ -333,9 +334,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Let $g$ be the inverse of $f\colon A\to B$, so $g\circ f=1_A$ and $f\circ g=1_B$. Applying $F$ and using both laws gives $Fg\circ Ff=F(g\circ f)=F(1_A)=1_{FA}$, and likewise $Ff\circ Fg=1_{FB}$. So $Fg$ is a two-sided inverse of $Ff$, and no injectivity of $F$ is used. A diagram commutes when composites are equal, and for each equation $h=g\circ f$ the composition law gives $Fh=Fg\circ Ff$. So the image diagram commutes.'
     diagnostic_exemplar:
-      problem: "Prove that every functor $F$ carries isomorphisms to isomorphisms, and that $(Ff)^{-1}=F(f^{-1})$."
-      answer: "Let $f\\colon A\\to B$ have inverse $f^{-1}$. Applying $F$ to $f^{-1}\\circ f=1_A$ and using both functor laws: $F(f^{-1})\\circ Ff=F(f^{-1}\\circ f)=F(1_A)=1_{FA}$. Symmetrically, applying $F$ to $f\\circ f^{-1}=1_B$ gives $Ff\\circ F(f^{-1})=1_{FB}$. So $F(f^{-1})$ is a two-sided inverse of $Ff$; hence $Ff$ is an isomorphism and, inverses being unique, $(Ff)^{-1}=F(f^{-1})$."
-      solution_sketch: "Apply $F$ to the two equations defining $f^{-1}$ and push $F$ through each composite with the composition law; $F(1)=1$ turns both into identities, exhibiting $F(f^{-1})$ as a two-sided inverse of $Ff$. Uniqueness of inverses then gives the naming claim."
+      problem: 'A functor between one-object categories $\mathbf{B}\mathbb{Z}_{12}\to\mathbf{B}\mathbb{Z}_{18}$ is the same as a monoid homomorphism $\mathbb{Z}_{12}\to\mathbb{Z}_{18}$. How many such functors are there?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'A functor is fixed by the image $x$ of $1$, and it needs $12x\equiv 0 \pmod{18}$. This means $x\equiv 0 \pmod 3$, so $x\in\{0,3,6,9,12,15\}$.'
     anki_seeds:
       - front: "A functor between one-object categories $BM\\to BN$ is exactly a {{c1::monoid homomorphism}}."
         back: "monoid homomorphism"
@@ -508,9 +510,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Closure: the composite of two endofunctors of $\mathbf{C}$ is a functor $\mathbf{C}\to\mathbf{C}$. Unit: $(1_{\mathbf{C}}\circ T)(A)=T(A)$ and $(1_{\mathbf{C}}\circ T)(f)=T(f)$, so $1_{\mathbf{C}}\circ T=T$, and likewise $T\circ 1_{\mathbf{C}}=T$. Associativity: $((R\circ S)\circ T)(A)=R(S(T(A)))=(R\circ(S\circ T))(A)$, and the same on morphisms. A set with an associative product and a two-sided unit is a monoid.'
     diagnostic_exemplar:
-      problem: "Given functors $F\\colon\\mathcal{B}\\to\\mathcal{C}$ and $G\\colon\\mathcal{C}\\to\\mathcal{D}$, define $GF$ by $(GF)A=G(FA)$ and $(GF)f=G(Ff)$, and prove that $GF$ satisfies both functor laws."
-      answer: "Typing: for $f\\colon A\\to B$, $Ff\\colon FA\\to FB$, so $G(Ff)\\colon GFA\\to GFB$. Identities: $(GF)(1_A)=G(F1_A)=G(1_{FA})=1_{GFA}$, using the identity law of $F$ then of $G$. Composites: $(GF)(g\\circ f)=G(F(g\\circ f))=G(Fg\\circ Ff)=G(Fg)\\circ G(Ff)=(GF)g\\circ(GF)f$, using the composition law of $F$ then of $G$. Hence $GF$ is a functor."
-      solution_sketch: "Check the typing of $G(Ff)$, then apply each law twice, inner functor first: $G(F1_A)=G(1_{FA})=1_{GFA}$, and $G(F(g\\circ f))$ splits by the law for $F$ and then by the law for $G$."
+      problem: 'Let $F\colon\mathbf{B}\mathbb{Z}_6\to\mathbf{B}\mathbb{Z}_{10}$ send $1$ to $5$, and let $G\colon\mathbf{B}\mathbb{Z}_{10}\to\mathbf{B}\mathbb{Z}_4$ send $1$ to $2$. Composition in each category is addition modulo the order. What does the composite $GF$ send the morphism $1$ to?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: '$(GF)(1)=G(F(1))=G(5)=5\cdot 2=10$, and $10\equiv 2 \pmod 4$.'
     anki_seeds:
       - front: "How is the composite functor $GF$ defined?"
         back: "$(GF)A=G(FA)$ on objects and $(GF)f=G(Ff)$ on morphisms."
@@ -680,9 +683,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'For $f\colon C\to C''$, the pair $(f,f)$ is a morphism from $(C,C)$ to $(C'',C'')$, since each coordinate is one. Identity law: $\Delta(1_C)=(1_C,1_C)$, which is the identity of $(C,C)$. Composition law: $\Delta(g\circ f)=(g\circ f,g\circ f)$, and $\Delta(g)\circ\Delta(f)=(g,g)\circ(f,f)$, which is the same pair by coordinatewise composition. So $\Delta$ is a functor.'
     diagnostic_exemplar:
-      problem: "For a function $f\\colon X\\to Y$ define $f^*\\colon X^*\\to Y^*$ on the free monoids of finite words by $f^*(x_1\\cdots x_n)=f(x_1)\\cdots f(x_n)$ and $f^*(\\varepsilon)=\\varepsilon$. Show that $f^*$ is a monoid homomorphism and that $(-)^*$ is a functor $\\mathbf{Set}\\to\\mathbf{Mon}$."
-      answer: "Homomorphism: $f^*$ sends the unit $\\varepsilon$ to $\\varepsilon$ and preserves concatenation, since applying $f$ letterwise to $uv$ gives $f^*(u)f^*(v)$. Functor laws: $1_X^*$ applies $1_X$ letterwise, so $1_X^*=1_{X^*}$; and $(g\\circ f)^*$ applies $g\\circ f$ letterwise, which is the same as applying $f$ letterwise then $g$ letterwise, so $(g\\circ f)^*=g^*\\circ f^*$. Hence $(-)^*$ is a functor."
-      solution_sketch: "Everything reduces to the phrase: apply $f$ letterwise. That description makes $f^*$ fix $\\varepsilon$ and respect concatenation, and it makes applying $g\\circ f$ letterwise visibly the same as applying $f$ letterwise and then $g$ letterwise."
+      problem: 'For a function $f\colon X\to Y$, the free monoid functor sends $f$ to $f^*$, which applies $f$ to each letter of a word. Let $f\colon\{a,b\}\to\{0,1\}$ be given by $f(a)=1$ and $f(b)=0$. What is $f^*(abba)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1001'
+      solution_sketch: 'Apply $f$ to each letter in turn: $a\mapsto 1$, $b\mapsto 0$, $b\mapsto 0$, $a\mapsto 1$.'
     anki_seeds:
       - front: "What does a forgetful functor do?"
         back: "drops structure, e.g. $\\mathbf{Grp}\\to\\mathbf{Set}$."
@@ -836,9 +840,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Show that $1_X^{-1}[T]=T$. Then show that $x\in(g\circ f)^{-1}[T]$ if and only if $g(f(x))\in T$ if and only if $x\in f^{-1}[g^{-1}[T]]$.'
     diagnostic_exemplar:
-      problem: "Prove that the composite of two contravariant functors is covariant."
-      answer: "Let $G\\colon\\mathcal C^{op}\\to\\mathcal D$ and $F\\colon\\mathcal D^{op}\\to\\mathcal E$ be contravariant, so $G(g\\circ f)=Gf\\circ Gg$ and $F$ likewise reverses order. Then $FG(g\\circ f)=F(Gf\\circ Gg)=F(Gg)\\circ F(Gf)=FG(g)\\circ FG(f)$ — the two reversals cancel, restoring the covariant composition law. Identities are preserved by both, so $F\\circ G$ is a covariant functor."
-      solution_sketch: "Track the order of a composite through both functors: each contravariant step reverses it, and two reversals restore the original order. Identities survive both steps, so the composite obeys the covariant laws."
+      problem: 'The contravariant powerset functor sends $f\colon X\to Y$ to $P(f)\colon P(Y)\to P(X)$ with $P(f)(S)=f^{-1}(S)$. Let $f\colon\{1,2,3,4\}\to\{a,b\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=a$, $f(4)=a$. How many elements does $P(f)(\{a\})$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$P(f)(\{a\})=f^{-1}(\{a\})=\{1,3,4\}$, which has $3$ elements.'
     anki_seeds:
       - front: "Contravariant functor composition law?"
         back: "$F(g\\circ f)=Ff\\circ Fg$ (order reversed); equivalently a functor $\\mathcal C^{op}\\to\\mathcal D$."
@@ -979,9 +984,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Use fullness to find $h$ with $Fh$ equal to the inverse of $Ff$. Then $F(h\circ f)=F(1_A)$ and $F(f\circ h)=F(1_B)$, and faithfulness gives $h\circ f=1_A$ and $f\circ h=1_B$.'
     diagnostic_exemplar:
-      problem: "Prove that a fully faithful functor $F$ reflects isomorphisms: if $Ff$ is an isomorphism, then $f$ is an isomorphism."
-      answer: "Let $Ff\\colon FA\\to FB$ have inverse $g\\colon FB\\to FA$. By fullness $g=Fh$ for some $h\\colon B\\to A$. Then $F(h\\circ f)=Fh\\circ Ff=g\\circ Ff=1_{FA}=F(1_A)$, so faithfulness gives $h\\circ f=1_A$. Symmetrically $F(f\\circ h)=Ff\\circ Fh=1_{FB}=F(1_B)$ gives $f\\circ h=1_B$. Hence $h$ is a two-sided inverse and $f$ is an isomorphism."
-      solution_sketch: "Fullness supplies the candidate and faithfulness proves it works: lift the inverse of $Ff$ to some $h\\colon B\\to A$, then descend the two identity equations from $\\mathcal D$ to $\\mathcal C$ by cancelling $F$."
+      problem: 'A functor $F$ is faithful. The hom-set $\mathrm{Hom}(A,B)$ has $4$ morphisms and the hom-set $\mathrm{Hom}(FA,FB)$ has $6$ morphisms. How many morphisms $g$ in $\mathrm{Hom}(FA,FB)$ have no $f$ with $Ff=g$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Faithful means the map $\mathrm{Hom}(A,B)\to\mathrm{Hom}(FA,FB)$ is injective. So its image has exactly $4$ morphisms, and $6-4=2$ morphisms are missed.'
     anki_seeds:
       - front: "A functor is faithful when each hom-set map $\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(FA,FB)$ is..."
         back: "injective."
@@ -1134,9 +1140,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'For full subcategories, each hom-set equals the hom-set of $\mathcal C$, so the hom-sets agree and composition is inherited. For the second claim, the subcategories of $\mathbf{Set}$ with all functions and with only injective functions have the same objects but different hom-sets.'
     diagnostic_exemplar:
-      problem: "Is $\\mathbf{Grp}$ a full subcategory of $\\mathbf{Mon}$? Prove your answer."
-      answer: "Yes. Every group is a monoid, and every monoid homomorphism $\\phi\\colon G\\to H$ between groups automatically preserves inverses: from $\\phi(g)\\phi(g^{-1})=\\phi(gg^{-1})=\\phi(e)=e$ and likewise $\\phi(g^{-1})\\phi(g)=e$, the element $\\phi(g^{-1})$ is a two-sided inverse of $\\phi(g)$, so $\\phi(g^{-1})=\\phi(g)^{-1}$ and $\\phi$ is a group homomorphism. Hence $\\mathrm{Hom}_{\\mathbf{Mon}}(G,H)=\\mathrm{Hom}_{\\mathbf{Grp}}(G,H)$ for all groups $G,H$: the subcategory is full."
-      solution_sketch: "Fullness asks whether the two hom-sets coincide, so the real question is whether a monoid homomorphism between groups automatically preserves inverses. Show $\\phi(g^{-1})$ is a two-sided inverse of $\\phi(g)$ and invoke uniqueness of inverses."
+      problem: 'Let $\mathcal{C}$ be the chain $0<1<2<3<4$, with one morphism $x\to y$ when $x\le y$. Let $\mathcal{D}$ be the full subcategory of $\mathcal{C}$ on the objects $0,2,3,4$. How many morphisms does $\mathcal{D}$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '10'
+      solution_sketch: 'A full subcategory keeps every morphism of $\mathcal{C}$ between its objects. The objects $0<2<3<4$ form a chain of $4$ objects, so there are $4\cdot 5/2=10$ morphisms.'
     anki_seeds:
       - front: "Full subcategory definition?"
         back: "A subcategory containing all $\\mathcal C$-morphisms between its chosen objects; equivalently, determined by a class of objects."
@@ -1258,9 +1265,10 @@ topics:
             solution_sketch: 'Composition and identities in $\mathcal{C}\times\mathcal{D}$ are componentwise, so $(f,1_{Y''})\circ(1_X,g)=(f\circ1_X,1_{Y''}\circ g)=(f,g)$ and $(1_{X''},g)\circ(f,1_Y)=(1_{X''}\circ f,g\circ1_Y)=(f,g)$. Apply $F$ and use that a functor preserves composition: $F(f,g)=F(f,1_{Y''})\circ F(1_X,g)$ and $F(f,g)=F(1_{X''},g)\circ F(f,1_Y)$. Both composites equal $F(f,g)$, so the two partial actions of $F$ commute. This is the interchange law: a functor out of a product is functorial in each variable separately.'
         constraints: 'Bifunctors are given by explicit rules: the product of sets with value tables, numbers ordered by their size, rectangles, and one-object categories built from small cyclic groups or S_3. Items evaluate the two partial actions, count functors out of a product, or locate the failing requirement. One full-proof exemplar closes the list.'
     diagnostic_exemplar:
-      problem: "Show that disjoint union $\\sqcup\\colon\\mathbf{Set}\\times\\mathbf{Set}\\to\\mathbf{Set}$, $(X,Y)\\mapsto X\\sqcup Y$ and $(f,g)\\mapsto f\\sqcup g$, is a functor on the product category, and verify the interchange identity $f\\sqcup g=(f\\sqcup 1_{Y'})\\circ(1_X\\sqcup g)=(1_{X'}\\sqcup g)\\circ(f\\sqcup 1_Y)$ for $f\\colon X\\to X'$ and $g\\colon Y\\to Y'$."
-      answer: "Identities and composition in $\\mathbf{Set}\\times\\mathbf{Set}$ are componentwise. Identity law: $1_X\\sqcup 1_Y$ is the identity on each summand, so it equals $1_{X\\sqcup Y}$. Composition law: for $(f,g)\\colon(X,Y)\\to(X',Y')$ and $(f',g')\\colon(X',Y')\\to(X'',Y'')$, the map $(f'\\circ f)\\sqcup(g'\\circ g)$ applies $f'\\circ f$ on the left summand and $g'\\circ g$ on the right, which is exactly $(f'\\sqcup g')\\circ(f\\sqcup g)$. So $\\sqcup$ is a functor on the product category, i.e. a bifunctor. Interchange: in $\\mathbf{Set}\\times\\mathbf{Set}$ the componentwise factorisations $(f,g)=(f,1_{Y'})\\circ(1_X,g)=(1_{X'},g)\\circ(f,1_Y)$ hold, and applying the functor gives the stated identity. Elementwise, all three routes send a left-summand element $x$ to the left-summand element $f(x)$ and a right-summand element $y$ to the right-summand element $g(y)$."
-      solution_sketch: "Composition and identities in a product category are componentwise, so both functor laws reduce to the fact that $\\sqcup$ acts on each summand separately. For interchange, factor $(f,g)$ in $\\mathbf{Set}\\times\\mathbf{Set}$ the two available ways and apply the functor; elementwise every route sends $x$ to $f(x)$ and $y$ to $g(y)$."
+      problem: 'In the product category $\mathbf{B}\mathbb{Z}_6\times\mathbf{B}\mathbb{Z}_4$, composition is addition mod $6$ in the first slot and mod $4$ in the second slot. What is the smallest $n\ge 1$ such that the morphism $(1,1)$ composed with itself $n$ times is the identity?'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'Composition is componentwise, so $n(1,1)=(n \bmod 6,\ n \bmod 4)$. This is $(0,0)$ when $n$ is a multiple of $\operatorname{lcm}(6,4)=12$.'
     anki_seeds:
       - front: "Composition in $\\mathcal C\\times\\mathcal D$?"
         back: "$(f',g')\\circ(f,g)=(f'\\circ f,\\ g'\\circ g)$, componentwise."
@@ -1413,9 +1421,10 @@ topics:
             solution_sketch: 'Each $\mathrm{Hom}(A,B)$ is a set because $\mathcal{C}$ is locally small. A morphism $(A,B)\to(A'',B'')$ of $\mathcal{C}^{op}\times\mathcal{C}$ is a pair $f\colon A''\to A$ and $g\colon B\to B''$ of morphisms of $\mathcal{C}$, and $g\circ h\circ f$ has source $A''$ and target $B''$ for $h\colon A\to B$, so the function is well defined. The identity $(1_A,1_B)$ acts by $h\mapsto1_B\circ h\circ1_A=h$. For composition, the composite of $(f,g)$ and $(f'',g'')$ in $\mathcal{C}^{op}\times\mathcal{C}$ is $(f\circ f'',g''\circ g)$, and it acts by $h\mapsto(g''\circ g)\circ h\circ(f\circ f'')=g''\circ(g\circ h\circ f)\circ f''$ by associativity. This is the action of $(f'',g'')$ after the action of $(f,g)$, so the rule is a functor.'
         constraints: 'Categories are Set with small finite sets given by value tables, divisibility on {1,...,12}, and school contexts that count assignments. Items compute the image g after h after f, count the functions sent to a given function, give the typing of a composite, or locate the first wrong order of composition. One full-proof exemplar closes the list.'
     diagnostic_exemplar:
-      problem: "For morphisms $f\\colon A'\\to A$ and $g\\colon B\\to B'$ of a locally small $\\mathcal C$, show that $h\\mapsto g\\circ h\\circ f$ defines a map $\\mathrm{Hom}(A,B)\\to\\mathrm{Hom}(A',B')$, and verify the composition law making $\\mathrm{Hom}(-,-)$ a functor $\\mathcal C^{op}\\times\\mathcal C\\to\\mathbf{Set}$."
-      answer: "Typing: for $h\\colon A\\to B$, $g\\circ h\\circ f\\colon A'\\to B'$, as required. Identities: $(1_A,1_B)$ acts by $h\\mapsto 1_B\\circ h\\circ 1_A=h$. Composition: for $(f,g)\\colon(A,B)\\to(A',B')$ and $(f',g')\\colon(A',B')\\to(A'',B'')$ in $\\mathcal C^{op}\\times\\mathcal C$ (so $f\\colon A'\\to A$, $f'\\colon A''\\to A'$ in $\\mathcal C$), the composite acts by $h\\mapsto(g'\\circ g)\\circ h\\circ(f\\circ f')=g'\\circ\\big(g\\circ h\\circ f\\big)\\circ f'$, which is the action of $(f',g')$ after the action of $(f,g)$ — associativity makes the two agree. So $\\mathrm{Hom}(-,-)$ is a functor, contravariant in the first slot and covariant in the second."
-      solution_sketch: "Type the assignment first, then observe that the composition law is pure associativity: one long string $g'\\circ g\\circ h\\circ f\\circ f'$ re-bracketed as the outer action applied after the inner one. Contravariance in the first slot is exactly what makes the pre-composed factors accumulate in the reversed order."
+      problem: 'In $\mathbf{Set}$ let $A=\{0,1,2\}$, and let $F=\mathrm{Hom}(A,-)$. Let $f\colon\{p,q\}\to\mathbb{Z}$ be given by $f(p)=5$ and $f(q)=7$. Let $h\colon A\to\{p,q\}$ be given by $h(0)=p$, $h(1)=q$, $h(2)=p$. Then $F(f)(h)=f\circ h$. What is $(f\circ h)(0)+(f\circ h)(1)+(f\circ h)(2)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '17'
+      solution_sketch: '$F(f)$ is post-composition with $f$. The values are $f(p)=5$, $f(q)=7$, $f(p)=5$, and $5+7+5=17$.'
     anki_seeds:
       - front: "$\\mathrm{Hom}(A,-)$: variance and action on a morphism $f$?"
         back: "covariant; post-composition $f_*=f\\circ(-)$."
@@ -1595,9 +1604,10 @@ topics:
             solution_sketch: 'An object of $(C\downarrow G)$ is a pair $(D,f)$ with $f\colon C\to G(D)$, and a morphism from $(D,f)$ to $(D'',f'')$ is an arrow $d\colon D\to D''$ with $G(d)\circ f=f''$. The pair $(D_0,f_0)$ is initial when for every object $(D,f)$ there is exactly one morphism from $(D_0,f_0)$ to $(D,f)$. By the description of morphisms, existence of that morphism says that there is an arrow $d\colon D_0\to D$ with $G(d)\circ f_0=f$, which is the existence clause of a universal arrow. Uniqueness of the morphism says that such an arrow $d$ is unique, which is the uniqueness clause. So $(D_0,f_0)$ is initial if and only if $f_0$ is a universal arrow from $C$ to $G$.'
         constraints: 'Functors are monotone maps between chains given by value lists, or rules on the numbers ordered by size: n to 6n, n to n squared, n to 35n, n to 3n. Items find the object underlying the initial object of a comma category, count its objects, decide whether an initial object exists, or locate the first wrong claim. One full-proof exemplar closes the list.'
     diagnostic_exemplar:
-      problem: "In the comma category $(F\\downarrow G)$, a morphism $(A,B,h)\\to(A',B',h')$ is a pair $(a,b)$ with $Gb\\circ h=h'\\circ Fa$. Prove that the componentwise composite of two such morphisms is again a morphism of $(F\\downarrow G)$."
-      answer: "Let $(a,b)\\colon(A,B,h)\\to(A',B',h')$ and $(a',b')\\colon(A',B',h')\\to(A'',B'',h'')$. Then $G(b'\\circ b)\\circ h=Gb'\\circ Gb\\circ h=Gb'\\circ h'\\circ Fa=h''\\circ Fa'\\circ Fa=h''\\circ F(a'\\circ a)$, using functoriality of $G$ and $F$ and the two given squares in turn. So $(a'\\circ a,\\,b'\\circ b)$ satisfies the comma square condition and is a morphism $(A,B,h)\\to(A'',B'',h'')$."
-      solution_sketch: "The same paste-two-squares move as for the arrow category: expand $G(b'\\circ b)$ by functoriality of $G$, push it across the two comma squares in turn, and reassemble the right-hand side with functoriality of $F$."
+      problem: 'Let $\mathcal{C}$ be the chain $0<1<2<3$, with one morphism $x\to y$ when $x\le y$. Let $\mathcal{A}$ be the discrete category with objects $p,q,r$, and let $\mathcal{B}$ be the discrete category with objects $u,v$. The functor $F\colon\mathcal{A}\to\mathcal{C}$ sends $p,q,r$ to $0,2,3$. The functor $G\colon\mathcal{B}\to\mathcal{C}$ sends $u,v$ to $1,3$. How many objects does the comma category $(F\downarrow G)$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'An object is a triple $(P,Q,h)$ with $h\colon F(P)\to G(Q)$, so it needs $F(P)\le G(Q)$, and then $h$ is unique. The pairs $(p,u)$, $(p,v)$, $(q,v)$, $(r,v)$ work, and the other two fail.'
     anki_seeds:
       - front: "An object of the comma category $(F\\downarrow G)$ is..."
         back: "a triple $(A,B,h\\colon FA\\to GB)$."

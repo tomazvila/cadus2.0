@@ -536,7 +536,7 @@ pub(super) async fn advance_and_fold(
             ..Advance::carry_on()
         }
     } else if task.task_type == TaskType::Review {
-        review::close_review(task, recorded, events, &content.cfg)
+        review::close_review(task, recorded, events, &content.cfg, &content.curriculum)
     } else if task.task_type == TaskType::Quiz {
         quiz::close_quiz(task, recorded, events, &content.cfg)
     } else if task.task_type == TaskType::Drill {

@@ -39,6 +39,7 @@ fn closed(task_id: Option<&str>, passed: bool, inconclusive: bool) -> Event {
         task_id: task_id.map(std::borrow::ToOwned::to_owned),
         inconclusive,
         confirmation_skills: Vec::new(),
+        variety_waived: false,
     })
 }
 

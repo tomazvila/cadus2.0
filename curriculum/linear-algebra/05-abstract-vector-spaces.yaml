@@ -149,10 +149,10 @@ topics:
             solution_sketch: 'By the definition, $0 \odot 7 = 0 \cdot 7 - 0 + 1 = 1$. This is the zero vector of $V$, in agreement with the general fact that $0\mathbf{v} = \mathbf{0}$.'
         constraints: "axiom manipulations of two or three lines; modified operations on R or R^2; each step cites the axiom used"
     diagnostic_exemplar:
-      problem: 'Let $V = \mathbb{R}^{>0}$ with $x \oplus y = xy$ and $c \odot x = x^c$. Identify the zero vector and the additive inverse of $x$, then verify the axiom $(c + d) \odot x = (c \odot x) \oplus (d \odot x)$.'
-      answer: 'Zero vector $1$; the additive inverse of $x$ is $1/x$; and $(c + d) \odot x = x^{c+d} = x^c x^d = (c \odot x) \oplus (d \odot x)$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The identity for $\oplus$ is $1$ since $x \cdot 1 = x$, and $x \oplus (1/x) = 1$; the axiom is exactly the exponent law $x^{c+d} = x^cx^d$.'
+      problem: 'The set of positive real numbers has the addition $u\oplus v=uv$ and the scalar multiplication $c\odot u=u^c$. Find the zero vector of this space.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'The zero vector $z$ must satisfy $u\oplus z=u$, that is $uz=u$. So $z=1$.'
     anki_seeds:
       - front: 'The scalars of a vector space must come from a...'
         back: 'field: a number system where $+, -, \times$, and division by nonzero elements all work (e.g. $\mathbb{Q}$, $\mathbb{R}$, $\mathbb{C}$).'
@@ -300,10 +300,10 @@ topics:
             solution_sketch: 'Distribute the scalars: $-2(x^2 - x) = -2x^2 + 2x$ and $3(x + 2) = 3x + 6$. Combine like powers: $-2x^2 + (2x + 3x) + 6 = -2x^2 + 5x + 6$.'
         constraints: "2 spanning objects; coefficients found by matching one coefficient/entry at a time, with integer or simple fractional values in -4..5"
     diagnostic_exemplar:
-      problem: 'Show that $W = \{p \in P_2 : p(1) = 0\}$ is a subspace of $P_2$, and write $x^2 + x - 2$ as a linear combination of $p_1 = x - 1$ and $p_2 = x^2 - 1$, both of which lie in $W$.'
-      answer: 'W is a subspace (the zero polynomial satisfies p(1) = 0, and if p(1) = q(1) = 0 then (p + cq)(1) = 0); and x^2 + x - 2 = p_1 + p_2'
-      answer_contract: {kind: none}
-      solution_sketch: 'Evaluation at $1$ is linear, so its kernel is a subspace; matching coefficients in $a(x - 1) + b(x^2 - 1) = bx^2 + ax - (a + b)$ gives $a = b = 1$.'
+      problem: 'Find the dimension of the subspace of $M_{2\times 2}$ that holds all matrices with trace $0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$M_{2\times2}$ has dimension $4$. The condition $a+d=0$ removes one dimension, so the answer is $3$.'
     anki_seeds:
       - front: '$P_n$ denotes the vector space of...'
         back: 'polynomials of degree at most $n$ (with the zero polynomial).'
@@ -454,10 +454,10 @@ topics:
             solution_sketch: 'The set $\{1, i\}$ is a basis of $\mathbb{C}$ over $\mathbb{R}$, because every $a + bi$ is a real combination of $1$ and $i$ and the two are independent. So each number needs $2$ real entries.'
         constraints: "fields limited to Q, Q(sqrt(d)) for d in {2, 3, 5}, R, C; independence arguments reduce to irrationality of sqrt(d) or to i not being real"
     diagnostic_exemplar:
-      problem: 'Show that $\{1 + \sqrt{2},\ 1 - \sqrt{2}\}$ is a basis of $\mathbb{Q}(\sqrt{2})$ as a vector space over $\mathbb{Q}$, and find the coordinates of $4 - 3\sqrt{2}$ relative to it.'
-      answer: 'It is a basis (the space has dimension 2 over Q, and coefficient matching a + b = 0, a - b = 0 forces a = b = 0, so the two are independent over Q); coordinates (1/2, 7/2)'
-      answer_contract: {kind: none}
-      solution_sketch: '$a(1 + \sqrt2) + b(1 - \sqrt2) = (a + b) + (a - b)\sqrt2$; matching rational and irrational parts gives $a + b = 4$, $a - b = -3$, so $a = 1/2$, $b = 7/2$.'
+      problem: 'Find the dimension of the subspace $\{p\in P_4 : p(1)=0\}$ of $P_4$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: '$P_4$ has dimension $5$. The condition $p(1)=0$ is one independent linear condition, so the subspace has dimension $4$.'
     anki_seeds:
       - front: '$\dim P_n = $ ?'
         back: '$n + 1$ (standard basis $\{1, x, \dots, x^n\}$).'
@@ -615,10 +615,10 @@ topics:
             solution_sketch: 'One apple weighs $6 / 2 = 3$ kg and one pear weighs $4 / 2 = 2$ kg, because $(1, 0) = \frac{1}{2} b_1$ and $(0, 1) = \frac{1}{2} b_2$. A basket with one of each weighs $3 + 2 = 5$ kg.'
         constraints: 'dimensions <= 6; functional coordinates read off as values on the basis vectors; contexts with prices and packs'
     diagnostic_exemplar:
-      problem: 'Find the dual basis $\{f_1, f_2\}$ of $B = \{(1, 2), (1, 1)\}$ in $\mathbb{R}^2$, and write $f(x, y) = 3x + 5y$ in terms of it.'
-      answer: 'f_1(x, y) = -x + y, f_2(x, y) = 2x - y; and f = 13 f_1 + 8 f_2'
-      answer_contract: {kind: none}
-      solution_sketch: '$f_i$ is the functional with $f_i(\mathbf{b}_j) = \delta_{ij}$; expanding a functional in the dual basis uses the coefficients $f(\mathbf{b}_1) = 13$ and $f(\mathbf{b}_2) = 8$.'
+      problem: 'A linear functional $f$ on $\mathbb{R}^2$ has $f(1,1)=3$ and $f(1,-1)=1$. Find $f(2,0)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Write $(2,0)=(1,1)+(1,-1)$. By linearity $f(2,0)=3+1=4$.'
     anki_seeds:
       - front: 'The dual space $V^*$ is the space of all...'
         back: 'linear functionals on $V$: linear maps $V \to$ scalars.'
@@ -769,10 +769,10 @@ topics:
             solution_sketch: 'We have $T(1) = 1$, with coordinates $(1, 0)$. We have $T(x) = x/2$, with coordinates $(0, 1/2)$. These are the columns, so the matrix is $\begin{pmatrix} 1 & 0 \\ 0 & 1/2 \end{pmatrix}$.'
         constraints: 'maps on P_1 or P_2 built from shifts p(x+c), scalings p(cx) or p(x/2), or coefficient formulas with c in -2..3; no calculus; images expressed in the monomial basis'
     diagnostic_exemplar:
-      problem: 'Let $T : P_1 \to P_1$ be the shift $T(p)(x) = p(x + 2)$. Find the matrix of $T$ relative to the basis $\{1, x\}$, and use the matrix to compute $T(3 + 2x)$.'
-      answer: '$\begin{pmatrix}1&2\\0&1\end{pmatrix}$; $T(3 + 2x) = 7 + 2x$'
-      answer_contract: {kind: none}
-      solution_sketch: '$T(1) = 1$ and $T(x) = x + 2$ give the columns $(1, 0)$ and $(2, 1)$; applying the matrix to the coordinate vector $(3, 2)$ gives $(7, 2)$.'
+      problem: 'Let $T(x,y)=(2x+y,\,x-3y)$ on $\mathbb{R}^2$. The basis is $B=\{(1,0),(1,1)\}$. Find the entry in row $1$, column $2$ of the matrix of $T$ in the basis $B$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: '$T(1,1)=(3,-2)=5(1,0)+(-2)(1,1)$. The coordinates $(5,-2)$ form column $2$, so the entry in row $1$ is $5$.'
     anki_seeds:
       - front: 'Column $j$ of $[T]_B$, the matrix of $T$ relative to basis $B$?'
         back: '$[T(\mathbf{b}_j)]_B$ — the image of the $j$-th basis vector, written in $B$-coordinates.'
@@ -936,10 +936,10 @@ topics:
             solution_sketch: 'On $[-1, 1]$ we have $\langle x, 1 \rangle = \int_{-1}^{1} x\,dx = 0$. So no multiple of $v_1 = 1$ is subtracted, and $v_2 = x$. The value $1/2$ belongs to $[0, 1]$ only.'
         constraints: 'the sets {1, x} or {1, x, x^2}; intervals [0,1], [-1,1], [0,2] or [0,3]; projection coefficients are small fractions; verify orthogonality of the output by one integral'
     diagnostic_exemplar:
-      problem: 'With $\langle f, g \rangle = \int_0^1 f(x)g(x)\,dx$ on $P_1$, apply Gram-Schmidt to $\{1, x\}$ and give the norm of the second vector you obtain.'
-      answer: '$v_1 = 1$, $v_2 = x - \frac{1}{2}$; $\|v_2\| = \frac{1}{2\sqrt{3}}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\langle x, 1\rangle = 1/2$ and $\langle 1, 1\rangle = 1$, so $v_2 = x - 1/2$; then $\|v_2\|^2 = \int_0^1 (x - 1/2)^2dx = 1/12$.'
+      problem: 'On $\mathbb{R}^2$ an inner product is $\langle u,v\rangle=2u_1v_1+3u_2v_2$. Find $\langle (1,2),(4,1)\rangle$.'
+      answer_contract: {"kind":"exact"}
+      answer: '14'
+      solution_sketch: 'Compute $2\cdot1\cdot4+3\cdot2\cdot1=8+6=14$.'
     anki_seeds:
       - front: 'The three inner-product axioms?'
         back: 'Symmetry $\langle u, v \rangle = \langle v, u \rangle$; linearity in each argument; positivity $\langle v, v \rangle > 0$ for $v \neq \mathbf{0}$.'

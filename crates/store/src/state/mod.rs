@@ -188,6 +188,52 @@ pub async fn save_web_state(
     Ok(())
 }
 
+/// Read this tenant's frozen plan of the day: the session id and the document.
+/// `None` means no day has been frozen yet (D-DP1).
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn load_session_plan(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+) -> Result<Option<(String, Json)>, StoreError> {
+    let row = sqlx::query!(
+        r#"SELECT session_id AS "session_id!", plan AS "plan!" FROM session_plans WHERE user_id = $1"#,
+        user_id
+    )
+    .fetch_optional(&mut **tx)
+    .await?;
+    Ok(row.map(|row| (row.session_id, row.plan)))
+}
+
+/// Write this tenant's frozen plan of the day (D-DP1). The row is a scratch
+/// row: no event is appended and no replay reads it.
+///
+/// # Errors
+///
+/// Returns [`StoreError::Db`] when the statement fails.
+pub async fn save_session_plan(
+    tx: &mut Transaction<'_, Postgres>,
+    user_id: Uuid,
+    session_id: &str,
+    plan: &Json,
+) -> Result<(), StoreError> {
+    sqlx::query!(
+        r#"
+        INSERT INTO session_plans (user_id, session_id, plan) VALUES ($1, $2, $3)
+        ON CONFLICT (user_id) DO UPDATE
+            SET session_id = EXCLUDED.session_id, plan = EXCLUDED.plan, updated_at = now()
+        "#,
+        user_id,
+        session_id,
+        plan
+    )
+    .execute(&mut **tx)
+    .await?;
+    Ok(())
+}
+
 /// Drop this tenant's D-S6 document. The scratch is loss-tolerant: an enroll and
 /// a session end both clear it (`cadus_web/api.py:833`, `:906`).
 ///

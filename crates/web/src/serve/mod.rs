@@ -132,7 +132,7 @@ pub use route::serve;
 pub(crate) use route::{install_next, record_first_serve};
 pub(crate) use session_tasks::restore_session_tasks;
 use target::*;
-pub(crate) use teach::{kp_visuals, teach_figure};
+pub(crate) use teach::{kp_visuals, teach_figure, teach_page};
 pub use teach::{teach, teach_check};
 
 /// The code of a task id that is not in this session's plan.

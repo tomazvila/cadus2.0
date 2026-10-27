@@ -124,9 +124,10 @@ topics:
             solution_sketch: 'The test rejects $H_0$ when $0.031 \le \alpha$. The levels 0.01 and 0.025 are below 0.031, so the smallest level that rejects is 0.05.'
         constraints: 'explicit p and alpha; answers use reject / fail to reject, never accept H0'
     diagnostic_exemplar:
-      problem: 'Packets should average $\mu = 250$ g. A sample of $n = 36$ packets gives a mean $2.5$ SEs below $250$. For a two-sided test at $\alpha = 0.05$: state the hypotheses, approximate the p-value with the empirical rule, and give the decision.'
-      answer: '$H_0: \mu = 250$ vs $H_1: \mu \ne 250$; a mean at least $2.5$ SEs out is rarer than the $5\%$ chance of $2$ SEs, so $p < 0.05$ — reject $H_0$.'
-      solution_sketch: 'State $H_0$ (the no-effect claim) against a two-sided $H_1$, then judge the observed distance against the empirical rule''s benchmark: $2$ SEs out already leaves only $5\%$, so $2.5$ SEs is rarer still and $p < \alpha$.'
+      problem: 'A significance test of $H_0$ reports $p = 0.04$. Suppose that $H_0$ is true and that $500$ new samples are taken. What is the expected number of the samples that give data at least as extreme as the original sample?'
+      answer_contract: {"kind":"exact"}
+      answer: '20'
+      solution_sketch: 'The p-value is the chance of data at least as extreme when $H_0$ is true. So $0.04\cdot 500=20$ samples.'
     anki_seeds:
       - front: 'p-value?'
         back: 'The probability, assuming $H_0$, of data at least as extreme as what was observed.'
@@ -261,9 +262,10 @@ topics:
             solution_sketch: 'The test detects 0.8 of the real effects. So the number of real effects is $48 \div 0.8 = 60$.'
         constraints: 'power computed only via 1 - beta; context items weigh the real-world cost of each error or use the power as a rate'
     diagnostic_exemplar:
-      problem: 'A factory tests each batch with $H_0$: "the batch meets the specification", at $\alpha = 0.01$, and the test has Type II error probability $\beta = 0.15$. Describe a Type I and a Type II error in context, give the probability of a Type I error when $H_0$ is true, and give the power of the test.'
-      answer: 'Type I: rejecting a good batch — probability 0.01 (the significance level); Type II: passing a batch that violates the specification; power = 1 - β = 0.85'
-      solution_sketch: '$\alpha$ is exactly $P(\text{reject } H_0 \mid H_0 \text{ true})$, and power $= 1 - \beta$.'
+      problem: 'A test has a Type II error probability $\beta=0.35$. What is the power of the test?'
+      answer_contract: {"kind":"exact"}
+      answer: '0.65'
+      solution_sketch: 'Power is $1-\beta=1-0.35=0.65$.'
     anki_seeds:
       - front: 'Type I vs Type II error?'
         back: 'Type I: reject a true $H_0$. Type II: fail to reject a false $H_0$.'
@@ -400,9 +402,10 @@ topics:
             solution_sketch: 'The standard error is $\sigma / \sqrt{n}$, so $6 / \sqrt{n} = 1.5$. Then $\sqrt{n} = 4$ and $n = 16$.'
         constraints: 'metric contexts; conclusions restate the decision in the scenario; empirical-rule p-values (0.32, 0.05, 0.003) quoted when |z| lands on 1, 2, or 3'
     diagnostic_exemplar:
-      problem: 'Cement sacks are labelled $25$ kg and the process has $\sigma = 0.4$ kg. A sample of $n = 16$ sacks has $\bar{x} = 24.7$ kg. Test $H_0: \mu = 25$ against $H_1: \mu \ne 25$ at $\alpha = 0.05$ ($z^* = 2$). Give $z$, the decision, and a conclusion in context.'
-      answer: '$\operatorname{SE} = 0.4/4 = 0.1$; $z = -3$; $|-3| > 2$, so reject $H_0$ — strong evidence the sacks are underfilled ($p \approx 0.003$).'
-      solution_sketch: 'The $\sigma$-known case: $\operatorname{SE} = \sigma/\sqrt{n}$, $z = (\bar x - \mu_0)/\operatorname{SE}$, and reject when $|z|$ exceeds the supplied $z^* = 2$. Finish in context — say what it means for the sacks, not merely that $H_0$ is rejected.'
+      problem: 'A process has a known population standard deviation of $12$. A sample of $n=36$ has mean $73$. What is the z statistic for the test of $H_0: \mu = 70$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1.5'
+      solution_sketch: 'The standard error is $12/\sqrt{36}=2$. So $z=\frac{73-70}{2}=1.5$.'
     anki_seeds:
       - front: 'One-sample z statistic?'
         back: '$z = \dfrac{\bar{x} - \mu_0}{\sigma/\sqrt{n}}$.'
@@ -536,9 +539,10 @@ topics:
             solution_sketch: 'The sample proportion is $140/200 = 0.7$ and the standard error under $H_0$ is about 0.0283. So $z = -0.1 / 0.0283 \approx -3.54$, which is below $-1.645$, and the test rejects $H_0$.'
         constraints: 'two-sided tests use z* = 2 (empirical-rule value); any one-sided or exact critical value is supplied in the problem; the interval SE uses p-hat, the test SE uses p0; conclusions restate the decision in the scenario terms'
     diagnostic_exemplar:
-      problem: 'A coin is suspected of being unfair. In $n = 100$ flips it lands heads $65$ times. Test $H_0: p = \frac{1}{2}$ against $H_1: p \ne \frac{1}{2}$ at $\alpha = 0.05$ ($z^* = 2$). Give the conditions check, $z$, and the decision in context.'
-      answer: '$np_0 = n(1-p_0) = 50 \ge 10$; $\operatorname{SE} = \sqrt{\frac{1/4}{100}} = \frac{1}{20} = 0.05$; $z = \dfrac{0.65 - 0.5}{0.05} = 3$; $|3| > 2$, so reject $H_0$ — strong evidence the coin is unfair ($p \approx 0.003$).'
-      solution_sketch: 'Check $np_0 \geq 10$ and $n(1-p_0) \geq 10$ first, then build the SE from the null value $p_0$ (not from $\hat p$), form $z = (\hat p - p_0)/\operatorname{SE}$, and compare with the supplied $z^* = 2$.'
+      problem: 'A coin lands heads $60$ times in $100$ flips. Find the z statistic for the test of $H_0: p = 1/2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The sample proportion is $0.6$. The standard error under $H_0$ is $\sqrt{0.5\cdot0.5/100}=0.05$. So $z=\frac{0.6-0.5}{0.05}=2$.'
     anki_seeds:
       - front: 'One-proportion z statistic?'
         back: '$z = \dfrac{\hat{p} - p_0}{\sqrt{p_0(1-p_0)/n}}$ — the SE under $H_0$ uses $p_0$, not $\hat{p}$.'
@@ -813,9 +817,10 @@ topics:
             solution_sketch: 'The difference is $-0.5$, so the standard error must be $0.2$. Then $2/\sqrt{n}=0.2$, so $\sqrt{n}=10$ and $n=100$.'
         constraints: 'metric contexts; one-sided and two-sided cases; the t statistic is asked in most items; two label items (a decision and a four-way conclusion) with different answers; one item finds n'
     diagnostic_exemplar:
-      problem: 'A bakery''s loaves should weigh $800$ g on average. A sample of $n = 16$ loaves has $\bar{x} = 806$ g and $s = 8$ g. Test $H_0: \mu = 800$ against $H_1: \mu \ne 800$ at $\alpha = 0.05$ ($t^* = 2.131$, df $15$). Give $t$, the decision, and a conclusion in context.'
-      answer: '$\operatorname{SE} = 2$; $t = 3$; $|3| > 2.131$, so reject $H_0$ — evidence the loaves are heavier than $800$ g on average.'
-      solution_sketch: 'Same shape as the z-test with $s$ in place of an unknown $\sigma$: $\operatorname{SE} = s/\sqrt{n}$ and $t = (\bar x - \mu_0)/\operatorname{SE}$, compared with the supplied $t^* = 2.131$ on $n - 1 = 15$ df.'
+      problem: 'A sample of $n=25$ measurements has $\bar{x}=54$ and $s=10$. Find the t statistic for the test of $H_0: \mu=50$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The standard error is $10/\sqrt{25}=2$. So $t=\frac{54-50}{2}=2$.'
     anki_seeds:
       - front: 'One-sample t statistic?'
         back: '$t = \dfrac{\bar{x} - \mu_0}{s/\sqrt{n}}$, with $n - 1$ degrees of freedom.'
@@ -954,9 +959,10 @@ topics:
             solution_sketch: 'The standard error must be $10/5=2$, so its variance is $4$. Then $\frac{144}{n}+\frac{256}{n}=\frac{400}{n}=4$, so $n=100$.'
         constraints: 'metric contexts; t* always supplied with its (conservative) df when a decision or interval is asked; two decision items with different answers; one confidence-interval item; causal language only when the scenario states random assignment, never for observational comparisons'
     diagnostic_exemplar:
-      problem: '$32$ students are randomly split: $16$ revise with a study app, $16$ without, and all sit the same exam marked out of $10$. App group: $\bar{x}_1 = 8.0$, $s_1 = 1.2$; control: $\bar{x}_2 = 6.5$, $s_2 = 1.6$. Test $H_0: \mu_1 = \mu_2$ against $H_1: \mu_1 \ne \mu_2$ at $\alpha = 0.05$ with $t^* = 2.131$ (conservative df $15$). Give $t$, the decision, and a conclusion in context.'
-      answer: '$\operatorname{SE} = \sqrt{0.09 + 0.16} = 0.5$; $t = \dfrac{8.0 - 6.5}{0.5} = 3$; $|3| > 2.131$, so reject $H_0$ — evidence the app improves marks, and random assignment lets the difference be attributed to the app.'
-      solution_sketch: 'Two independent samples, so the standard errors combine in quadrature: $\operatorname{SE} = \sqrt{s_1^2/n_1 + s_2^2/n_2}$ and $t = (\bar x_1 - \bar x_2)/\operatorname{SE}$ against the supplied $t^* = 2.131$. Random assignment is what upgrades the conclusion from association to cause.'
+      problem: 'Two independent samples give $\bar{x}_1=50$, $s_1=9$, $n_1=9$ and $\bar{x}_2=40$, $s_2=8$, $n_2=4$. Find the unpooled two-sample t statistic for the difference of the means.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The standard error is $\sqrt{81/9+64/4}=\sqrt{25}=5$. So $t=\frac{50-40}{5}=2$.'
     anki_seeds:
       - front: 'Two-sample t statistic?'
         back: '$t = \dfrac{\bar{x}_1 - \bar{x}_2}{\sqrt{s_1^2/n_1 + s_2^2/n_2}}$.'
@@ -1094,9 +1100,10 @@ topics:
             solution_sketch: 'The test rejects only when the statistic is strictly above $15.086$. So $H_0$ is kept when $x\le15.086$.'
         constraints: 'critical values always supplied with their df; df = k - 1 in both directions; rejection is right-tail only; two label items with different answers; the rejection region is written as an inequality in x'
     diagnostic_exemplar:
-      problem: 'A four-sided die is rolled $100$ times: observed counts $(30, 30, 22, 18)$. Test $H_0$: "the die is fair" at $\alpha = 0.05$; the critical value with df $= 3$ is $7.815$ (given). Compute $\chi^2$ and decide.'
-      answer: 'Expected $25$ each; $\chi^2 = \dfrac{25 + 25 + 9 + 49}{25} = 4.32 < 7.815$: fail to reject $H_0$ — the counts are consistent with a fair die.'
-      solution_sketch: 'A fair die makes every expected count $100/4 = 25$; sum $\frac{(O - E)^2}{E}$ over the four cells and compare with the supplied critical value $7.815$ — falling below it means the discrepancies are within chance variation.'
+      problem: 'A coin is tossed $50$ times and shows $30$ heads and $20$ tails. Find the chi-square statistic for the claim that the coin is fair.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Each outcome is expected $25$ times. Then $\chi^2=\frac{(30-25)^2}{25}+\frac{(20-25)^2}{25}=1+1=2$.'
     anki_seeds:
       - front: 'Chi-square statistic?'
         back: '$\chi^2 = \sum \dfrac{(O - E)^2}{E}$ over all categories.'
@@ -1242,9 +1249,10 @@ topics:
             solution_sketch: 'The margin of error is $t^*\operatorname{SE}_b$, so $\operatorname{SE}_b$ is the margin divided by $t^*$. Divide: $0.55\div2.2=0.25$. The standard error of the slope is $0.25$.'
         constraints: 't* supplied with df = n - 2; confidence interval endpoints are exact decimals of at most three places; the decision is a separate item from the t statistic; when both test and interval appear, their agreement is stated'
     diagnostic_exemplar:
-      problem: 'A regression of daily heating cost in EUR ($y$) on outdoor temperature in °C ($x$) over $n = 22$ days gives $b = -2.5$ with $\operatorname{SE}_b = 1.0$; $t^* = 2.086$ (df $20$, $\alpha = 0.05$). Test $H_0: \beta = 0$ and conclude in context.'
-      answer: '$t = -2.5$ and $|-2.5| > 2.086$: reject $H_0$ — evidence of a real linear relationship, with cost falling by about $2.5$ EUR per additional degree.'
-      solution_sketch: 'The slope test is an ordinary t-test: $t = (b - 0)/\operatorname{SE}_b$ against the supplied $t^* = 2.086$ on $n - 2 = 20$ df. Rejecting says the slope is distinguishable from zero; state it in EUR per degree.'
+      problem: 'A regression gives a slope $b=3.6$ with standard error $\operatorname{SE}_b=0.9$. Find the $t$ statistic for testing $H_0:\beta=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The statistic is $t=\frac{b-0}{\operatorname{SE}_b}=\frac{3.6}{0.9}=4$.'
     anki_seeds:
       - front: '"No linear relationship" as a hypothesis?'
         back: '$H_0: \beta = 0$, about the population slope.'

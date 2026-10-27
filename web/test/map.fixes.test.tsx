@@ -91,6 +91,14 @@ describe('the map view — the fixes', () => {
     view.unmount();
   });
 
+  it('opens the lesson text of the picked topic', async () => {
+    const view = await mountLoaded();
+    await act(async () => { last().emit('tap', last().getElementById('fractions')); });
+    await act(async () => { screen.getByRole('button', { name: 'Read the lesson text' }).click(); });
+    expect(view.onRead).toHaveBeenCalledWith('fractions');
+    view.unmount();
+  });
+
   it('gives each state its own shape and the new words', () => {
     expect(new Set(STATES.map((s) => s.shape)).size).toBe(4);
     expect(STATES.map((s) => s.label)).toEqual([

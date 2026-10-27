@@ -115,10 +115,10 @@ topics:
             solution_sketch: 'Integrating $f_x$ in $x$ gives $x^2 y + 3x$ plus an unknown function $g(y)$. Matching $f_y = x^2 + g''(y)$ with $x^2 + 2y$ gives $g(y) = y^2$. So $f = x^2 y + 3x + y^2$.'
         constraints: 'potentials are polynomials of degree at most 3; gradient fields are written as a bracketed list of components; is-it-a-gradient-field items use the mixed-partials test'
     diagnostic_exemplar:
-      problem: 'Find the gradient field of $f(x, y) = x^3 y - y^2$ and evaluate it at $(1, 2)$.'
-      answer: '$\nabla f = \langle 3x^2 y,\; x^3 - 2y \rangle$; $\nabla f(1, 2) = \langle 6, -3 \rangle$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Differentiate in each variable: $f_x = 3x^2y$, $f_y = x^3 - 2y$; at $(1,2)$ these are $6$ and $1 - 4 = -3$.'
+      problem: 'Let $f(x, y) = x^2 y + y$. Find the value of the gradient field $\nabla f$ at $(2, 1)$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(4, 5)'
+      solution_sketch: '$\nabla f = \langle 2xy,\; x^2 + 1 \rangle$. At $(2, 1)$ this is $\langle 4, 5 \rangle$.'
     anki_seeds:
       - front: 'What is a vector field on $\mathbb{R}^2$?'
         back: 'A function assigning a vector $\mathbf{F}(x, y)$ to each point $(x, y)$.'
@@ -621,10 +621,10 @@ topics:
             solution_sketch: 'A closed curve does not force the integral to be zero. On the circle $x = 2\cos t$, $y = 2\sin t$ the integrand is $4\cos^2 t + 4\sin^2 t = 4$. So the integral is $\int_0^{2\pi} 4\,dt = 8\pi$.'
         constraints: '3D curves polynomial in t; closed squares, triangles and ellipses traversed counterclockwise; answers small rationals or multiples of pi'
     diagnostic_exemplar:
-      problem: 'Evaluate $\oint_C x^2\,dy - y\,dx$ counterclockwise around the triangle with vertices $(0,0)$, $(1,0)$, $(0,1)$.'
-      answer: '$\dfrac{5}{6}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'On $(0,0) \to (1,0)$: $y = 0$, $dy = 0$, contribution $0$. On $(1,0) \to (0,1)$, with $x = 1-t$, $y = t$: the integrand is $\left[(1-t)^2 + t\right]dt$, giving $\tfrac{1}{3} + \tfrac{1}{2} = \tfrac{5}{6}$. On $(0,1) \to (0,0)$: $x = 0$, $dx = 0$, contribution $0$.'
+      problem: 'Evaluate $\int_C (x + y)\,ds$, where $C$ is the line segment from $(0, 0)$ to $(3, 4)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '35/2'
+      solution_sketch: 'Use $x = 3t$, $y = 4t$ for $0 \le t \le 1$, so $ds = 5\,dt$. The integral is $\int_0^1 7t \cdot 5\,dt = \frac{35}{2}$.'
     anki_seeds:
       - front: 'How does $\int_C P\, dx + Q\, dy$ relate to a vector line integral?'
         back: 'It equals $\int_C \mathbf{F} \cdot d\mathbf{r}$ for $\mathbf{F} = \langle P, Q \rangle$.'
@@ -757,10 +757,10 @@ topics:
             solution_sketch: 'Integrating $f_x=e^x\sin y+2x$ in $x$ gives $f=e^x\sin y+x^2+g(y)$. Then $f_y=e^x\cos y+g''(y)$ must equal $e^x\cos y+3y^2$, so $g''(y)=3y^2$ and $g=y^3$. Hence $f=e^x\sin y+x^2+y^3$.'
         constraints: "polynomial fields and fields with e^x sin y terms; a potential exists only if P_y = Q_x, so one item asks for the verdict first; one item pins the constant with f(0, 0) = 5"
     diagnostic_exemplar:
-      problem: 'Show that $\mathbf{F} = \langle 3x^2 + 2xy^3,\; 3x^2y^2 + 4y \rangle$ is conservative and find a potential function.'
-      answer: '$P_y = 6xy^2 = Q_x$, so $\mathbf{F}$ is conservative; $f(x, y) = x^3 + x^2y^3 + 2y^2$ (plus any constant).'
-      answer_contract: {kind: none}
-      solution_sketch: 'Integrating $P$ in $x$: $f = x^3 + x^2y^3 + g(y)$. Then $f_y = 3x^2y^2 + g''(y) = 3x^2y^2 + 4y$ forces $g''(y) = 4y$, so $g(y) = 2y^2$.'
+      problem: 'The field $\mathbf{F} = \langle 2xy,\; x^2 + 3 \rangle$ has a potential function $f$ with $f(0, 0) = 0$. Find $f(2, 1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'Integrate $f_x = 2xy$ to get $f = x^2 y + g(y)$. Then $f_y = x^2 + g''(y) = x^2 + 3$ gives $g = 3y$, so $f(2,1) = 4 + 3 = 7$.'
     anki_seeds:
       - front: 'Component test for a conservative field $\mathbf{F} = \langle P, Q \rangle$ on a simply connected domain?'
         back: '$\dfrac{\partial P}{\partial y} = \dfrac{\partial Q}{\partial x}$'
@@ -1283,10 +1283,10 @@ topics:
             solution_sketch: 'For this ellipse $x\,dy - y\,dx = 8\,dt$, so the line integral is $16\pi$. The area formula has the factor $\tfrac{1}{2}$, so the area is $\tfrac{1}{2}\cdot 16\pi = 8\pi$.'
         constraints: "ellipses and polygons parametrized with sin/cos or segments; the integrand collapses via sin^2 + cos^2 = 1; items may ask for a side, a cost or a depth"
     diagnostic_exemplar:
-      problem: 'Use Green''s theorem to evaluate $\oint_C xy\,dx + x^2\,dy$ where $C$ is the boundary of the triangle with vertices $(0,0)$, $(2,0)$, $(2,2)$, traversed counterclockwise.'
-      answer: '$\dfrac{8}{3}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$Q_x - P_y = 2x - x = x$, and the triangle is $0 \le x \le 2$, $0 \le y \le x$, so the integral is $\int_0^2\!\int_0^x x\,dy\,dx = \int_0^2 x^2\,dx = \tfrac{8}{3}$.'
+      problem: 'Use Green''s theorem to evaluate $\oint_C -y\,dx + x\,dy$, where $C$ is the boundary of the rectangle $[0, 3] \times [0, 2]$, traversed counterclockwise.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'Here $Q_x - P_y = 1 - (-1) = 2$. The integral is $2$ times the area of the rectangle, $2 \cdot 6 = 12$.'
     anki_seeds:
       - front: 'Green''s theorem (circulation form)?'
         back: '$\oint_C P\, dx + Q\, dy = \iint_D \left(\frac{\partial Q}{\partial x} - \frac{\partial P}{\partial y}\right) dA$, with $C$ the positively oriented boundary of $D$.'

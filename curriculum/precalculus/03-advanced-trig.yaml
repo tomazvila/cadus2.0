@@ -27,6 +27,7 @@ topics:
         name: 'Evaluate at standard values'
         key_prerequisites: [unit-circle]
         constraints: 'inputs drawn from unit-circle values; answers in radians; includes short word problems that ask for an angle'
+        visuals: [{"kind":"special_triangle","figure":{"shape":"thirty_sixty_ninety","short_leg":"3"},"caption":"A right triangle with angles of 30 and 60 degrees and the side lengths in their fixed ratio"}]
         exemplars:
           - problem: 'Evaluate $\arcsin\left(\frac{\sqrt{3}}{2}\right)$.'
             answer: 'pi/3'
@@ -647,6 +648,7 @@ topics:
           answer_contract: {"kind": "exact"}
           answer: '1'
           reveal: 'Factoring gives $\sin(2x - 2) = \sin(2(x - 1))$, so the shift is $1$ and not $2$. The shift is read only from the factored form $B(x - C)$.'
+        visuals: [{"kind":"curve","x_min":"0","x_max":"10","y_min":"-2","y_max":"4","x_tick":"1","y_tick":"1","curve":{"family":"sine","amplitude":"2","period":"8","phase":"1","midline":"1"},"key_points":[{"x":"1","y":"1","label":"start"},{"x":"3","y":"3","label":"max"},{"x":"7","y":"-1","label":"min"}],"asymptotes":[],"caption":"A sine curve shifted right and up from the parent graph, with the start of its cycle, its highest point and its lowest point marked"}]
         exemplars:
           - problem: 'How far to the right is the graph of $y = 3\sin\left(2x - \frac{\pi}{3}\right) + 1$ shifted from the graph of $y = 3\sin 2x + 1$?'
             answer: 'pi/6'
@@ -696,6 +698,7 @@ topics:
         name: Write the equation from features or a graph
         key_prerequisites: [trig-graphs-midline, function-transformations-shifts]
         constraints: "integer amplitudes and midlines; periods 2π, π, or 4π; features given as max/min values and locations at multiples of π/6 or π/4"
+        visuals: [{"kind":"curve","x_min":"-1","x_max":"11","y_min":"-4","y_max":"2","x_tick":"1","y_tick":"1","curve":{"family":"cosine","amplitude":"2","period":"8","phase":"1","midline":"-1"},"key_points":[{"x":"1","y":"1","label":"top"},{"x":"5","y":"-3","label":"bottom"}],"asymptotes":[],"caption":"A cosine curve that reaches its highest point at the start of its cycle, with the highest and lowest points marked"}]
         exemplars:
           - problem: 'Write the equation of the sine curve with amplitude $2$, period $\pi$, phase shift $\frac{\pi}{4}$ to the right and midline $y = 3$.'
             answer: '2 sin(2(x - pi/4)) + 3'
@@ -733,6 +736,7 @@ topics:
         name: Sinusoidal modeling
         key_prerequisites: [trig-graphs-midline]
         constraints: "metric units and 24-hour times; periods giving B as a simple π-fraction; the phase pinned by a stated maximum, minimum, or start position"
+        visuals: [{"kind":"curve","x_min":"0","x_max":"12","y_min":"4","y_max":"16","x_tick":"1","y_tick":"2","curve":{"family":"cosine","amplitude":"4","period":"10","phase":"2","midline":"10"},"key_points":[{"x":"2","y":"14","label":"high"},{"x":"7","y":"6","label":"low"}],"asymptotes":[],"caption":"A cosine curve that models a repeating quantity, with its high value and its low value marked"}]
         exemplars:
           - problem: 'A Ferris wheel of radius $7$ m has its centre $9$ m above the ground and turns once every $24$ s. A cabin starts at the lowest point at $t = 0$. Write the height $h$ of the cabin in metres as a cosine function of $t$.'
             answer: '9 - 7 cos(pi t/12)'
@@ -775,10 +779,10 @@ topics:
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The midline is $\frac{18 + 6}{2} = 12$ and the amplitude is $6$. The period is $365$ days, so $B = \frac{2\pi}{365}$, and the maximum falls on day $172$.'
     diagnostic_exemplar:
-      problem: 'A Ferris wheel of radius $8$ m has its centre $10$ m above the ground and turns once every $40$ s. A cabin starts at the lowest point at $t = 0$. Write its height $h(t)$ in metres as a cosine function.'
-      answer: "h(t) = 10 - 8 cos(πt/20)"
-      answer_contract: {kind: none}
-      solution_sketch: 'Midline $10$, amplitude $8$, $B = \frac{2\pi}{40} = \frac{\pi}{20}$; starting at the minimum means a reflected cosine.'
+      problem: 'Find the phase shift of $y = 2\sin(4x - \pi) + 1$, where a positive shift is to the right.'
+      answer_contract: {"kind":"exact"}
+      answer: 'pi/4'
+      solution_sketch: 'Write $4x - \pi = 4\left(x - \frac{\pi}{4}\right)$. The graph moves $\frac{\pi}{4}$ to the right.'
     anki_seeds:
       - front: "For y = A sin(B(x − C)) + D, the phase shift is..."
         back: "C: right if C > 0, left if C < 0 (read only after factoring B out of the argument)."
@@ -929,10 +933,10 @@ topics:
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
             solution_sketch: 'The reading is undefined where the argument is a multiple of $\pi$. The argument grows by $\pi$ when $t$ grows by $\frac{\pi}{\pi/4} = 4$ seconds.'
     diagnostic_exemplar:
-      problem: 'Find the period of $y = \tan\frac{x}{2}$ and the equation of its vertical asymptote in $(0, 2\pi)$.'
-      answer: "period 2π; asymptote x = π"
-      answer_contract: {kind: none}
-      solution_sketch: 'Period $\pi \div \frac{1}{2} = 2\pi$; asymptotes where $\frac{x}{2} = \frac{\pi}{2} + \pi k$, so $x = \pi$ inside $(0, 2\pi)$.'
+      problem: 'Find the smallest positive $x$ at which $y = \cot x$ has a vertical asymptote.'
+      answer_contract: {"kind":"exact"}
+      answer: 'pi'
+      solution_sketch: 'We have $\cot x = \frac{\cos x}{\sin x}$. The denominator first reaches zero at $x = \pi$, where the numerator is $-1$.'
     anki_seeds:
       - front: "Period of tan and cot?"
         back: "π (not 2π)."

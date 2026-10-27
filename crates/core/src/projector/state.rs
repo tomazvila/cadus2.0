@@ -369,6 +369,7 @@ mod tests {
             task_id: None,
             inconclusive: false,
             confirmation_skills: Vec::new(),
+            variety_waived: false,
         })
     }
 

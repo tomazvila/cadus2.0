@@ -50,6 +50,7 @@ import type {
   QuizResultResponse,
   TeachCheckResponse,
   TeachResponse,
+  TopicTeachResponse,
   UngradedListResponse,
   OverturnsResponse,
 } from './types';
@@ -138,6 +139,7 @@ export const api: ApiClient = {
     request<ProblemReportReceipt>('GET', `/reports/${seg(reportId)}`, undefined, signal),
   taskServe: (taskId) => request<ServedProblem>('POST', `/task/${seg(taskId)}/serve`, {}),
   taskTeach: (taskId) => request<TeachResponse>('POST', `/task/${seg(taskId)}/teach`, {}),
+  topicTeach: (topicId) => request<TopicTeachResponse>('GET', `/topics/${seg(topicId)}/teach`),
   taskTeachCheck: (taskId, body) =>
     request<TeachCheckResponse>('POST', `/task/${seg(taskId)}/teach/check`, body),
   taskHint: (taskId, problemId) =>

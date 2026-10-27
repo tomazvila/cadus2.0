@@ -42,7 +42,7 @@ Full JSON Schema for all 16 types plus `LearnerModel`: `docs/reference/event-sch
 | `task_served` | **`task_id: str`**, **`task_type: TaskType`**, `topic: Slug\|null = null`, `kp: Slug\|null = null`, `problems: [ServedProblem] = []`, `component_topics: [Slug] = []`, `seed: int\|null = null` |
 | `attempt` | **`attempt_id: str`**, **`task_id: str`**, **`topic: Slug`**, `kp: Slug\|null = null`, **`task_type: TaskType`**, **`problem: {text: str, expected: str}`**, **`given_answer: str`**, `work: str\|null = null`, `answer_kind: AnswerKind\|null = null`, **`correct: bool`**, **`secs: int (≥0)`**, `error_tags: [str] = []`, **`work_quality: WorkQuality`**, `grader_note: str\|null = null`, `assisted: bool = false` |
 | `lesson_result` | **`topic: Slug`**, **`passed: bool`**, `failed_at_kp: Slug\|null = null`, `xp: float = 0.0`, **`quality_tier: WorkQuality`**, `assisted: bool = false` |
-| `review_result` | **`topic: Slug`**, **`passed: bool`**, **`weighted_score: float`**, `xp: float = 0.0`, **`quality_tier: WorkQuality`**, `assisted: bool = false`, `task_id: str\|null = null` |
+| `review_result` | **`topic: Slug`**, **`passed: bool`**, **`weighted_score: float`**, `xp: float = 0.0`, **`quality_tier: WorkQuality`**, `assisted: bool = false`, `task_id: str\|null = null`, `inconclusive: bool = false`, `confirmation_skills: list[str] = []`, `variety_waived: bool = false` |
 | `quiz_result` | **`quiz_id: str`**, **`score: float`**, `per_topic: [{topic: Slug, correct: bool, secs: int≥0}] = []`, `xp: float = 0.0` |
 | `remediation_triggered` | **`kind: str`**, **`source_topic: Slug`**, `targets: [Slug] = []` |
 | `diagnostic_answer` | **`topic: Slug`**, **`correct: bool`**, **`secs: int≥0`**, **`weight: float ∈[0,1]`** |
@@ -129,7 +129,7 @@ else:       mark_lesson_fail(topic, failed_at_kp, ts)     # NO FIRe, NO propagat
 record_xp(ts, xp); last_practice[topic] = ts
 apply_fire_result(topic, passed=passed, quality=quality_tier, assisted=assisted)
 ```
-No status change. A `review_result` on an `untouched` topic leaves it `untouched` while writing `repNum`/`memoryBase`/`t0` — observable in the fixture (`absolute-value-inequalities`).
+No status change. The fold reads `passed` and `inconclusive` only; the variety rule (D-RV1) is applied before the event is written, and `variety_waived` is never read. A `review_result` on an `untouched` topic leaves it `untouched` while writing `repNum`/`memoryBase`/`t0` — observable in the fixture (`absolute-value-inequalities`).
 
 ### 4.5 `quiz_result`
 

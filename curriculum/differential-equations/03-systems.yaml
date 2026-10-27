@@ -92,10 +92,10 @@ topics:
             solution_sketch: 'Tank A loses $20/100 = 1/5$ of its salt per minute and gains $20/200 = 1/10$ of the salt in tank B. So $A = \begin{pmatrix}- \frac{1}{5}&\frac{1}{10}\\\frac{1}{5}&- \frac{1}{10}\end{pmatrix}$. The product $A\binom{1}{-1} = \binom{-3/10}{3/10} = -\frac{3}{10}\binom{1}{-1}$. So $k = -3/10$.'
         constraints: '2x2 matrices with integer entries; verification reduces to one matrix-vector product compared with k times the vector; word problems use mixing tanks'
     diagnostic_exemplar:
-      problem: 'Write the system $x'' = 2x + y$, $y'' = 4x + 2y$ in matrix form, and verify that $\mathbf{X} = e^{4t}\binom{1}{2}$ is a solution.'
-      answer: '$\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 4 & 2 \end{pmatrix}\mathbf{X}$; and since $A\binom{1}{2} = \binom{4}{8} = 4\binom{1}{2}$, we get $A\mathbf{X} = 4\mathbf{X} = \mathbf{X}''$, so it is a solution.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The coefficient matrix has rows $(2, 1)$ and $(4, 2)$; the vector $\binom{1}{2}$ is an eigenvector with eigenvalue $4$, which matches the exponential rate.'
+      problem: 'The system $x''=4x-y$, $y''=2x+5y$ is written as $\mathbf{X}''=A\mathbf{X}$ with $\mathbf{X}=\binom{x}{y}$. Find the trace of $A$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The matrix $A$ has rows $(4,-1)$ and $(2,5)$. Its trace is $4+5=9$.'
     anki_seeds:
       - front: 'Matrix form of a linear system of ODEs?'
         back: '$\mathbf{X}'' = A\mathbf{X}$, where $\mathbf{X}$ stacks the unknown functions and $A$ holds the coefficients.'
@@ -197,10 +197,10 @@ topics:
             solution_sketch: 'Eliminating $x$ gives a solution $y = c_1 + c_2e^{-3t/10}$, and the exponential term dies out, so $y$ tends to $c_1$. With $y(0) = 0$ and $y''(0) = \frac{60}{5} = 12$ we get $c_1 + c_2 = 0$ and $-\frac{3}{10}c_2 = 12$, so $c_2 = -40$ and $c_1 = 40$. Tank B holds $40$ kg in the long run.'
         constraints: '2x2 systems with initial values; the learner finds x(t), y(t), or a long-run value; characteristic roots are integers or simple fractions; three word problems'
     diagnostic_exemplar:
-      problem: 'Solve the system $x'' = y$, $y'' = 2x + y$ by elimination, giving both $x(t)$ and $y(t)$.'
-      answer: '$x = c_1 e^{2t} + c_2 e^{-t}$, $\;y = 2c_1 e^{2t} - c_2 e^{-t}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Differentiating the first equation, $x'''' = y'' = 2x + x''$, so $x'''' - x'' - 2x = 0$ with roots $2$ and $-1$. Then $y = x''$.'
+      problem: 'Eliminate $y$ from $x''=y$, $y''=6x+y$ to get a second-order equation for $x$. Find the positive root of its characteristic equation.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Differentiate: $x''''=y''=6x+y=6x+x''$. So $x''''-x''-6x=0$ and $r^2-r-6=(r-3)(r+2)=0$. The positive root is $3$.'
     anki_seeds:
       - front: 'Elimination method for a 2x2 linear system of ODEs?'
         back: 'Differentiate one equation, substitute the other to get a single second-order ODE in one variable; recover the second variable by back-substitution.'
@@ -302,10 +302,10 @@ topics:
             solution_sketch: 'The Wronskian is $e^{-t}\cdot(-4e^{-4t}) - e^{-4t}\cdot(-e^{-t}) = -4e^{-5t} + e^{-5t} = -3e^{-5t}$. This is never zero, so the two solutions are independent for every $t$. They form a fundamental set, and every motion is a combination of them.'
         constraints: 'Wronskian = determinant of the matrix whose columns are the solutions, in the order given; 2x2 only; two word problems'
     diagnostic_exemplar:
-      problem: 'Compute the Wronskian of $\mathbf{X}_1 = e^{t}\binom{1}{0}$ and $\mathbf{X}_2 = e^{2t}\binom{1}{1}$. Fundamental set?'
-      answer: '$W = \det\begin{pmatrix} e^{t} & e^{2t} \\ 0 & e^{2t} \end{pmatrix} = e^{3t} \neq 0$: yes.'
-      answer_contract: {kind: none}
-      solution_sketch: 'For vector solutions the Wronskian is the determinant of the matrix whose columns are the solutions; here the first has zero second entry, so the matrix is triangular and $W = e^{t}\cdot e^{2t}$. Nonvanishing $W$ is exactly the fundamental-set criterion.'
+      problem: 'Two solutions of a $2\times2$ system are $\mathbf{X}_1=e^{t}\binom{1}{3}$ and $\mathbf{X}_2=e^{2t}\binom{1}{5}$. Find their Wronskian at $t=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'At $t=0$ the columns are $(1,3)$ and $(1,5)$. The determinant is $1\cdot5-1\cdot3=2$.'
     anki_seeds:
       - front: 'General solution of a 2x2 system $\mathbf{X}'' = A\mathbf{X}$ from a fundamental set $\mathbf{X}_1, \mathbf{X}_2$?'
         back: '$\mathbf{X} = c_1\mathbf{X}_1 + c_2\mathbf{X}_2$'
@@ -407,10 +407,10 @@ topics:
             solution_sketch: 'The characteristic polynomial is $\det(A - \lambda I) = \lambda^2 + 6\lambda + 5 = (\lambda + 1)(\lambda + 5)$. The eigenvalues are $-1$ and $-5$. The larger one is $-1$.'
         constraints: 'second-order constant-coefficient equations with integer roots, some with leading coefficient other than 1; companion matrix always [[0,1],[-c,-b]]; two word problems'
     diagnostic_exemplar:
-      problem: 'Convert $y'''' + 4y'' - 5y = 0$ into a first-order system in matrix form, and find the eigenvalues of its companion matrix.'
-      answer: '$\mathbf{X}'' = \begin{pmatrix} 0 & 1 \\ 5 & -4 \end{pmatrix}\mathbf{X}$ with $x_1 = y$, $x_2 = y''$; eigenvalues $\lambda = 1$ and $\lambda = -5$ — exactly the characteristic roots of the scalar equation.'
-      answer_contract: {kind: none}
-      solution_sketch: '$x_1'' = x_2$ and $x_2'' = y'''' = 5y - 4y'' = 5x_1 - 4x_2$. Then $\det(A - \lambda I) = \lambda^2 + 4\lambda - 5 = (\lambda - 1)(\lambda + 5)$.'
+      problem: 'Write $y''''+7y''-4y=0$ as a first-order system $\mathbf{X}''=A\mathbf{X}$ with $x_1=y$ and $x_2=y''$. Find the determinant of $A$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-4'
+      solution_sketch: 'The companion matrix has rows $(0,1)$ and $(4,-7)$. Its determinant is $0\cdot(-7)-1\cdot4=-4$.'
     anki_seeds:
       - front: "Converting y'' + by' + cy = 0 to a system: with x_1 = y, x_2 = y', the matrix is..."
         back: "[[0, 1], [-c, -b]] (the companion matrix; its eigenvalues are the characteristic roots)."
@@ -561,10 +561,10 @@ topics:
             solution_sketch: 'The matrix is $[[0, 1], [2, 1]]$ with eigenpairs $\lambda = 2$ with $(1, 2)$ and $\lambda = -1$ with $(1, -1)$. The start $(3, 0)$ gives $c_1 + c_2 = 3$ and $2c_1 - c_2 = 0$, so $c_1 = 1$, $c_2 = 2$. Hence $x(t) = e^{2t} + 2e^{-t}$.'
         constraints: "initial conditions solvable by a 2x2 linear system with integer solutions"
     diagnostic_exemplar:
-      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{4}{-1}$.'
-      answer: '$\mathbf{X} = e^{5t}\binom{2}{1} + 2e^{2t}\binom{1}{-1}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The eigenpairs are $\lambda = 5$ with $\binom{2}{1}$ and $\lambda = 2$ with $\binom{1}{-1}$. Then $c_1\binom{2}{1} + c_2\binom{1}{-1} = \binom{4}{-1}$ gives $c_1 = 1$, $c_2 = 2$.'
+      problem: 'Find the larger eigenvalue of $A=\begin{pmatrix}1&2\\3&0\end{pmatrix}$, the matrix of the system $\mathbf{X}''=A\mathbf{X}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The trace is $1$ and the determinant is $-6$. So $\lambda^2-\lambda-6=(\lambda-3)(\lambda+2)=0$ and the larger root is $3$.'
     anki_seeds:
       - front: 'Solution of $\mathbf{X}'' = A\mathbf{X}$ built from an eigenpair $(\lambda, \mathbf{v})$?'
         back: '$\mathbf{X} = e^{\lambda t}\mathbf{v}$'
@@ -701,10 +701,10 @@ topics:
             solution_sketch: 'The eigenvalues are $\pm 5i$, so the solution is $(4\cos 5t, -4\sin 5t)$. Its distance from the origin is $\sqrt{16\cos^2 5t + 16\sin^2 5t} = 4$ at every time. So at $t = 3$ the distance is $4$.'
         constraints: "cover source/center/unstable spiral; stability verdict required each time"
     diagnostic_exemplar:
-      problem: 'A $2 \times 2$ linear system $\mathbf{X}'' = A\mathbf{X}$ has eigenvalues $\lambda = 2 \pm 3i$. Classify the origin, state its stability, and explain why it is the only equilibrium.'
-      answer: 'Unstable spiral: the eigenvalues are complex with positive real part, so trajectories spiral outward and the origin is unstable. Since neither eigenvalue is $0$, $\det A \neq 0$, so $A\mathbf{X} = \mathbf{0}$ has only the solution $\mathbf{X} = \mathbf{0}$ — the origin is the only equilibrium.'
-      answer_contract: {kind: none}
-      solution_sketch: '$\det A$ is the product of the eigenvalues, $(2+3i)(2-3i) = 13 \neq 0$.'
+      problem: 'The eigenvalues of $\mathbf{X}''=\begin{pmatrix}0&k\\-9&0\end{pmatrix}\mathbf{X}$ are $6i$ and $-6i$. Find $k$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The characteristic equation is $\lambda^2+9k=0$. With $\lambda=6i$ we get $-36+9k=0$, so $k=4$.'
     anki_seeds:
       - front: 'Phase portrait when both eigenvalues are real and negative?'
         back: 'Stable node (sink): all trajectories approach the origin.'
@@ -859,10 +859,10 @@ topics:
             solution_sketch: 'A solution is $c_1 e^{5t}\mathbf{v}_1 + c_2 e^{-6t}\mathbf{v}_2$. As $t \to \infty$ the term $e^{-6t}$ tends to zero, because $-6$ is negative, and the term $e^{5t}$ grows. So the trajectory approaches the line through $(2, 1)$, which has slope $\tfrac12$.'
         constraints: "read dominance from the largest eigenvalue; rotation direction by evaluating AX at (1,0)"
     diagnostic_exemplar:
-      problem: 'For $\mathbf{X}'' = \begin{pmatrix} -3 & 2 \\ -2 & -3 \end{pmatrix}\mathbf{X}$, use the trace and determinant to classify the origin, and say what a generic trajectory does as $t \to \infty$.'
-      answer: 'Stable spiral: $T = -6$, $D = 13$, and $T^2 - 4D = -16 < 0$ gives complex eigenvalues with negative real part; every trajectory spirals inward and tends to the origin.'
-      answer_contract: {kind: none}
-      solution_sketch: '$T^2 - 4D < 0$ means complex eigenvalues (spiralling), and $T < 0$ makes their real part negative (inward).'
+      problem: 'A $2\times2$ system has trace $6$ and determinant $8$. Find its larger eigenvalue.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The eigenvalues solve $\lambda^2-6\lambda+8=(\lambda-2)(\lambda-4)=0$. The larger root is $4$.'
     anki_seeds:
       - front: 'What does $\det A < 0$ tell you about the origin of $\mathbf{X}'' = A\mathbf{X}$?'
         back: 'It is a saddle (real eigenvalues of opposite sign), always unstable.'
@@ -1003,10 +1003,10 @@ topics:
             solution_sketch: 'The eigenvalues are $-1 \pm 3i$, and the solution is $e^{-t}(2\cos 3t, -2\sin 3t)$. Its distance from the origin is $2e^{-t}$. At $t = 2$ this is $2e^{-2} \approx 0.27$.'
         constraints: "initial conditions align with a single real solution; stability read from the real part alpha"
     diagnostic_exemplar:
-      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 0 & 2 \\ -2 & 0 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{3}{0}$, and say whether the trajectories spiral inward, spiral outward, or close up.'
-      answer: '$\mathbf{X} = \binom{3\cos 2t}{-3\sin 2t}$; the eigenvalues $\pm 2i$ are purely imaginary, so the trajectories are closed orbits (circles) — neither inward nor outward.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The general real solution is $c_1\binom{\cos 2t}{-\sin 2t} + c_2\binom{\sin 2t}{\cos 2t}$; the initial condition gives $c_1 = 3$, $c_2 = 0$.'
+      problem: 'Find the eigenvalue with positive imaginary part of $A=\begin{pmatrix}-1&-6\\6&-1\end{pmatrix}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-1 + 6i'
+      solution_sketch: 'The trace is $-2$ and the determinant is $1+36=37$. So $\lambda^2+2\lambda+37=0$ and $\lambda=-1\pm6i$.'
     anki_seeds:
       - front: 'Real solutions from a complex eigenpair $\lambda = \alpha + \beta i$, eigenvector $\mathbf{v}$?'
         back: 'The real and imaginary parts of $e^{\lambda t}\mathbf{v}$ (via Euler''s formula $e^{i\beta t} = \cos\beta t + i\sin\beta t$).'
@@ -1158,10 +1158,10 @@ topics:
             solution_sketch: 'The trace is $6$ and the determinant is $9$, so the double eigenvalue is $3$ with the eigenvector $(1, 1)$ and the generalized eigenvector $(0, 1)$. Then $\mathbf{X}(0) = c_1(1, 1) + c_2(0, 1) = (1, 2)$ gives $c_1 = 1$ and $c_2 = 1$. So $y(t) = e^{3t}(c_1 + c_2 t + c_2) = (2 + t)e^{3t}$.'
         constraints: 'initial values with integer c_1, c_2; one component x(t) or y(t) or a value at a stated time asked; stability read from the sign of the double eigenvalue; spring and tank contexts'
     diagnostic_exemplar:
-      problem: 'Solve $\mathbf{X}'' = \begin{pmatrix} 2 & 1 \\ 0 & 2 \end{pmatrix}\mathbf{X}$ with $\mathbf{X}(0) = \binom{1}{3}$, and say whether the trajectory approaches the origin as $t \to \infty$.'
-      answer: '$\mathbf{X} = e^{2t}\binom{1 + 3t}{3}$; no — the double eigenvalue $2$ is positive, so the trajectory runs away from the origin (an unstable degenerate node).'
-      answer_contract: {kind: none}
-      solution_sketch: 'The matrix is defective (only $\binom{1}{0}$ is an eigenvector), so the general solution is $c_1 e^{2t}\binom{1}{0} + c_2 e^{2t}\left[t\binom{1}{0} + \binom{0}{1}\right]$; the initial condition gives $c_1 = 1$, $c_2 = 3$.'
+      problem: 'The matrix $A=\begin{pmatrix}1&4\\-1&5\end{pmatrix}$ has the only eigenvalue $3$ and the eigenvector $\mathbf{v}=\binom{2}{1}$. Solve $(A-3I)\mathbf{w}=\mathbf{v}$ for the vector $\mathbf{w}$ with $w_1=1$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(1, 1)'
+      solution_sketch: 'The first row gives $-2w_1+4w_2=2$. With $w_1=1$ we get $w_2=1$. The second row gives $-1+2=1$, which agrees.'
     anki_seeds:
       - front: 'Second solution for a defective double eigenvalue $\lambda$ with eigenvector $\mathbf{v}$?'
         back: '$e^{\lambda t}(t\mathbf{v} + \mathbf{w})$, where $(A - \lambda I)\mathbf{w} = \mathbf{v}$.'
@@ -1313,10 +1313,10 @@ topics:
             solution_sketch: 'The amounts satisfy $x'' = -0.1x + 0.1y + 3e^{-0.3t}$ and $y'' = 0.1x - 0.2y$. We need $(A + 0.3I)\mathbf{a} = -(3, 0)$, that is $0.2a_1 + 0.1a_2 = -3$ and $0.1a_1 + 0.1a_2 = 0$. The second gives $a_2 = -a_1$, so $0.1a_1 = -3$, $a_1 = -30$ and $a_2 = 30$.'
         constraints: 'exponent alpha not an eigenvalue except in the resonance discussion; solve (A - alpha I)a = -v for the coefficient vector a; tank contexts with a dissolving source'
     diagnostic_exemplar:
-      problem: 'For $\mathbf{X}'' = \begin{pmatrix} 1 & 2 \\ 2 & 1 \end{pmatrix}\mathbf{X} + \binom{1}{1}e^{2t}$, find a particular solution of the form $\mathbf{X}_p = \mathbf{a}e^{2t}$.'
-      answer: '$\mathbf{X}_p = \binom{-1}{-1}e^{2t}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Substituting gives $2\mathbf{a} = A\mathbf{a} + \binom{1}{1}$, i.e. $(A - 2I)\mathbf{a} = -\binom{1}{1}$. Solving $\begin{pmatrix} -1 & 2 \\ 2 & -1 \end{pmatrix}\mathbf{a} = \binom{-1}{-1}$ gives $\mathbf{a} = \binom{-1}{-1}$ (legitimate because $2$ is not an eigenvalue of $A$).'
+      problem: 'Find a constant particular solution of $\mathbf{X}''=\begin{pmatrix}1&2\\3&4\end{pmatrix}\mathbf{X}+\binom{-4}{-10}$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(2, 1)'
+      solution_sketch: 'Set $A\mathbf{X}+\mathbf{b}=0$. Then $x+2y=4$ and $3x+4y=10$. The first gives $x=4-2y$, so $12-2y=10$, $y=1$ and $x=2$.'
     anki_seeds:
       - front: 'General solution of $\mathbf{X}'' = A\mathbf{X} + \mathbf{b}$?'
         back: 'Homogeneous general solution plus any one particular solution: $\mathbf{X} = \mathbf{X}_h + \mathbf{X}_p$.'
@@ -1470,10 +1470,10 @@ topics:
             solution_sketch: 'The coexistence equilibrium is $(5, 3)$. The Jacobian $\begin{pmatrix} 3 - y & -x \\ y & x - 5 \end{pmatrix}$ equals $\begin{pmatrix} 0 & -5 \\ 3 & 0 \end{pmatrix}$ there, so the determinant is $0 \cdot 0 - (-5)(3) = 15$. With trace $0$ the linearization is a center, and the populations cycle near coexistence.'
         constraints: 'Lotka-Volterra and competing-species models with integer or simple decimal parameters and integer equilibrium coordinates; every classification carries a one-line population interpretation; the Lotka-Volterra interior center is stated as the linearization verdict'
     diagnostic_exemplar:
-      problem: 'For the predator-prey system $x'' = x(4 - y)$, $y'' = y(x - 2)$ (prey $x$, predators $y$), find the coexistence equilibrium and classify it by linearization.'
-      answer: 'Coexistence equilibrium $(2, 4)$. There $J = \begin{pmatrix} 0 & -2 \\ 4 & 0 \end{pmatrix}$ with $T = 0$ and $D = 8$, so $\lambda = \pm i\sqrt{8}$: a linear centre, predicting the populations cycling around coexistence. (A centre is the borderline case, so linearization alone does not settle the nonlinear behaviour.)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Equilibria come from $x(4-y) = 0$ and $y(x-2) = 0$: the origin and $(2,4)$. The Jacobian is $\begin{pmatrix} 4 - y & -x \\ y & x - 2 \end{pmatrix}$.'
+      problem: 'Find the equilibrium of the system $x''=x(8-2y)$, $y''=y(x-3)$ at which $x>0$ and $y>0$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(3, 4)'
+      solution_sketch: 'For $x>0$ and $y>0$ the factors must be zero: $8-2y=0$ gives $y=4$, and $x-3=0$ gives $x=3$.'
     anki_seeds:
       - front: 'Jacobian matrix of the system $x'' = f(x, y)$, $y'' = g(x, y)$?'
         back: '$J = \begin{pmatrix} f_x & f_y \\ g_x & g_y \end{pmatrix}$, evaluated at the equilibrium of interest.'

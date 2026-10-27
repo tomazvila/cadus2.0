@@ -145,10 +145,10 @@ topics:
             solution_sketch: 'The different rearrangements correspond to the cosets of the kernel, so $30 = 6\cdot|\text{kernel}|$. The kernel is the set of elements that leave every block in place, and it has $30/6 = 5$ elements.'
         constraints: 'translate actions to permutation representations; images of points, orders of images and kernels; faithfulness checks on small examples'
     diagnostic_exemplar:
-      problem: 'Does $g \cdot x = x g$ (right multiplication used as a left action) define an action of a non-abelian $G$ on itself? Check the composition axiom.'
-      answer: 'No: $g \cdot (h \cdot x) = xhg$ but $(gh) \cdot x = xgh$, and $xhg \neq xgh$ in general.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The order of factors comes out reversed; the fix is $g \cdot x = xg^{-1}$, which does satisfy the axioms.'
+      problem: 'The permutation $(1\,2\,3)(4\,5)(6\,7)$ generates a cyclic group that acts on $\{1,2,\dots,9\}$. How many orbits does this action have?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'The orbits are $\{1,2,3\}$, $\{4,5\}$, $\{6,7\}$, $\{8\}$ and $\{9\}$. That is $5$ orbits.'
     anki_seeds:
       - front: "Two axioms of a group action?"
         back: "$e \\cdot x = x$ and $g \\cdot (h \\cdot x) = (gh) \\cdot x$."
@@ -298,10 +298,10 @@ topics:
             solution_sketch: 'The permutation $(1\,2\,3)(4\,5)$ moves the positions $1,2,3,4,5$ and leaves position $6$ alone. Exactly $1$ dancer stays in place.'
         constraints: 'transitivity verdicts paired with the number of orbits; fixed points of conjugation = center'
     diagnostic_exemplar:
-      problem: '$D_4$ acts on the four vertices $1, 2, 3, 4$ of a square (labelled counterclockwise). Find the orbit and the stabilizer of vertex $1$, and say whether the action is transitive.'
-      answer: 'The rotation $r$ acts as the $4$-cycle $(1\,2\,3\,4)$, so the orbit of $1$ is all of $\{1,2,3,4\}$ and the action is transitive (a single orbit). The stabilizer is $\mathrm{Stab}(1) = \{e, d\}$, where $d$ is the reflection in the diagonal through vertices $1$ and $3$ — the only nonidentity symmetry fixing vertex $1$. Note $|D_4| = 8 = 4 \cdot 2 = |\mathrm{Orb}(1)| \cdot |\mathrm{Stab}(1)|$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Rotations carry vertex $1$ to every vertex, so there is one orbit; only the identity and the diagonal reflection through vertex $1$ fix it.'
+      problem: 'The dihedral group $D_6$ of order $12$ acts on the $6$ vertices of a regular hexagon. How many elements fix vertex $1$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The action is transitive, so the orbit of vertex $1$ has size $6$. The stabilizer has order $12/6=2$.'
     anki_seeds:
       - front: "Definition of the orbit of $x$ under an action of $G$?"
         back: "$\\mathrm{Orb}(x) = \\{g \\cdot x : g \\in G\\}$; orbits partition the set."
@@ -461,10 +461,10 @@ topics:
             solution_sketch: 'The number of conjugates is the size of the class, $|G|/|C(x)| = 21/3 = 7$. So $x$ has $7$ conjugates.'
         constraints: 'class sizes and centralizer orders in S_3, S_4, S_5, S_6, D_4 and small abstract groups'
     diagnostic_exemplar:
-      problem: 'In $S_4$ the conjugacy class of $(1\,2)$ has $6$ elements. Using the orbit-stabilizer theorem for the conjugation action of $S_4$ on itself, find $|C((1\,2))|$ and list the elements of that centralizer.'
-      answer: 'Under conjugation the orbit of $(1\,2)$ is its conjugacy class and the stabilizer is the centralizer, so $|S_4| = |\mathrm{class}| \cdot |C((1\,2))|$ gives $|C((1\,2))| = 24/6 = 4$. The four elements are $e$, $(1\,2)$, $(3\,4)$ and $(1\,2)(3\,4)$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Apply orbit-stabilizer to the conjugation action: class size times centralizer order is $|G|$. Then identify the permutations commuting with $(1\,2)$ — those preserving $\{1,2\}$ and $\{3,4\}$ setwise.'
+      problem: 'A group of order $24$ acts on a set. One point has an orbit of size $6$. Find the order of the stabilizer of that point.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'By the orbit-stabilizer theorem, $|G|=|\mathrm{orbit}|\cdot|\mathrm{stab}|$. So $|\mathrm{stab}|=24/6=4$.'
     anki_seeds:
       - front: "Orbit-stabilizer theorem?"
         back: "$|G| = |\\mathrm{Orb}(x)| \\cdot |\\mathrm{Stab}(x)|$ (finite $G$)."
@@ -758,9 +758,10 @@ topics:
             solution_sketch: 'Each $\lambda_a$ is a bijection of $G$, because $x\mapsto a^{-1}x$ undoes it on both sides, so $\lambda_a$ lies in the symmetric group on $G$. For $a$, $b$ and any $x$ in $G$, $\lambda_{ab}(x) = (ab)x = a(bx) = \lambda_a(\lambda_b(x))$, so $\lambda_{ab} = \lambda_a\lambda_b$ and the assignment is a homomorphism. If $\lambda_a$ is the identity permutation, then $a = ae = \lambda_a(e) = e$, so the kernel is trivial and the homomorphism is injective. Hence $G$ embeds as a subgroup of the symmetric group on the set $G$, which for a finite group of order $n$ is an embedding into $S_n$.'
         constraints: 'regular representations of Z_n and the Klein group; images of points, cycle counts and orders; one proof request'
     diagnostic_exemplar:
-      problem: 'Cayley''s theorem embeds $(\mathbb{Z}_6, +)$ into a symmetric group $S_n$. Give $n$, write the permutation representing the element $3$ in cycle notation, and explain why the embedding is injective.'
-      answer: '$n = 6$: the group acts on its own six elements by left translation. The element $3$ gives $\lambda_3(x) = x + 3$, i.e. $0 \mapsto 3,\ 1 \mapsto 4,\ 2 \mapsto 5,\ 3 \mapsto 0,\ 4 \mapsto 1,\ 5 \mapsto 2$, which in cycle notation is $(0\,3)(1\,4)(2\,5)$. The map $g \mapsto \lambda_g$ is injective because $\lambda_g = \mathrm{id}$ forces $g = \lambda_g(0) = 0$.'
-      solution_sketch: 'The regular representation sends $g$ to translation by $g$ on the group itself; translation by $3$ in $\mathbb{Z}_6$ is an involution with three $2$-cycles. Injectivity follows by evaluating at the identity.'
+      problem: 'The group $\mathbb{Z}_8$ acts on itself by left addition. The element $6$ permutes the $8$ elements. How many cycles does this permutation have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Adding $6$ repeatedly cycles through multiples of $\gcd(6,8)=2$. Each cycle has length $8/2=4$, so there are $8/4=2$ cycles.'
     anki_seeds:
       - front: "Cayley's theorem?"
         back: "Every group is isomorphic to a group of permutations; a group of order $n$ embeds in $S_n$."

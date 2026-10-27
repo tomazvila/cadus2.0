@@ -38,6 +38,9 @@ import type { Gate } from '@/hooks/usePhase';
 import type { AnswerResponse, ApiClient, PlanTask, ReworkResponse, ServedProblem } from '@/api/types';
 import type { SessionPlan } from './useSessionPlan';
 
+/** The lesson a hint names after the third hint: its topic id and its name. */
+type ReferenceLesson = { topic: string; name: string };
+
 export type SessionPhase =
   | 'loading' | 'teaching' | 'no-instruction' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
@@ -60,7 +63,7 @@ export interface GradeDeps {
   setRework: (rework: ReworkResponse | null) => void;
   setElapsed: (secs: number) => void;
   setHints: (update: (prev: string[]) => string[]) => void;
-  setReferenceLesson: (update: (prev: string | null) => string | null) => void;
+  setReferenceLesson: (update: (prev: ReferenceLesson | null) => ReferenceLesson | null) => void;
   /** The three values the drill auto-submit watches. */
   countdown: boolean;
   elapsed: number;
@@ -191,7 +194,7 @@ export function useGrade({
       // structural here: there is no `expected` on this route to leak.
       setHints((prev) => [...prev, h.hint]);
       // W-A4: shown ONCE, however many hints repeat the pointer.
-      setReferenceLesson((prev) => prev ?? h.reference_lesson?.name ?? null);
+      setReferenceLesson((prev) => prev ?? h.reference_lesson ?? null);
     });
   };
 

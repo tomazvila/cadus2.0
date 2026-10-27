@@ -362,10 +362,10 @@ topics:
             solution_sketch: 'The integral of demand minus supply gives the total surplus, not the producer surplus. At equilibrium $q^* = 4$ and $p^* = 64$, and the producer surplus is $\int_0^4 (64 - 4q^2)\,dq = 256 - \frac{256}{3} = \frac{512}{3}$.'
         constraints: 'equilibrium solvable by setting demand = supply and factoring; quantities and prices come out as integers; also total surplus, a ratio of the two surpluses and one error-analysis item'
     diagnostic_exemplar:
-      problem: 'Demand is $p = 27 - q^2$ and supply is $p = 2q^2$. Find the equilibrium point and the consumer surplus.'
-      answer: '$q^* = 3$, $p^* = 18$; $CS = 18$'
-      answer_contract: {kind: none}
-      solution_sketch: '$27 - q^2 = 2q^2$ gives $q^* = 3$ and $p^* = 18$; then $CS = \int_0^3 (27 - q^2)\,dq - 3 \cdot 18 = 72 - 54$.'
+      problem: 'The demand curve for a product is $p=60-3q$, where $p$ is the price in dollars and $q$ is the number of units sold. At a market price of $30$ dollars, find the consumer surplus.'
+      answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
+      answer: '150'
+      solution_sketch: 'The market quantity solves $60-3q=30$, so $q^*=10$. The surplus is $\int_0^{10}(30-3q)\,dq=300-150=150$ dollars.'
     anki_seeds:
       - front: "Consumer surplus formula (demand d(q), market price p*, quantity q*)?"
         back: '$CS = \int_0^{q^*} (d(q) - p^*) \, dq$ — the area between the demand curve and the price line'
@@ -1476,10 +1476,10 @@ topics:
             solution_sketch: 'The force is not $20$ N the whole way, because it grows from $0$ to $20$ N. With $k = 40$ N/m the work is $\int_0^{0.5} 40x\,dx = 20(0.25) = 5$ joules.'
         constraints: 'SI units; k determined from one force-displacement pair, or the unknown is the stretch or k'
     diagnostic_exemplar:
-      problem: 'A force of $15$ N stretches a spring $0.3$ m beyond its natural length. How much work is done stretching it from $0.2$ m to $0.5$ m beyond natural length?'
-      answer: '$5.25$ J'
-      answer_contract: {kind: none}
-      solution_sketch: 'Hooke gives $k = 15/0.3 = 50$ N/m; then $W = \int_{0.2}^{0.5} 50x\,dx = 25(0.25 - 0.04)$.'
+      problem: 'A spring pulls back with force $F(x)=200x$ newtons when it is stretched $x$ m from its natural length. Find the work done, in joules, in stretching it from $x=0$ m to $x=0.3$ m.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The work is $\int_0^{0.3}200x\,dx=100x^2$ evaluated from $0$ to $0.3$. This is $100\cdot 0.09=9$ joules.'
     anki_seeds:
       - front: "Work done by a variable force F(x) moving from a to b?"
         back: '$W = \int_a^b F(x) \, dx$'
@@ -1631,10 +1631,10 @@ topics:
             solution_sketch: 'A slice at depth $x$ weighs $39200\pi\,dx$ N and rises $x$. The water fills depths $2$ to $5$, so $W = \int_2^5 39200\pi x\,dx = 39200\pi(12.5 - 2) = 411600\pi$ J.'
         constraints: "cylindrical tanks only; slices indexed by depth below the rim; weight density stated (9800 N/m^3 for water); the outlet may lie above the rim"
     diagnostic_exemplar:
-      problem: 'A cylindrical tank of radius $2$ m and height $3$ m is full of water (weight density $9800$ N/m$^3$). Find the work to pump all the water over the top rim.'
-      answer: '$176400\pi$ J'
-      answer_contract: {kind: none}
-      solution_sketch: 'A slab at depth $y$ below the rim has weight $9800 \cdot 4\pi\,dy$ and is lifted $y$: $W = 39200\pi\int_0^3 y\,dy = 176400\pi$.'
+      problem: 'Find the average value of $f(x)=3x^2$ on $[1,3]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '13'
+      solution_sketch: 'The integral $\int_1^3 3x^2\,dx$ is $27-1=26$. Divide by the length $2$ to get $13$.'
     anki_seeds:
       - front: "Average value of f on [a, b]?"
         back: '$f_{avg} = \frac{1}{b-a} \int_a^b f(x) \, dx$'
@@ -1797,10 +1797,10 @@ topics:
             solution_sketch: 'The width falls steadily from $10$ m to $4$ m over $6$ m of depth, so $w(y) = 10 - y$ meters. Then $F = 9800\int_0^6 y(10 - y)\,dy = 9800\left(5y^2 - \frac{y^3}{3}\right)\Big|_0^6 = 9800(180 - 72) = 1058400$ N.'
         constraints: "width w(y) linear in depth, or the centroid shortcut for symmetric plates; state w(y) explicitly"
     diagnostic_exemplar:
-      problem: 'A triangular plate has its base of $4$ m at the water surface and its apex $3$ m directly below the midpoint of the base. Find the fluid force on one side ($9800$ N/m$^3$).'
-      answer: '$58800$ N'
-      answer_contract: {kind: none}
-      solution_sketch: 'The width at depth $y$ is $4(1 - y/3)$, so $F = 9800\int_0^3 y\cdot 4\left(1 - \frac{y}{3}\right)dy = 39200 \cdot \frac{3}{2}$.'
+      problem: 'Water has weight density $9800$ N/m$^3$. The horizontal bottom of a pool has area $25$ m$^2$ and lies $2$ m below the surface. Find the fluid force on the bottom, in newtons.'
+      answer_contract: {"kind":"exact"}
+      answer: '490000'
+      solution_sketch: 'The pressure at depth $2$ m is $9800\cdot 2=19600$ Pa. The force is pressure times area, $19600\cdot 25=490000$ N.'
     anki_seeds:
       - front: "Hydrostatic force on a vertical plate (strip at depth y, width w(y))?"
         back: '$F = \rho g \int y \, w(y) \, dy$ over the plate''s depth range'

@@ -48,6 +48,7 @@ import { Diagnostic } from '@/views/Diagnostic';
 import { Quiz } from '@/views/Quiz';
 import { Session } from '@/views/session/Session';
 import { CurriculumMap } from '@/views/map/Map';
+import { TopicRead } from '@/views/read/TopicRead';
 import { ProofsScreen } from '@/views/proofs/Proofs';
 import { OperatorScreen } from '@/views/admin/Ops';
 import { ReviewScreen } from '@/views/admin/Review';
@@ -68,7 +69,8 @@ export type View =
   | { name: 'quiz'; task: PlanTask; fromSession: boolean }
   | { name: 'diagnostic' }
   | { name: 'proofs' }
-  | { name: 'map'; back: View };
+  | { name: 'map'; back: View; picked?: string }
+  | { name: 'read'; topic: string; back: View };
 
 /** The dashboard, which is where every exit path ends. */
 const HOME: View = { name: 'dashboard' };
@@ -324,6 +326,7 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
           {...common}
           onExit={goHome}
           onQuiz={(task) => { setView({ name: 'quiz', task, fromSession: true }); }}
+          onRead={(topic) => { setView({ name: 'read', topic, back: { name: 'session' } }); }}
         />
       );
     case 'quiz':
@@ -338,7 +341,25 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
     case 'diagnostic':
       return <Diagnostic diag={placement} reportApi={api} demo={api.demo} onUnauthorized={onUnauthorized} onExit={goHome} />;
     case 'map':
-      return <CurriculumMap {...common} onExit={() => { setView(view.back); }} />;
+      return (
+        <CurriculumMap
+          {...common}
+          initialPicked={view.picked ?? null}
+          onExit={() => { setView(view.back); }}
+          onRead={(id) => { setView({ name: 'read', topic: id, back: { ...view, picked: id } }); }}
+        />
+      );
+    case 'read':
+      // A chain of neighbor opens keeps the first `back`, so one Back ends the chain.
+      return (
+        <TopicRead
+          {...common}
+          topic={view.topic}
+          onOpen={(id) => { setView({ name: 'read', topic: id, back: view.back }); }}
+          backLabel={BACK_LABELS[view.back.name] ?? 'Back'}
+          onExit={() => { setView(view.back); }}
+        />
+      );
     case 'proofs':
       return <ProofsScreen {...common} onExit={goHome} />;
     default:
@@ -350,11 +371,19 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
           onDiagnostic={openDiagnostic}
           onMap={() => { setView({ name: 'map', back: HOME }); }}
           onProofs={() => { setView({ name: 'proofs' }); }}
+          onRead={(topic) => { setView({ name: 'read', topic, back: HOME }); }}
         />
       );
   }
 }
 
+
+/** The Back button of the read page, by the screen it returns to. */
+const BACK_LABELS: Partial<Record<string, string>> = {
+  session: 'Back to the question',
+  map: 'Back to the map',
+  dashboard: 'Back to the dashboard',
+};
 
 const TITLES: Record<string, string> = {
   auth: 'Sign in',
@@ -363,6 +392,7 @@ const TITLES: Record<string, string> = {
   quiz: 'Quiz',
   diagnostic: 'Starting questions',
   proofs: 'Your proofs',
+  read: 'Lesson text',
   ops: 'Operator',
   review: 'Review',
 };

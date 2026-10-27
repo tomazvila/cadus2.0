@@ -103,6 +103,7 @@ describe('the curriculum and session routes', () => {
     await api.reviewSoon('whole numbers');
     await api.sessionStart();
     await api.taskTeach('t 1');
+    await api.topicTeach('a b');
     await api.taskQuizResult('q/1', true);
     await api.getDiagnosis('j/1');
     expect(calls()).toEqual([
@@ -111,6 +112,7 @@ describe('the curriculum and session routes', () => {
       ['POST', '/api/topics/whole%20numbers/review-soon', '{}'],
       ['POST', '/api/session/start', '{}'],
       ['POST', '/api/task/t%201/teach', '{}'],
+      ['GET', '/api/topics/a%20b/teach', null],
       ['POST', '/api/task/q%2F1/quiz-result', '{"practice":true}'],
       ['GET', '/api/diagnosis/j%2F1', null],
     ]);

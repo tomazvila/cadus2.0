@@ -128,10 +128,10 @@ topics:
             solution_sketch: 'An integer with remainder $1$ on division by $4$ has the form $4k + 1$, as in $1, 5, 9$ and $-3$. So $r = 1$. The other values $r = 0, 2, 3$ give the integers with remainder $0$, $2$ and $3$.'
         constraints: 'Translate English descriptions of infinite integer sets into defining predicates; preserve the variable domain and quantifier. Items ask for the matching description, a witness, a count or a member.'
     diagnostic_exemplar:
-      problem: 'Write the set $\{1, 4, 9, 16, 25, \dots\}$ of squares of positive integers in set-builder notation, and decide whether it is a subset of $\mathbb{N}$, of $\mathbb{Z}$ and of $\mathbb{Q}$.'
-      answer_contract: {kind: none}
-      answer: 'In set-builder notation: $\{n^2 : n \in \mathbb{Z}^{+}\}$, equivalently $\{m \in \mathbb{N} : m = n^2 \text{ for some } n \in \mathbb{Z}^{+}\}$. Every such $m$ is a positive whole number, so it lies in $\mathbb{N}$, hence in $\mathbb{Z}$, hence in $\mathbb{Q}$ (as $m/1$): the set is a subset of all three.'
-      solution_sketch: 'Name the generating rule to convert the roster into set-builder form, then check membership in each number system using $\mathbb{N} \subseteq \mathbb{Z} \subseteq \mathbb{Q}$.'
+      problem: 'How many elements does $\{n^2 : n \in \mathbb{Z}, -3 \le n \le 3\}$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The squares of $-3,\dots,3$ are $9,4,1,0,1,4,9$. A set lists each element once, so the set is $\{0,1,4,9\}$.'
     anki_seeds:
       - front: 'Roster vs. set-builder notation?'
         back: 'Roster lists the elements $\{1, 2, 3\}$; set-builder describes them by a property $\{x : P(x)\}$.'
@@ -270,10 +270,10 @@ topics:
             solution_sketch: 'There are $48 \div 4 = 12$ multiples of $4$ from $1$ to $48$. Those that are also multiples of $6$ are the multiples of $12$, namely $12, 24, 36, 48$, which is $4$ of them. So $12 - 4 = 8$ elements of $A \setminus B$ lie in that range.'
         constraints: 'operate on sets given by a defining property; items ask for a common divisor, a count, an inequality or the smallest member'
     diagnostic_exemplar:
-      problem: 'Let $E$ be the set of even integers and $T$ the set of multiples of $3$. Describe $E \cup T$, $E \cap T$ and $E \setminus T$.'
-      answer_contract: {kind: none}
-      answer: '$E \cup T$ is the set of integers divisible by $2$ or by $3$ (or both). $E \cap T$ is the set of multiples of $6$: an integer divisible by both $2$ and $3$ is divisible by $6$, and conversely. $E \setminus T$ is the set of even integers that are not multiples of $3$ — equivalently, the even integers not divisible by $6$.'
-      solution_sketch: 'Read each operation off the defining conditions: "or" for the union, "and" for the intersection (which forces divisibility by $6$), "and not" for the difference.'
+      problem: 'Let $A=\{1,2,\dots,10\}$ and $B=\{3,6,9,12\}$. How many elements does $A \setminus B$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'Only $3,6,9$ of $B$ lie in $A$. Remove them from the 10 elements of $A$ to get 7.'
     anki_seeds:
       - front: 'Is $A \setminus B$ equal to $B \setminus A$ in general?'
         back: 'No; e.g. $A = \{1, 2\}$, $B = \{2\}$: $A \setminus B = \{1\}$ but $B \setminus A = \varnothing$.'
@@ -417,10 +417,10 @@ topics:
             solution_sketch: 'First $B \cup C = \{2, 4, 6, 7, 8, 9\}$. Remove these elements from $A = \{1, 2, \dots, 8\}$. What remains is $A \setminus (B \cup C) = A \cap (B \cup C)^{c} = \{1, 3, 5\}$.'
         constraints: 'rewrite a set difference with a complement and intersection; check by members of an arbitrary element, then compute on small sets and in contexts'
     diagnostic_exemplar:
-      problem: 'With universe $U = \{1, 2, \dots, 8\}$, $A = \{1,2,3,4\}$ and $B = \{3,4,5\}$: verify that $A \setminus B = A \cap B^{c}$, and say what $A^{c}$ becomes if the universe is changed to $V = \{1, \dots, 5\}$.'
-      answer_contract: {kind: none}
-      answer: 'Inside $U$: $B^{c} = \{1,2,6,7,8\}$, so $A \cap B^{c} = \{1,2\}$; and directly $A \setminus B = \{1,2\}$ — the two agree. Relative to $U$, $A^{c} = \{5,6,7,8\}$; relative to $V = \{1,\dots,5\}$, $A^{c} = \{5\}$. The complement depends on the universe, whereas $A \setminus B$ does not.'
-      solution_sketch: 'Compute $B^{c}$ inside $U$ and intersect with $A$; then recompute $A^{c}$ in the smaller universe to see the dependence.'
+      problem: 'Let $U=\{1,2,\dots,12\}$ and let $A$ be the set of multiples of $3$ in $U$. How many elements does $A^c$ have, with $A^c$ the complement of $A$ in $U$?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: '$A=\{3,6,9,12\}$ has 4 elements. The complement has $12-4=8$ elements.'
     anki_seeds:
       - front: '$(A^{c})^{c} = $ ?'
         back: '$A$ — complementing twice returns the original set.'
@@ -558,10 +558,10 @@ topics:
             solution_sketch: 'Each playlist has $6 - 2 = 4$ songs that are not on the other. So the songs on exactly one playlist number $4 + 4 = 8$. Equivalently $6 + 6 - 2 \cdot 2 = 8$.'
         constraints: 'properties of the symmetric difference tested on concrete sets and by a general membership argument; items ask for a set, a count, a verdict or the elements that show a claim is false'
     diagnostic_exemplar:
-      problem: 'With $A = \{1, 3, 5\}$ and $B = \{1, 2, 3\}$: compute $(A \cup B) \setminus (A \cap B)$ and $(A \setminus B) \cup (B \setminus A)$, confirm they agree, and state $A \triangle A$.'
-      answer_contract: {kind: none}
-      answer: '$A \cup B = \{1,2,3,5\}$ and $A \cap B = \{1,3\}$, so $(A \cup B) \setminus (A \cap B) = \{2,5\}$. Also $A \setminus B = \{5\}$ and $B \setminus A = \{2\}$, whose union is $\{2,5\}$ — the two forms agree, and both equal $A \triangle B$. Finally $A \triangle A = \varnothing$: no element lies in one copy of $A$ without lying in the other.'
-      solution_sketch: 'Compute both standard forms of the symmetric difference and compare; the last part follows from the definition applied to a set and itself.'
+      problem: 'Let $A=\{1,2,3,4,5,6\}$ and $B=\{4,5,6,7,8\}$. How many elements does $A \triangle B$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: '$A \triangle B$ holds the elements in exactly one set: $\{1,2,3\}$ from $A$ and $\{7,8\}$ from $B$. That is 5 elements.'
     anki_seeds:
       - front: 'Definition of the symmetric difference $A \triangle B$?'
         back: '$(A \setminus B) \cup (B \setminus A)$ — the elements in exactly one of $A, B$.'
@@ -711,10 +711,10 @@ topics:
             solution_sketch: 'The students who use none are in the complement of the union. The union is $\{1, 2, 3, 5, 6, 7\}$. The students outside it are $4, 8$.'
         constraints: 'chains of two or three operations, mixing difference, symmetric difference, and intersection; two in-context items about school travel'
     diagnostic_exemplar:
-      problem: 'With universe $U = \{1, \dots, 8\}$, $A = \{1,2,3,4\}$, $B = \{2,4,6\}$ and $C = \{1,4,7\}$, compute $(A \setminus B) \cap C^{c}$.'
-      answer_contract: {kind: none}
-      answer: '$A \setminus B = \{1,3\}$ and $C^{c} = \{2,3,5,6,8\}$, so $(A \setminus B) \cap C^{c} = \{3\}$.'
-      solution_sketch: 'Work outward: first the difference, then the complement inside $U$, then the intersection.'
+      problem: 'Let $A=\{1,2,3,4\}$, $B=\{3,4,5\}$ and $C=\{4,5,6\}$. How many elements does $C \cap (A \cup B)$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: '$A \cup B=\{1,2,3,4,5\}$. Its common elements with $C$ are $4$ and $5$.'
     anki_seeds:
       - front: 'Set-builder definition of the union $A \cup B$?'
         back: '$A \cup B = \{x : x \in A \lor x \in B\}$.'
@@ -867,10 +867,10 @@ topics:
             solution_sketch: 'The interval $[-1, 3)$ contains $-1$, so $-1$ is not in the complement. It does not contain $3$, so $3$ is in the complement. The complement is $(-\infty, -1) \cup [3, \infty)$.'
         constraints: "complement or difference producing a union of at most two intervals"
     diagnostic_exemplar:
-      problem: 'Write $\{x \in \mathbb{R} : 2 < x \le 7\}$ in interval notation, then compute $[1, 4] \cap (2, 6)$ and $\mathbb{R} \setminus [1, 4]$.'
-      answer_contract: {kind: none}
-      answer: '$(2, 7]$ — a round bracket for the strict inequality, a square bracket for the inclusive one. Next, $[1,4] \cap (2,6) = (2, 4]$: the intersection begins at the larger left endpoint (excluded) and ends at the smaller right endpoint (included). Finally $\mathbb{R} \setminus [1,4] = (-\infty, 1) \cup (4, \infty)$.'
-      solution_sketch: 'Match strict inequalities to round brackets; intersect by taking the larger left endpoint and the smaller right endpoint, and complement by removing a closed block from the line.'
+      problem: 'How many integers lie in $[-3,2) \cup (4,7]$?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The first interval holds $-3,-2,-1,0,1$. The second holds $5,6,7$. That is $5+3=8$ integers.'
     anki_seeds:
       - front: 'Square bracket vs. round bracket in interval notation?'
         back: 'Square includes the endpoint; round excludes it.'
@@ -1149,10 +1149,10 @@ topics:
             solution_sketch: 'The set $A$ must contain $1$ and $2$ and may add only elements from $3$ and $4$. Each of $3$ and $4$ is either in $A$ or not, giving $2 \times 2 = 4$ choices. So $4$ sets satisfy both conditions.'
         constraints: "set equality via mutual containment; proper vs improper subsets"
     diagnostic_exemplar:
-      problem: 'Let $A = \{1, \{2\}, 3\}$. Decide each of (a) $\{2\} \in A$, (b) $\{2\} \subseteq A$, (c) $\{1,3\} \subseteq A$, (d) $\varnothing \subseteq A$; and state how many proper subsets $A$ has.'
-      answer_contract: {kind: none}
-      answer: '(a) True — the set $\{2\}$ is listed as an element of $A$. (b) False — this would require $2 \in A$, but the number $2$ is not an element of $A$ (only the set $\{2\}$ is). (c) True — both $1$ and $3$ are elements of $A$. (d) True — the empty set is a subset of every set, vacuously. Since $|A| = 3$, there are $2^3 = 8$ subsets, of which $8 - 1 = 7$ are proper (all but $A$ itself).'
-      solution_sketch: 'Keep "element of" and "subset of" apart: $\{2\}$ occurs here as an element, not as a subset. Then count subsets as $2^{|A|}$ and discard $A$ itself.'
+      problem: 'How many subsets of $\{1,2,3,4,5,6\}$ have exactly $2$ elements?'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'Choose 2 of 6 elements: $\binom{6}{2}=15$.'
     anki_seeds:
       - front: '$x \in A$ versus $\{x\} \subseteq A$?'
         back: 'They say the same thing: the element $x$ belongs to $A$.'
@@ -1286,10 +1286,10 @@ topics:
             solution_sketch: 'The set $\mathcal{P}(B)$ has $2^3 = 8$ elements and $\mathcal{P}(A)$ has $2^2 = 4$. Every subset of $A$ is a subset of $B$, so $\mathcal{P}(A)$ sits inside $\mathcal{P}(B)$. So $8 - 4 = 4$ elements of $\mathcal{P}(B)$ are not in $\mathcal{P}(A)$.'
         constraints: "unwind $S \\in \\mathcal{P}(A) \\iff S \\subseteq A$ on concrete sets"
     diagnostic_exemplar:
-      problem: 'List $\mathcal{P}(\{a, b\})$ and $\mathcal{P}(\varnothing)$, and state how many elements $\mathcal{P}(S)$ has when $|S| = 6$.'
-      answer_contract: {kind: none}
-      answer: '$\mathcal{P}(\{a,b\}) = \{\varnothing, \{a\}, \{b\}, \{a,b\}\}$ — four subsets. $\mathcal{P}(\varnothing) = \{\varnothing\}$: a one-element set whose single member is the empty set. And $|\mathcal{P}(S)| = 2^{6} = 64$ when $|S| = 6$.'
-      solution_sketch: 'Enumerate subsets by size, remembering that the empty set and the whole set both count; then use $|\mathcal{P}(S)| = 2^{|S|}$.'
+      problem: 'How many elements does $\mathcal{P}(\mathcal{P}(\{a\}))$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: '$\mathcal{P}(\{a\})=\{\emptyset,\{a\}\}$ has 2 elements. A set with 2 elements has $2^2=4$ subsets.'
     anki_seeds:
       - front: '$S \in \mathcal{P}(A)$ if and only if...'
         back: '$S \subseteq A$.'
@@ -1448,9 +1448,10 @@ topics:
             solution_sketch: 'We prove both directions. ($\Rightarrow$) Suppose $A \subseteq B$. Let $S$ be an arbitrary element of $\mathcal{P}(A)$, so $S \subseteq A$. Let $x \in S$. Then $x \in A$, and since $A \subseteq B$, we get $x \in B$. Hence every element of $S$ lies in $B$, so $S \subseteq B$ and $S \in \mathcal{P}(B)$. Since $S$ was an arbitrary element of $\mathcal{P}(A)$, we conclude $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. ($\Leftarrow$) Suppose $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. Every set is a subset of itself, so $A \subseteq A$, which means $A \in \mathcal{P}(A)$. Because $\mathcal{P}(A) \subseteq \mathcal{P}(B)$, it follows that $A \in \mathcal{P}(B)$. By the definition of the power set, $A \in \mathcal{P}(B)$ means $A \subseteq B$. Both implications are proved, so $A \subseteq B$ if and only if $\mathcal{P}(A) \subseteq \mathcal{P}(B)$. $\square$'
         constraints: 'prove power-set statements by unwinding S in P(A) iff S subset A: count elements of power sets, decide membership, test a claimed implication; one written proof about power sets'
     diagnostic_exemplar:
-      problem: 'Prove: for all sets $A$ and $B$, $\mathcal{P}(A) \cap \mathcal{P}(B) = \mathcal{P}(A \cap B)$.'
-      answer: 'Take any set $X$. Then $X \in \mathcal{P}(A) \cap \mathcal{P}(B)$ iff $X \in \mathcal{P}(A)$ and $X \in \mathcal{P}(B)$, i.e. iff $X \subseteq A$ and $X \subseteq B$. Now $X \subseteq A$ and $X \subseteq B$ hold iff every $x \in X$ lies in both $A$ and $B$, i.e. iff $X \subseteq A \cap B$, i.e. iff $X \in \mathcal{P}(A \cap B)$. Each step is an equivalence, so the two power sets have exactly the same elements and are equal (this is double inclusion run in both directions at once).'
-      solution_sketch: 'Unwind membership in a power set as a subset relation, then use that being a subset of both sets is the same as being a subset of their intersection.'
+      problem: 'How many subsets of $\{1,2,3,4,5,6\}$ contain both $1$ and $2$?'
+      answer_contract: {"kind":"exact"}
+      answer: '16'
+      solution_sketch: 'Both $1$ and $2$ are fixed in the subset. Each of the 4 other elements is in or out, so $2^4=16$.'
     anki_seeds:
       - front: 'To prove $A \subseteq B$, you...'
         back: 'take an arbitrary $x \in A$ and show that $x \in B$.'
@@ -1596,10 +1597,10 @@ topics:
             solution_sketch: 'Write $-1 = 6 \cdot (-1) + 5$ and $11 = 6 \cdot 1 + 5$. Both integers leave the remainder $5$, so they lie in the same block $\{6k + 5\}$.'
         constraints: 'described sets partitioning $\mathbb{Z}$ by parity or remainder; find the class of a given integer; spot a missing or shared integer; contexts with houses, rotas and shifts'
     diagnostic_exemplar:
-      problem: 'Which of these are partitions: (i) $\{\{1,2\},\{3,4\}\}$ of $\{1,2,3,4\}$; (ii) the even integers together with the odd integers, of $\mathbb{Z}$; (iii) $\{\{1,2,3\},\{3,4\}\}$ of $\{1,2,3,4\}$?'
-      answer_contract: {kind: none}
-      answer: '(i) Yes: both blocks are nonempty, they are disjoint, and their union is $\{1,2,3,4\}$. (ii) Yes: both blocks are nonempty, no integer is both even and odd (disjoint), and every integer is one or the other, so they cover $\mathbb{Z}$. (iii) No: the blocks share the element $3$, so they are not pairwise disjoint.'
-      solution_sketch: 'Check all three conditions for each family — nonempty blocks, pairwise disjoint, union equal to the whole set.'
+      problem: 'How many partitions of $\{1,2,3\}$ into non-empty disjoint blocks are there?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'One block: 1 way. Blocks of sizes 2 and 1: 3 ways. Three blocks of size 1: 1 way. The total is 5.'
     anki_seeds:
       - front: 'A partition of a set $A$ is...'
         back: 'a collection of nonempty, pairwise disjoint subsets of $A$ whose union is $A$.'
@@ -1749,10 +1750,10 @@ topics:
             solution_sketch: 'The product $A \times A$ has $7 \cdot 7 = 49$ pairs, and exactly $7$ of them have equal entries. So $49 - 7 = 42$ pairs have $a \neq b$.'
         constraints: 'carve a subset of a product by a condition on coordinates (list it or count it); dice, boards and grids as contexts'
     diagnostic_exemplar:
-      problem: 'With $A = \{1, 2, 3\}$, give $|A \times A|$ and list the pairs in $\{(a,b) \in A \times A : a + b \le 4\}$.'
-      answer_contract: {kind: none}
-      answer: '$|A \times A| = 3 \cdot 3 = 9$. The pairs with $a + b \le 4$ are $(1,1), (1,2), (1,3), (2,1), (2,2), (3,1)$ — six of the nine; order matters, so $(1,3)$ and $(3,1)$ count separately.'
-      solution_sketch: 'Count the product as $|A| \cdot |A|$, then run through the ordered pairs and keep those whose coordinate sum is at most $4$.'
+      problem: 'Let $A=\{1,2,3\}$ and $B=\{x \in \mathbb{Z} : -1 \le x \le 2\}$. How many elements does $A \times B$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: '$B=\{-1,0,1,2\}$ has 4 elements. So $|A \times B|=3 \cdot 4=12$.'
     anki_seeds:
       - front: 'The Cartesian product $A \times B$?'
         back: 'The set of ordered pairs $\{(a, b) : a \in A,\ b \in B\}$.'
@@ -1895,10 +1896,10 @@ topics:
             solution_sketch: 'The intersection needs every set, not only the first. For $n = 2$ the set is $\left(0, 1.5\right)$, which does not contain $1.5$, so $1.5$ first fails at $n = 2$.'
         constraints: 'decide membership in an indexed union (find a witness index) and in an indexed intersection (every index or one failing index); contexts with months and clubs'
     diagnostic_exemplar:
-      problem: 'For $n \ge 1$ let $A_n = \left(0,\ 1 + \tfrac{1}{n}\right)$. Compute $\bigcup_{n \ge 1} A_n$ and $\bigcap_{n \ge 1} A_n$.'
-      answer_contract: {kind: none}
-      answer: 'The intervals shrink as $n$ grows ($A_1 \supseteq A_2 \supseteq \cdots$), so the union is the largest one: $\bigcup_{n \ge 1} A_n = A_1 = (0, 2)$. For the intersection, $x$ lies in every $A_n$ iff $x > 0$ and $x < 1 + \tfrac1n$ for every $n$; any $x > 1$ fails once $\tfrac1n < x - 1$, while every $x \le 1$ passes. Hence $\bigcap_{n \ge 1} A_n = (0, 1]$.'
-      solution_sketch: 'For a nested decreasing family the union is the first set; for the intersection ask which $x$ survive every bound $1 + 1/n$.'
+      problem: 'For each $n \in \{1,2,3,4\}$ let $A_n=\{k \in \mathbb{Z} : n \le k \le n+2\}$. How many elements does $\bigcup_{n=1}^{4} A_n$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: '$A_1=\{1,2,3\}$ to $A_4=\{4,5,6\}$. Their union is $\{1,\dots,6\}$.'
     anki_seeds:
       - front: 'For nested sets $A_1 \subseteq A_2 \subseteq \cdots$, what are $\bigcup A_n$ and $\bigcap A_n$ over a finite range?'
         back: 'The largest set and the smallest set in the range, respectively.'
@@ -2038,9 +2039,10 @@ topics:
             solution_sketch: 'We show that each side is a subset of the other. First, let $x \in B \cap \bigcup_{i \in I} A_i$. Then $x \in B$ and $x \in \bigcup_{i \in I} A_i$. By the definition of an indexed union there is an index $k \in I$ with $x \in A_k$. Now $x \in B$ and $x \in A_k$, so $x \in B \cap A_k$. Since $k \in I$, this gives $x \in \bigcup_{i \in I} (B \cap A_i)$. Second, let $x \in \bigcup_{i \in I} (B \cap A_i)$. Then there is an index $k \in I$ with $x \in B \cap A_k$, so $x \in B$ and $x \in A_k$. From $x \in A_k$ with $k \in I$ we get $x \in \bigcup_{i \in I} A_i$, and together with $x \in B$ this gives $x \in B \cap \bigcup_{i \in I} A_i$. Both inclusions hold, so the two sets are equal. $\square$'
         constraints: 'prove an identity involving an indexed family by element chasing; graded items compute both sides of an identity, decide true or false statements and find counterexamples; contexts with clubs and choirs'
     diagnostic_exemplar:
-      problem: 'Prove the generalized De Morgan law $\left(\bigcup_{i \in I} A_i\right)^{c} = \bigcap_{i \in I} A_i^{\,c}$.'
-      answer: 'Not in any $A_i$ iff in every complement.'
-      solution_sketch: '$x \in (\bigcup_i A_i)^{c}$ iff $x \notin \bigcup_i A_i$ iff for all $i$, $x \notin A_i$, iff for all $i$, $x \in A_i^{c}$, iff $x \in \bigcap_i A_i^{c}$. $\square$'
+      problem: 'For each $i \in \{2,3,4\}$ let $A_i$ be the set of multiples of $i$ in $\{1,2,\dots,12\}$. How many elements does $\bigcup_{i \in \{2,3,4\}} A_i$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The union is $\{2,3,4,6,8,9,10,12\}$. The multiples of $4$ are already multiples of $2$.'
     anki_seeds:
       - front: 'Meaning of $x \in \bigcup_{i \in I} A_i$ and $x \in \bigcap_{i \in I} A_i$?'
         back: '$\bigcup$: $x \in A_i$ for some $i \in I$. $\bigcap$: $x \in A_i$ for every $i \in I$.'
@@ -2192,9 +2194,10 @@ topics:
             solution_sketch: 'We show that each side is a subset of the other. First, let $x \in A \setminus (B \cap C)$. Then $x \in A$ and $x \notin B \cap C$. Since $x \notin B \cap C$, it is not true that both $x \in B$ and $x \in C$, so $x \notin B$ or $x \notin C$. If $x \notin B$, then $x \in A$ and $x \notin B$ give $x \in A \setminus B$. If $x \notin C$, then in the same way $x \in A \setminus C$. In either case $x \in (A \setminus B) \cup (A \setminus C)$. Second, let $x \in (A \setminus B) \cup (A \setminus C)$. Then $x \in A \setminus B$ or $x \in A \setminus C$. If $x \in A \setminus B$, then $x \in A$ and $x \notin B$, and because $x \notin B$ we have $x \notin B \cap C$; so $x \in A \setminus (B \cap C)$. If $x \in A \setminus C$, then $x \in A$ and $x \notin C$, so $x \notin B \cap C$ and again $x \in A \setminus (B \cap C)$. The two inclusions give $A \setminus (B \cap C) = (A \setminus B) \cup (A \setminus C)$. $\square$'
         constraints: 'express a difference as membership plus non-membership, then chase; graded items compute differences on small sets, decide true or false identities and count with differences; contexts with choirs and libraries'
     diagnostic_exemplar:
-      problem: 'Prove: $A \setminus (B \setminus C) = (A \setminus B) \cup (A \cap C)$.'
-      answer: 'Element chase. $x \in A \setminus (B \setminus C)$ iff $x \in A$ and $\lnot(x \in B \land x \notin C)$. By De Morgan the second condition becomes $x \notin B \lor x \in C$, so the whole condition is $x \in A \land (x \notin B \lor x \in C)$. Distributing the conjunction over the disjunction gives $(x \in A \land x \notin B) \lor (x \in A \land x \in C)$, i.e. $x \in A \setminus B$ or $x \in A \cap C$, i.e. $x \in (A \setminus B) \cup (A \cap C)$. Every step is an equivalence, so the two sets are equal.'
-      solution_sketch: 'Rewrite the differences as conjunctions with negations, apply De Morgan to the inner difference, then distribute.'
+      problem: 'Let $U=\{1,2,\dots,8\}$, $A=\{1,2,3,4\}$ and $B=\{3,4,5,6\}$. How many elements does $A^c \cup B^c$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'By De Morgan, $A^c \cup B^c=(A \cap B)^c$. Since $A \cap B=\{3,4\}$, the set has $8-2=6$ elements.'
     anki_seeds:
       - front: 'The two standard ways to prove a set identity?'
         back: 'Element-chasing (show $x \in$ LHS iff $x \in$ RHS) or double inclusion ($\subseteq$ both ways).'

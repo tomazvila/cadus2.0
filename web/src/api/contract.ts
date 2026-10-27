@@ -45,6 +45,7 @@ import type {
   TeachCheckRequest,
   TeachCheckResponse,
   TeachResponse,
+  TopicTeachResponse,
 } from './types-study';
 import type {
   ApproveResponse,
@@ -124,6 +125,7 @@ export interface ApiClient {
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
+  topicTeach(topicId: string): Promise<TopicTeachResponse>;
   taskTeachCheck(taskId: string, body: TeachCheckRequest): Promise<TeachCheckResponse>;
   taskHint(taskId: string, problemId: string): Promise<HintResponse>;
   taskAnswer(
@@ -242,6 +244,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'GET', path: '/api/report/retention', auth: 'S', via: 'method', client: 'getRetentionReport' },
   { method: 'POST', path: '/api/enroll', auth: 'S', via: 'method', client: 'enroll' },
   { method: 'POST', path: '/api/topics/{topic_id}/review-soon', auth: 'S', via: 'method', client: 'reviewSoon' },
+  { method: 'GET', path: '/api/topics/{topic_id}/teach', auth: 'S', via: 'method', client: 'topicTeach' },
   { method: 'POST', path: '/api/goal/xp', auth: 'S', via: 'method', client: 'setXpGoal' },
   { method: 'POST', path: '/api/session/start', auth: 'S', via: 'method', client: 'sessionStart' },
   { method: 'POST', path: '/api/session/end', auth: 'S', via: 'method', client: 'sessionEnd' },

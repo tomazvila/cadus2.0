@@ -53,7 +53,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
         // 2026-10-07, courses rewrite (95 thousands separators, three reworded items, mixed-number forms): hash re-pinned.
         // 2026-10-08, story framing removed: hash re-pinned (was 0fa8bc22...ad7b).
         // 2026-10-12, Foundations merge (D-C1): hash re-pinned (was c1ea8818...013c).
-        "91526de1802b1265d8dbae7d06a689eac68c56f0cb46cbd56c0f8ba71c89c71f"
+        // 2026-10-27, placement probes: the 39 Foundations multi-step probes gained a contract; hash re-pinned (was 91526de1...c71f).
+        "7af156655f1c9cfa30802bf5adae467755a81133a0697dd30ef1c8216d75ef1d"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -79,11 +80,12 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             // 2026-10-12, Foundations merge (D-C1): the tallies below pin the merged
             // tree (1,669 live statements). The `ascending_chain` kind (5) left with
             // the dropped twin steps.
+            // 2026-10-27, placement probes: the 39 uncontracted rows gained a contract (4 coordinates, 28 exact, 1 inequality_union, 6 unit); no row is uncontracted.
             ("approx".to_owned(), 26),
-            ("coordinates".to_owned(), 119),
-            ("exact".to_owned(), 648),
+            ("coordinates".to_owned(), 123),
+            ("exact".to_owned(), 676),
             ("function".to_owned(), 12),
-            ("inequality_union".to_owned(), 97),
+            ("inequality_union".to_owned(), 98),
             ("label".to_owned(), 91),
             ("list".to_owned(), 38),
             ("multipart".to_owned(), 30),
@@ -96,8 +98,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             ("required_inequality_notation".to_owned(), 23),
             ("required_simplest_radical".to_owned(), 7),
             ("required_single_power".to_owned(), 1),
-            ("uncontracted".to_owned(), 39),
-            ("unit".to_owned(), 401),
+            ("unit".to_owned(), 407),
         ])
     );
 
@@ -152,7 +153,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             .filter(|row| row["answer_contract"].is_null())
             .filter(|row| reviewed_keys.contains(&key(row)))
             .count(),
-        39 // 2026-10-12, Foundations merge (D-C1): was 44
+        0 // 2026-10-27, placement probes: was 39; 2026-10-12, Foundations merge (D-C1): was 44
     );
     assert_eq!(
         reviewed
@@ -162,7 +163,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
                 live["problem"] == row["problem"] && live["answer"] == row["answer"]
             })
             .count(),
-        95 // 2026-10-12, Foundations merge (D-C1): was 104
+        61 // 2026-10-27, placement probes: 34 reviewed diagnostic rows changed problem or answer text (was 95); 2026-10-12, Foundations merge (D-C1): was 104
     );
     assert_eq!(
         counts,

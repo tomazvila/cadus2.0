@@ -138,10 +138,10 @@ topics:
             solution_sketch: 'The image is $Q\mathbf v=(3,-1)$, so $\|Q\mathbf v\|^2=3^2+(-1)^2=10$. The same value comes from $\|\mathbf v\|^2=(-1)^2+3^2=10$, because $Q$ is orthogonal.'
         constraints: 'lengths, dot products and determinants of 2x2 rotations/reflections with integer test vectors, plus lengths and dot products under an unnamed orthogonal matrix'
     diagnostic_exemplar:
-      problem: 'For $Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&-1\\1&1\end{pmatrix}$, verify that $Q$ is orthogonal, give $Q^{-1}$, and compute $\|Q\mathbf{x}\|$ for $\mathbf{x} = (3, 4)$.'
-      answer: '$Q$ is orthogonal (its columns are orthonormal, so $Q^TQ = I$); $Q^{-1} = Q^T = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$; $\|Q\mathbf{x}\| = \|\mathbf{x}\| = 5$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Each column has norm $1$ and their dot product is $(1)(-1) + (1)(1) = 0$ before scaling; orthogonal matrices preserve norms, so $\|Q\mathbf{x}\| = \|(3,4)\| = 5$.'
+      problem: 'The matrix $Q=\frac{1}{13}\begin{pmatrix}5&a\\12&-5\end{pmatrix}$ is orthogonal and $a>0$. Find $a$.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'The columns $(5/13,12/13)$ and $(a/13,-5/13)$ must be perpendicular. This gives $5a-60=0$, so $a=12$.'
     anki_seeds:
       - front: 'A square matrix $Q$ is orthogonal when $Q^TQ = $ ?'
         back: '$I$ — equivalently, its columns form an orthonormal set.'
@@ -285,10 +285,10 @@ topics:
             solution_sketch: 'The determinant of $A$ is $\det D=2\cdot4=8$. For an invertible matrix $\det(A^{-1})=1/\det A$, so $\det(A^{-1})=1/8$.'
         constraints: 'D diagonal with small integer entries; answers obtained without multiplying out Q; determinants also read as area factors'
     diagnostic_exemplar:
-      problem: 'Orthogonally diagonalize $A = \begin{pmatrix}3&1\\1&3\end{pmatrix}$ as $A = QDQ^T$, then use the factorization to give $\det A$ and the eigenvalues of $A^2$.'
-      answer: '$Q = \frac{1}{\sqrt{2}}\begin{pmatrix}1&1\\-1&1\end{pmatrix}$, $D = \begin{pmatrix}2&0\\0&4\end{pmatrix}$; $\det A = 8$; $A^2$ has eigenvalues $4$ and $16$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The eigenpairs are $2$ with $(1, -1)$ and $4$ with $(1, 1)$; normalizing gives the columns of $Q$, and $\det A = \det D = 8$ while $A^2 = QD^2Q^T$.'
+      problem: 'Find the largest eigenvalue of the symmetric matrix $A=\begin{pmatrix}3&5\\5&3\end{pmatrix}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The eigenvalues of $\begin{pmatrix}a&b\\b&a\end{pmatrix}$ are $a+b$ and $a-b$. Here they are $8$ and $-2$, so the largest is $8$.'
     anki_seeds:
       - front: 'Spectral theorem: every real symmetric matrix can be written as...'
         back: '$A = QDQ^T$ with $Q$ orthogonal and $D$ diagonal (real eigenvalues on the diagonal).'
@@ -433,10 +433,10 @@ topics:
             solution_sketch: 'In principal-axis coordinates the curve is $2u^2+4v^2=1$. The semi-axes are $1/\sqrt2$ along the $u$ axis and $1/\sqrt4=1/2$ along the $v$ axis. The longer one is $1/\sqrt2$.'
         constraints: '2x2 forms whose eigenvalues are integers or halves; conclusions stated in principal-axis coordinates, extreme values on the unit circle and semi-axes, no explicit angle computations'
     diagnostic_exemplar:
-      problem: 'Write $q(x, y) = x^2 + 4xy + y^2$ as $\mathbf{x}^TA\mathbf{x}$ with $A$ symmetric, classify its definiteness, and give its cross-term-free form in principal-axis coordinates.'
-      answer: '$A = \begin{pmatrix}1&2\\2&1\end{pmatrix}$; eigenvalues $3$ and $-1$, so $q$ is indefinite; in principal-axis coordinates $q = 3u^2 - v^2$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Split the $4xy$ evenly off the diagonal; the eigenvalues of $A$ are $1 \pm 2$, and the principal-axis form has those eigenvalues as coefficients.'
+      problem: 'Let $A=\begin{pmatrix}2&1\\1&3\end{pmatrix}$. Find $\mathbf x^TA\mathbf x$ for $\mathbf x=(2,-1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'First $A\mathbf x=(4-1,\,2-3)=(3,-1)$. Then $\mathbf x^TA\mathbf x=2\cdot3+(-1)(-1)=7$.'
     anki_seeds:
       - front: 'In the symmetric matrix of a quadratic form, the coefficient of $xy$ is...'
         back: 'split in half across the two off-diagonal entries.'
@@ -573,10 +573,10 @@ topics:
             solution_sketch: 'The outer product is $\mathbf u_1\mathbf v_1^T=\frac12\begin{pmatrix}1&1\\1&1\end{pmatrix}$. Multiplying by $\sigma_1=2$ gives $\begin{pmatrix}1&1\\1&1\end{pmatrix}$. Since $\sigma_2=0$, this approximation equals the matrix itself.'
         constraints: 'SVD data given or carried over from kp2-scale computations; rank and null-space dimension read off the sigma list; rank-1 term computed as an explicit outer product with entries in -3..3; storage count for a rank-k picture'
     diagnostic_exemplar:
-      problem: 'For $A = \begin{pmatrix}0&4\\2&0\end{pmatrix}$, find the singular values, an SVD $A = U\Sigma V^T$, and the rank of $A$.'
-      answer: '$\sigma_1 = 4$, $\sigma_2 = 2$; $U = I_2$, $\Sigma = \begin{pmatrix}4&0\\0&2\end{pmatrix}$, $V^T = \begin{pmatrix}0&1\\1&0\end{pmatrix}$; rank $2$'
-      answer_contract: {kind: none}
-      solution_sketch: '$A^TA = \mathrm{diag}(4, 16)$, so the singular values are $4$ and $2$ with $\mathbf{v}_1 = (0,1)$, $\mathbf{v}_2 = (1,0)$; then $\mathbf{u}_i = A\mathbf{v}_i/\sigma_i$ gives $U = I$, and both singular values are nonzero.'
+      problem: 'Find the largest singular value of $A=\begin{pmatrix}1&2\\2&1\end{pmatrix}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'First $A^TA=\begin{pmatrix}5&4\\4&5\end{pmatrix}$, with eigenvalues $9$ and $1$. The largest singular value is $\sqrt9=3$.'
     anki_seeds:
       - front: 'The singular values of $A$ are...'
         back: 'the square roots of the eigenvalues of $A^TA$, listed in decreasing order.'

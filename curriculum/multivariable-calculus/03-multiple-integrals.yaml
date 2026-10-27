@@ -288,10 +288,10 @@ topics:
             solution_sketch: 'The region is $0 \le y \le 2$ and $0 \le x \le \frac{y}{2}$. The condition $x \le \frac{y}{2}$ gives $y \ge 2x$, and $x$ runs from $0$ to $1$. So for a fixed $x$, $y$ runs from $2x$ to $2$: $a = 0$, $b = 1$, $g = 2x$, $h = 2$.'
         constraints: 'regions are triangles or parabola-bounded; both orders are written with exact bounds; two items read a measured plot from its iterated integral; one verdict item checks a reversal'
     diagnostic_exemplar:
-      problem: 'Describe the region of $\int_0^2 \int_x^2 f(x, y)\,dy\,dx$, and rewrite the integral with the order of integration reversed.'
-      answer: 'The triangle $0 \le x \le y \le 2$ (vertices $(0,0)$, $(0,2)$, $(2,2)$); reversed, $\int_0^2 \int_0^y f(x, y)\,dx\,dy$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The given limits are the type I description $0 \le x \le 2$, $x \le y \le 2$. Slicing horizontally instead: $y$ runs over $[0, 2]$ and, for each $y$, $x$ runs from $0$ to $y$.'
+      problem: 'Find the area of the region between the curves $y = x$ and $y = x^2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/6'
+      solution_sketch: 'The curves meet at $x = 0$ and $x = 1$, and $x \ge x^2$ between them. The area is $\int_0^1 (x - x^2)\,dx = \frac{1}{2} - \frac{1}{3} = \frac{1}{6}$.'
     anki_seeds:
       - front: 'Type I vs type II region?'
         back: 'Type I: $a \le x \le b$, $g_1(x) \le y \le g_2(x)$. Type II: $c \le y \le d$, $h_1(y) \le x \le h_2(y)$.'
@@ -443,10 +443,10 @@ topics:
             solution_sketch: 'The region is $0 \le y \le 1$, $0 \le x \le \frac{y}{2}$. The integral becomes $\int_0^1 \frac{y}{2}\sin(y^2)\,dy = \frac{1}{4}(1 - \cos 1)$, which is about $0.1149$.'
         constraints: 'the inner integrand has no elementary antiderivative in the given order (e^{x^2}, sin(y^2)); reversal makes it a u-substitution; two items are plate-mass contexts where the learner must choose the order'
     diagnostic_exemplar:
-      problem: 'Evaluate $\int_0^1 \int_{3y}^{3} e^{x^2}\,dx\,dy$ by reversing the order of integration.'
-      answer: '$\dfrac{e^9 - 1}{6}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The region $0 \le y \le 1$, $3y \le x \le 3$ is the triangle $0 \le x \le 3$, $0 \le y \le x/3$. Reversed: $\int_0^3 \int_0^{x/3} e^{x^2}\,dy\,dx = \int_0^3 \frac{x}{3}e^{x^2}\,dx = \frac{1}{6}\left[e^{x^2}\right]_0^3 = \frac{e^9 - 1}{6}$.'
+      problem: 'Evaluate $\int_0^2 \int_0^3 (x + 2y)\,dy\,dx$.'
+      answer_contract: {"kind":"exact"}
+      answer: '24'
+      solution_sketch: 'Inner: $\int_0^3 (x + 2y)\,dy = 3x + 9$. Then $\int_0^2 (3x + 9)\,dx = 6 + 18 = 24$.'
     anki_seeds:
       - front: 'When must you reverse the order of integration in a double integral?'
         back: 'When the inner integrand has no elementary antiderivative in the given order (e.g. $e^{x^2}$, $\sin(y^2)$).'
@@ -562,10 +562,10 @@ topics:
             solution_sketch: 'The area is $3$. The integral is $\int_0^3 \int_0^{2 - 2x/3} x^2 y\,dy\,dx = \frac{9}{5}$. The average is $\frac{9/5}{3} = \frac{3}{5}$.'
         constraints: 'triangular regions with integer vertices, plus one region between a parabola and a line; divide by the AREA, not by a side length; contexts include an average temperature and a mass from an average density'
     diagnostic_exemplar:
-      problem: 'Find the average value of $f(x, y) = x + y$ over the triangle with vertices $(0,0)$, $(2,0)$, $(0,2)$.'
-      answer: '$\dfrac{4}{3}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The triangle has area $2$. By symmetry $\iint (x+y)\,dA = 2\iint x\,dA = 2\int_0^2 x(2 - x)\,dx = 2\left(4 - \tfrac{8}{3}\right) = \tfrac{8}{3}$, so the average is $\tfrac{8}{3} \div 2 = \tfrac{4}{3}$.'
+      problem: 'Find the average value of $f(x, y) = xy$ over the rectangle $[0, 2] \times [0, 4]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The area is $8$. The integral is $\int_0^2 x\,dx \cdot \int_0^4 y\,dy = 2 \cdot 8 = 16$, so the average is $16 \div 8 = 2$.'
     anki_seeds:
       - front: 'Average value of $f$ over a plane region $D$?'
         back: '$\bar{f} = \dfrac{1}{\operatorname{Area}(D)} \iint_D f \, dA$'
@@ -710,10 +710,10 @@ topics:
             solution_sketch: 'The mass is $\tfrac12$. The moments are $M_y = \iint xy\,dA = \tfrac14$ and $M_x = \iint y^2\,dA = \tfrac13$. So $\bar x = \tfrac12$ and $\bar y = \tfrac23$.'
         constraints: "use symmetry when available; centroids/centers have small rational coordinates"
     diagnostic_exemplar:
-      problem: 'Find the centre of mass of the lamina occupying $[0, 2] \times [0, 1]$ with density $\rho(x, y) = x$.'
-      answer: '$\left(\dfrac{4}{3},\; \dfrac{1}{2}\right)$'
-      answer_contract: {kind: none}
-      solution_sketch: '$m = \int_0^2\!\int_0^1 x\,dy\,dx = 2$; $M_y = \int_0^2\!\int_0^1 x^2\,dy\,dx = \tfrac{8}{3}$; $M_x = \int_0^2\!\int_0^1 xy\,dy\,dx = 1$. Hence $\bar x = \tfrac{8}{3}/2 = \tfrac{4}{3}$ and $\bar y = 1/2$.'
+      problem: 'Find the mass of the lamina that occupies $[0, 2] \times [0, 3]$ with density $\rho(x, y) = xy$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The mass is $\int_0^2 \int_0^3 xy\,dy\,dx = \int_0^2 x\,dx \cdot \int_0^3 y\,dy = 2 \cdot \frac{9}{2} = 9$.'
     anki_seeds:
       - front: 'Center of mass formulas for a lamina with density $\rho$?'
         back: '$\bar{x} = \frac{M_y}{m} = \frac{1}{m}\iint x\rho\, dA$, $\;\bar{y} = \frac{M_x}{m} = \frac{1}{m}\iint y\rho\, dA$.'
@@ -932,10 +932,10 @@ topics:
             solution_sketch: 'The surface lies over the disk $r \le \sqrt3$ and the factor is $\sqrt{1+4r^2}$. So $A = 2\pi\int_0^{\sqrt3} \sqrt{1+4r^2}\,r\,dr = 2\pi\cdot\tfrac{1}{12}(13\sqrt{13} - 1) = \tfrac{\pi}{6}(13\sqrt{13}-1)$.'
         constraints: "radially symmetric surfaces; the substitution u = 1 + 4r^2 (or a constant factor) finishes the integral; answers exact"
     diagnostic_exemplar:
-      problem: 'Find the area of the part of the paraboloid $z = x^2 + y^2$ lying below the plane $z = 4$.'
-      answer: '$\dfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$'
-      answer_contract: {kind: none}
-      solution_sketch: '$dS = \sqrt{1 + 4x^2 + 4y^2}\,dA$, and the shadow is the disk $r \le 2$, so $A = \int_0^{2\pi}\!\int_0^2 \sqrt{1 + 4r^2}\,r\,dr\,d\theta = 2\pi \cdot \tfrac{1}{12}\left[(1 + 4r^2)^{3/2}\right]_0^2 = \tfrac{\pi}{6}\left(17\sqrt{17} - 1\right)$.'
+      problem: 'Find the area of the part of the plane $z = 2x + 2y + 1$ that lies above the rectangle $[0, 1] \times [0, 2]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The area element is $\sqrt{1 + 2^2 + 2^2}\,dA = 3\,dA$. The rectangle has area $2$, so the surface area is $6$.'
     anki_seeds:
       - front: 'Surface area of the graph $z = f(x, y)$ over a region $D$?'
         back: '$\iint_D \sqrt{1 + f_x^2 + f_y^2} \, dA$'
@@ -1076,10 +1076,10 @@ topics:
             solution_sketch: 'The volume is $\int_0^1\int_0^1 (x^2 + cy)\,dy\,dx = \tfrac13 + \tfrac{c}{2}$. Setting this equal to $\tfrac12$ gives $\tfrac{c}{2} = \tfrac16$, so $c = \tfrac13$.'
         constraints: "z-bounds are polynomial surfaces; after the inner integral the problem reduces to an earlier double integral"
     diagnostic_exemplar:
-      problem: 'Evaluate $\iiint_E x\,dV$ where $E$ is the tetrahedron bounded by the coordinate planes and the plane $x + 2y + z = 2$.'
-      answer: '$\dfrac{1}{3}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Bounds: $0 \le x \le 2$, $0 \le y \le \frac{2-x}{2}$, $0 \le z \le 2 - x - 2y$. Integrating in $z$ then $y$ gives $\int_0^{(2-x)/2}(2 - x - 2y)\,dy = \frac{(2-x)^2}{4}$, so the integral is $\int_0^2 \frac{x(2-x)^2}{4}\,dx = \frac{1}{4}\left(12 - \frac{32}{3}\right) = \frac{1}{3}$.'
+      problem: 'Evaluate $\iiint_E z\,dV$, where $E$ is the box $[0, 1] \times [0, 2] \times [0, 3]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The integral is $\int_0^1 dx \cdot \int_0^2 dy \cdot \int_0^3 z\,dz = 1 \cdot 2 \cdot \frac{9}{2} = 9$.'
     anki_seeds:
       - front: 'How do you compute a volume with a triple integral?'
         back: '$V = \iiint_E 1 \, dV$ — integrate the constant $1$ over the solid.'
@@ -1350,10 +1350,10 @@ topics:
             solution_sketch: 'In cylindrical coordinates $0 \le r \le 3$ and $0 \le z \le 18 - 2r^2$. So $V = 2\pi\int_0^3 (18 - 2r^2)\,r\,dr = 2\pi\left(81 - \frac{81}{2}\right) = 81\pi$.'
         constraints: 'paraboloids and cylinders with small integer radii; answers exact multiples of pi; word problems give volumes in cubic metres'
     diagnostic_exemplar:
-      problem: 'Use cylindrical coordinates to find the volume of the solid bounded above by the paraboloid $z = 12 - x^2 - y^2$ and below by the cone $z = \sqrt{x^2 + y^2}$.'
-      answer: '$\dfrac{99\pi}{2}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The surfaces meet where $12 - r^2 = r$, i.e. $r = 3$. Then $V = \int_0^{2\pi}\!\int_0^3 \left[(12 - r^2) - r\right] r\,dr\,d\theta = 2\pi\left[6r^2 - \tfrac{r^4}{4} - \tfrac{r^3}{3}\right]_0^3 = 2\pi\left(54 - \tfrac{81}{4} - 9\right) = \tfrac{99\pi}{2}$.'
+      problem: 'The solid $x^2 + y^2 \le 4$, $0 \le z \le 3$ has volume $k\pi$. Find $k$.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'In cylindrical coordinates the volume is $\int_0^{2\pi}\int_0^2\int_0^3 r\,dz\,dr\,d\theta = 2\pi \cdot 2 \cdot 3 = 12\pi$, so $k = 12$.'
     anki_seeds:
       - front: 'Volume element in cylindrical coordinates?'
         back: '$dV = r \, dz \, dr \, d\theta$'
@@ -1515,10 +1515,10 @@ topics:
             solution_sketch: 'Small areas are multiplied by the Jacobian of the map. The Jacobian of the polar map is $r$, so near $r = 3$ the factor is $3$.'
         constraints: '2x2 Jacobians only; cone half-angles at standard unit-circle values; at most two items ask which coordinate system to use; word problems use solids bounded by spheres and cones centered at the origin'
     diagnostic_exemplar:
-      problem: 'Use spherical coordinates to find the volume of the region inside the sphere $\rho \le 2$ and above the cone $\varphi \le \frac{\pi}{3}$.'
-      answer: '$\dfrac{8\pi}{3}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$V = \int_0^{2\pi}\!\int_0^{\pi/3}\!\int_0^2 \rho^2 \sin\varphi \,d\rho\,d\varphi\,d\theta = 2\pi \cdot \tfrac{8}{3} \cdot \left[-\cos\varphi\right]_0^{\pi/3} = 2\pi \cdot \tfrac{8}{3} \cdot \tfrac{1}{2} = \tfrac{8\pi}{3}$.'
+      problem: 'A point has cylindrical coordinates $(r, \theta, z) = (3, \frac{\pi}{2}, 5)$. Find its rectangular coordinates $(x, y, z)$.'
+      answer_contract: {"kind":"coordinates","arity":3}
+      answer: '(0, 3, 5)'
+      solution_sketch: 'Use $x = r\cos\theta = 3 \cdot 0 = 0$ and $y = r\sin\theta = 3 \cdot 1 = 3$. The height $z = 5$ stays the same.'
     anki_seeds:
       - front: 'Volume element in spherical coordinates?'
         back: '$dV = \rho^2 \sin\varphi \, d\rho \, d\varphi \, d\theta$'
@@ -1673,10 +1673,10 @@ topics:
             solution_sketch: 'In polar coordinates the density is $r^2$ and $dA = r\,dr\,d\theta$. So $m = \int_0^{2\pi}\int_0^2 r^3\,dr\,d\theta = 4 \cdot 2\pi = 8\pi$ kilograms.'
         constraints: 'boundary curves become u = const, v = const; final answers involve at most one logarithm; word problems give a garden bed, a field or a plate bounded by the curves'
     diagnostic_exemplar:
-      problem: 'Evaluate $\iint_R (x + y)\,dA$, where $R$ is the parallelogram with vertices $(0,0)$, $(3,1)$, $(4,3)$, $(1,2)$, using the change of variables $x = 3u + v$, $y = u + 2v$.'
-      answer: '$\dfrac{35}{2}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The map sends the unit square $0 \le u, v \le 1$ onto $R$, and its Jacobian is $3 \cdot 2 - 1 \cdot 1 = 5$. Since $x + y = 4u + 3v$, the integral is $\int_0^1\!\int_0^1 (4u + 3v)\cdot 5\,du\,dv = 5\left(2 + \tfrac{3}{2}\right) = \tfrac{35}{2}$.'
+      problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(u, v)}$ for $x = 4u + v$, $y = u + 2v$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'The partial derivatives are $x_u = 4$, $x_v = 1$, $y_u = 1$ and $y_v = 2$. The Jacobian is $4 \cdot 2 - 1 \cdot 1 = 7$.'
     anki_seeds:
       - front: 'Change-of-variables formula for double integrals?'
         back: '$\iint_R f(x,y)\, dA = \iint_S f(x(u,v), y(u,v)) \left|\frac{\partial(x,y)}{\partial(u,v)}\right| du\, dv$'

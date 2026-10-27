@@ -144,9 +144,10 @@ topics:
             solution_sketch: 'If $\varphi$ and $\psi$ are automorphisms, then $\psi(\varphi(ab)) = \psi(\varphi(a)\varphi(b)) = \psi(\varphi(a))\psi(\varphi(b))$, and a composite of bijections is a bijection, so $\psi \circ \varphi$ is an automorphism. Composition of functions is associative, and the identity map is an automorphism that acts as the identity element. For an automorphism $\varphi$ the inverse function is a bijection, and for $h_1 = \varphi(g_1)$ and $h_2 = \varphi(g_2)$ we get $\varphi^{-1}(h_1 h_2) = g_1 g_2 = \varphi^{-1}(h_1)\varphi^{-1}(h_2)$, so $\varphi^{-1}$ is an automorphism.'
         constraints: "closure of isomorphisms under inverse and composition; simple automorphisms of Z, Z_n"
     diagnostic_exemplar:
-      problem: 'Exhibit an isomorphism $U(10) \to \mathbb{Z}_4$ and justify briefly.'
-      answer: '$U(10) = \langle 3 \rangle$ with $3^1=3, 3^2=9, 3^3=7, 3^4=1$; send $3^k \mapsto k$. A generator-to-generator map of cyclic groups of equal order is an isomorphism.'
-      solution_sketch: 'Both groups are cyclic of order $4$; matching generators gives $\varphi(3^k) = k \bmod 4$, which converts multiplication into addition of exponents.'
+      problem: 'The map $\varphi:\mathbb{Z}_9\to\mathbb{Z}_9$, $\varphi(k)=2k \bmod 9$, is an isomorphism of the additive group $\mathbb{Z}_9$. Its inverse has the form $\psi(m)=am \bmod 9$ with $0<a<9$. Find $a$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'We need $2a\equiv 1 \pmod 9$. Since $2\cdot 5=10\equiv 1$, $a=5$.'
     anki_seeds:
       - front: "What is a group isomorphism?"
         back: "A bijective homomorphism; its inverse is automatically a homomorphism too."
@@ -295,10 +296,10 @@ topics:
             solution_sketch: 'The pair of dial positions is an element of $\mathbb{Z}_3 \times \mathbb{Z}_5$, and each press adds $(1, 1)$. The order of $(1, 1)$ is $\mathrm{lcm}(3, 5) = 15$, which equals the order of the whole group, so $\mathbb{Z}_3 \times \mathbb{Z}_5$ is cyclic and isomorphic to $\mathbb{Z}_{15}$. Both dials return together after $15$ presses.'
         constraints: "yes/no with proof, orders <= 12; use the gcd criterion and order profiles"
     diagnostic_exemplar:
-      problem: 'Are $\mathbb{Z}_8$, $\mathbb{Z}_4 \times \mathbb{Z}_2$, and $\mathbb{Z}_2 \times \mathbb{Z}_2 \times \mathbb{Z}_2$ pairwise non-isomorphic? Prove it.'
-      answer: 'Yes: their maximal element orders are $8$, $4$, and $2$ respectively, and maximal order is an isomorphism invariant.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Compute the largest order in each (generator; $(1,0)$ of order $4$; all non-identity elements order $2$).'
+      problem: 'How many elements of order $2$ does the group $\mathbb{Z}_2\times\mathbb{Z}_2\times\mathbb{Z}_2$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'Every non-identity element has order $2$. The group has $8$ elements, so $7$ have order $2$.'
     anki_seeds:
       - front: "Fastest way to show two finite groups are NOT isomorphic?"
         back: "Find an invariant that differs: order, abelian-ness, cyclicity, or the count of elements of some order."
@@ -443,10 +444,10 @@ topics:
             solution_sketch: 'The kernel is a subgroup of $G$ with more than $1$ element, and its order divides $27$ by Lagrange''s theorem. The divisors of $27$ are $1, 3, 9, 27$, so the smallest possible order is $3$.'
         constraints: "fiber/counting problems with |G| <= 60"
     diagnostic_exemplar:
-      problem: 'For $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 4x \bmod 12$: compute $\ker \varphi$ and $\mathrm{im}\,\varphi$, check that $|\ker \varphi| \cdot |\mathrm{im}\,\varphi| = 12$, and say whether $\varphi$ is injective.'
-      answer: '$\ker \varphi = \{0, 3, 6, 9\}$ and $\mathrm{im}\,\varphi = \{0, 4, 8\}$, so $4 \cdot 3 = 12$. $\varphi$ is not injective: the kernel is bigger than $\{0\}$ (for instance $\varphi(3) = \varphi(0) = 0$), and a homomorphism is injective exactly when its kernel is trivial.'
-      answer_contract: {kind: none}
-      solution_sketch: '$4x \equiv 0 \pmod{12}$ iff $3 \mid x$; the image consists of the multiples of $\gcd(4,12) = 4$. Then apply the kernel criterion for injectivity.'
+      problem: 'Let $\varphi:\mathbb{Z}_{18}\to\mathbb{Z}_{18}$ be given by $\varphi(x)=12x \bmod 18$. How many elements does $\ker\varphi$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The condition $12x\equiv 0 \pmod{18}$ means $x$ is a multiple of $3$. So $\ker\varphi=\{0,3,6,9,12,15\}$ has $6$ elements.'
     anki_seeds:
       - front: "$\\ker \\varphi$ for a group homomorphism is always a ______ of the domain."
         back: "Normal subgroup."
@@ -597,9 +598,10 @@ topics:
             solution_sketch: 'Suppose $\varphi : \mathbb{Z}_m \to \mathbb{Z}_n$ is a surjective homomorphism. By the first isomorphism theorem, $\mathbb{Z}_m/\ker\varphi \cong \mathrm{im}\,\varphi = \mathbb{Z}_n$, so $n = m/|\ker\varphi|$. Then $m = n \cdot |\ker\varphi|$, so $n$ divides $m$, which contradicts the assumption.'
         constraints: "existence/non-existence of surjections between groups of order <= 30"
     diagnostic_exemplar:
-      problem: 'Let $\varphi : \mathbb{Z}_{12} \to \mathbb{Z}_{12}$, $\varphi(x) = 3x$. Apply the first isomorphism theorem: what is $\mathbb{Z}_{12}/\{0,4,8\}$ isomorphic to?'
-      answer: '$\mathbb{Z}_4$ (the image $\{0,3,6,9\}$ is cyclic of order $4$).'
-      solution_sketch: '$\ker\varphi = \{0,4,8\}$ and $\mathrm{im}\,\varphi = \langle 3 \rangle \cong \mathbb{Z}_4$, so the quotient is $\mathbb{Z}_4$.'
+      problem: 'Let $\varphi:\mathbb{Z}_{24}\to\mathbb{Z}_{24}$ be given by $\varphi(x)=9x \bmod 24$. How many elements does $\mathrm{im}\,\varphi$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The kernel holds the $x$ with $9x\equiv 0 \pmod{24}$, which are the multiples of $8$: $0,8,16$. By the first isomorphism theorem the image has $24/3=8$ elements.'
     anki_seeds:
       - front: "First isomorphism theorem?"
         back: "$G/\\ker\\varphi \\cong \\mathrm{im}\\,\\varphi$ via $g\\ker\\varphi \\mapsto \\varphi(g)$."
@@ -768,9 +770,10 @@ topics:
             solution_sketch: 'Let $\varphi : R \to S$ be a ring homomorphism. Its kernel is an ideal, since $\varphi(a - b) = 0$ and $\varphi(ra) = \varphi(r)\varphi(a) = 0$ for $a, b$ in the kernel. The map $r + \ker\varphi \mapsto \varphi(r)$ is well defined, respects sums and products, is injective because $\varphi(r) = 0$ means $r \in \ker\varphi$, and is onto the image. For $\varphi(p) = p(i)$ on $\mathbb{R}[x]$ the image is all of $\mathbb{C}$, since $\varphi(a + bx) = a + bi$. If $p = (x^2+1)q + (cx + d)$ and $p(i) = 0$, then $ci + d = 0$ forces $c = d = 0$, so the kernel is generated by $x^2 + 1$, and $\mathbb{R}[x]/\langle x^2+1 \rangle \cong \mathbb{C}$.'
         constraints: 'statement of the theorem and applications by evaluation and reduction maps: Z[x] -> Z, Z -> Z_n, R[x] -> C; the kernel is found by a division-with-remainder argument, and remainders are asked for directly'
     diagnostic_exemplar:
-      problem: 'In $(\mathbb{Z}, +)$ take $H = 6\mathbb{Z}$ and $N = 10\mathbb{Z}$. Use the second isomorphism theorem to identify $6\mathbb{Z}/30\mathbb{Z}$, then use the third isomorphism theorem to identify $(\mathbb{Z}/30\mathbb{Z})\,/\,(6\mathbb{Z}/30\mathbb{Z})$.'
-      answer: '$H + N = 2\mathbb{Z}$ (integer combinations of $6$ and $10$ are the multiples of $\gcd(6,10) = 2$) and $H \cap N = 30\mathbb{Z}$ (common multiples, $\mathrm{lcm}(6,10) = 30$). The second isomorphism theorem gives $(H+N)/N \cong H/(H \cap N)$, i.e. $2\mathbb{Z}/10\mathbb{Z} \cong 6\mathbb{Z}/30\mathbb{Z}$; both are cyclic of order $5$, so $6\mathbb{Z}/30\mathbb{Z} \cong \mathbb{Z}_5$. Since $30\mathbb{Z} \subseteq 6\mathbb{Z}$, the third isomorphism theorem cancels the common $30\mathbb{Z}$: $(\mathbb{Z}/30\mathbb{Z})/(6\mathbb{Z}/30\mathbb{Z}) \cong \mathbb{Z}/6\mathbb{Z} \cong \mathbb{Z}_6$.'
-      solution_sketch: 'In $\mathbb{Z}$, the sum of two subgroups is generated by the gcd and the intersection by the lcm. Apply the diamond theorem, then cancel $30\mathbb{Z}$ with the third theorem.'
+      problem: 'Let $N\le M$ be normal subgroups of a group $G$ with $|G|=60$, $|N|=5$ and $|M|=15$. Find the order of the quotient group $(G/N)/(M/N)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'By the third isomorphism theorem, $(G/N)/(M/N)\cong G/M$. Its order is $60/15=4$.'
     anki_seeds:
       - front: "Second (diamond) isomorphism theorem?"
         back: "$H \\le G$, $N \\trianglelefteq G$: $\\ HN/N \\cong H/(H \\cap N)$."
@@ -1082,10 +1085,10 @@ topics:
             solution_sketch: 'The group $U(15) = \{1, 2, 4, 7, 8, 11, 13, 14\}$ has order $8$, but a group of order $8$ is cyclic only if some element has order $8$. The powers of $2$ are $2, 4, 8, 1$, and the other elements have order at most $4$ as well, so the largest order is $4$. Hence $U(15)$ is not cyclic.'
         constraints: 'U(n) for n <= 16, small quotients and products; match against Z_n, Klein, S_3, D_4, D_5'
     diagnostic_exemplar:
-      problem: 'The group $U(18)$ has order $6$. Decide which of the two groups of order $6$ it is, and name the invariant that settles it.'
-      answer: 'Up to isomorphism the groups of order $6$ are $\mathbb{Z}_6$ and $S_3 \cong D_3$, separated by commutativity (equivalently, by having an element of order $6$). $U(18) = \{1,5,7,11,13,17\}$ is abelian, since multiplication mod $18$ is commutative, so $U(18) \cong \mathbb{Z}_6$. Concretely $5$ has order $6$: $5,\ 25 \equiv 7,\ 35 \equiv 17,\ 85 \equiv 13,\ 65 \equiv 11,\ 55 \equiv 1$, so $U(18) = \langle 5 \rangle$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Recall the order-$6$ catalogue, then test the separating invariant on $U(18)$ — abelian-ness, confirmed by exhibiting a generator.'
+      problem: 'A group of order $6$ is not abelian. How many elements of order $3$ does it have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'A non-abelian group of order 6 is isomorphic to $S_3$. The elements of order 3 in $S_3$ are the two 3-cycles.'
     anki_seeds:
       - front: "The two groups of order 4 up to isomorphism?"
         back: "$\\mathbb{Z}_4$ and the Klein four-group $\\mathbb{Z}_2 \\times \\mathbb{Z}_2$."
@@ -1244,10 +1247,10 @@ topics:
             solution_sketch: 'Every symmetry is $r^i s^j$ with $0 \le i < 6$ and $j \in \{0, 1\}$, so there are at most $6 \cdot 2 = 12$ symmetries. The group is the dihedral group $D_6$, in which all $12$ forms are distinct, so the tile has $12$ symmetries.'
         constraints: 'match presentations to Z_n, D_n (n <= 6) and Z_m x Z_n (via commuting generators); the answer is an order, an element order, an element count or a familiar-group label; the fact that the relations cap the order may be quoted'
     diagnostic_exemplar:
-      problem: 'How many homomorphisms are there from the free group $F(\{a, b\})$ to $\mathbb{Z}_3$, and which group does the presentation $\langle x \mid x^5 = e \rangle$ define?'
-      answer: '$3^2 = 9$ homomorphisms; the presentation defines $\mathbb{Z}_5$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Generators of a free group map freely; a single generator with $x^5 = e$ gives the cyclic group of order $5$.'
+      problem: 'In the free group $F(\{a,b\})$ the reduced form of $a\,b^{3}\,b^{-5}\,a^{-1}\,a^{2}$ is $a\,b^{n}\,a$. Find $n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-2'
+      solution_sketch: 'Join $b^{3}b^{-5}=b^{-2}$. Join $a^{-1}a^{2}=a$. The word is $a\,b^{-2}\,a$, so $n=-2$.'
     anki_seeds:
       - front: "What is the free group $F(S)$?"
         back: "Reduced words in the generators $S$ and their inverses, multiplied by concatenation-then-cancellation; no relations hold except the forced ones."

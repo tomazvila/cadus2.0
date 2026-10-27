@@ -129,10 +129,10 @@ topics:
             solution_sketch: 'The span is a line exactly when one vector is a multiple of the other. Since $6 = 2 \cdot 3$, we need $a = 2 \cdot 2 = 4$.'
         constraints: "spans of 1-2 vectors in R^2; equations of lines, points on lines and shape verdicts"
     diagnostic_exemplar:
-      problem: 'Write $(4, 7)$ as a combination of $(1, 1)$ and $(1, 2)$.'
-      answer: "(4, 7) = 1(1, 1) + 3(1, 2)"
-      answer_contract: {kind: none}
-      solution_sketch: '$c_1 + c_2 = 4$, $c_1 + 2c_2 = 7$: subtract to get $c_2 = 3$, then $c_1 = 1$.'
+      problem: 'Compute $3(2, -1) - 2(1, 4)$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(4, -11)'
+      solution_sketch: 'Scale: $3(2,-1)=(6,-3)$ and $2(1,4)=(2,8)$. Subtract component by component: $(6-2,-3-8)=(4,-11)$.'
     anki_seeds:
       - front: '$\mathrm{span}\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$ is the set of all...'
         back: 'linear combinations $c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k$.'
@@ -258,10 +258,10 @@ topics:
             solution_sketch: 'A line is a subspace exactly when it passes through the origin, so the constant term is $0$. This gives $3a - 9 = 0$, so $a = 3$.'
         constraints: "lines/planes; subspace iff the equation is homogeneous (passes through the origin)"
     diagnostic_exemplar:
-      problem: 'Is $W = \{(x, y) : x \ge 0\}$ a subspace of $\mathbb{R}^2$? Name the property that fails and give a counterexample.'
-      answer: 'No: closure under scalar multiplication fails, since (1, 0) is in W but (-1)(1, 0) = (-1, 0) is not'
-      answer_contract: {kind: none}
-      solution_sketch: '$W$ contains $\mathbf{0}$ and is closed under addition, but a negative scalar pushes a point out of the half-plane.'
+      problem: 'Find the value of $c$ for which $\{(x, y) : x + 2y = c\}$ is a subspace of $\mathbb{R}^2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '0'
+      solution_sketch: 'A subspace holds the zero vector. Put $(0,0)$ in the equation: $0=c$.'
     anki_seeds:
       - front: 'The three conditions of the subspace test?'
         back: 'Contains $\mathbf{0}$; closed under addition; closed under scalar multiplication.'
@@ -405,10 +405,10 @@ topics:
             solution_sketch: 'Since $(2, 4, 2) = 2(1, 2, 1)$, the second vector adds no new direction. The span is the line through $(1, 2, 1)$, which has dimension $1$.'
         constraints: "spans of 1-2 vectors in R^2 or R^3; slopes, equations, points, dimensions and shape verdicts"
     diagnostic_exemplar:
-      problem: 'Is $(1, 3, 1)$ in $\mathrm{span}\{(1, 1, 0), (0, 1, 1)\}$? Describe that span geometrically.'
-      answer: 'No: matching components forces a = 1 and b = 1, but then the middle entry is 2, not 3; the span itself is a plane through the origin in R^3'
-      answer_contract: {kind: none}
-      solution_sketch: '$a(1,1,0) + b(0,1,1) = (a, a + b, b)$, so $a = 1$, $b = 1$ and $a + b = 2 \ne 3$. Two independent vectors span a plane through the origin.'
+      problem: 'What is the dimension of $\mathrm{span}\{(1, 2, 3), (2, 4, 6), (0, 1, 1)\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The second vector is $2(1,2,3)$, so it adds nothing. The third vector is not a multiple of $(1,2,3)$, so the span has dimension $2$.'
     anki_seeds:
       - front: 'Why is every span automatically a subspace?'
         back: 'It contains the zero combination, and sums/scalar multiples of linear combinations are linear combinations.'
@@ -551,10 +551,10 @@ topics:
             solution_sketch: 'The second vector is a multiple $s(4, 10)$ of the first. From $4s = 6$ we get $s = 3/2$, so $h = 10s = 15$.'
         constraints: "solve-for-h with integer h; relations with coefficients in -2..2"
     diagnostic_exemplar:
-      problem: 'Is $\{(1, 1, 2), (2, 0, 1), (3, 1, 3)\}$ linearly independent? If not, give a nontrivial dependence relation.'
-      answer: 'No: v1 + v2 - v3 = 0'
-      answer_contract: {kind: none}
-      solution_sketch: 'Row reduction produces a zero row; concretely $(1,1,2) + (2,0,1) = (3,1,3)$, so the third vector is a combination of the first two.'
+      problem: 'Find the value of $k$ for which $(1, 2)$ and $(3, k)$ are linearly dependent.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Two vectors are dependent when one is a multiple of the other. Here $(3,k)=3(1,2)$, so $k=6$.'
     anki_seeds:
       - front: 'Definition: $\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$ is linearly independent when $c_1\mathbf{v}_1 + \cdots + c_k\mathbf{v}_k = \mathbf{0}$ implies...'
         back: '$c_1 = \cdots = c_k = 0$ (only the trivial combination).'
@@ -694,10 +694,10 @@ topics:
             solution_sketch: 'Solve for $x = -2y + z$, with $y$ and $z$ free, so every position is $y(-2, 1, 0) + z(1, 0, 1)$. These two vectors are independent and span the set, so the dimension is $2$.'
         constraints: 'dimensions 0-4; redundant vectors are obvious multiples or sums; solution sets of one or two equations; contexts with possible mixes and positions'
     diagnostic_exemplar:
-      problem: 'Find a basis for the subspace $W = \{(x, y, z) : x + 2y - z = 0\}$ of $\mathbb{R}^3$, give $\dim W$, and give the coordinates of $(0, 1, 2)$ relative to your basis.'
-      answer: 'Basis {(-2, 1, 0), (1, 0, 1)} (any valid basis); dim W = 2; coordinates of (0, 1, 2) are (1, 2)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Solving $x = -2y + z$ with $y = s$, $z = t$ gives $(-2, 1, 0)s + (1, 0, 1)t$; and $(0, 1, 2) = 1(-2, 1, 0) + 2(1, 0, 1)$.'
+      problem: 'What is the dimension of $\{(x, y, z, w) : x + y + z + w = 0\}$ in $\mathbb{R}^4$?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The one equation fixes $w$ from $x,y,z$. So $x,y,z$ are free and the dimension is $4-1=3$.'
     anki_seeds:
       - front: 'A basis of a vector space is a set that is both...'
         back: 'linearly independent and spanning.'
@@ -1132,10 +1132,10 @@ topics:
             solution_sketch: 'The matrix has $4$ columns, so the rank plus the nullity equals $4$. With rank $4$ the nullity is $4 - 4 = 0$, so the null space contains only the zero vector.'
         constraints: 'sizes up to 8 columns; ask for rank or nullity given the other; contexts with free variables and balance equations'
     diagnostic_exemplar:
-      problem: 'For $A = \begin{pmatrix}1&2&3\\2&4&8\end{pmatrix}$, find the rank, a basis for the null space, and check the rank-nullity theorem.'
-      answer: 'Rank 2; null space basis {(-2, 1, 0)}; rank + nullity = 2 + 1 = 3, the number of columns'
-      answer_contract: {kind: none}
-      solution_sketch: 'Row reduction gives pivots in columns $1$ and $3$, so the rank is $2$ and $x_2$ is free with $x_3 = 0$ and $x_1 = -2x_2$.'
+      problem: 'Find the rank of $\begin{pmatrix}1&2&3\\2&4&6\\1&0&1\end{pmatrix}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Row 2 is $2$ times row 1, so it adds nothing. Row 3 is not a multiple of row 1, so two rows are independent and the rank is $2$.'
     anki_seeds:
       - front: 'Rank-nullity theorem for an $m \times n$ matrix $A$?'
         back: '$\mathrm{rank}(A) + \dim \mathrm{Nul}(A) = n$ (the number of columns).'
@@ -1283,10 +1283,10 @@ topics:
             solution_sketch: 'The solution space is the null space of $A$, so the nullity is $3$ and the rank is $7 - 3 = 4$. The rank is less than $7$, so $A$ is not invertible and $\det A = 0$.'
         constraints: 'square matrices; connect rank n to invertible, nonzero determinant and trivial null space; at most one yes/no item'
     diagnostic_exemplar:
-      problem: '$A$ is $3 \times 3$ and its echelon form has $2$ pivots. Give the rank and nullity of $A$, say whether $A$ is invertible, and give $\det A$.'
-      answer: 'Rank 2, nullity 1; not invertible; det A = 0'
-      answer_contract: {kind: none}
-      solution_sketch: 'Rank equals the pivot count and nullity is $3 - 2 = 1$; a nontrivial null space rules out invertibility, which forces $\det A = 0$.'
+      problem: 'A $4 \times 6$ matrix $A$ has rank $3$. Find the nullity of $A$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The matrix has $6$ columns. Rank plus nullity equals $6$, so the nullity is $6-3=3$.'
     anki_seeds:
       - front: 'For an $m \times n$ matrix, the rank is at most...'
         back: '$\min(m, n)$.'
@@ -1437,10 +1437,10 @@ topics:
             solution_sketch: 'The order of the factors matters. The map $T$ acts first, so its matrix goes on the right, and the matrix of $S \circ T$ is $[S][T]$. This product has rows $(0, -2)$ and $(3, 0)$.'
         constraints: 'compose two of: 90-degree rotations, axis reflections, integer scalings and shears; images of points; solving for one factor'
     diagnostic_exemplar:
-      problem: '$S$ reflects $\mathbb{R}^2$ across the $x$-axis and $T$ rotates it by $90^\circ$ counterclockwise. Find the standard matrix of $S \circ T$ and compute $(S \circ T)(1, 2)$.'
-      answer: '$\begin{pmatrix}0&-1\\-1&0\end{pmatrix}$; $(S \circ T)(1, 2) = (-2, -1)$'
-      answer_contract: {kind: none}
-      solution_sketch: '$S = \begin{pmatrix}1&0\\0&-1\end{pmatrix}$ and $T = \begin{pmatrix}0&-1\\1&0\end{pmatrix}$, so the composition has matrix $ST$; applying it to $(1,2)$ gives $(-2, -1)$.'
+      problem: 'A linear map $T$ on $\mathbb{R}^2$ has $T(1, 0) = (2, 1)$ and $T(0, 1) = (-1, 3)$. Compute $T(3, 2)$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(4, 9)'
+      solution_sketch: 'By linearity $T(3,2)=3T(1,0)+2T(0,1)=(6,3)+(-2,6)=(4,9)$.'
     anki_seeds:
       - front: 'The two defining properties of a linear transformation?'
         back: '$T(\mathbf{u} + \mathbf{v}) = T(\mathbf{u}) + T(\mathbf{v})$ and $T(c\mathbf{u}) = cT(\mathbf{u})$.'
@@ -1612,10 +1612,10 @@ topics:
             solution_sketch: 'The directions that change no measurement form the kernel, so $\dim \ker T = 2$. The parameters form the domain, of dimension $5$, so $\dim \operatorname{im} T = 5 - 2 = 3$.'
         constraints: 'domain dimension up to 7; ask for kernel or image dimension given the other, or for the domain dimension; at most two yes/no items'
     diagnostic_exemplar:
-      problem: 'For $T(\mathbf{x}) = A\mathbf{x}$ with $A = \begin{pmatrix}1&3\\2&6\end{pmatrix}$, find $\ker T$, describe $\mathrm{im}\,T$, and check that the two dimensions add to $2$.'
-      answer: 'ker T = span{(-3, 1)}; im T = span{(1, 2)}, the line through the origin with direction (1, 2); 1 + 1 = 2'
-      answer_contract: {kind: none}
-      solution_sketch: '$x + 3y = 0$ gives the kernel; both columns are multiples of $(1, 2)$, so the image is that line; rank $1$ plus nullity $1$ equals the $2$ columns.'
+      problem: 'Find the dimension of the kernel of $T(x, y, z) = (x + y + z, 2x + 2y + 2z)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The image is the line spanned by $(1,2)$, so it has dimension $1$. By rank-nullity the kernel has dimension $3-1=2$.'
     anki_seeds:
       - front: 'For $T(\mathbf{x}) = A\mathbf{x}$: kernel and image in matrix language?'
         back: '$\ker T = \mathrm{Nul}(A)$; $\mathrm{im}\, T = \mathrm{Col}(A)$.'
@@ -1769,10 +1769,10 @@ topics:
             solution_sketch: 'A square matrix gives both properties or neither. The determinant is $2 \cdot 2 - 4 \cdot 1 = 0$, so $T$ is not onto either. The rank is $1$, so the image has dimension $1$.'
         constraints: 'square 2x2 decided by the determinant; both-or-neither; one 3x3 dimension item; at most two yes/no items'
     diagnostic_exemplar:
-      problem: '$A = \begin{pmatrix}2&4&1\\0&0&3\end{pmatrix}$ defines $T : \mathbb{R}^3 \to \mathbb{R}^2$. Is $T$ one-to-one? Is it onto? Justify from the pivots.'
-      answer: 'Not one-to-one (3 columns but only 2 pivots, so the kernel is nontrivial); onto (2 pivots = the number of rows, so the columns span R^2)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Pivots sit in columns $1$ and $3$; the free variable $x_2$ gives a nonzero kernel vector, while a pivot in every row makes the column space all of $\mathbb{R}^2$.'
+      problem: 'A one-to-one linear map goes from $\mathbb{R}^3$ to $\mathbb{R}^5$. What is the dimension of its image?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'One-to-one means the kernel is $\{0\}$, so the nullity is $0$. Rank-nullity gives rank $3-0=3$.'
     anki_seeds:
       - front: 'A linear map is one-to-one iff its kernel is...'
         back: '$\{\mathbf{0}\}$ (equivalently, a pivot in every column).'
@@ -1915,10 +1915,10 @@ topics:
             solution_sketch: 'Each dot product must be divided by $\mathbf{v}\cdot\mathbf{v}$, which is $2$ for both basis vectors. The dot products are $8$ and $4$, so the coordinates are $\frac{8}{2} = 4$ and $\frac{4}{2} = 2$.'
         constraints: "orthogonal bases only; coefficients are integers"
     diagnostic_exemplar:
-      problem: 'Verify that $B = \{(2, 1), (-1, 2)\}$ is an orthogonal basis of $\mathbb{R}^2$, then use dot products to write $\mathbf{x} = (3, 4)$ in that basis.'
-      answer: 'Orthogonal (dot product -2 + 2 = 0), hence a basis of R^2; x = 2(2, 1) + 1(-1, 2)'
-      answer_contract: {kind: none}
-      solution_sketch: 'Each coefficient is $\mathbf{x}\cdot\mathbf{b}_i / \|\mathbf{b}_i\|^2$: $10/5 = 2$ and $5/5 = 1$.'
+      problem: 'Find the value of $k$ for which $(2, k, 1)$ and $(3, 4, -2)$ are orthogonal.'
+      answer_contract: {"kind":"exact"}
+      answer: '-1'
+      solution_sketch: 'The dot product is $6+4k-2=0$. So $4k=-4$ and $k=-1$.'
     anki_seeds:
       - front: 'An orthonormal set is an orthogonal set whose vectors all have...'
         back: 'norm $1$.'
@@ -2064,10 +2064,10 @@ topics:
             solution_sketch: 'Zero work means the force is perpendicular to both directions. So $a + 2b = 0$ and $b + 3 = 0$, which give $b = -3$ and $a = 6$.'
         constraints: '1x2 or 2x3 matrices; verification by one or two dot products; verdict, parameter and dimension items allowed'
     diagnostic_exemplar:
-      problem: 'Find a basis for the orthogonal complement of the plane $x + 2y - z = 0$ in $\mathbb{R}^3$, give its dimension, and say how it is related to $A = \begin{pmatrix}1&2&-1\end{pmatrix}$.'
-      answer: 'Basis {(1, 2, -1)} (any nonzero multiple); dimension 1; the plane is Nul(A) and its complement is Row(A)'
-      answer_contract: {kind: none}
-      solution_sketch: 'A plane through the origin is the null space of its coefficient row, and $(\mathrm{Nul}\,A)^\perp = \mathrm{Row}\,A$; the dimensions $2$ and $1$ sum to $3$.'
+      problem: 'What is the dimension of the orthogonal complement of $\mathrm{span}\{(1, 2, 0, 1), (0, 1, 1, 0)\}$ in $\mathbb{R}^4$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The two vectors are independent, so the span has dimension $2$. The span and its complement have dimensions that add to $4$, so the complement has dimension $2$.'
     anki_seeds:
       - front: '$W^\perp$ is defined as the set of vectors that are...'
         back: 'orthogonal to every vector of $W$.'
@@ -2221,10 +2221,10 @@ topics:
             solution_sketch: 'The closest point is the orthogonal projection of $(4, 3)$ onto the line. It is $\frac{10}{5}(1, 2) = (2, 4)$.'
         constraints: 'distances are integers or single square roots; contexts with roads, cables and points on a map are allowed'
     diagnostic_exemplar:
-      problem: 'Write $\mathbf{x} = (5, 1)$ as $\hat{\mathbf{x}} + \mathbf{z}$ with $\hat{\mathbf{x}}$ in $W = \mathrm{span}\{(1, 1)\}$ and $\mathbf{z} \perp W$, and give the distance from $\mathbf{x}$ to $W$.'
-      answer: '$\hat{\mathbf{x}} = (3, 3)$, $\mathbf{z} = (2, -2)$; the distance is $2\sqrt{2}$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\hat{\mathbf{x}} = \frac{5 + 1}{2}(1, 1) = (3, 3)$, so $\mathbf{z} = (2, -2)$ and the distance is $\|\mathbf{z}\| = 2\sqrt2$.'
+      problem: 'Find the orthogonal projection of $(3, 0, 3)$ onto $\mathrm{span}\{(1, 2, 2)\}$.'
+      answer_contract: {"kind":"coordinates","arity":3}
+      answer: '(1, 2, 2)'
+      solution_sketch: 'The dot product is $3+0+6=9$ and $|(1,2,2)|^2=9$. The scale is $9/9=1$, so the projection is $(1,2,2)$.'
     anki_seeds:
       - front: 'Projection of $\mathbf{x}$ onto a subspace with ORTHOGONAL basis $\{\mathbf{v}_1, \dots, \mathbf{v}_k\}$?'
         back: '$\hat{\mathbf{x}} = \sum_i \dfrac{\mathbf{x} \cdot \mathbf{v}_i}{\mathbf{v}_i \cdot \mathbf{v}_i}\mathbf{v}_i$.'
@@ -2525,10 +2525,10 @@ topics:
             solution_sketch: 'The residual is $\mathbf{b} - A(1, 2) = (1, 2, 4) - (1, 2, 3) = (0, 0, 1)$. For a least-squares solution the residual must be orthogonal to every column of $A$, but $(0, 0, 1)\cdot(1, 0, 1) = 1 \ne 0$, so the answer is no.'
         constraints: 'residual entries small integers; error a single square root or a simple fraction of one; candidate comparison and orthogonality verdicts allowed'
     diagnostic_exemplar:
-      problem: 'Find the least-squares line $y = a + bx$ through $(-1, 0)$, $(0, 2)$, $(1, 1)$, and the least-squares error $\|\mathbf{b} - A\hat{\mathbf{x}}\|$.'
-      answer: '$y = 1 + \frac{x}{2}$; the residual is $(-\frac{1}{2}, 1, -\frac{1}{2})$ and the error is $\frac{\sqrt{6}}{2}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The normal equations give $a = \bar y = 1$ and $b = \sum x_iy_i / \sum x_i^2 = 1/2$; the residuals $-\frac12, 1, -\frac12$ have norm $\sqrt{3/2} = \sqrt6/2$.'
+      problem: 'Find the value of $x$ that makes $x(1, 1, 1)$ closest to $(1, 2, 6)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The normal equation is $3x=1+2+6=9$. So $x=3$, the mean of the entries.'
     anki_seeds:
       - front: 'The least-squares solution of $A\mathbf{x} = \mathbf{b}$ solves which system?'
         back: 'The normal equations $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$.'

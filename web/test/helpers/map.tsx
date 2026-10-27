@@ -98,7 +98,7 @@ export async function mount(
   resetCytoscape();
   // The view choice persists; every mount starts without one.
   if (!keepStorage) window.localStorage.clear();
-  const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn() };
+  const handlers = { onUnauthorized: vi.fn(), onExit: vi.fn(), onRead: vi.fn() };
   const props = { api: stubApi(), demo: false, ...handlers, ...over };
   const tree = <CurriculumMap {...props} />;
   const view = await renderInView(wrapper ? wrapper({ children: tree }) : tree);

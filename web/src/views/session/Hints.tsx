@@ -11,9 +11,11 @@ import type { PlanTask } from '@/api/types';
  * out the three-hint escalation does, up front: the ladder does not exist, so
  * `requestHint` would only buy a `409 no_hint_ladder`.
  */
-export function HintPanel({ hints, referenceLesson, hintsAvailable, taskType }: {
+export function HintPanel({ hints, referenceLesson, hintsAvailable, taskType, onRead }: {
   hints: string[];
-  referenceLesson: string | null;
+  referenceLesson: { topic: string; name: string } | null;
+  /** Open the lesson text of a topic. Absent, the note shows no button. */
+  onRead?: (topic: string) => void;
   hintsAvailable: boolean;
   taskType: PlanTask['task_type'];
 }) {
@@ -27,7 +29,12 @@ export function HintPanel({ hints, referenceLesson, hintsAvailable, taskType }: 
       ))}
       {referenceLesson ? (
         <div className="reference-lesson">
-          {`Still stuck? Read the lesson “${referenceLesson}” again, then answer as well as you can.`}
+          {`Still stuck? Read the lesson “${referenceLesson.name}” again, then answer as well as you can.`}
+          {onRead ? (
+            <button type="button" className="btn btn-ghost" onClick={() => { onRead(referenceLesson.topic); }}>
+              {`Open the lesson “${referenceLesson.name}”`}
+            </button>
+          ) : null}
         </div>
       ) : null}
       {!hintsAvailable && taskType === 'review' ? (

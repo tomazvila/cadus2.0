@@ -59,6 +59,8 @@ export interface SessionProps {
   onExit: () => void;
   /** A quiz is not this loop: the quiz screen owns the whole-quiz clock (QUIZ-budget). */
   onQuiz: (task: PlanTask) => void;
+  /** Open the lesson text of a topic. The session stays open behind it. */
+  onRead: (topic: string) => void;
 }
 
 /** The drill rule, re-exported for the tests that pin it beside the loop. */
@@ -71,6 +73,7 @@ export function Session({
   onUnauthorized,
   onExit,
   onQuiz,
+  onRead,
 }: SessionProps) {
   const life = useLifetime();
   // The day rollover closed the session on screen (`409 session_rolled_over`): drop what is
@@ -92,7 +95,7 @@ export function Session({
   // The worked example of the lesson on screen, kept for the "Show the worked example" fold.
   const [example, setExample] = useState<TeachResponse['worked_example'] | null>(null);
   const [hints, setHints] = useState<string[]>(NO_HINTS);
-  const [referenceLesson, setReferenceLesson] = useState<string | null>(null);
+  const [referenceLesson, setReferenceLesson] = useState<{ topic: string; name: string } | null>(null);
   const [result, setResult] = useState<AnswerResponse | null>(null);
   const report = useProblemReport(api, undefined, (receipt, context) => {
     setResult((previous) => applyReportCorrection(previous, receipt, context));
@@ -576,7 +579,7 @@ export function Session({
         <WorkedFold taskType={session.task.task_type} example={example} />
 
         <HintPanel hints={hints} referenceLesson={referenceLesson}
-          hintsAvailable={hintsAvailable} taskType={session.task.task_type} />
+          hintsAvailable={hintsAvailable} taskType={session.task.task_type} onRead={onRead} />
 
         {/* Disabled only where the problem is over. A grade in flight leaves the field
             live: the phase gate, not the attribute, is what stops the second post. */}
@@ -620,6 +623,8 @@ export function Session({
             continueRef={continueRef}
             revealTopic={reviewTopic(session.task)}
             hintsUsed={hints.length}
+            lessonTopic={session.task.topic}
+            onRead={onRead}
           >
             {/* Keyed by the attempt, so a second grade of the same problem — the DD-3/P1
                 re-solve — never shows the first attempt's explanation. */}

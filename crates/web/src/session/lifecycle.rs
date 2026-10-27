@@ -5,15 +5,19 @@
 use axum::Json;
 use axum::http::StatusCode;
 use cadus_core::event::{Event, SchemaVersion, SessionEnd, SessionStart};
-use cadus_store::state::{clear_web_state, project_and_save};
+use cadus_store::state::{
+    Projection, clear_web_state, load_session_plan, project_and_save, save_session_plan,
+};
 use serde_json::{Value, json};
 
 use super::dashboard::due_counts;
+use super::plan::compose_plan;
 use super::rollover::{Rollover, session_day};
 use super::store::{
-    Ready, Reply, enrolled_event, event_slug, json_of, no_open_session, reply_committed,
+    Ready, Reply, Tx, enrolled_event, event_slug, json_of, no_open_session, reply_committed,
     unknown_course,
 };
+use super::today::{frozen_json, local_date};
 use crate::error::ApiError;
 use crate::state::INVALID_REQUEST;
 
@@ -77,6 +81,35 @@ pub async fn enroll(req: Ready, body: Option<Json<Value>>) -> Reply {
     reply_committed(tx, body).await
 }
 
+/// Freeze the set of the local day in `session_plans` (D-DP1).
+///
+/// The row stays when its `day` is today. Otherwise the plan of the new session
+/// replaces it. No event is appended, so the log does not change.
+async fn freeze_day(
+    req: &Ready,
+    tx: &mut Tx,
+    projection: &Projection,
+    session: &str,
+) -> Result<(), ApiError> {
+    let day = local_date(req.now, req.content.cfg.timezone.as_deref());
+    let held = req.store(load_session_plan(tx, req.user_id)).await?;
+    if held.is_some_and(|(_, plan)| plan["day"].as_str() == Some(day.to_string().as_str())) {
+        return Ok(());
+    }
+    let readiness = req.readiness(tx).await?;
+    let plan = compose_plan(
+        &req.content,
+        &projection.view,
+        &projection.model,
+        session,
+        req.now,
+        &readiness,
+    );
+    let frozen = frozen_json(req.graph(), &plan, day);
+    req.store(save_session_plan(tx, req.user_id, session, &frozen))
+        .await
+}
+
 // --------------------------------------------------------------------------- //
 // POST /api/session/start
 // --------------------------------------------------------------------------- //
@@ -129,6 +162,12 @@ pub async fn session_start(req: Ready) -> Reply {
     let projection = req
         .store(project_and_save(&mut tx, req.user_id, &input, None))
         .await?;
+
+    // D-DP1: the first new session of the local day freezes the set of the day.
+    // A reopened session and a second session of the same day keep the row.
+    if !reopened {
+        freeze_day(&req, &mut tx, &projection, &session).await?;
+    }
 
     // (Re)bind the scratch to this session. The bind resets it on a drift.
     let mut scratch = req.read_state(&mut tx).await?;

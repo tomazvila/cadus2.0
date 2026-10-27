@@ -154,6 +154,7 @@ const nav = () => ({
   onUnauthorized: vi.fn(),
   onExit: vi.fn(),
   onQuiz: vi.fn(),
+  onRead: vi.fn(),
 });
 
 /** `plan: undefined` MEANS "read the plan yourself", so the key is honored, not defaulted. */

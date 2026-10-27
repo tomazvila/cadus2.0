@@ -260,6 +260,25 @@ export function createDemoApi(): ApiClient {
         last_active_at: '2026-08-29T16:30:00Z',
         session_open: false,
         plan_preview: { budget_secs: 1500, first_topic: { id: 'fractions', name: 'Fractions' } },
+        today: {
+          date: '2026-08-30',
+          day_number: 12,
+          set: [
+            {
+              task_id: 'demo-lesson-fractions', task_type: 'lesson',
+              topic: { id: 'fractions', name: 'Fractions' }, n_problems: 5, time_budget_secs: 900,
+              progress: { answered: 0, done: false },
+            },
+            {
+              task_id: 'demo-review-whole-numbers', task_type: 'review',
+              topic: { id: 'whole-numbers', name: 'Whole numbers' }, n_problems: null,
+              time_budget_secs: 300, progress: { answered: 0, done: false },
+            },
+          ],
+          read: { topic: { id: 'fractions', name: 'Fractions' }, kp: 'kp1', source: 'lesson' },
+          week: { study_days: 4, topics_passed: 3 },
+          frozen: false,
+        },
       }),
 
     getGraph: (scope) =>
@@ -365,6 +384,35 @@ export function createDemoApi(): ApiClient {
           steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
           figure: DEMO_FIGURE,
         },
+      });
+    },
+
+    topicTeach: async (topicId) => {
+      if (topicId !== 'fractions') refuse(404, 'not_found', 'No topic with this id is in the demo.');
+      return reply({
+        topic: 'fractions',
+        name: 'Fractions',
+        module: 'Arithmetic',
+        course: 'demo',
+        course_name: 'Demo course',
+        position: 1,
+        count: 1,
+        previous: null,
+        next: null,
+        learn_first: [],
+        opens_next: [],
+        points: [{
+          kp: DEMO_PROBLEMS[0].kp,
+          name: 'Equal fractions',
+          page: {
+            concept: 'A fraction names the same number when you divide both parts by the same factor.',
+            worked_example: {
+              problem: 'Simplify $\\frac{4}{6}$.',
+              steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
+              figure: DEMO_FIGURE,
+            },
+          },
+        }],
       });
     },
 

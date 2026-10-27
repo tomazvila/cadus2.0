@@ -152,9 +152,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Data: both categories are the poset (N, at most) viewed as a category, F(c) = 2c is order-preserving, and G(d) = floor(d/2). Step 1 (the bijection and its direction): 2c is at most d exactly when c is at most floor(d/2), so the hom-set Hom(2c, d) is nonempty exactly when Hom(c, G(d)) is; each has at most one element, so sending the unique map to the unique map is a bijection from Hom(2c, d) to Hom(c, G(d)). Step 2 (naturality in c, checked alone): for c'' at most c and a map h from 2c to d, the two sides of the naturality equation both lie in the hom-set Hom(c'', G(d)), which has at most one element, so they are equal. Step 3 (naturality in d, checked alone): for d at most d'' and h from 2c to d, both sides of the naturality equation lie in Hom(c, G(d'')), again a set with at most one element, so they are equal. Conclusion: the functors F and G together with these bijections satisfy the hom-set definition of the adjunction F left adjoint to G, with naturality verified in each variable separately.'
     diagnostic_exemplar:
-      problem: "Let $i\\colon(\\mathbb{Z},\\le)\\to(\\mathbb{R},\\le)$ be the inclusion of posets. Prove that $i\\dashv\\lfloor-\\rfloor$, stating the bijection in the standard $\\mathrm{Hom}(FC,D)\\cong\\mathrm{Hom}(C,GD)$ form and saying why naturality is automatic."
-      answer: "For $n\\in\\mathbb{Z}$ and $x\\in\\mathbb{R}$: $i(n)\\le x\\iff n\\le\\lfloor x\\rfloor$, because $\\lfloor x\\rfloor$ is the greatest integer $\\le x$ (if $n\\le x$ then $n\\le\\lfloor x\\rfloor$; conversely $n\\le\\lfloor x\\rfloor\\le x$). In poset categories hom-sets have at most one element, so this biconditional IS the hom-set bijection $\\mathrm{Hom}_{\\mathbb R}(i(n),x)\\cong\\mathrm{Hom}_{\\mathbb Z}(n,\\lfloor x\\rfloor)$, matching the standard form with $F=i$ (left adjoint) and $G=\\lfloor-\\rfloor$ (right adjoint); naturality is automatic since parallel maps of thin categories are equal."
-      solution_sketch: "Prove the biconditional $n\\le x\\iff n\\le\\lfloor x\\rfloor$ from the defining property of the floor as the greatest integer below $x$. In a thin category a biconditional is the hom-set bijection, and naturality is vacuous because parallel arrows in a poset are equal."
+      problem: 'How many monoid homomorphisms are there from the free monoid on $\{a,b,c\}$ to $(\mathbb{Z}/3,+,0)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '27'
+      solution_sketch: 'A monoid homomorphism out of a free monoid is fixed by its values on the letters. Each of the $3$ letters goes to one of $3$ elements, so there are $3^3=27$.'
     anki_seeds:
       - front: "An adjunction $F\\dashv G$ is..."
         back: "a natural isomorphism $\\mathrm{Hom}_{\\mathcal D}(FC,D)\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD)$ in $C,D$; $F$ is the left adjoint, $G$ the right."
@@ -309,9 +310,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1 (instantiate the second adjunction): fix objects X of C and e of E; applying the adjunction between H and K at the object F(X) of D gives a bijection from the arrows H(F(X)) to e in E to the arrows F(X) to K(e) in D, natural in the free variable e and in the object F(X). Step 2 (instantiate the first adjunction): applying the adjunction between F and G at the object K(e) of D gives a bijection from the arrows F(X) to K(e) to the arrows X to G(K(e)) in C, natural in X and in K(e). Step 3 (chain the bijections): composing the two bijections gives a bijection from the arrows H(F(X)) to e to the arrows X to G(K(e)). Step 4 (track naturality): the composite is natural in X because each factor is natural in its first free variable and F is a functor, and natural in e because each factor is natural in its second free variable and K is a functor. Step 5 (conclude): a family of bijections from the arrows HF(X) to e to the arrows X to GK(e), natural in both variables, is exactly the hom-set definition of an adjunction, so HF is left adjoint to GK.'
     diagnostic_exemplar:
-      problem: "Let $F\\dashv G$ be an adjunction with counit $\\varepsilon$. Prove that $G$ is faithful if and only if every component $\\varepsilon_D$ is an epimorphism."
-      answer: "Write $\\Phi\\colon\\mathrm{Hom}_{\\mathcal D}(FC,D')\\cong\\mathrm{Hom}_{\\mathcal C}(C,GD')$ for the adjunction bijection, so $\\Phi^{-1}(k)=\\varepsilon_{D'}\\circ Fk$. Fix $h\\colon D\\to D'$ and apply this at $C=GD$, $k=Gh$: $\\Phi^{-1}(Gh)=\\varepsilon_{D'}\\circ FG(h)=h\\circ\\varepsilon_D$, the last step being naturality of $\\varepsilon\\colon FG\\Rightarrow 1_{\\mathcal D}$ at $h$. Since $\\Phi^{-1}\\colon\\mathrm{Hom}_{\\mathcal C}(GD,GD')\\to\\mathrm{Hom}_{\\mathcal D}(FGD,D')$ is a bijection, for $h,h'\\colon D\\to D'$ we get $Gh=Gh'\\iff h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$. If $G$ is faithful, then $h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$ gives $Gh=Gh'$ and hence $h=h'$, so $\\varepsilon_D$ is right-cancellable, i.e. an epimorphism, for every $D$. Conversely if every $\\varepsilon_D$ is epi and $Gh=Gh'$, then $h\\circ\\varepsilon_D=h'\\circ\\varepsilon_D$ and cancelling $\\varepsilon_D$ gives $h=h'$, so $G$ is faithful."
-      solution_sketch: "Compute $\\Phi^{-1}(Gh)$ two ways: the formula $\\varepsilon\\circ F(-)$ together with naturality of $\\varepsilon$ at $h$ turns it into $h\\circ\\varepsilon_D$. Since $\\Phi^{-1}$ is a bijection, $Gh=Gk$ is equivalent to $h\\circ\\varepsilon_D=k\\circ\\varepsilon_D$, and that equivalence is exactly the statement that $G$ is faithful iff $\\varepsilon_D$ is right-cancellable."
+      problem: 'Regard $(\mathbb{Z},\le)$ as a category. The functor $F(n)=5n$ has a right adjoint $G$ with $5n\le m\iff n\le G(m)$. Find $G(-7)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-2'
+      solution_sketch: '$G(m)$ is the greatest integer $n$ with $5n\le m$. For $m=-7$ we need $n\le -1.4$, so $G(-7)=-2$.'
     anki_seeds:
       - front: "The unit of $F\\dashv G$ is the transpose of {{c1::$1_{FC}$}}, giving $\\eta_C\\colon C\\to GFC$."
         back: "$1_{FC}$"
@@ -471,9 +473,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Full statement: for a set $X$, let $X^*$ be the free monoid of words on $X$; for a monoid $M$, let $U(M)$ be its underlying set. Step 1, the map: send a homomorphism $h\colon X^* \to M$ to its restriction $\bar{h}\colon X \to U(M)$, $\bar{h}(x) = h(x)$. Step 2, restriction is well defined: $h$ is a function on the whole set $X^*$, so restricting it to the subset of one-letter words gives an honest function $X \to U(M)$; no choice is involved. Step 3, extension: given $g\colon X \to U(M)$, define $\hat{g}(x_1 \cdots x_n) = g(x_1) \cdots g(x_n)$ and send the empty word to the identity of $M$; a word factors into letters in exactly one way, so $\hat{g}$ is one well-defined homomorphism. Step 4, uniqueness: any homomorphism $h$ with $h|_X = g$ must satisfy $h(x_1 \cdots x_n) = h(x_1) \cdots h(x_n) = g(x_1) \cdots g(x_n)$ and $h(\epsilon) = 1$, hence $h = \hat{g}$; so restriction and extension are inverse bijections. Step 5, conclusion: the bijection $\mathrm{Hom}_{\mathbf{Mon}}(X^*, M) \cong \mathrm{Hom}_{\mathbf{Set}}(X, U(M))$ is natural in $X$ and $M$, with unit the insertion of letters, so the free monoid functor is left adjoint to the forgetful functor.'
     diagnostic_exemplar:
-      problem: "Using the currying adjunction $(-\\times A)\\dashv(-)^A$ and associativity of the product, prove the exponential law $C^{A\\times B}\\cong(C^B)^A$ in a cartesian closed category."
-      answer: "For every $X$: $\\mathrm{Hom}(X,C^{A\\times B})\\cong\\mathrm{Hom}(X\\times(A\\times B),C)\\cong\\mathrm{Hom}((X\\times A)\\times B,C)\\cong\\mathrm{Hom}(X\\times A,C^B)\\cong\\mathrm{Hom}(X,(C^B)^A)$ — uncurry, reassociate, curry twice — each step natural in $X$. Two objects representing the same functor are isomorphic (Yoneda), so $C^{A\\times B}\\cong(C^B)^A$."
-      solution_sketch: "Do not construct a map between the two objects directly. Chain hom-set bijections at an arbitrary $X$ — uncurry, reassociate the product, curry twice — checking each step is natural in $X$; Yoneda then upgrades the isomorphism of representables to an isomorphism of the objects themselves."
+      problem: 'Let $\Delta\colon\mathbf{Set}\to\mathbf{Set}\times\mathbf{Set}$ be the diagonal functor, with right adjoint the product. How many morphisms are there from $\Delta\{1,2\}$ to $(\{a,b,c\},\{x,y\})$?'
+      answer_contract: {"kind":"exact"}
+      answer: '36'
+      solution_sketch: 'By the adjunction, these morphisms match the functions $\{1,2\}\to\{a,b,c\}\times\{x,y\}$. The target has $6$ elements, so there are $6^2=36$.'
     anki_seeds:
       - front: "The chain of adjoints around the diagonal functor?"
         back: "$(+)\\dashv\\Delta\\dashv(\\times)$: coproduct is left adjoint, product is right adjoint to $\\Delta$."
@@ -590,9 +593,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1 (naturality of $\Phi$, second variable): apply naturality in $D$ to the map $h: FC \to D$ acting on $1_{FC}$: $\Phi(h) = \Phi(h \circ 1_{FC}) = Gh \circ \Phi(1_{FC}) = Gh \circ \eta_C$. Step 2 (naturality of $\Psi = \Phi^{-1}$, first variable): dually, naturality in $C$ applied to $k: C \to GD$ acting on $1_{GD}$ gives $\Psi(k) = \Psi(1_{GD} \circ k) = \Psi(1_{GD}) \circ Fk = \varepsilon_D \circ Fk$. Step 3 (first direction): $\Psi(\Phi(h)) = \varepsilon_D \circ FGh \circ F\eta_C = h \circ \varepsilon_{FC} \circ F\eta_C = h \circ 1_{FC} = h$, using the naturality square $\varepsilon_D \circ FGh = h \circ \varepsilon_{FC}$ and the triangle identity $\varepsilon_{FC} \circ F\eta_C = 1_{FC}$. Step 4 (second direction): $\Phi(\Psi(k)) = G\varepsilon_D \circ GFk \circ \eta_C = G\varepsilon_D \circ \eta_{GD} \circ k = 1_{GD} \circ k = k$, using the naturality square $GFk \circ \eta_C = \eta_{GD} \circ k$ and the triangle identity $G\varepsilon_D \circ \eta_{GD} = 1_{GD}$. Step 5 (conclusion): $\Phi$ and $\Psi$ are mutually inverse, so the unit and counit determine the whole adjunction bijection.'
     diagnostic_exemplar:
-      problem: "For an adjunction $F\\dashv G$ with hom-set bijection $\\Phi$, unit $\\eta_C=\\Phi(1_{FC})$ and counit $\\varepsilon_D=\\Phi^{-1}(1_{GD})$, derive the formulas $\\Phi(h)=Gh\\circ\\eta_C$ and $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$ from the naturality of $\\Phi$."
-      answer: "Naturality of $\\Phi$ in the second variable, applied to $h\\colon FC\\to D$, gives $\\Phi(h)=\\Phi(h\\circ 1_{FC})=Gh\\circ\\Phi(1_{FC})=Gh\\circ\\eta_C$. Dually, naturality of $\\Phi^{-1}$ in the first variable, applied to $k\\colon C\\to GD$, gives $\\Phi^{-1}(k)=\\Phi^{-1}(1_{GD}\\circ k)=\\Phi^{-1}(1_{GD})\\circ Fk=\\varepsilon_D\\circ Fk$. So the unit and counit encode the whole bijection."
-      solution_sketch: "Feed an identity into naturality of $\\Phi$: write $h=h\\circ 1_{FC}$ and move $h$ out through the naturality square, leaving $Gh\\circ\\Phi(1_{FC})$. The dual move on $\\Phi^{-1}$, writing $k=1_{GD}\\circ k$, gives the counit formula."
+      problem: 'Let $F\dashv U$ be the free-monoid adjunction with counit $\varepsilon$. The monoid $M=(\mathbb{Z}/3,+,0)$ gives the free monoid $FUM$ on the elements $0,1,2$. The counit $\varepsilon_M$ sends a word to the sum of its letters in $M$. Find $\varepsilon_M$ of the word $2,2,2,1$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'The counit multiplies out the word in $M$. The sum is $2+2+2+1=7$, and $7\equiv 1 \pmod 3$.'
     anki_seeds:
       - front: "Unit of $F\\dashv G$ (type and transpose)?"
         back: "$\\eta\\colon 1\\Rightarrow GF$, with $\\eta_C=\\Phi(1_{FC})$."
@@ -741,9 +745,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The triangle identities force $\varepsilon+\eta=0$, so $\varepsilon=4$. Then $\Psi(9)=\varepsilon+9=13$. As a check, $\Phi(13)=13+\eta=9$, so $\Phi$ returns the arrow $9$.'
     diagnostic_exemplar:
-      problem: "Using $\\eta_C=\\Phi(1_{FC})$ and $\\Phi^{-1}(k)=\\varepsilon_D\\circ Fk$, prove the first triangle identity $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$."
-      answer: "Apply $\\Phi^{-1}$ to both sides of $\\eta_C=\\Phi(1_{FC})$: $\\Phi^{-1}(\\eta_C)=1_{FC}$. Now evaluate $\\Phi^{-1}$ on $k=\\eta_C\\colon C\\to GFC$ (so $D=FC$) with the formula: $\\Phi^{-1}(\\eta_C)=\\varepsilon_{FC}\\circ F\\eta_C$. Equating the two expressions gives $\\varepsilon_{FC}\\circ F\\eta_C=1_{FC}$, which holding for all $C$ is $\\varepsilon F\\circ F\\eta=1_F$."
-      solution_sketch: "Apply $\\Phi^{-1}$ to the definition $\\eta_C=\\Phi(1_{FC})$ to get $\\Phi^{-1}(\\eta_C)=1_{FC}$, then evaluate that same $\\Phi^{-1}(\\eta_C)$ using the formula $\\varepsilon\\circ F(-)$. Equating the two readings of one value is the identity."
+      problem: 'Let $F\dashv U$ be the free-monoid adjunction on $\mathbf{Set}$ with unit $\eta$ and counit $\varepsilon$. Let $X=\{a,b,c\}$ and let $w=cabbc$ be a word in $FX$. The first triangle identity is the equation $\varepsilon_{FX}\circ F\eta_X=1_{FX}$. Find the length of the word $\varepsilon_{FX}(F\eta_X(w))$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'By the triangle identity, $\varepsilon_{FX}(F\eta_X(w))=w$. The word $w$ has $5$ letters.'
     anki_seeds:
       - front: "First triangle (zig-zag) identity, involving $F\\eta$?"
         back: "$\\varepsilon F\\circ F\\eta=1_F$."
@@ -897,9 +902,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Step 1 (left adjoint construction): give disc(X) the topology in which every subset of X is open. Step 2 (automatic legality): any function f from disc(X) to a space Y is continuous, because the preimage of any open set of Y is a subset of X and is therefore open. Step 3 (bijection): continuous maps disc(X) to Y correspond exactly to functions X to U(Y), which is the hom-set bijection showing the discrete construction is left adjoint to U. Step 4 (right adjoint construction): give indisc(Y) the topology whose only open sets are the empty set and Y. Step 5 (automatic legality): any function g from a space X to indisc(Y) is continuous, because the preimage of an open set of indisc(Y) is empty or all of X, both open in X. Step 6 (bijection): continuous maps X to indisc(Y) correspond exactly to functions U(X) to Y, the hom-set bijection showing U is left adjoint to the indiscrete construction. Conclusion: U carries a left adjoint, the discrete construction, and a right adjoint, the indiscrete construction.'
     diagnostic_exemplar:
-      problem: "Show that the forgetful functor $U\\colon\\mathbf{Top}\\to\\mathbf{Set}$ has both a left adjoint and a right adjoint, exhibiting the two hom-set bijections."
-      answer: "Left adjoint: the discrete-space functor. Every function from a discrete space is continuous (all subsets are open in the source), so $\\mathrm{Hom}_{\\mathbf{Top}}(X_{\\mathrm{disc}},Y)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UY)$, natural in both variables: $\\mathrm{disc}\\dashv U$. Right adjoint: the indiscrete-space functor. Every function into an indiscrete space is continuous (only $\\varnothing$ and the whole set are open in the target), so $\\mathrm{Hom}_{\\mathbf{Top}}(X,Y_{\\mathrm{ind}})\\cong\\mathrm{Hom}_{\\mathbf{Set}}(UX,Y)$: $U\\dashv\\mathrm{ind}$."
-      solution_sketch: "Ask on which side continuity comes for free. Every map out of a discrete space is continuous, giving $\\mathrm{disc}\\dashv U$; every map into an indiscrete space is continuous, giving $U\\dashv\\mathrm{ind}$. Each observation is itself the hom-set bijection."
+      problem: 'How many group homomorphisms are there from the free abelian group $\mathbb{Z}^3$ to $\mathbb{Z}/4$?'
+      answer_contract: {"kind":"exact"}
+      answer: '64'
+      solution_sketch: 'A homomorphism out of the free abelian group on $3$ generators is fixed by the images of the generators. Each image is one of $4$ elements, so there are $4^3=64$.'
     anki_seeds:
       - front: "Free-forgetful adjunction pattern?"
         back: "Free $\\dashv$ Forgetful: $\\mathrm{Hom}_{\\mathcal A}(FX,A)\\cong\\mathrm{Hom}_{\\mathbf{Set}}(X,UA)$; unit inserts generators."
@@ -1009,9 +1015,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Full object: c = gf is the round trip on P, and a closure operator is monotone, inflationary and idempotent; we verify the three properties in that order, using only the unit, the counit and monotonicity. Step 1 (monotone): f and g are monotone, and a composite of monotone maps is monotone, so c is monotone. Step 2 (inflationary): the unit of the connection at p reads p <= gf(p) = c(p), so c is inflationary. Step 3 (idempotent): the unit at the element c(p) gives c(p) <= c(c(p)); for the reverse inequality, the counit at the element f(p) of the other poset reads fg(f(p)) <= f(p), and applying the monotone map g to both sides yields gf(gf(p)) <= gf(p), that is, c(c(p)) <= c(p); the equality c(c(p)) = c(p) is then obtained by antisymmetry from the two inequalities. Conclusion: c is monotone, inflationary and idempotent, so c is a closure operator; dually, fg is an interior operator.'
     diagnostic_exemplar:
-      problem: "Let $f\\dashv g$ be a monotone Galois connection between posets ($f(p)\\le q\\iff p\\le g(q)$). Prove that $c=g\\circ f$ is a closure operator: monotone, inflationary, and idempotent."
-      answer: "Monotone: composite of monotone maps. Inflationary: from $f(p)\\le f(p)$ the biconditional gives $p\\le gf(p)=c(p)$ (the unit). Idempotent: $c(p)\\le c(c(p))$ by the unit; for the reverse, the counit $fg(q)\\le q$ at $q=f(p)$ gives $fgf(p)\\le f(p)$, and applying the monotone $g$ yields $c(c(p))=gfgf(p)\\le gf(p)=c(p)$. By antisymmetry $c(c(p))=c(p)$."
-      solution_sketch: "Monotonicity is inherited from the two maps. Inflationary is the unit, obtained by feeding $f(p)\\le f(p)$ into the biconditional; for idempotence use the counit $fg(q)\\le q$ at $q=f(p)$, apply the monotone $g$, and close with antisymmetry."
+      problem: 'The map $c\colon(\mathbb{R},\le)\to(\mathbb{Z},\le)$ is left adjoint to the inclusion of $\mathbb{Z}$ in $\mathbb{R}$. This means $c(x)\le n\iff x\le n$ for every integer $n$. Find $c(-7/2)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-3'
+      solution_sketch: '$c(x)$ is the least integer $n$ with $x\le n$. For $x=-3.5$ the least such integer is $-3$.'
     anki_seeds:
       - front: "A Galois connection is an adjunction between..."
         back: "posets (thin categories): monotone $f,g$ with $f(p)\\le q\\iff p\\le g(q)$."
@@ -1174,9 +1181,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Step 1, fullness: a monotone map between posets is exactly a morphism of preorders, so the posets form a full subcategory. Step 2, the reflector: for a preorder $P$, declare $x$ equivalent to $y$ when $x \le y$ and $y \le x$; the classes form a poset $P/\sim$ with $[x] \le [y]$ iff $x \le y$, which is well defined and antisymmetric. Step 3, universal property: a monotone $f$ from $P$ to a poset $Q$ sends equivalent elements to equal values, since $f(x) \le f(y) \le f(x)$ and antisymmetry force equality, so $f$ equals $h$ after the quotient map $q$ for a unique monotone $h$, naturally in $Q$. Step 4, adjunction: the natural bijection makes the class construction a left adjoint to the inclusion, with unit $q$. Step 5, idempotent monad: the induced monad $T$ is the class construction followed by inclusion, and its multiplication is the counit under inclusion; the counit at each poset is an isomorphism because a poset is its own reflection, so the multiplication is invertible, $T^2 \cong T$, and the monad is idempotent.'
     diagnostic_exemplar:
-      problem: "Show that $\\mathbf{Ab}$ is a reflective subcategory of $\\mathbf{Grp}$, identifying the reflector and its unit."
-      answer: "$\\mathbf{Ab}$ is full in $\\mathbf{Grp}$: every homomorphism between abelian groups is kept. The reflector is abelianization $G\\mapsto G^{\\mathrm{ab}}=G/[G,G]$: for abelian $A$, any homomorphism $f\\colon G\\to A$ kills commutators ($f(xyx^{-1}y^{-1})=f(x)f(y)f(x)^{-1}f(y)^{-1}=e$ since $A$ is abelian), so $f$ factors uniquely through the quotient map $\\eta_G\\colon G\\to G^{\\mathrm{ab}}$. This gives a natural bijection $\\mathrm{Hom}_{\\mathbf{Ab}}(G^{\\mathrm{ab}},A)\\cong\\mathrm{Hom}_{\\mathbf{Grp}}(G,A)$, i.e. abelianization is left adjoint to the inclusion, with unit $\\eta_G$."
-      solution_sketch: "The reflector must kill exactly what obstructs a map into an abelian group, namely the commutators. Show any $f\\colon G\\to A$ with $A$ abelian vanishes on commutators, hence factors uniquely through $G/[G,G]$; that unique factorization is the adjunction bijection, with the quotient map as unit."
+      problem: 'The category $\mathbf{Ab}$ is a reflective subcategory of $\mathbf{Grp}$. The reflection of a group $G$ is its abelianization $G/[G,G]$. Find the order of the reflection of the dihedral group $D_4$ of order $8$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The commutator subgroup of $D_4$ is its center, of order $2$. So the abelianization has order $8/2=4$.'
     anki_seeds:
       - front: "A reflective subcategory is..."
         back: "a full subcategory whose inclusion has a left adjoint (the reflector)."
@@ -1335,9 +1343,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Step 1: let F be a left adjoint to G, with F from C to D. After passing to opposite categories, F read from C opposite to D opposite is a right adjoint, since the adjunction reverses. Step 2: a colimit of a diagram in C is a limit of the corresponding diagram in C opposite, and a colimiting cocone in C is a limiting cone in C opposite. Step 3: by RAPL, the right adjoint of Step 1 preserves this limiting cone in C opposite. Step 4: translating back along Step 2, F carries colimiting cocones in C to colimiting cocones in D, so F preserves every colimit that exists in C. Step 5: the free monoid functor M from Set to Mon is left adjoint to the forgetful functor, so by the preserved colimit just proved it preserves binary coproducts; the coproduct of two sets is their disjoint union, and M of a disjoint union is the coproduct in Mon of the two free monoids. This completes the proof; compare your write-up with the solution.'
     diagnostic_exemplar:
-      problem: "Prove RAPL: a right adjoint $G\\colon\\mathcal D\\to\\mathcal C$ (with $F\\dashv G$) preserves every limit that exists in $\\mathcal D$."
-      answer: "Let $\\lim D$ exist for $D\\colon\\mathcal J\\to\\mathcal D$. For every $C$: $\\mathrm{Hom}(C,G\\lim D)\\cong\\mathrm{Hom}(FC,\\lim D)\\cong\\lim_j\\mathrm{Hom}(FC,Dj)\\cong\\lim_j\\mathrm{Hom}(C,GDj)$ — adjunction, then hom-functors preserve limits, then adjunction again — each step natural in $C$. The last set is exactly the set of cones from $C$ over $GD$, so $G(\\lim D)$ equipped with the legs $G\\lambda_j$ has the universal property of $\\lim(GD)$: maps into it correspond bijectively to cones. Hence the canonical comparison $G(\\lim D)\\to\\lim(GD)$ is an isomorphism and $G$ preserves the limit."
-      solution_sketch: "Never touch the cones directly. Chain natural bijections $\\mathrm{Hom}(C,G\\lim D)\\cong\\mathrm{Hom}(FC,\\lim D)\\cong\\lim_j\\mathrm{Hom}(FC,Dj)\\cong\\lim_j\\mathrm{Hom}(C,GDj)$ — adjunction, hom preserves limits, adjunction again — and read the last set as the cones from $C$ over $GD$."
+      problem: 'For a set $A$ the functor $(-)^A\colon\mathbf{Set}\to\mathbf{Set}$ is a right adjoint, so it preserves products. Let $A$ have $2$ elements, $B$ have $3$ elements and $C$ have $4$ elements. How many elements does $B^A\times C^A$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '144'
+      solution_sketch: '$B^A$ has $3^2=9$ elements and $C^A$ has $4^2=16$ elements. The product has $9\cdot16=144$ elements.'
     anki_seeds:
       - front: "What does RAPL state about adjoints?"
         back: "Right Adjoints Preserve Limits."

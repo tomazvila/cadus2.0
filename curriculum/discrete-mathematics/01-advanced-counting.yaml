@@ -568,10 +568,10 @@ topics:
             solution_sketch: 'Eight integers can be chosen one from each of the eight pairs, for example $1, 2, \dots, 8$, and no two of them add up to $17$. A $9$th integer must complete a pair, so the answer is $9$.'
         constraints: "the solver must find the pigeonholes (pairs, colors, remainders, squares, chains); integers <= 20; the item must test THIS KP: Choosing the right pigeonholes"
     diagnostic_exemplar:
-      problem: 'Show that among any $6$ integers chosen from $\{1, 2, \dots, 10\}$, two of them sum to $11$.'
-      answer: 'Partition $\{1, \dots, 10\}$ into the pairs $\{1,10\}, \{2,9\}, \{3,8\}, \{4,7\}, \{5,6\}$: $6$ numbers in $5$ pairs force two into one pair, and each pair sums to $11$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Pigeonhole with the five sum-$11$ pairs as holes.'
+      problem: 'Take integers from $1, 2, \dots, 30$. What is the smallest number of integers to take so that two of them always have the same remainder when divided by $6$?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'There are $6$ possible remainders, which are the pigeonholes. Draw $7$ integers and two share a remainder. Six integers can have six different remainders.'
     anki_seeds:
       - front: "Generalized pigeonhole: to guarantee $k$ objects in one of $n$ boxes, you need..."
         back: '$n(k-1) + 1$ objects.'
@@ -682,9 +682,10 @@ topics:
             solution_sketch: 'Count the pairs (S, c) where S is a nonempty subset of an $n$-set and c is a member of S. Choosing the committee size $k$, the committee in $\binom{n}{k}$ ways and its chair in $k$ ways gives $k\binom{n}{k}$ pairs, so summing over $k$ gives the left side. Choosing the chair first in $n$ ways, each of the other $n-1$ people is in or out, giving $n \cdot 2^{n-1}$ pairs. Both counts are of the same set, so the sides are equal.'
         constraints: "identities provable by committee/chair or in-out arguments; n symbolic or small; no induction"
     diagnostic_exemplar:
-      problem: 'Give a combinatorial proof that $\binom{2n}{2} = 2\binom{n}{2} + n^2$.'
-      answer: 'Split $2n$ people into two rooms of $n$. A pair from the $2n$ is either within room one, within room two ($\binom{n}{2}$ each), or split across rooms ($n \cdot n$). Total: $2\binom{n}{2} + n^2 = \binom{2n}{2}$.'
-      solution_sketch: 'Count unordered pairs from $2n$ objects by cases on how the pair meets a fixed half-half split; verify: $\binom{2n}{2} = 2n^2 - n = 2 \cdot \tfrac{n(n-1)}{2} + n^2$.'
+      problem: 'A group of $10$ people stands in two rooms of $5$ people each. How many pairs of people have one person in each room?'
+      answer_contract: {"kind":"exact"}
+      answer: '25'
+      solution_sketch: 'Each pair takes one person from room one and one from room two. That gives $5\cdot 5=25$ pairs.'
     anki_seeds:
       - front: "Structure of a combinatorial proof"
         back: "Pose one counting question and answer it two ways; the two expressions must be equal."

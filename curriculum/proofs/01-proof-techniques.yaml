@@ -121,9 +121,10 @@ topics:
             solution_sketch: 'Let $a$, $b$, $c$ and $d$ be integers with $a \mid b$ and $c \mid d$. By the definition of divisibility, there is an integer $k$ with $b = ak$, and there is an integer $l$ with $d = cl$. Multiplying the two equations gives $bd = (ak)(cl) = (ac)(kl)$. Since $k$ and $l$ are integers and the integers are closed under multiplication, $kl$ is an integer. So $bd = (ac)(kl)$ with $kl$ an integer, and by the definition of divisibility, $ac \mid bd$. Since $a$, $b$, $c$ and $d$ were arbitrary, the statement is proved.'
         constraints: 'unpack each divisibility hypothesis as an equation with an integer multiplier and factor the divisor out of the target; error analysis, packing and splitting contexts, and a textbook divisibility proof'
     diagnostic_exemplar:
-      problem: 'Prove: for all integers $a, b$, if $a \mid b$ then $a \mid (3b^2 + b)$.'
-      answer: 'Suppose $a \mid b$, so $b = ak$ for some integer $k$. Then $3b^2 + b = 3(ak)^2 + ak = a(3ak^2 + k)$, and $3ak^2 + k$ is an integer, so $a \mid (3b^2 + b)$ by the definition of divisibility.'
-      solution_sketch: 'Unfold the divisibility hypothesis as $b = ak$, substitute, and factor $a$ out of the result.'
+      problem: 'Let $n = 2k + 1$ with $k = 7$. Then $n^2 = 2m + 1$ for an integer $m$. Find $m$.'
+      answer_contract: {"kind":"exact"}
+      answer: '112'
+      solution_sketch: 'Here $n = 15$ and $n^2 = 225 = 2 \cdot 112 + 1$. In general $n^2 = 2(2k^2 + 2k) + 1$, and $2 \cdot 49 + 14 = 112$.'
     anki_seeds:
       - front: 'Structure of a direct proof of $\forall x\, (P(x) \to Q(x))$?'
         back: 'Take an arbitrary $x$ for which $P(x)$ is true, then derive $Q(x)$ using definitions and known facts.'
@@ -251,9 +252,10 @@ topics:
             solution_sketch: 'Vacuous proof. Let $x$ be a real number. Since $x^2 \ge 0$, we have $x^2 + 1 \ge 1 > 0$, so $x^2 + 1 = 0$ is false for every real $x$. An implication with a false hypothesis is true, so the statement holds. Trivial proof. Let $x$ be a real number. The square of a real number is never negative, so $(x - 1)^2 \ge 0$ for every real $x$, whether or not $x^2 + 1 = 0$. An implication with a true conclusion is true, so the statement holds. Each argument alone proves the statement for every real $x$. The first one never uses the conclusion, and the second one never uses the hypothesis.'
         constraints: 'decide between a vacuous and a trivial proof by testing the hypothesis and the conclusion separately; classification items with natural words, counting contexts, error analysis, and a textbook claim that has both proofs'
     diagnostic_exemplar:
-      problem: 'Prove each, naming the template used (vacuous or trivial): (a) for every real $x$, if $x^2 < 0$ then $x = 7$; (b) for every integer $n$, if $n$ is prime then $n^2 \ge 0$.'
-      answer: '(a) Vacuous: no real $x$ satisfies $x^2 < 0$, since squares of reals are nonnegative; the antecedent is never true, so the conditional holds for every $x$ with nothing further to check. (b) Trivial: $n^2 \ge 0$ holds for every integer $n$, so the consequent is always true and the conditional holds whether or not $n$ is prime.'
-      solution_sketch: 'Decide in each case whether the hypothesis is unsatisfiable (vacuous proof) or the conclusion is always true (trivial proof), and say which.'
+      problem: 'How many integers $n$ satisfy $1 < n^2 < 4$?'
+      answer_contract: {"kind":"exact"}
+      answer: '0'
+      solution_sketch: 'The square of an integer is $0, 1, 4, 9, \dots$. No square lies strictly between $1$ and $4$.'
     anki_seeds:
       - front: 'Vacuous proof of $P \to Q$?'
         back: 'Show $P$ is never true; a conditional with a false hypothesis is automatically true.'
@@ -376,9 +378,10 @@ topics:
             solution_sketch: 'Let $r$ and $s$ be rational numbers with $r < s$, and let $t = \frac{r + s}{2}$. Write $r = \frac{a}{b}$ and $s = \frac{c}{d}$ with integers $a$, $b$, $c$, $d$ and $b \ne 0$, $d \ne 0$. Then $t = \frac{1}{2}\left(\frac{ad + bc}{bd}\right) = \frac{ad + bc}{2bd}$. The numerator $ad + bc$ and the denominator $2bd$ are integers, and $2bd \ne 0$ because $2$, $b$ and $d$ are nonzero. So $t$ is rational. Next, $t - r = \frac{r + s}{2} - r = \frac{s - r}{2}$. Since $r < s$, we have $s - r > 0$, so $t - r > 0$ and $r < t$. Also $s - t = s - \frac{r + s}{2} = \frac{s - r}{2} > 0$, so $t < s$. Hence $r < t < s$, and $t$ is a rational number strictly between $r$ and $s$.'
         constraints: 'the average of two rationals is rational and lies strictly between them; justify both strict inequalities; error analysis on very close rationals; measurement contexts with a midpoint; a textbook density proof'
     diagnostic_exemplar:
-      problem: 'Prove: if $r$ is rational and $r < 5$, then there is a rational number $t$ with $r < t < 5$.'
-      answer: 'Take $t = \frac{r+5}{2}$. Writing $r = p/q$ with $p, q$ integers and $q \ne 0$ gives $t = \frac{p + 5q}{2q}$, a ratio of integers with nonzero denominator, so $t$ is rational. From $r < 5$: adding $r$ to both sides gives $2r < r + 5$, hence $r < t$; adding $5$ to both sides gives $r + 5 < 10$, hence $t < 5$. So $r < t < 5$.'
-      solution_sketch: 'Use the midpoint: show it is rational by writing it as a single fraction, then obtain both inequalities from $r < 5$.'
+      problem: 'Find the average of $\frac34$ and $\frac56$ as a fraction.'
+      answer_contract: {"kind":"exact"}
+      answer: '19/24'
+      solution_sketch: 'The sum is $\frac9{12} + \frac{10}{12} = \frac{19}{12}$. Half of this is $\frac{19}{24}$.'
     anki_seeds:
       - front: 'Definition of a rational number?'
         back: 'A real number expressible as $p/q$ with $p, q$ integers and $q \ne 0$.'
@@ -507,9 +510,10 @@ topics:
             solution_sketch: 'Let $a$ and $b$ be integers. We prove both directions. ($\Leftarrow$) Suppose $a$ and $b$ are both odd. Then $a = 2k + 1$ and $b = 2l + 1$ for some integers $k$ and $l$. So $ab = (2k + 1)(2l + 1) = 4kl + 2k + 2l + 1 = 2(2kl + k + l) + 1$. Since $2kl + k + l$ is an integer, $ab$ is odd. ($\Rightarrow$) We prove the contrapositive: if $a$ and $b$ are not both odd, then $ab$ is not odd. Suppose $a$ and $b$ are not both odd. Every integer is even or odd, so one of them is even. Say $a$ is even, so $a = 2k$ for some integer $k$; the case that $b$ is even is the same with $a$ and $b$ exchanged. Then $ab = 2(kb)$, and $kb$ is an integer, so $ab$ is even. An integer is not both even and odd, so $ab$ is not odd. This proves the contrapositive, so if $ab$ is odd then $a$ and $b$ are both odd. Both directions hold, so $ab$ is odd if and only if $a$ and $b$ are both odd.'
         constraints: 'prove both directions of an if and only if statement; name the contrapositive and the converse correctly; witnesses for odd products; error analysis; dice and tiling contexts; a textbook biconditional proof'
     diagnostic_exemplar:
-      problem: 'Prove: for all integers $m, n$, if $m$ and $n$ are both odd then $4 \mid (m^2 + n^2 - 2)$.'
-      answer: 'Write $m = 2a + 1$ and $n = 2b + 1$ with $a, b$ integers. Then $m^2 + n^2 - 2 = (4a^2 + 4a + 1) + (4b^2 + 4b + 1) - 2 = 4(a^2 + a + b^2 + b)$. Since $a^2 + a + b^2 + b$ is an integer, $4 \mid (m^2 + n^2 - 2)$.'
-      solution_sketch: 'Substitute the odd forms, expand both squares, and factor $4$ out of what remains.'
+      problem: 'Find the largest positive integer $d$ such that $d$ divides $84$ and $d$ divides $60$.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'If $d$ divides both numbers, then $d$ divides $84 - 60 = 24$ and $60 - 2 \cdot 24 = 12$. The number $12$ divides $84$ and $60$, so $d = 12$.'
     anki_seeds:
       - front: 'Definition: $a \mid b$ ("$a$ divides $b$")?'
         back: 'There is an integer $k$ with $b = ak$ (with $a \ne 0$).'
@@ -645,9 +649,10 @@ topics:
             solution_sketch: 'Let $n$ be an arbitrary integer. By the division algorithm $n$ has exactly one of the forms $3k$, $3k + 1$ or $3k + 2$ with $k$ an integer, so we consider three cases. Case 1: $n = 3k$. Then $n^3 - n = 27k^3 - 3k = 3(9k^3 - k)$. Case 2: $n = 3k + 1$. Then $n^3 - n = (27k^3 + 27k^2 + 9k + 1) - (3k + 1) = 27k^3 + 27k^2 + 6k = 3(9k^3 + 9k^2 + 2k)$. Case 3: $n = 3k + 2$. Then $n^3 - n = (27k^3 + 54k^2 + 36k + 8) - (3k + 2) = 27k^3 + 54k^2 + 33k + 6 = 3(9k^3 + 18k^2 + 11k + 2)$. In each case the expression in brackets is an integer, so $n^3 - n$ is a multiple of $3$. The three cases cover every integer. Therefore $3$ divides $n^3 - n$ for every integer $n$. $\square$'
         constraints: 'Cases on the remainder modulo m: the quotient witness of one case, remainders of squares in contexts with sharing, a verdict, a counterexample from a missing case and the number of cases. The last item is a full textbook proof.'
     diagnostic_exemplar:
-      problem: 'Prove by cases on the remainder of $n$ modulo $3$: for every integer $n$, $n^2 \equiv 0$ or $1 \pmod 3$.'
-      answer: 'Every integer has the form $3k$, $3k+1$ or $3k+2$. If $n = 3k$ then $n^2 = 9k^2 = 3(3k^2) \equiv 0$. If $n = 3k+1$ then $n^2 = 9k^2 + 6k + 1 = 3(3k^2 + 2k) + 1 \equiv 1$. If $n = 3k+2$ then $n^2 = 9k^2 + 12k + 4 = 3(3k^2 + 4k + 1) + 1 \equiv 1$. The three cases are exhaustive, so $n^2 \equiv 0$ or $1 \pmod 3$ for every integer $n$.'
-      solution_sketch: 'Split on the three possible remainders, square each form, and read off the remainder; note that the cases cover every integer.'
+      problem: 'How many real numbers $x$ satisfy $|x - 3| + |x + 2| = 7$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'For $x \ge 3$ the equation is $2x - 1 = 7$, so $x = 4$. For $x \le -2$ it is $-2x + 1 = 7$, so $x = -3$. For $-2 < x < 3$ the left side is $5$.'
     anki_seeds:
       - front: 'When is a proof by cases valid?'
         back: 'When the cases are exhaustive (cover every possibility) and each case yields the conclusion.'
@@ -780,9 +785,10 @@ topics:
             solution_sketch: 'Let $a$, $b$ and $c$ be integers and put $P = (a - b)(b - c)(c - a)$. Each of the three numbers is even or odd, and there are only two parities, so two of the three numbers have the same parity. We justify a relabeling. Exchanging two of the names changes $P$ only by a factor $-1$: for example exchanging $a$ and $b$ gives $(b - a)(a - c)(c - b) = -P$, and the same holds for the other exchanges. Whether $P$ is even does not depend on its sign, so the statement is unchanged by every relabeling of $a$, $b$, $c$. Therefore we may assume without loss of generality that $a$ and $b$ have the same parity. If $a$ and $b$ are both even, then $a = 2s$ and $b = 2t$ for integers $s$ and $t$, and $a - b = 2(s - t)$. If $a$ and $b$ are both odd, then $a = 2s + 1$ and $b = 2t + 1$, and $a - b = 2(s - t)$. In both cases $a - b = 2m$ with $m = s - t$ an integer. Then $P = 2m(b - c)(c - a) = 2[m(b - c)(c - a)]$, and the bracket is an integer, so $P$ is even. Therefore $(a - b)(b - c)(c - a)$ is even for all integers $a$, $b$ and $c$. $\square$'
         constraints: 'When WLOG is legitimate: verdicts on given assumptions, the number of cases that remain after a legitimate symmetry, counts in contexts, and one asymmetric statement where the assumption removes cases. The last item is a full textbook proof.'
     diagnostic_exemplar:
-      problem: 'Prove: for all integers $m, n$, if $m$ and $n$ have different parities then $mn$ is even. Use "without loss of generality", and justify in one sentence why the WLOG step is legitimate here.'
-      answer: 'Both the hypothesis ("different parities") and the conclusion ($mn$ even) are unchanged when $m$ and $n$ are swapped, so a proof of one case covers the other by relabelling: WLOG $m$ is even and $n$ is odd. Then $m = 2a$ for an integer $a$, so $mn = 2(an)$ with $an$ an integer, i.e. $mn$ is even.'
-      solution_sketch: 'State the symmetry that licenses WLOG, take the even factor to be $m$, and factor $2$ out of the product.'
+      problem: 'How many pairs of positive integers $(a, b)$ with $a \le b$ satisfy $ab = 36$?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'List the divisors $a \le 6$: $1, 2, 3, 4, 6$. Each gives one pair: $(1,36), (2,18), (3,12), (4,9), (6,6)$.'
     anki_seeds:
       - front: 'What justifies a "without loss of generality" assumption?'
         back: 'A symmetry of the statement: relabeling the variables maps the remaining cases onto the assumed one.'
@@ -918,9 +924,10 @@ topics:
             solution_sketch: 'Let $x$ be a real number. We prove the contrapositive: if $x$ is rational, then $x^3 + 4x$ is rational. Suppose that $x$ is rational. By the definition of rational numbers, $x = p/q$ for some integers $p$ and $q$ with $q \ne 0$. Then $x^3 + 4x = \dfrac{p^3}{q^3} + \dfrac{4p}{q} = \dfrac{p^3 + 4pq^2}{q^3}$. The numerator $p^3 + 4pq^2$ is an integer, and the denominator $q^3$ is a nonzero integer because $q \ne 0$. So $x^3 + 4x$ is a quotient of integers with a nonzero denominator, which means it is rational. This proves the contrapositive. Since a statement and its contrapositive are equivalent, if $x^3 + 4x$ is irrational, then $x$ is irrational. $\square$'
         constraints: 'Contrapositive with real numbers and the definition of rational: the fraction produced by the proof, naming the contrapositive, a value check, measured contexts that need a division, a verdict, a count of irrational numbers. The last item is a full textbook proof.'
     diagnostic_exemplar:
-      problem: 'Prove: for every real $x$, if $x^2 + 2x$ is irrational then $x$ is irrational.'
-      answer: 'Prove the contrapositive: if $x$ is rational then $x^2 + 2x$ is rational. Let $x = p/q$ with $p, q$ integers and $q \ne 0$. Then $x^2 + 2x = \frac{p^2}{q^2} + \frac{2p}{q} = \frac{p^2 + 2pq}{q^2}$, a ratio of integers with nonzero denominator, hence rational. The contrapositive is logically equivalent to the original statement, so the claim follows.'
-      solution_sketch: 'The direct statement is awkward; its contrapositive needs only closure of the rationals under products and sums.'
+      problem: 'For integers $a$ and $b$ with $a < 10$ and $b < 10$, find the smallest integer $k$ such that $a + b < k$ always holds.'
+      answer_contract: {"kind":"exact"}
+      answer: '19'
+      solution_sketch: 'Integers below $10$ are at most $9$. So $a + b \le 18$, and $a + b < 19$ always holds. The value $a + b = 18$ occurs, so $k = 18$ fails.'
     anki_seeds:
       - front: 'To prove $P \to Q$ by contrapositive, you instead prove...'
         back: 'The logically equivalent contrapositive $\neg Q \to \neg P$.'
@@ -1052,9 +1059,10 @@ topics:
             solution_sketch: 'Let $a$ and $b$ be positive real numbers. Then $a + b > 0$. We give a chain of equivalences and justify each link. $a < b$ if and only if $0 < b - a$, because adding $a$ to both sides, or subtracting $a$, can be undone. $0 < b - a$ if and only if $0 < (b - a)(a + b)$: multiplying both sides by the positive number $a + b$ keeps the inequality, and dividing by it restores the inequality. $0 < (b - a)(a + b)$ if and only if $0 < b^2 - a^2$, because $(b - a)(a + b) = b^2 - a^2$ is an identity. Finally $0 < b^2 - a^2$ if and only if $a^2 < b^2$, because adding $a^2$ to both sides can be undone. Every link is an equivalence, and equivalence is transitive. Therefore $a < b$ if and only if $a^2 < b^2$ for all positive real numbers $a$ and $b$. $\square$'
         constraints: 'Equivalence chains: the extraneous or lost solution of a chain with a link that is not reversible, a verdict, contexts with a division, the number of solutions of a rational equation. The last item is a full textbook proof.'
     diagnostic_exemplar:
-      problem: 'Prove: an integer $n$ is odd if and only if $n^2 + 2n$ is odd.'
-      answer: '($\Rightarrow$) $n$ odd: $n^2$ odd and $2n$ even, so the sum is odd. ($\Leftarrow$) contrapositive: $n$ even makes $n^2 + 2n = n(n+2)$ even.'
-      solution_sketch: 'Forward: odd plus even is odd. Backward via contrapositive: $n = 2k$ gives $n^2 + 2n = 4k^2 + 4k = 2(2k^2 + 2k)$, even. $\square$'
+      problem: 'Count the integers $n$ with $1 \le n \le 20$ for which $4 \mid n$ and $6 \mid n$ are both true or both false.'
+      answer_contract: {"kind":"exact"}
+      answer: '14'
+      solution_sketch: 'Both sides are true only for $n = 12$. Both sides are false for $20 - 7 = 13$ values, because $4, 6, 8, 12, 16, 18, 20$ make at least one side true. So $1 + 13 = 14$.'
     anki_seeds:
       - front: 'To prove "$P$ if and only if $Q$"?'
         back: 'Prove both directions: $P \to Q$ and $Q \to P$ (each may be direct or contrapositive).'
@@ -1183,9 +1191,10 @@ topics:
             solution_sketch: 'Suppose, for contradiction, that $r$ is rational, $s$ is irrational, and $r + s$ is rational. Write $r = a/b$ and $r + s = c/d$ with integers $a, b, c, d$ and $b \neq 0$, $d \neq 0$. Then $s = (r + s) - r = \frac{c}{d} - \frac{a}{b} = \frac{cb - ad}{bd}$. The numerator $cb - ad$ is an integer, and the denominator $bd$ is a nonzero integer. So $s$ is a quotient of two integers with nonzero denominator, which means that $s$ is rational. This contradicts the assumption that $s$ is irrational. Therefore $r + s$ is irrational.'
         constraints: "reach an explicit contradiction (odd = even, rational = irrational, etc.) and say what it contradicts. Items are computed steps of the method, verdict labels with balanced keys, and one written proof. The stem must not state the decisive result or the direction of a verdict."
     diagnostic_exemplar:
-      problem: 'Prove by contradiction: there is no smallest integer.'
-      answer: 'Assume a smallest integer $m$; then $m - 1 < m$ is a smaller integer, a contradiction.'
-      solution_sketch: 'Suppose $m$ were the smallest integer. Then $m - 1$ is an integer smaller than $m$, contradicting minimality. Hence no smallest integer exists. $\square$'
+      problem: 'Assume that $2, 3, 5, 7, 11$ are all the primes. Form the product of these primes plus $1$. Compute this number.'
+      answer_contract: {"kind":"exact"}
+      answer: '2311'
+      solution_sketch: 'The product is $2 \cdot 3 \cdot 5 \cdot 7 \cdot 11 = 2310$. Adding $1$ gives $2311$, which no listed prime divides.'
     anki_seeds:
       - front: 'Structure of a proof by contradiction of a statement $S$?'
         back: 'Assume $\neg S$, derive a contradiction (a false statement), and conclude that $S$ must hold.'
@@ -1324,9 +1333,10 @@ topics:
             solution_sketch: 'Suppose, for contradiction, that there are only finitely many primes, and list all of them as $p_1, p_2, \dots, p_k$. This list is not empty, since $2$ is prime. Let $N = p_1 p_2 \cdots p_k + 1$. Then $N > 1$, so $N$ has a prime divisor $q$, because every integer greater than $1$ has a prime divisor. Since $p_1, \dots, p_k$ are all the primes, $q = p_i$ for some $i$. Then $q$ divides $p_1 p_2 \cdots p_k$, and $q$ divides $N$, so $q$ divides the difference $N - p_1 p_2 \cdots p_k = 1$. But a prime is at least $2$ and cannot divide $1$. This is a contradiction. Hence there are infinitely many primes.'
         constraints: "construct an object that contradicts the finiteness/nonexistence assumption. Items are computed steps of the method, verdict labels with balanced keys, and one written proof. The stem must not state the decisive result or the direction of a verdict."
     diagnostic_exemplar:
-      problem: 'Prove by contradiction that $\sqrt{6}$ is irrational.'
-      answer: 'Suppose $\sqrt6$ were rational, say $\sqrt6 = p/q$ with $p, q$ integers, $q \ne 0$, and the fraction in lowest terms, so $\gcd(p, q) = 1$. Squaring gives $p^2 = 6q^2$, so $p^2$ is even; an odd $p$ would have odd square, so $p$ is even, say $p = 2k$. Substituting, $4k^2 = 6q^2$, i.e. $2k^2 = 3q^2$. The left side is even, so $3q^2$ is even, and since $3$ is odd this forces $q^2$ even and hence $q$ even. But then $2$ divides both $p$ and $q$, contradicting $\gcd(p,q) = 1$. Therefore $\sqrt6$ is irrational.'
-      solution_sketch: 'Assume a lowest-terms representation, square it, and derive that numerator and denominator are both even — the contradiction with lowest terms.'
+      problem: 'How many pairs of integers $(x, y)$ satisfy $x^2 - y^2 = 6$?'
+      answer_contract: {"kind":"exact"}
+      answer: '0'
+      solution_sketch: 'Since $x^2 - y^2 = (x - y)(x + y)$, and the two factors have the same parity, the product is odd or a multiple of $4$. The number $6$ is neither.'
     anki_seeds:
       - front: 'Key idea in proving $\sqrt{2}$ irrational by contradiction?'
         back: 'Assume $\sqrt 2 = p/q$ in lowest terms; derive that $p$ and $q$ are both even, contradicting lowest terms.'
@@ -1464,9 +1474,10 @@ topics:
             solution_sketch: 'Consider the number $t = \sqrt{2}^{\sqrt{2}}$. Either $t$ is rational or $t$ is irrational. Case 1: $t$ is rational. Take $a = b = \sqrt{2}$. Both are irrational, and $a^b = t$ is rational. Case 2: $t$ is irrational. Take $a = t$ and $b = \sqrt{2}$. Both are irrational. Then, by the law $(x^y)^z = x^{yz}$ for positive $x$, $a^b = (\sqrt{2}^{\sqrt{2}})^{\sqrt{2}} = \sqrt{2}^{\sqrt{2} \cdot \sqrt{2}} = \sqrt{2}^{2} = 2$, which is rational. In both cases there exist irrational numbers $a$ and $b$ with $a^b$ rational. The proof does not tell us which case holds.'
         constraints: "the argument may not identify the witness; make the case split or counting explicit. Items are computed steps of the method, verdict labels with balanced keys, and one written proof. The stem must not state the decisive result or the direction of a verdict."
     diagnostic_exemplar:
-      problem: 'Prove: among any five integers, there are two whose difference is divisible by $4$.'
-      answer: 'Every integer leaves one of the four remainders $0, 1, 2, 3$ on division by $4$. Given five integers, two of them must leave the same remainder, since there are only four remainders available. If $a = 4s + r$ and $b = 4t + r$ share the remainder $r$, then $a - b = 4(s - t)$, so $4 \mid (a - b)$. This proves existence without exhibiting the pair — a nonconstructive existence proof.'
-      solution_sketch: 'Classify the integers by remainder mod $4$; with five integers and four classes two must share a class, and equal remainders make the difference a multiple of $4$.'
+      problem: 'Find the smallest positive integer that is the sum of two positive squares in two different ways. Equal squares are allowed.'
+      answer_contract: {"kind":"exact"}
+      answer: '50'
+      solution_sketch: 'Check $n < 50$: each has at most one such pair. At $50$ we have $50 = 1 + 49 = 25 + 25$.'
     anki_seeds:
       - front: 'Constructive vs. nonconstructive existence proof?'
         back: 'Constructive: exhibit and verify an explicit witness. Nonconstructive: show a witness must exist without identifying it.'
@@ -1608,9 +1619,10 @@ topics:
             solution_sketch: 'Let $x$ be a real number with $x \neq 0$ and $x \neq 1$. Existence: put $y = x^2/(x - 1)$, which is defined since $x \neq 1$. Then $y/x = x/(x - 1)$ and $y - x = \frac{x^2 - x(x - 1)}{x - 1} = \frac{x}{x - 1}$. So $y/x = y - x$, and a solution exists. Uniqueness: suppose $y$ is any real number with $y/x = y - x$. Multiplying by $x$ gives $y = xy - x^2$. Then $x^2 = xy - y = y(x - 1)$, and dividing by $x - 1 \neq 0$ gives $y = x^2/(x - 1)$. So every solution equals $x^2/(x - 1)$, and the solution is unique.'
         constraints: "state the $\\exists!$ claim as existence plus uniqueness and prove both parts. Items are computed steps of the method, verdict labels with balanced keys, and one written proof. The stem must not state the decisive result or the direction of a verdict."
     diagnostic_exemplar:
-      problem: 'Prove that there is exactly one real number $x$ with $x^3 + x = 10$.'
-      answer: 'Existence: $x = 2$ gives $8 + 2 = 10$. Uniqueness: suppose $a^3 + a = b^3 + b$. Then $(a^3 - b^3) + (a - b) = 0$, i.e. $(a-b)(a^2 + ab + b^2 + 1) = 0$. The second factor is positive for all real $a, b$, since $a^2 + ab + b^2 = \left(a + \tfrac{b}{2}\right)^2 + \tfrac{3b^2}{4} \ge 0$, making the factor at least $1$. Hence $a - b = 0$, so $a = b$. Therefore $x = 2$ is the unique solution.'
-      solution_sketch: 'Exhibit a solution, then show any two solutions coincide: factor $a^3 + a - (b^3 + b)$ and check that the quadratic factor never vanishes.'
+      problem: 'Write $-37 = 8q + r$ with integers $q$ and $r$ and $0 \le r < 8$. Find $r$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The unique pair is $q = -5$ and $r = 3$, because $8 \cdot (-5) + 3 = -37$.'
     anki_seeds:
       - front: 'Standard template for proving uniqueness?'
         back: 'Assume $x$ and $y$ both satisfy the property, then show $x = y$.'
@@ -1755,10 +1767,10 @@ topics:
             solution_sketch: 'The square root of $16$ has two branches, $4$ and $-4$, and both are kept. Each branch gives one solution, $m = 7$ and $m = -1$, and no solution is lost. So the method is valid.'
         constraints: "hidden division by zero or invalid root extraction; the learner names the exact illegal step"
     diagnostic_exemplar:
-      problem: 'Identify the error in each argument: (a) "The sum of two even integers is even — indeed $4 + 6 = 10$." (b) "If $a = b$ then $a^2 = ab$, so $a^2 - b^2 = ab - b^2$, so $(a+b)(a-b) = b(a-b)$, hence $a + b = b$; taking $a = b = 1$ gives $2 = 1$."'
-      answer_contract: {kind: none}
-      answer: '(a) Proof by example: one instance cannot establish a universal claim. A proof must start from arbitrary even integers $2a$ and $2b$ and show $2a + 2b = 2(a+b)$. (b) An illegal cancellation: passing from $(a+b)(a-b) = b(a-b)$ to $a + b = b$ divides by $a - b$, which is $0$ because $a = b$. Division by zero is not a valid step, so the conclusion does not follow.'
-      solution_sketch: 'Ask what each step actually licenses: one instance never proves "for all", and cancelling a factor requires it to be nonzero.'
+      problem: 'The expression $n^2 + n + 41$ gives a prime for $n = 1, 2, 3, \dots, 39$. Find the smallest positive integer $n$ for which it is not prime.'
+      answer_contract: {"kind":"exact"}
+      answer: '40'
+      solution_sketch: 'At $n = 40$ the value is $1600 + 40 + 41 = 1681 = 41^2$. Examples for $n < 40$ do not prove the claim for every $n$.'
     anki_seeds:
       - front: 'Why does deriving a true statement from a claim not prove the claim?'
         back: 'A false statement can imply a true one ($F \to T$ is true); the steps must be reversible or run forward from known truths.'
@@ -1912,9 +1924,10 @@ topics:
             solution_sketch: 'We prove by induction on $n$ the statement $P(n)$: $1 + 3 + 5 + \cdots + (2n-1) = n^2$. Base case: for $n = 1$ the left side is $1$ and the right side is $1^2 = 1$, so $P(1)$ holds. Inductive hypothesis: let $k \ge 1$ be an integer and assume $1 + 3 + \cdots + (2k-1) = k^2$. Inductive step: we must prove $P(k+1)$, that is, $1 + 3 + \cdots + (2k-1) + (2(k+1) - 1) = (k+1)^2$. The last term is $2(k+1) - 1 = 2k + 1$. Add $2k + 1$ to both sides of the hypothesis. The left side becomes $1 + 3 + \cdots + (2k+1)$ and the right side becomes $k^2 + 2k + 1 = (k+1)^2$. This is $P(k+1)$. So $P(k)$ implies $P(k+1)$ for every $k \ge 1$. By the principle of mathematical induction, $P(n)$ holds for every integer $n \ge 1$. $\square$'
         constraints: "single-step sums with linear terms; write base, hypothesis, and step explicitly Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Prove by induction: for all $n \ge 1$, $3 + 7 + 11 + \cdots + (4n - 1) = n(2n + 1)$.'
-      answer: 'Base $n = 1$: $3 = 3$. Step: $n(2n+1) + (4n + 3) = 2n^2 + 5n + 3 = (n+1)(2n+3)$.'
-      solution_sketch: 'Base: $n = 1$ gives $3 = 1 \cdot 3$. Step: assume the sum is $n(2n+1)$; adding the next term $4(n+1) - 1 = 4n + 3$ gives $2n^2 + 5n + 3 = (n + 1)(2(n+1) + 1)$. $\square$'
+      problem: 'Find the smallest positive integer $n$ with $2^n < n!$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'For $n = 1, 2, 3$ we have $2 \ge 1$, $4 \ge 2$, $8 \ge 6$. At $n = 4$ we have $16 < 24$. This is the base case.'
     anki_seeds:
       - front: 'The two parts of a proof by induction?'
         back: 'Base case (verify $P(n_0)$) and inductive step (assume $P(n)$, prove $P(n + 1)$).'
@@ -2062,9 +2075,10 @@ topics:
             solution_sketch: 'We prove by induction on $n \ge 0$ the statement $P(n)$: $1 + 3 + 3^2 + \cdots + 3^n = \frac{3^{n+1}-1}{2}$. Base case: for $n = 0$ the left side is $3^0 = 1$ and the right side is $\frac{3^1 - 1}{2} = 1$, so $P(0)$ holds. Inductive hypothesis: let $k \ge 0$ be an integer and assume $1 + 3 + \cdots + 3^k = \frac{3^{k+1}-1}{2}$. Inductive step: we must prove $P(k+1)$. Add the next term $3^{k+1}$ to both sides of the hypothesis. The right side becomes $\frac{3^{k+1} - 1}{2} + 3^{k+1} = \frac{3^{k+1} - 1 + 2 \cdot 3^{k+1}}{2} = \frac{3 \cdot 3^{k+1} - 1}{2} = \frac{3^{k+2} - 1}{2}$. This is the right side of $P(k+1)$, because $(k+1)+1 = k+2$. So $P(k)$ implies $P(k+1)$ for every $k \ge 0$. By the principle of mathematical induction, $P(n)$ holds for every integer $n \ge 0$. $\square$'
         constraints: "geometric sums with integer ratio; combine over a common denominator in the step Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Prove: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i(i+1)} = \frac{n}{n+1}$.'
-      answer: 'Base $n = 1$: $\tfrac{1}{2} = \tfrac{1}{2}$. Step: $\frac{n}{n+1} + \frac{1}{(n+1)(n+2)} = \frac{n(n+2) + 1}{(n+1)(n+2)} = \frac{n+1}{n+2}$.'
-      solution_sketch: 'Base: $\frac{1}{1 \cdot 2} = \frac{1}{2}$. Step: $\frac{n(n+2) + 1}{(n+1)(n+2)} = \frac{(n+1)^2}{(n+1)(n+2)} = \frac{n+1}{n+2}$, the formula at $n + 1$. $\square$'
+      problem: 'Find the value of $1^2 + 2^2 + 3^2 + \cdots + 9^2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '285'
+      solution_sketch: 'The formula $\frac{n(n+1)(2n+1)}{6}$ at $n = 9$ gives $\frac{9 \cdot 10 \cdot 19}{6} = 285$.'
     anki_seeds:
       - front: 'The inductive step for a summation formula $\sum_{i=1}^n a_i = F(n)$?'
         back: 'Add the next term: show $F(n) + a_{n+1} = F(n+1)$.'
@@ -2191,9 +2205,10 @@ topics:
             solution_sketch: 'We prove by induction on $n \ge 0$ the statement $P(n)$: $9 \mid 4^n + 6n - 1$. Base case: for $n = 0$ we have $4^0 + 0 - 1 = 0 = 9 \cdot 0$, so $P(0)$ holds. Inductive hypothesis: let $k \ge 0$ be an integer and assume $9 \mid 4^k + 6k - 1$, that is, $4^k + 6k - 1 = 9m$ for some integer $m$. Inductive step: we must prove $9 \mid 4^{k+1} + 6(k+1) - 1$. Write $4^{k+1} + 6(k+1) - 1 = 4 \cdot 4^k + 6k + 5$. Subtract and add $4(4^k + 6k - 1) = 4 \cdot 4^k + 24k - 4$ to get $4^{k+1} + 6(k+1) - 1 = 4(4^k + 6k - 1) + (6k + 5 - 24k + 4) = 4(4^k + 6k - 1) + (9 - 18k)$. By the hypothesis $4(4^k + 6k - 1) = 36m$, and $9 - 18k = 9(1 - 2k)$. Therefore $4^{k+1} + 6(k+1) - 1 = 36m + 9(1 - 2k) = 9(4m + 1 - 2k)$, and $4m + 1 - 2k$ is an integer. So $9 \mid 4^{k+1} + 6(k+1) - 1$, and $P(k)$ implies $P(k+1)$ for every $k \ge 0$. By the principle of mathematical induction, $P(n)$ holds for every integer $n \ge 0$. $\square$'
         constraints: "express the next case as (multiple of the hypothesis) plus a visible multiple of the divisor Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Prove by induction: for all $n \ge 0$, $9 \mid (10^{n} - 9n - 1)$.'
-      answer: 'Base $n = 0$: $10^0 - 0 - 1 = 0$, which is divisible by $9$. Step: assume $9 \mid (10^{n} - 9n - 1)$. Then $10^{n+1} - 9(n+1) - 1 = 10(10^{n} - 9n - 1) + (90n + 10 - 9n - 10) = 10(10^{n} - 9n - 1) + 81n$. The first term is divisible by $9$ by the inductive hypothesis and the second because $81n = 9 \cdot 9n$, so the sum is divisible by $9$. By induction the claim holds for all $n \ge 0$.'
-      solution_sketch: 'Peel one factor of $10$ off the exponential and repair the linear part; the correction term $81n$ is a multiple of $9$.'
+      problem: 'Find the largest integer $d$ such that $d$ divides $9^n - 1$ for every positive integer $n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'At $n = 1$ the value is $8$, so $d \le 8$. Induction uses $9^{k+1} - 1 = 9(9^k - 1) + 8$, so $8$ divides every term.'
     anki_seeds:
       - front: 'Key rewrite for proving $d \mid (a^n - 1)$ by induction (where $d = a - 1$)?'
         back: '$a^{n+1} - 1 = a(a^n - 1) + (a - 1)$.'
@@ -2326,9 +2341,10 @@ topics:
             solution_sketch: 'Fix a real number $x \ge -1$. We prove by induction on $n$ that $(1+x)^n \ge 1+nx$ for every integer $n \ge 1$. Base case: for $n=1$ both sides equal $1+x$, so the inequality holds. Inductive hypothesis: let $k \ge 1$ be an integer and assume $(1+x)^k \ge 1+kx$. Because $x \ge -1$, the factor $1+x$ is nonnegative, so multiplying both sides of the hypothesis by $1+x$ keeps the direction of the inequality: $(1+x)^{k+1} \ge (1+kx)(1+x)$. Expanding gives $(1+kx)(1+x) = 1+x+kx+kx^2 = 1+(k+1)x+kx^2$. Since $kx^2 \ge 0$, we have $1+(k+1)x+kx^2 \ge 1+(k+1)x$. Hence $(1+x)^{k+1} \ge 1+(k+1)x$, which is the statement for $k+1$. By the principle of mathematical induction, the inequality holds for every integer $n \ge 1$.'
         constraints: "multiplying inequalities requires a nonnegative factor; block-bounding for harmonic sums Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Prove by induction: for all $n \ge 1$, $\displaystyle\sum_{i=1}^{n} \frac{1}{i^2} \le 2 - \frac{1}{n}$.'
-      answer: 'Base $n = 1$: the sum is $1$ and $2 - \tfrac11 = 1$, so the inequality holds (with equality). Step: assume $\sum_{i=1}^{n} \frac{1}{i^2} \le 2 - \frac{1}{n}$. Then $\sum_{i=1}^{n+1} \frac{1}{i^2} \le 2 - \frac{1}{n} + \frac{1}{(n+1)^2}$, so it suffices that $\frac{1}{(n+1)^2} \le \frac{1}{n} - \frac{1}{n+1} = \frac{1}{n(n+1)}$ — true because $(n+1)^2 > n(n+1)$ for $n \ge 1$. Hence $\sum_{i=1}^{n+1} \frac{1}{i^2} \le 2 - \frac{1}{n+1}$, and the claim follows by induction.'
-      solution_sketch: 'Add the new term to the inductive bound and check it fits inside the gap $\frac1n - \frac{1}{n+1}$.'
+      problem: 'Find the smallest positive integer $n$ with $2^n > 10n$.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'For $n = 1, \dots, 5$ we have $2, 4, 8, 16, 32$ against $10, 20, 30, 40, 50$, so the inequality fails. At $n = 6$ we have $64 > 60$.'
     anki_seeds:
       - front: 'Bernoulli''s inequality?'
         back: '$(1 + x)^n \ge 1 + nx$ for every real $x \ge -1$ and integer $n \ge 1$.'
@@ -2465,9 +2481,10 @@ topics:
             solution_sketch: 'We prove by induction on $n$ that $n! > 2^n$ for every integer $n \ge 4$. The base case must be $n=4$, because the claim fails for $n=1,2,3$, where $1<2$, $2<4$ and $6<8$. Base case: $4!=24$ and $2^4=16$, and $24>16$. Inductive hypothesis: let $k \ge 4$ be an integer and assume $k! > 2^k$. Then $(k+1)!=(k+1)\cdot k!$. Multiplying the strict inequality $k!>2^k$ by the positive number $k+1$ gives $(k+1)\cdot k! > (k+1)\cdot 2^k$. Since $k \ge 4$ we have $k+1 \ge 5 > 2$, so $(k+1)\cdot 2^k > 2\cdot 2^k = 2^{k+1}$. Chaining the inequalities gives $(k+1)! > 2^{k+1}$, which is the statement for $k+1$. By the principle of mathematical induction, $n! > 2^n$ for every integer $n \ge 4$.'
         constraints: "diagnose a broken step or find the correct starting threshold before proving Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Find the least integer $n_0$ such that $2^{n} > n^{3}$ holds for all $n \ge n_0$, and prove it by induction.'
-      answer: '$n_0 = 10$: the inequality fails at $n = 9$ ($512 < 729$) and holds at $n = 10$ ($1024 > 1000$), which serves as the base case. Step: assume $2^{n} > n^{3}$ for some $n \ge 10$. Then $2^{n+1} = 2 \cdot 2^{n} > 2n^{3}$, and $2n^{3} \ge (n+1)^{3}$ because $(n+1)^{3} = n^{3}\left(1 + \tfrac1n\right)^{3} \le n^{3}(1.1)^{3} = 1.331\,n^{3} < 2n^{3}$ for $n \ge 10$. Hence $2^{n+1} > (n+1)^{3}$, and by induction the inequality holds for every $n \ge 10$.'
-      solution_sketch: 'Test small values to locate the threshold (it fails at $9$, holds at $10$), then induct, bounding $(1 + 1/n)^3$ below $2$ for $n \ge 10$.'
+      problem: 'Compute the product $\left(1 - \frac12\right)\left(1 - \frac13\right)\cdots\left(1 - \frac1{10}\right)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/10'
+      solution_sketch: 'The factors are $\frac12, \frac23, \dots, \frac9{10}$. Each numerator cancels the next denominator, so the product is $\frac1{10}$.'
     anki_seeds:
       - front: 'The two parts of a proof by induction?'
         back: 'Base case (verify $P(n_0)$) and inductive step (assume $P(n)$, prove $P(n + 1)$).'
@@ -2606,9 +2623,10 @@ topics:
             solution_sketch: 'We prove by strong induction on $n$ that $f_n<2^n$ for every integer $n \ge 1$. Base cases: $f_1=1<2=2^1$ and $f_2=1<4=2^2$. Two base cases are needed because $f_n$ is defined from the two previous terms. Inductive hypothesis: let $n \ge 3$ be an integer and assume $f_j<2^j$ for every integer $j$ with $1 \le j<n$. Since $n \ge 3$, the indices $n-1$ and $n-2$ are at least $1$ and less than $n$, so $f_{n-1}<2^{n-1}$ and $f_{n-2}<2^{n-2}$. By the recurrence, $f_n=f_{n-1}+f_{n-2}<2^{n-1}+2^{n-2}=2\cdot 2^{n-2}+2^{n-2}=3\cdot 2^{n-2}<4\cdot 2^{n-2}=2^n$. This is the statement for $n$. By the principle of strong induction, $f_n<2^n$ for every integer $n \ge 1$.'
         constraints: "bound each recursive term using the strong hypothesis Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Prove: every postage amount of $n \ge 12$ cents can be made using only $4$-cent and $5$-cent stamps.'
-      answer: 'Base cases $12, 13, 14, 15$; step reduces $n$ to $n - 4 \ge 12$ plus one $4$-cent stamp.'
-      solution_sketch: 'Base: $12 = 4+4+4$, $13 = 4+4+5$, $14 = 4+5+5$, $15 = 5+5+5$. Step: for $n \ge 16$, assume every value in $[12, n)$ is makeable; since $n - 4 \ge 12$ is makeable, add one $4$-cent stamp to form $n$. $\square$'
+      problem: 'A sequence has $a_1 = 1$, $a_2 = 2$ and $a_n = a_{n-1} + a_{n-2}$ for $n \ge 3$. Find $a_8$.'
+      answer_contract: {"kind":"exact"}
+      answer: '34'
+      solution_sketch: 'The terms are $1, 2, 3, 5, 8, 13, 21, 34$.'
     anki_seeds:
       - front: 'Strong induction hypothesis vs. ordinary induction?'
         back: 'Strong induction assumes $P(k)$ for every $k$ from the base up to $n$, not just $P(n)$.'
@@ -2745,9 +2763,10 @@ topics:
             solution_sketch: 'Assume the well-ordering principle: every nonempty set of positive integers has a least element. Let $P(n)$ be a statement about positive integers $n$ such that (i) $P(1)$ is true, and (ii) for every integer $k \ge 1$, if $P(k)$ is true then $P(k+1)$ is true. We show that $P(n)$ is true for every positive integer $n$. Suppose not. Then the set $C=\{n \in \mathbb Z^+ : P(n) \text{ is false}\}$ is nonempty, so by the well-ordering principle it has a least element $m$. By (i) we have $m \ne 1$, so $m \ge 2$, and $m-1$ is a positive integer smaller than $m$. By the minimality of $m$, the integer $m-1$ is not in $C$, so $P(m-1)$ is true. Applying (ii) with $k=m-1$ shows that $P(m)$ is true, which contradicts $m \in C$. Therefore $C$ is empty, and $P(n)$ is true for every positive integer $n$. This is the principle of mathematical induction.'
         constraints: "connect the two principles via a least failure point Closed proof-audit items must require this knowledge point's method; verify every proposed inference for the stated arbitrary inputs. Do not supply the decisive result as an established fact."
     diagnostic_exemplar:
-      problem: 'Use the well-ordering principle to prove that every nonempty set $S$ of integers that is bounded above has a greatest element.'
-      answer: 'Let $M$ be an upper bound for $S$, so $s \le M$ for every $s \in S$, and put $T = \{M - s : s \in S\}$. Every element of $T$ is a nonnegative integer, and $T$ is nonempty because $S$ is, so by the well-ordering principle $T$ has a least element, say $M - s_0$ with $s_0 \in S$. Then for every $s \in S$ we have $M - s_0 \le M - s$, i.e. $s \le s_0$. Hence $s_0$ is an element of $S$ greater than or equal to every element of $S$ — a greatest element.'
-      solution_sketch: 'Reflect the set about the upper bound to land inside the nonnegative integers, apply well-ordering there, and translate the least element back.'
+      problem: 'Find the least positive integer of the form $12a + 18b$ with $a$ and $b$ integers.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Every such number is a multiple of $6$. Also $12 \cdot (-1) + 18 \cdot 1 = 6$, so the least value is $6$.'
     anki_seeds:
       - front: 'The well-ordering principle?'
         back: 'Every nonempty set of natural numbers (or of integers bounded below) has a least element.'

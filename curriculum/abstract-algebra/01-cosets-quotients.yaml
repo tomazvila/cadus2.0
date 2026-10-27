@@ -149,10 +149,10 @@ topics:
             solution_sketch: 'The cosets are equal exactly when $13 - 4 = 9$ lies in $H$. But $H = \{0, 5, 10\}$ does not contain $9$. Explicitly $4 + H = \{4, 9, 14\}$ and $13 + H = \{13, 3, 8\}$, so they are different.'
         constraints: 'subgroups of Z_n (n <= 30); equality through b - a in H; answers are verdicts, counts or one residue; contexts: timetables and rings of pegs'
     diagnostic_exemplar:
-      problem: 'In $S_3$ (composing right to left) let $H = \{e, (2\,3)\}$. List all left cosets of $H$, and decide whether $(1\,2)H = H(1\,2)$.'
-      answer: 'The left cosets are $H = \{e, (2\,3)\}$, $(1\,2)H = \{(1\,2), (1\,2\,3)\}$ and $(1\,3)H = \{(1\,3), (1\,3\,2)\}$: three cosets of size $2$ partitioning $S_3$. But $H(1\,2) = \{(1\,2), (1\,3\,2)\}$, so $(1\,2)H \ne H(1\,2)$ — left and right cosets of this subgroup differ.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Multiply $H$ on the left by one representative from each block; the cosets partition $S_3$ into three blocks of size $2$. Then compute $H(1\,2)$ and compare — a non-normal subgroup of a non-abelian group has different left and right cosets.'
+      problem: 'In $\mathbb{Z}_{15}$ let $H=\{0,5,10\}$. Add $4$ to each element of $H$ and reduce modulo $15$. What is the largest of the three resulting numbers?'
+      answer_contract: {"kind":"exact"}
+      answer: '14'
+      solution_sketch: 'The sums are $4$, $9$ and $14$. The largest is $14$.'
     anki_seeds:
       - front: "When are two left cosets equal: $aH = bH$ iff ...?"
         back: "$a^{-1}b \\in H$."
@@ -293,10 +293,10 @@ topics:
             solution_sketch: 'The order of $3$ is the least positive $k$ with $3^k \equiv 1 \pmod 8$. We have $3^1 = 3$ and $3^2 = 9 \equiv 1$. So the order is $2$.'
         constraints: 'counterexample recall: A_4 (subgroups of order 6), U(8), U(16) or the Klein four-group (element orders); two contexts: a counter and the rotations of a tetrahedron'
     diagnostic_exemplar:
-      problem: 'A group $G$ has order $12$ and a subgroup $H$ with $[G : H] = 3$. Find $|H|$, and decide whether every group of order $12$ must contain a subgroup of order $6$.'
-      answer: '$|H| = |G|/[G:H] = 12/3 = 4$. No: the converse of Lagrange fails. $A_4$ has order $12$ but no subgroup of order $6$ — such a subgroup would have index $2$, hence be normal with quotient of order $2$, so it would contain $g^2$ for every $g$; every $3$-cycle is a square ($\sigma = (\sigma^2)^2$), giving all eight $3$-cycles inside a subgroup of size $6$, a contradiction.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Lagrange gives $|G| = |H| \cdot [G:H]$. For the second part, divisibility is necessary but not sufficient: $A_4$ is the standard counterexample.'
+      problem: 'A group $G$ has order $36$ and a subgroup $H$ has index $4$. Find the order of $H$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'Lagrange gives $|G|=[G:H]\cdot|H|$. So $|H|=36/4=9$.'
     anki_seeds:
       - front: "Lagrange's theorem?"
         back: "In a finite group, the order of every subgroup divides the order of the group; $|G| = [G:H]\\,|H|$."
@@ -443,9 +443,10 @@ topics:
             solution_sketch: 'Because $\gcd(a, n) = 1$, the class of $a$ lies in the group $U(n)$. Let $d$ be its order in $U(n)$. By Lagrange''s theorem $d$ divides $|U(n)|$, so $|U(n)| = dm$ for some positive integer $m$. Then $a^{|U(n)|} = (a^d)^m \equiv 1^m = 1 \pmod n$.'
         constraints: 'modular exponentiation with moduli <= 30, reduced via g^{|U(n)|} = 1; last-digit and register contexts; one error-analysis item; one proof request'
     diagnostic_exemplar:
-      problem: 'Let $G$ be a group with $|G| = 35$ and $g \in G$ with $g \neq e$. What are the possible orders of $g$? Then compute $7^{222} \bmod 11$.'
-      answer: 'Possible orders: $5, 7, 35$. And $7^{222} \equiv 5 \pmod{11}$.'
-      solution_sketch: 'Orders divide $35$ and exceed $1$. Since $7^{10} \equiv 1 \pmod{11}$ and $222 = 10\cdot22 + 2$, $7^{222} \equiv 7^2 = 49 \equiv 5$.'
+      problem: 'A group $G$ has order $13$. Find the order of an element $g\neq e$ of $G$.'
+      answer_contract: {"kind":"exact"}
+      answer: '13'
+      solution_sketch: 'The order of $g$ divides $13$ by Lagrange. It is not $1$ because $g\neq e$. So it is $13$.'
     anki_seeds:
       - front: "In a finite group $G$, $g^{|G|} = $ ?"
         back: "$e$, because $|g|$ divides $|G|$ (Lagrange)."
@@ -604,9 +605,10 @@ topics:
             solution_sketch: 'If $g$ lies in $H$, then $gH = H = Hg$. If $g$ lies outside $H$, then $gH \ne H$, so with index $2$ the left cosets are $H$ and $gH$, and $gH$ is the complement of $H$. The same argument on the right shows that $Hg$ is the complement of $H$. So $gH = Hg$ for every $g$, and $H$ is normal.'
         constraints: 'the index-2 lemma and immediate applications; contexts: books and symmetries of a polygon; one error-analysis item and one proof request'
     diagnostic_exemplar:
-      problem: 'Determine whether $N = \{e, (1\,2\,3), (1\,3\,2)\}$ is normal in $S_3$, and whether $K = \{e, (1\,3)\}$ is.'
-      answer: '$N = A_3$ is normal (index $2$); $K$ is not: $(1\,2)(1\,3)(1\,2) = (2\,3) \notin K$.'
-      solution_sketch: '$N$ has index $6/3 = 2$, hence is normal. For $K$, one conjugation lands outside.'
+      problem: 'How many normal subgroups does the group $\mathbb{Z}_{12}$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: '$\mathbb{Z}_{12}$ is abelian, so every subgroup is normal. It has one subgroup for each divisor of $12$: $1,2,3,4,6,12$, which is $6$.'
     anki_seeds:
       - front: "Conjugation test for normality?"
         back: "$N \\trianglelefteq G$ iff $gng^{-1} \\in N$ for all $g \\in G$, $n \\in N$."
@@ -1070,10 +1072,10 @@ topics:
             solution_sketch: 'The subgroup $H=\{0,4,8\}$ has $3$ rotations and $K=\{0,6\}$ has $2$ rotations. Their orders are coprime, so they meet only in the identity. Then $|HK|=3\cdot2/1=6$, which is only half of the $12$ rotations.'
         constraints: 'orders pq or p^2 q with p, q <= 11, plus orders 12 and 91; the intersection-divides-gcd step justified by Lagrange every time'
     diagnostic_exemplar:
-      problem: 'A group $G$ of order $35$ has normal subgroups $H \cong \mathbb{Z}_5$ and $K \cong \mathbb{Z}_7$. Show $H \cap K = \{e\}$, compute $|HK|$, and identify $G$ up to isomorphism.'
-      answer: '$|H \cap K|$ divides $\gcd(5, 7) = 1$, so $H \cap K = \{e\}$; $|HK| = \frac{5 \cdot 7}{1} = 35$, so $HK = G$; the recognition criterion gives $G \cong \mathbb{Z}_5 \times \mathbb{Z}_7 \cong \mathbb{Z}_{35}$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Lagrange forces the trivial intersection, the counting formula forces $HK = G$, and coprime cyclic factors multiply to a cyclic group.'
+      problem: 'In $\mathbb{Z}_{20}$ let $H=\langle 4\rangle$ and $K=\langle 10\rangle$. How many elements does the set $H+K=\{h+k : h\in H,\ k\in K\}$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '10'
+      solution_sketch: '$|H|=5$, $|K|=2$ and $H\cap K=\{0\}$. So $|H+K|=5\cdot 2/1=10$.'
     anki_seeds:
       - front: "Internal direct product recognition criterion?"
         back: "$H, K \\trianglelefteq G$, $H \\cap K = \\{e\\}$, $HK = G$ $\\implies$ $G \\cong H \\times K$ via $(h,k) \\mapsto hk$."
@@ -1244,10 +1246,10 @@ topics:
             solution_sketch: 'The classes are the cosets of $\{e,r^2\}$ in the group of $8$ symmetries. Each coset has $2$ symmetries, so there are $8/2=4$ classes. This is the order of the abelianization $D_4/[D_4,D_4]$.'
         constraints: 'abelianization orders and element-order counts for S_3, D_4, D_6 and direct products; the criterion that G/N is abelian exactly when [G,G] lies in N, used as a verdict; equivalence classes modulo commutators as contexts'
     diagnostic_exemplar:
-      problem: 'In $D_4$ (with $r$ of order $4$, $s$ a reflection), compute $[s, r] = s^{-1}r^{-1}sr$, state $[D_4, D_4]$, and identify the abelianization $D_4/[D_4, D_4]$.'
-      answer: '$[s, r] = r^2$ (since $s^{-1}r^{-1}s = r$); $[D_4, D_4] = \{e, r^2\}$; the quotient has order $4$ with every non-identity coset of order $2$, so it is $\mathbb{Z}_2 \times \mathbb{Z}_2$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Use $srs^{-1} = r^{-1}$ to evaluate the commutator; all commutators land in $\langle r^2 \rangle$; classify the order-4 quotient by element orders.'
+      problem: 'How many elements does the commutator subgroup of $S_3$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Every commutator in $S_3$ is an even permutation, and the 3-cycle $(1\,2\,3)$ is a commutator. So the subgroup is $A_3$, which has $3$ elements.'
     anki_seeds:
       - front: "Commutator $[a, b]$ and what $[a,b] = e$ means?"
         back: "$[a,b] = a^{-1}b^{-1}ab$; it equals $e$ exactly when $a$ and $b$ commute."

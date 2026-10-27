@@ -105,10 +105,10 @@ topics:
             solution_sketch: 'The integrand is $te^{-(s-2)t}$. It decays faster than $t$ grows exactly when $s-2 > 0$, so the transform exists for $s > 2$.'
         constraints: 'integrands t, t^2, t e^{at}; one or two integrations by parts; transforms, values at a point and convergence'
     diagnostic_exemplar:
-      problem: 'Compute $\mathcal{L}\{te^{-2t}\}$ directly from the definition, stating where it converges.'
-      answer: '$\dfrac{1}{(s + 2)^2}$ for $s > -2$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\int_0^{\infty} t e^{-(s+2)t}\,dt$; integrating by parts with $u = t$ gives $\frac{1}{(s+2)^2}$, and the boundary terms vanish exactly when $s + 2 > 0$.'
+      problem: 'Evaluate $\int_0^{\infty} e^{-4t}e^{t}\,dt$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/3'
+      solution_sketch: 'The integrand is $e^{-3t}$. Its integral from $0$ to $\infty$ is $\frac{1}{3}$.'
     anki_seeds:
       - front: 'Definition of the Laplace transform?'
         back: '$\mathcal{L}\{f(t)\} = \int_0^{\infty} e^{-st} f(t)\,dt$'
@@ -974,10 +974,10 @@ topics:
             solution_sketch: 'Transform the equation with the derivative formulas and the initial values. This gives $(s^{2} + 9)Y = \frac{27}{s}$, so $Y(s) = \frac{27}{s \left(s^{2} + 9\right)}$. Partial fractions give $Y(s) = - \frac{3 s}{s^{2} + 9} + \frac{3}{s}$. Inverting term by term gives 3 - 3cos(3t). The constant $27$ transforms to $\mathcal{L}\{27\} = \frac{27}{s}$.'
         constraints: "forcing a constant; characteristic roots integer or +/- bi; three-term partial fractions at most"
     diagnostic_exemplar:
-      problem: 'Solve $y'''' + 2y'' + 5y = 5$, $y(0) = 0$, $y''(0) = 0$, using the Laplace transform.'
-      answer: '$y = 1 - e^{-t}\cos 2t - \tfrac{1}{2}e^{-t}\sin 2t$'
-      answer_contract: {kind: none}
-      solution_sketch: '$(s^2 + 2s + 5)Y = \frac{5}{s}$, so $Y = \frac{5}{s(s^2+2s+5)} = \frac{1}{s} - \frac{s + 2}{(s+1)^2 + 4}$. Writing $s + 2 = (s+1) + 1$ inverts term by term.'
+      problem: 'Take the Laplace transform of $y''+2y=0$ with $y(0)=3$ and solve for $Y(s)$.'
+      answer_contract: {"kind":"function","vars":["s"]}
+      answer: '3/(s+2)'
+      solution_sketch: 'The transform gives $sY-3+2Y=0$. So $Y(s)=\frac{3}{s+2}$.'
     anki_seeds:
       - front: "Why does the Laplace method suit IVPs?"
         back: "The initial conditions enter the algebra immediately: no general solution or constant-fitting step."
@@ -1125,10 +1125,10 @@ topics:
             solution_sketch: 'The delayed signal is $u_c(t)\,e^{-2(t-c)}$. At $t=10$ it equals $e^{-2(10-c)}$, which must be $e^{-6}$. So $2(10-c)=6$, which gives $10-c=3$ and $c=7$.'
         constraints: 'e^{-cs} times a single table entry; the answer is a value of the inverse transform, or its formula for t after the delay'
     diagnostic_exemplar:
-      problem: 'Let $f(t) = 0$ for $t < 2$ and $f(t) = t$ for $t \ge 2$. Write $f$ using a unit step and compute $\mathcal{L}\{f\}$.'
-      answer: '$f(t) = t\,u_2(t)$ and $\mathcal{L}\{f\} = e^{-2s}\left(\dfrac{1}{s^2} + \dfrac{2}{s}\right)$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Write $t = (t - 2) + 2$, so $f = \left[(t-2) + 2\right]u_2(t)$; the second shifting theorem then gives $e^{-2s}\mathcal{L}\{t + 2\} = e^{-2s}\left(\frac{1}{s^2} + \frac{2}{s}\right)$.'
+      problem: 'Let $f(t)=t^2\,u(t-2)$, where $u$ is the unit step function. Find $f(3)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'For $t\ge 2$ the step equals $1$, so $f(3)=3^2=9$.'
     anki_seeds:
       - front: 'Definition of the unit step $u_c(t)$?'
         back: '$u_c(t) = 0$ for $t < c$ and $1$ for $t \ge c$ (a switch that turns on at $t = c$).'
@@ -1234,10 +1234,10 @@ topics:
             solution_sketch: 'The inverse transform is the convolution $t*e^{-t}=t-1+e^{-t}$. At $t=2$ this is $2-1+e^{-2}\approx1.135$.'
         constraints: 'products of two table entries; convolution integrals stay elementary'
     diagnostic_exemplar:
-      problem: 'Use the convolution theorem to compute $\mathcal{L}^{-1}\left\{\dfrac{1}{s^2(s+2)}\right\}$.'
-      answer: '$\dfrac{t}{2} - \dfrac{1}{4} + \dfrac{1}{4}e^{-2t}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The transform is the product of $1/s^2$ and $1/(s+2)$, so the inverse is $t * e^{-2t} = \int_0^t \tau e^{-2(t-\tau)}\,d\tau = e^{-2t}\left[\frac{\tau}{2}e^{2\tau} - \frac{1}{4}e^{2\tau}\right]_0^t = \frac{t}{2} - \frac{1}{4} + \frac{1}{4}e^{-2t}$.'
+      problem: 'Let $f(t)=t$ and $g(t)=1$. Find the value at $t=4$ of the convolution $(f*g)(t)=\int_0^t f(\tau)\,g(t-\tau)\,d\tau$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'Since $g=1$, the integral is $\int_0^t \tau\,d\tau=\frac{t^2}{2}$. At $t=4$ this is $8$.'
     anki_seeds:
       - front: 'Definition of the convolution $(f * g)(t)$?'
         back: '$\int_0^t f(\tau)\,g(t - \tau)\,d\tau$'
@@ -1398,10 +1398,10 @@ topics:
             solution_sketch: 'The transform is $H=\frac{1}{(s+1)(s+3)}=\frac12\left(\frac1{s+1}-\frac1{s+3}\right)$, so the terms have a minus sign and the factor $\frac12$. Hence $h(1)=\frac12\left(e^{-1}-e^{-3}\right)$.'
         constraints: 'constant-coefficient second-order with distinct real integer roots or +-ni; the convolution form is stated, evaluated only if g is 1 or e^{at}; an impulse of a given strength may drive the system'
     diagnostic_exemplar:
-      problem: 'Find the impulse response $h(t)$ of $y'''' + 4y'' + 3y = f(t)$: solve with $f = \delta(t)$ and rest initial conditions.'
-      answer: '$h(t) = \tfrac{1}{2}\left(e^{-t} - e^{-3t}\right)$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\mathcal{L}\{\delta(t)\} = 1$, so $H(s) = \frac{1}{s^2 + 4s + 3} = \frac{1}{(s+1)(s+3)} = \frac{1}{2}\left(\frac{1}{s+1} - \frac{1}{s+3}\right)$.'
+      problem: 'Compute $\int_0^{\infty} (t^2+1)\,\delta(t-3)\,dt$.'
+      answer_contract: {"kind":"exact"}
+      answer: '10'
+      solution_sketch: 'The delta function picks out the value of the other factor at $t=3$. That value is $3^2+1=10$.'
     anki_seeds:
       - front: 'Sifting property of the Dirac delta?'
         back: '$\int \delta(t - c)f(t)\,dt = f(c)$ whenever the interval contains $c$.'

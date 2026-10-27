@@ -74,6 +74,10 @@ export interface FeedbackProps {
   revealTopic?: string | null;
   /** The hints the learner opened on this problem. A correct answer after a hint says so. */
   hintsUsed?: number;
+  /** The topic of the task. After a miss, the panel offers its lesson text. */
+  lessonTopic?: { id: string; name: string | null } | null;
+  /** Open the lesson text of a topic. Absent, the panel offers no such button. */
+  onRead?: ((topic: string) => void) | undefined;
 }
 
 export function Feedback(props: FeedbackProps) {
@@ -94,6 +98,8 @@ function GradedFeedback({
   proof,
   revealTopic,
   hintsUsed = 0,
+  lessonTopic,
+  onRead,
 }: FeedbackProps) {
   if (res.report_corrected) return <CorrectedFeedback res={res} onContinue={onRefresh ?? onContinue}
     onEnd={onEnd} continueRef={continueRef} />;
@@ -131,6 +137,9 @@ function GradedFeedback({
         </div>
       ) : null}
 
+      {/* D-TR1: after a miss, the lesson text of the topic opens in one press. */}
+      <ReadLesson miss={res.outcome === 'incorrect'} topic={lessonTopic} onRead={onRead} />
+
       {/* Amendment K (note 114): a refused answer is also checked in the
           background; the model's one-line reason rides beside the solution. */}
       {res.equivalence_reason ? <CheckerLine text={checkerLine(res)} /> : null}
@@ -160,6 +169,20 @@ function GradedFeedback({
       <EnterNote />
       {head.mood === 'correct' ? null : <p className="muted small">{STOP_NOTE}</p>}
     </div>
+  );
+}
+
+/** D-TR1: after a miss, the button that opens the lesson text of the topic. */
+function ReadLesson({ miss, topic, onRead }: {
+  miss: boolean;
+  topic: FeedbackProps['lessonTopic'];
+  onRead: FeedbackProps['onRead'];
+}) {
+  if (!miss || !topic || !onRead) return null;
+  return (
+    <button type="button" className="btn btn-ghost read-lesson" onClick={() => { onRead(topic.id); }}>
+      {`Read the lesson: ${topic.name ?? topic.id}`}
+    </button>
   );
 }
 
@@ -393,13 +416,16 @@ function TaskStatusLines({ res }: { res: AnswerResponse }) {
       {res.feedback_blocked ? <p role="status">Fresh practice is unavailable for this skill. Your answer is saved.</p> : null}
       {res.task_status === 'task_failed' && res.correct ? <p>Correct. Keep practising this skill: the lesson passes after two right in a row.</p> : null}
       {res.task_status === 'task_failed' && !res.correct && res.feedback_practice ? (
-        <p role="status">The lesson did not pass this time. It comes back next time. Practice a fresh problem now.</p>
+        <p role="status">The lesson did not pass this time. It comes back next time. Practice a fresh question now.</p>
       ) : null}
       {res.task_status === 'task_passed' ? (
         <p role="status">Lesson passed. The next one starts when you continue.</p>
       ) : null}
       {res.task_status === 'task_inconclusive' ? (
         <p className="feedback-reason">This review needs confirmation. A fresh question will check each uncertain skill.</p>
+      ) : null}
+      {res.task_status === 'task_needs_variety' ? (
+        <p className="feedback-reason">Your right answers were on the same question. One new question will check this skill.</p>
       ) : null}
     </>
   );

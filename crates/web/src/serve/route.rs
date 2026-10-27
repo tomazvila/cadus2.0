@@ -455,6 +455,7 @@ pub(crate) async fn install_next(
         probe_seen: task
             .probe_delay_days
             .map(|_| task.recent_problem_hashes.as_slice()),
+        prefer_new_in_task: task.task_type == TaskType::Review && task.n_problems.unwrap_or(0) >= 2,
     };
     let drawn_for = target.kp.clone();
     let (row, previously_claimed) =
@@ -624,6 +625,9 @@ fn fresh_unavailable() -> ApiError {
 pub(super) struct FreshPolicy<'a> {
     pub(super) feedback: Option<&'a Value>,
     pub(super) probe_seen: Option<&'a [String]>,
+    /// A review of two or more questions prefers a problem outside the task
+    /// memory. A repeat still serves when no other problem is left (D-RV1).
+    pub(super) prefer_new_in_task: bool,
 }
 
 /// Draw within a bounded freshness window, preserving an explicit block when exhausted.
@@ -639,17 +643,24 @@ pub(super) async fn draw_fresh(
     let graph = &content.curriculum;
     let (mut ring, memory) = windows;
     let mut selected = None;
+    let mut fallback_row = None;
     for _ in 0..8 {
         let avoid = Avoid::new(&ring, &memory);
-        let (row, previously_claimed) = draw(state, tx, user_id, content, target, &avoid)
-            .await
-            .map_err(|error| {
-                if policy.feedback.is_some() && error.code == POOL_UNAVAILABLE {
-                    fresh_unavailable()
-                } else {
-                    error
-                }
-            })?;
+        let drawn = draw(state, tx, user_id, content, target, &avoid).await;
+        let (row, previously_claimed) = match drawn {
+            Ok(drawn) => drawn,
+            // A repeat is a smaller failure than no problem (D-RV1).
+            Err(_) if fallback_row.is_some() => break,
+            Err(error) => {
+                return Err(
+                    if policy.feedback.is_some() && error.code == POOL_UNAVAILABLE {
+                        fresh_unavailable()
+                    } else {
+                        error
+                    },
+                );
+            }
+        };
         let digest = cadus_core::learner::problem_text_hash(&row.problem.text);
         let repeated_probe = match policy.probe_seen {
             Some(recent) => {
@@ -671,12 +682,19 @@ pub(super) async fn draw_fresh(
             None => false,
         };
         if !repeated_probe && !repeats_feedback(policy.feedback, &digest) {
+            if policy.prefer_new_in_task
+                && (memory.contains(&row.instance_hash) || memory.contains(&digest))
+            {
+                ring.push(&row.instance_hash);
+                fallback_row.get_or_insert((row, previously_claimed));
+                continue;
+            }
             selected = Some((row, previously_claimed));
             break;
         }
         ring.push(&row.instance_hash);
     }
-    selected.ok_or_else(|| {
+    selected.or(fallback_row).ok_or_else(|| {
         if policy.feedback.is_some() {
             fresh_unavailable()
         } else {

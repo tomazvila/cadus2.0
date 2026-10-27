@@ -17,7 +17,7 @@ use cadus_core::selector::{
     frontier_report, is_known, nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
-use cadus_store::state::{EventRow, latest_graded_topic, load_raw_events};
+use cadus_store::state::{EventRow, latest_graded_topic, load_raw_events, load_session_plan};
 use serde_json::{Map, Value, json};
 use sqlx::types::chrono::{DateTime, Utc};
 
@@ -227,6 +227,21 @@ pub async fn status(req: Ready) -> Reply {
         req.now,
         &readiness,
     );
+    let scratch = req.read_state(&mut tx).await?;
+    // The set frozen at the first session start of the local day (D-DP1).
+    let frozen = req
+        .store(load_session_plan(&mut tx, req.user_id))
+        .await?
+        .map(|(_, plan)| plan);
+    let today = super::today::today_json(
+        graph,
+        &view,
+        &plan,
+        &scratch,
+        req.now,
+        cfg.timezone.as_deref(),
+        frozen.as_ref(),
+    );
     let last = req.store(latest_graded_topic(&mut tx, req.user_id)).await?;
     let (last_topic, last_active_at) = last_studied(graph, last);
 
@@ -241,6 +256,8 @@ pub async fn status(req: Ready) -> Reply {
         // What "Continue studying" brings: the summed time budget of the planned
         // tasks, and the topic of the first one. Both are null for an empty plan.
         "plan_preview": plan_preview(graph, &plan),
+        // D-DP1: the Today card. No statement, no answer, no solution.
+        "today": today,
         "last_active_at": last_active_at,
         "courses": journey(graph, course),
         // The F6 test-prep set lives on the `profiles` row, and no M5 unit

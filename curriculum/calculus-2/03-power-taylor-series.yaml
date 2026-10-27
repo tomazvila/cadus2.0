@@ -145,10 +145,10 @@ topics:
             solution_sketch: 'A series in $(x-c)^n$ is centered at $c$. Here the factor is $(x-6)^n$, so $c=6$. The center is $6$, not $-6$.'
         constraints: 'centers are small integers; include a scaled bracket (2x - 6), center-only items and interval-to-radius setup items'
     diagnostic_exemplar:
-      problem: 'Find the center and radius of convergence of $\sum_{n=1}^{\infty} \frac{n(x - 3)^n}{4^n}$.'
-      answer: 'center $3$, $R = 4$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The ratio test gives $\lim \frac{n+1}{n}\cdot\frac{|x-3|}{4} = \frac{|x-3|}{4} < 1$.'
+      problem: 'Find the radius of convergence of $\sum_{n=1}^{\infty} \frac{n\,x^n}{4^n}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The ratio of consecutive terms is $\frac{n+1}{n}\cdot\frac{|x|}{4}$, which tends to $\frac{|x|}{4}$. The series converges when $\frac{|x|}{4}<1$, so the radius is $4$.'
     anki_seeds:
       - front: "To find the radius of convergence of a power series, apply..."
         back: "the ratio (or root) test to the terms and solve L < 1 for |x - a|"
@@ -295,10 +295,10 @@ topics:
             solution_sketch: 'The series needs the factor $\frac14$ that comes out of the denominator. So the series is $\frac14\left(1+\frac x4+\frac{x^2}{16}+\cdots\right)$. The $x^2$ coefficient is $\frac14\cdot\frac{1}{16}=\frac{1}{64}$.'
         constraints: 'denominators c +- x or c + bx with small integer c; first-terms, coefficient, radius and validity questions; numeric-sum setups and one error-analysis item'
     diagnostic_exemplar:
-      problem: 'Write $\frac{x}{2 + x}$ as a power series about $0$ and give its radius of convergence.'
-      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{n+1}}{2^{n+1}}$, $R = 2$'
-      answer_contract: {kind: none}
-      solution_sketch: '$\frac{1}{2+x} = \frac{1}{2}\cdot\frac{1}{1 - (-x/2)} = \sum \frac{(-1)^nx^n}{2^{n+1}}$ for $|x| < 2$; multiplying by $x$ shifts every exponent up by one.'
+      problem: 'Find the coefficient of $x^5$ in the power series of $\frac{1}{1-2x}$ about $0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '32'
+      solution_sketch: 'The ratio is $r=2x$, so the series is $\sum (2x)^n$. The $x^5$ term is $(2x)^5=32x^5$, so the coefficient is $32$.'
     anki_seeds:
       - front: 'Power series for $\frac{1}{1-x}$ (with validity)?'
         back: '$\sum_{n=0}^{\infty} x^n$ for $|x| < 1$'
@@ -614,10 +614,10 @@ topics:
             solution_sketch: 'The derivative series is $\sum_{n=1}^{\infty}\frac{x^{n-1}}{n}$, and the radius is still $1$. At $x=1$ it is the harmonic series, which diverges. At $x=-1$ it is alternating, and it converges. The correct interval is $-1\le x<1$.'
         constraints: 'conceptual endpoint questions paired with one concrete recheck; each item states the interval of the given series; include derivative and integral directions, a yes/no endpoint verdict and radius setups'
     diagnostic_exemplar:
-      problem: 'Integrate the geometric series for $\frac{1}{1 + x^2}$ to find the Maclaurin series of $\arctan x$, and give the interval on which it is valid.'
-      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^n x^{2n+1}}{2n+1}$, valid on $[-1, 1]$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Integrating $\sum(-1)^nx^{2n}$ term by term keeps the radius $1$; both endpoints now converge by the alternating series test.'
+      problem: 'Evaluate $\sum_{n=1}^{\infty} n\left(\frac13\right)^{n-1}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9/4'
+      solution_sketch: 'Differentiate $\sum x^n=\frac{1}{1-x}$ term by term to get $\sum n x^{n-1}=\frac{1}{(1-x)^2}$. At $x=\frac13$ this is $\frac{1}{(2/3)^2}=\frac94$.'
     anki_seeds:
       - front: "Term-by-term differentiation/integration of a power series preserves..., but may change..."
         back: "the radius of convergence; the behavior at the endpoints"
@@ -765,10 +765,10 @@ topics:
             solution_sketch: 'The fourth derivative of $\ln x$ is $-\frac{6}{x^4}$, which equals $-6$ at $1$. Divide by $4!=24$ to get $-\frac{6}{24}=-\frac{1}{4}$.'
         constraints: "centers where f and all derivatives evaluate to clean rationals (1/x at a = 2, ln x at a = 1, sqrt x at a = 4); truncated at degree 3 or less"
     diagnostic_exemplar:
-      problem: 'Find the Taylor series of $f(x) = \cos x$ centered at $a = \frac{\pi}{2}$.'
-      answer: '$\sum_{n=0}^{\infty} \frac{(-1)^{n+1}(x - \pi/2)^{2n+1}}{(2n+1)!}$ (equivalently $-\sin(x - \pi/2)$)'
-      answer_contract: {kind: none}
-      solution_sketch: 'The derivative cycle $\cos, -\sin, -\cos, \sin$ evaluated at $\pi/2$ gives $0, -1, 0, 1, \ldots$, so only odd powers survive, with alternating signs starting negative.'
+      problem: 'For $f(x)=e^{4x}$, find the coefficient of $x^2$ in its Maclaurin series.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'Each derivative multiplies by $4$, so $f''''(0)=16$. Divide by $2!$ to get $8$.'
     anki_seeds:
       - front: "Taylor series coefficient formula about x = a?"
         back: '$c_n = \frac{f^{(n)}(a)}{n!}$'
@@ -1062,10 +1062,10 @@ topics:
             solution_sketch: 'Integrate $1-\frac{x}{2}+\frac{3x^2}{8}$ from $0$ to $0.2$ to get $x-\frac{x^2}{4}+\frac{x^3}{8}$. At $0.2$ this is $0.2-0.01+0.001=0.191$.'
         constraints: "numerical approximations at |x| <= 0.2 with the rounding stated in the question"
     diagnostic_exemplar:
-      problem: 'Find the Maclaurin series of $\sqrt{1 + x^2}$ through the $x^4$ term, then use it to approximate $\sqrt{1.04}$.'
-      answer: '$1 + \frac{x^2}{2} - \frac{x^4}{8}$; $\sqrt{1.04} \approx \frac{5099}{5000}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The binomial series for $(1+u)^{1/2}$ is $1 + \frac{u}{2} - \frac{u^2}{8} + \cdots$ with $u = x^2$; at $x = 0.2$ this gives $1 + \frac{1}{50} - \frac{1}{5000}$.'
+      problem: 'Find the coefficient of $x^2$ in the Maclaurin series of $(1+x)^{3/2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3/8'
+      solution_sketch: 'The coefficient is $\binom{3/2}{2}=\frac{(3/2)(1/2)}{2!}=\frac{3/4}{2}=\frac{3}{8}$.'
     anki_seeds:
       - front: 'Binomial series: $(1 + x)^k = $ ? (validity)'
         back: '$\sum_{n=0}^{\infty} \binom{k}{n} x^n$ for $|x| < 1$, where $\binom{k}{n} = \frac{k(k-1)\cdots(k-n+1)}{n!}$'
@@ -1209,10 +1209,10 @@ topics:
             solution_sketch: 'The polynomial $1 + x + \frac{x^2}{2}$ at $x = 0.1$ gives $1.105$. Multiply by $2000$ to get a balance of about 2210 dollars.'
         constraints: "evaluation points within 1 of the center; the rounding is stated in the question"
     diagnostic_exemplar:
-      problem: 'Find $T_2(x)$ for $f(x) = \sqrt{x}$ at $a = 9$, and use it to approximate $\sqrt{9.6}$.'
-      answer: '$T_2(x) = 3 + \frac{x - 9}{6} - \frac{(x - 9)^2}{216}$; $\sqrt{9.6} \approx \frac{1859}{600}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'The derivatives at $9$ are $3$, $\frac16$, and $-\frac{1}{108}$; at $x = 9.6$ the polynomial gives $3 + \frac{1}{10} - \frac{1}{600}$.'
+      problem: 'Find the value at $x=1$ of the Maclaurin polynomial of degree $4$ for $e^x$.'
+      answer_contract: {"kind":"exact"}
+      answer: '65/24'
+      solution_sketch: 'The polynomial is $1+x+\frac{x^2}{2}+\frac{x^3}{6}+\frac{x^4}{24}$. At $x=1$ the sum is $1+1+\frac12+\frac16+\frac1{24}=\frac{65}{24}$.'
     anki_seeds:
       - front: 'The degree-n Taylor polynomial of f at a is $T_n(x) = $ ?'
         back: '$\sum_{k=0}^{n} \frac{f^{(k)}(a)}{k!}(x - a)^k$'

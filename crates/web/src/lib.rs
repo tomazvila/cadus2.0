@@ -243,6 +243,8 @@ pub fn create_app(state: AppState) -> Router {
             "/api/topics/{topic_id}/review-soon",
             post(session::review_soon),
         )
+        // D-TR1: the lesson text by topic, outside a task. A pure read.
+        .route("/api/topics/{topic_id}/teach", get(session::topic_teach))
         .route("/api/export", get(session::export))
         .route("/api/report/retention", get(report::retention))
         .route("/api/enroll", post(session::enroll))

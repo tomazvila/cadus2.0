@@ -140,9 +140,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1 (definition): for each map $u\colon X\to A\times B$ set $\Phi_X(u)=(\pi_1u,\pi_2u)$, an element of $S(X)$. Step 2 (injectivity): if $\Phi_X(u)=\Phi_X(v)$, then $u$ and $v$ are both comparison maps for the same pair $(f,g)$, and the uniqueness clause gives $u=v$. Step 3 (surjectivity): given $(f,g)\in S(X)$, the existence clause yields $u\colon X\to A\times B$ with $\pi_1u=f$ and $\pi_2u=g$, so $\Phi_X(u)=(f,g)$. Step 4 (naturality): for $h\colon Y\to X$ we have $\Phi_Y(uh)=(\pi_1uh,\pi_2uh)$, which is the pair $\Phi_X(u)$ precomposed with $h$ in each component. Conclusion: $\Phi$ is a natural bijection, so $A\times B$ represents $S$.'
     diagnostic_exemplar:
-      problem: "State the universal property of the product $A\\times B$ and use it to prove that $u\\mapsto(\\pi_1\\circ u,\\,\\pi_2\\circ u)$ is a bijection $\\mathrm{Hom}(X,A\\times B)\\cong\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$."
-      answer: "The universal property: for every pair $f\\colon X\\to A$, $g\\colon X\\to B$ there EXISTS a morphism $u\\colon X\\to A\\times B$ with $\\pi_1 u=f$, $\\pi_2 u=g$, and it is UNIQUE. Surjectivity of the map $u\\mapsto(\\pi_1 u,\\pi_2 u)$ is exactly the existence clause: every pair $(f,g)$ arises. Injectivity is exactly the uniqueness clause: two maps with the same components mediate the same pair, hence are equal. So the map is a bijection — $A\\times B$ represents $X\\mapsto\\mathrm{Hom}(X,A)\\times\\mathrm{Hom}(X,B)$."
-      solution_sketch: "Split the universal property into its two clauses and match them to the two halves of being a bijection: existence of the mediating $u$ is surjectivity, uniqueness of $u$ is injectivity. Beyond that dictionary there is nothing to compute."
+      problem: 'In $\mathbf{Set}$, let $A$ have $4$ elements and $B$ have $3$ elements. Let $X$ have $2$ elements. How many functions are there from $X$ to the product $A\times B$?'
+      answer_contract: {"kind":"exact"}
+      answer: '144'
+      solution_sketch: 'The product $A\times B$ has $12$ elements. A function from $X$ to it picks one of $12$ values for each of the $2$ elements of $X$, so there are $12^2=144$ functions.'
     anki_seeds:
       - front: "A universal property characterizes an object as..."
         back: "the initial (or terminal) object of an auxiliary category of candidate structures."
@@ -288,9 +289,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Setup: let $Q$ be a coproduct of $A$ and $B$ with injections $i_1,i_2$, and let $Q''$ be another with injections $j_1,j_2$. Mediating map $u$: the universal property of $Q$ applied to $j_1,j_2$ gives a unique $u\colon Q\to Q''$ with $ui_1=j_1$ and $ui_2=j_2$. Mediating map $v$: the universal property of $Q''$ applied to $i_1,i_2$ gives a unique $v\colon Q''\to Q$ with $vj_1=i_1$ and $vj_2=i_2$. Cross-map: $vu$ satisfies $(vu)i_1=vj_1=i_1$ and $(vu)i_2=i_2$, and $1_Q$ satisfies the same two equations, so the uniqueness clause of $Q$ forces $vu=1_Q$. The same argument with $Q$ and $Q''$ swapped gives $uv=1_{Q''}$. Conclusion: $u$ is an isomorphism compatible with the injections, and it is the only map obeying the two equations.'
     diagnostic_exemplar:
-      problem: "Prove that any two products of $A$ and $B$ are isomorphic by a unique isomorphism compatible with the projections."
-      answer: "Let $(P,\\pi_1,\\pi_2)$ and $(P',\\pi_1',\\pi_2')$ both be products. The universal property of $P'$ applied to the cone $(\\pi_1,\\pi_2)$ gives a unique $u\\colon P\\to P'$ with $\\pi_i'u=\\pi_i$; that of $P$ gives a unique $v\\colon P'\\to P$ with $\\pi_iv=\\pi_i'$. Then $\\pi_i(vu)=\\pi_i'u=\\pi_i$, so $vu$ and $1_P$ both mediate the cone $(\\pi_1,\\pi_2)$ into $P$; uniqueness forces $vu=1_P$, and symmetrically $uv=1_{P'}$. Hence $u$ is an isomorphism, unique among maps commuting with the projections."
-      solution_sketch: "Mediate each product through the other to get $u$ and $v$, then notice that $v\\circ u$ and the identity both mediate the same cone into $P$; the uniqueness clause collapses them. This is the standard argument that universal objects are unique up to a unique isomorphism."
+      problem: 'Let $\mathcal P$ be the category whose objects are the positive integers. It has one morphism $m\to n$ when $m$ divides $n$, and no other morphism. What is the coproduct of $4$ and $6$ in $\mathcal P$?'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'A coproduct of $4$ and $6$ is the least object that both divide. That is the least common multiple, $12$.'
     anki_seeds:
       - front: "Universal property of a product?"
         back: "$\\pi_1,\\pi_2$ with: every pair $f\\colon X\\to A$, $g\\colon X\\to B$ factors as a unique $\\langle f,g\\rangle\\colon X\\to A\\times B$."
@@ -435,9 +437,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Setup: let $\sim$ be the smallest equivalence relation on $B$ containing every pair $(f(a),g(a))$, let $Q=B/\!\sim$, and let $q$ send each element to its class. Step 1 ($qf=qg$): for each $a\in A$ we have $f(a)\sim g(a)$, so $q(f(a))=q(g(a))$. Step 2 (universality): let $n\colon B\to C$ satisfy $nf=ng$ and define $w([b])=n(b)$. This is well defined, because $R=\{(b,b''):n(b)=n(b'')\}$ is an equivalence relation containing every pair $(f(a),g(a))$, and $\sim$ is the smallest such relation, so $b\sim b''$ implies $n(b)=n(b'')$. Step 3 (uniqueness): $q$ is surjective, so any $w''$ with $w''q=n$ satisfies $w''([b])=n(b)=w([b])$, hence $w''=w$. Conclusion: $q$ is the coequalizer.'
     diagnostic_exemplar:
-      problem: "Prove that every equalizer $e\\colon E\\to A$ of $f,g\\colon A\\to B$ is a monomorphism."
-      answer: "Suppose $eu=ev$ for $u,v\\colon X\\to E$, and set $m=eu=ev$. Then $fm=(fe)u=(ge)u=gm$, so $m$ equalizes $f,g$ and therefore factors through $e$ via a UNIQUE map $X\\to E$. Both $u$ and $v$ are such factorizations ($eu=m=ev$), so uniqueness gives $u=v$. Hence $e$ is left-cancellable, i.e. a monomorphism."
-      solution_sketch: "From $e\\circ u=e\\circ v$, show the common composite equalizes $f$ and $g$, so it factors through $e$ by a unique map — and $u$, $v$ are both such factorizations. Left-cancellation comes from the uniqueness clause, not from any element chase."
+      problem: 'In $\mathbf{Set}$, let $f,g\colon\{0,1,2,3,4,5\}\to\mathbb Z$ be $f(x)=x^2$ and $g(x)=3x$. How many elements does the equalizer of $f$ and $g$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'In $\mathbf{Set}$ the equalizer is $\{x : f(x)=g(x)\}$. The equation $x^2=3x$ has the solutions $x=0$ and $x=3$ in the set, so there are $2$ elements.'
     anki_seeds:
       - front: "Equalizer of $f,g\\colon A\\to B$?"
         back: "the universal $e\\colon E\\to A$ with $fe=ge$; in $\\mathbf{Set}$, $E=\\{a: f(a)=g(a)\\}$."
@@ -591,9 +594,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1 (coproduct): form the disjoint union $A+B$ with its two injections. Step 2 (coequalizer): let $\sim$ be the smallest equivalence relation identifying $f(c)$ with $g(c)$ for each $c\in C$, and set $Q=(A+B)/\!\sim$ with $q_1(a)=[a]$ and $q_2(b)=[b]$. Step 3 (commutativity): for each $c$, $q_1f(c)=[f(c)]=[g(c)]=q_2g(c)$, so $q_1f=q_2g$. Step 4 (universal property): if $u\colon A\to X$ and $v\colon B\to X$ satisfy $uf=vg$, define $w([t])=u(t)$ for $t\in A$ and $w([t])=v(t)$ for $t\in B$; when a class meets both summands through some $c$, the condition $uf(c)=vg(c)$ makes the two values agree, so $w$ is well defined and is the unique map with $wq_1=u$ and $wq_2=v$. Step 5 (duality): $Q$ is the coequalizer of the two maps $C\to A+B$, the dual of the pullback as a product followed by an equalizer, so $Q$ is the pushout.'
     diagnostic_exemplar:
-      problem: "Prove that monomorphisms are stable under pullback: if $g\\colon B\\to C$ is mono and $(P,p_1,p_2)$ is the pullback of $f\\colon A\\to C$ along $g$, then $p_1\\colon P\\to A$ is mono."
-      answer: "Take $u,v\\colon X\\to P$ with $p_1u=p_1v$. Then $g(p_2u)=f(p_1u)=f(p_1v)=g(p_2v)$ using the pullback square, and $g$ mono gives $p_2u=p_2v$. So $u$ and $v$ mediate the same cone $(p_1u,p_2u)$ over the cospan; the pullback's uniqueness clause forces $u=v$. Hence $p_1$ is a monomorphism."
-      solution_sketch: "Push $p_1u=p_1v$ across the square to get $g\\circ p_2u=g\\circ p_2v$, cancel the mono $g$ so the second components agree too, then apply the pullback uniqueness clause to the single cone that both $u$ and $v$ mediate."
+      problem: 'In $\mathbf{Set}$, let $A=\{1,2,3,4,5,6\}$ and $B=\{1,2,3,4\}$. Let $f\colon A\to\{0,1,2\}$ and $g\colon B\to\{0,1,2\}$ both send $n$ to the remainder of $n$ divided by $3$. How many elements does the pullback of $f$ and $g$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The pullback is the set of pairs $(a,b)$ with $f(a)=g(b)$. Remainder $0$ gives $2\cdot1$ pairs, remainder $1$ gives $2\cdot2$, and remainder $2$ gives $2\cdot1$. The total is $2+4+2=8$.'
     anki_seeds:
       - front: "Pullback of $f\\colon A\\to C$, $g\\colon B\\to C$ in $\\mathbf{Set}$?"
         back: "$A\\times_C B=\\{(a,b): f(a)=g(b)\\}$; universal square with $fp_1=gp_2$."
@@ -708,9 +712,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Definition: a morphism of cones from $(X,\lambda)$ to $(Y,\mu)$ is a morphism $h\colon X\to Y$ in $\mathcal C$ with $\mu_j\circ h=\lambda_j$ for every object $j$ of $\mathcal J$; this is the leg-commuting condition. Step 1, identities: for a cone $(X,\lambda)$ the identity $1_X$ satisfies $\lambda_j\circ 1_X=\lambda_j$, so it is a morphism of cones from $(X,\lambda)$ to itself. Step 2, composition: if $h$ goes from $(X,\lambda)$ to $(Y,\mu)$ and $k$ goes from $(Y,\mu)$ to $(Z,\nu)$ and both commute with the legs, then $\nu_j\circ k\circ h=\mu_j\circ h=\lambda_j$, so $k\circ h$ is a morphism of cones. Step 3, laws: identities and composites are those of $\mathcal C$, so associativity and the identity laws are inherited and $\mathrm{Cone}(D)$ is a category. Step 4, limit: let $(L,\lambda)$ be terminal in $\mathrm{Cone}(D)$; then every cone $(X,\gamma)$ admits exactly one morphism of cones $h\colon X\to L$ with $\lambda_j\circ h=\gamma_j$, which is exactly the universal property of the limit cone. Hence a terminal object of $\mathrm{Cone}(D)$ is a limit of $D$.'
     diagnostic_exemplar:
-      problem: "For the parallel-pair diagram $D=(f,g\\colon A\\to B)$, show that a cone over $D$ with apex $X$ amounts to a single morphism $\\lambda_0\\colon X\\to A$ satisfying $f\\lambda_0=g\\lambda_0$."
-      answer: "A cone is a natural transformation $\\Delta_X\\Rightarrow D$ with legs $\\lambda_0\\colon X\\to A$ and $\\lambda_1\\colon X\\to B$. Naturality at the two parallel arrows forces $f\\circ\\lambda_0=\\lambda_1$ and $g\\circ\\lambda_0=\\lambda_1$. So $\\lambda_1$ is determined by $\\lambda_0$, and the two conditions collapse to $f\\lambda_0=g\\lambda_0$: the cone data is exactly a fork $\\lambda_0$ over the pair."
-      solution_sketch: "Write out the naturality condition at each of the two parallel arrows: each one forces $\\lambda_1$ to equal one of $f\\lambda_0$, $g\\lambda_0$. So $\\lambda_1$ is redundant and the two conditions fuse into the single fork equation."
+      problem: 'Let $D$ be given by $A\xrightarrow{f}C\xleftarrow{g}B$ in $\mathbf{Set}$ with $A=\{1,2\}$, $B=\{1,2,3\}$ and $C=\{0,1\}$. Here $f(1)=0$, $f(2)=1$, $g(1)=0$, $g(2)=0$ and $g(3)=1$. A cone over $D$ with apex $X=\{0,1\}$ is a pair of functions $\lambda_A\colon X\to A$ and $\lambda_B\colon X\to B$ with $f\lambda_A=g\lambda_B$. How many cones over $D$ have apex $X$?'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'For each element of $X$, the pair of values $(a,b)$ must satisfy $f(a)=g(b)$. There are $2+1=3$ such pairs, so the number of cones is $3^2=9$.'
     anki_seeds:
       - front: "A cone over a diagram $D$ with apex $X$ is..."
         back: "a natural transformation $\\Delta_X\\Rightarrow D$: legs $\\lambda_j\\colon X\\to Dj$ with $Df\\circ\\lambda_j=\\lambda_{j'}$."
@@ -861,9 +866,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1, define the category of cones: an object is a cone $(X,\mu)$ over $D$, and a morphism from $(X,\mu)$ to $(Y,\nu)$ is a map $u\colon X\to Y$ in $\mathcal C$ with $\nu_j\circ u=\mu_j$ for every object $j$ of the shape category, so a morphism of cones is exactly a map commuting with every leg. Step 2, existence: to say $(L,\lambda)$ is terminal means every cone $(X,\mu)$ admits some morphism to it; unpacking the definition, there exists a map $u\colon X\to L$ with $\lambda_j\circ u=\mu_j$ for every $j$, which is the existence half of the universal property. Step 3, uniqueness: terminal also says this morphism is unique, which is the uniqueness half of the universal property, stated separately. Step 4, conclusion: the universal property holds exactly when $(L,\lambda)$ is terminal in the category of cones over $D$.'
     diagnostic_exemplar:
-      problem: "Write $\\mathrm{Cone}(X,D)$ for the set of cones over $D$ with apex $X$. Prove that a cone $(L,\\lambda)$ is a limit of $D$ iff for every object $X$ the map $\\Theta_X\\colon\\mathrm{Hom}(X,L)\\to\\mathrm{Cone}(X,D)$, $u\\mapsto(\\lambda_j\\circ u)_j$, is a bijection."
-      answer: "$\\Theta_X$ is well defined: $(\\lambda_ju)_j$ is a cone since $Df\\circ\\lambda_j\\circ u=\\lambda_{j'}\\circ u$ follows from the cone condition on $\\lambda$. Surjectivity of $\\Theta_X$ for all $X$ says every cone $(X,\\mu)$ equals $(\\lambda_ju)_j$ for some $u$ — the EXISTENCE of a mediating map commuting with every leg. Injectivity says two maps inducing the same cone coincide — its UNIQUENESS. Together these are precisely the universal property of a limit cone, and conversely a limit cone makes every $\\Theta_X$ a bijection."
-      solution_sketch: "Check first that $\\Theta_X$ really lands in cones, then match clause to clause: surjectivity for every $X$ is the existence of a mediating map, injectivity is its uniqueness. That dictionary runs in both directions, which is what makes the statement an iff."
+      problem: 'Let $\mathcal J$ be the category with objects $1,2,3$, their identity morphisms and two other morphisms $a\colon1\to2$ and $b\colon1\to3$. Let $D\colon\mathcal J\to\mathbf{Set}$ send $1,2,3$ to sets with $5$, $2$ and $3$ elements. How many elements does the limit of $D$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'A point of the limit is a family $(x_1,x_2,x_3)$ with $x_2=D(a)(x_1)$ and $x_3=D(b)(x_1)$. The element $x_1$ is free and fixes the other two, so there are $5$ points.'
     anki_seeds:
       - front: "A limit of $D$ is..."
         back: "a universal (terminal) cone over $D$: every cone factors uniquely through it."
@@ -980,9 +986,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Binary products are greatest lower bounds, and $\min(m,n)$ always exists: it is a common lower bound, and every common lower bound $q$ satisfies $q\le\min(m,n)$. A parallel pair of arrows in a poset category is one arrow written twice, because a hom-set has at most one element, so its equalizer exists and is the identity on the source. A terminal object would be an element $t$ with $x\le t$ for every $x$, that is, a greatest element. No such element exists, because $t+1\not\le t$. So the empty diagram has no limit, and the poset is not finitely complete.'
     diagnostic_exemplar:
-      problem: "Show that the poset $(\\mathbb{N},\\le)$, viewed as a category, has all binary products and all equalizers, yet is not finitely complete."
-      answer: "Binary products are greatest lower bounds, and $\\min(m,n)$ always exists. Any parallel pair of arrows in a poset category is a single arrow repeated (hom-sets have at most one element), so its equalizer exists trivially (the identity on the source). But the limit of the EMPTY diagram is a terminal object, i.e. a greatest element of $(\\mathbb{N},\\le)$, which does not exist. So one finite diagram has no limit and the category is not finitely complete."
-      solution_sketch: "Binary products are meets, and $\\min(m,n)$ always exists; equalizers are trivial because a thin category has at most one arrow per hom-set. The failure is the empty diagram, whose limit is a terminal object — a greatest natural number, which does not exist."
+      problem: 'Let $\mathcal D$ be the set of divisors of $12$, as a category with one morphism $m\to n$ when $m$ divides $n$. Let $D\colon\mathcal D\to\mathcal D$ be the identity functor. What is the apex of a limit of $D$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'A limit of the identity functor is an object with a cone to every object. That is an initial object, which is $1$ because $1$ divides every divisor of $12$.'
     anki_seeds:
       - front: "The limit of the empty diagram is..."
         back: "a terminal object (dually, the colimit of the empty diagram is an initial object)."
@@ -1144,9 +1151,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Setup: form the disjoint union of the sets $Dj$ and quotient it by the smallest equivalence relation $\sim$ satisfying $x\sim Df(x)$ for every element $x$ in $Dj$ and every arrow $f\colon j\to j''$; call the quotient set $U$. Legs: define each leg from $Dj$ to $U$ by sending $x$ to its class; the generating relations give exactly the cocone condition. Universal property: take any cocone with apex $X$ and legs $\gamma_j$, and define a map $u\colon U\to X$ by sending the class of $x$ to the value of the leg at $x$. Cocone condition: equivalent elements are forced to have equal leg values by chains of generating pairs, so $u$ is independent of the representative. Uniqueness: the condition that $u$ composed with each leg equals that leg determines $u$ on every class, so at most one such $u$ exists. Conclusion: $U$ with the class legs is an initial cocone, hence a colimit, and this is exactly the dual of the limit story with all arrows reversed.'
     diagnostic_exemplar:
-      problem: "Prove that the legs $(\\lambda_j)$ of a limit cone $(L,\\lambda)$ over $D$ are jointly monic: if $u,v\\colon X\\to L$ satisfy $\\lambda_j u=\\lambda_j v$ for every $j$, then $u=v$."
-      answer: "Set $\\mu_j=\\lambda_ju=\\lambda_jv$. The family $(\\mu_j)$ is a cone with apex $X$: for $f\\colon j\\to j'$, $Df\\circ\\mu_j=Df\\circ\\lambda_j\\circ u=\\lambda_{j'}\\circ u=\\mu_{j'}$, inheriting the cone condition from $\\lambda$. The limit's universal property supplies a UNIQUE morphism $X\\to L$ whose legs are $(\\mu_j)$; both $u$ and $v$ are such morphisms, so $u=v$."
-      solution_sketch: "Show the common family $(\\lambda_j u)$ is itself a cone over $D$, inheriting the condition from $\\lambda$; then $u$ and $v$ are two mediating maps for one cone, and the uniqueness half of the limit property finishes it."
+      problem: 'In $\mathbf{Set}$, let $f,g\colon\{1,2,3\}\to\{a,b,c,d\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=c$ and $g(1)=b$, $g(2)=c$, $g(3)=c$. The colimit of the parallel pair $f,g$ is the quotient of $\{a,b,c,d\}$ by the least equivalence relation with $f(x)\sim g(x)$ for all $x$. How many elements does the colimit have?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The relation forces $a\sim b$ and $b\sim c$, and $c\sim c$ adds nothing. So $\{a,b,c\}$ is one class and $\{d\}$ is the other. There are $2$ classes.'
     anki_seeds:
       - front: "Formula for $\\lim D$ in $\\mathbf{Set}$?"
         back: "the set of compatible families $(x_j)$ with $Df(x_j)=x_{j'}$ for every $f\\colon j\\to j'$."
@@ -1261,9 +1269,10 @@ topics:
             solution_sketch: 'The map $k^A$ exists because $k\circ\mathrm{ev}\colon B^A\times A\to B''$ has a curry, and by definition that curry satisfies $\mathrm{ev}\circ(k^A\times 1_A)=k\circ\mathrm{ev}$. Uncurry the composite $k^A\circ\hat g$: since $(u\circ v)\times 1_A=(u\times 1_A)\circ(v\times 1_A)$, we get $\mathrm{ev}\circ((k^A\circ\hat g)\times 1_A)=\mathrm{ev}\circ(k^A\times 1_A)\circ(\hat g\times 1_A)$. By the defining equation of $k^A$ this equals $k\circ\mathrm{ev}\circ(\hat g\times 1_A)$, and by the defining equation of $\hat g$ it equals $k\circ g$. So $k^A\circ\hat g$ satisfies the defining equation of the curry of $k\circ g$, and uniqueness of the curry gives that the curry of $k\circ g$ is $k^A\circ\hat g$.'
         constraints: 'Naturality of currying is tested with explicit maps on sets of numbers: the curry of a precomposite read at a pair (naturality in $X$), the induced map $m^A$ on functions (naturality in the target), two priced contexts, an error-analysis item that forgets to apply $k$, a verdict on equality of two curries with the deciding values, and a count matching the bijection. The one full-proof item is naturality in the target.'
     diagnostic_exemplar:
-      problem: "From the universal property of the exponential $B^A$ (evaluation $\\mathrm{ev}\\colon B^A\\times A\\to B$ with unique currying), deduce the bijection $\\mathrm{Hom}(X\\times A,B)\\cong\\mathrm{Hom}(X,B^A)$."
-      answer: "Currying sends $g\\colon X\\times A\\to B$ to the unique $\\hat g\\colon X\\to B^A$ with $\\mathrm{ev}\\circ(\\hat g\\times 1_A)=g$; uncurrying sends $h\\colon X\\to B^A$ to $\\mathrm{ev}\\circ(h\\times 1_A)$. Uncurrying after currying returns $g$ by the defining equation. Currying after uncurrying returns $h$: $h$ satisfies the defining equation of the curry of $\\mathrm{ev}\\circ(h\\times 1_A)$, and the universal property says there is exactly one such map. So the two operations are mutually inverse, giving the bijection."
-      solution_sketch: "Define currying and uncurrying from the universal property and check the two round trips. One direction is just the defining equation of $\\mathrm{ev}$; the other needs the uniqueness clause, which says no other map satisfies that equation."
+      problem: 'In $\mathbf{Set}$, let $A$ have $2$ elements, $B$ have $3$ elements and $X$ have $2$ elements. How many morphisms are there from $X$ to the exponential object $B^A$?'
+      answer_contract: {"kind":"exact"}
+      answer: '81'
+      solution_sketch: 'The exponential $B^A$ is the set of functions $A\to B$. It has $3^2=9$ elements. A function from $X$ to it has $9^2=81$ choices.'
     anki_seeds:
       - front: "Universal property of the exponential $B^A$?"
         back: "$\\mathrm{ev}\\colon B^A\\times A\\to B$ with: every $g\\colon X\\times A\\to B$ has a unique curry $\\hat g\\colon X\\to B^A$, $\\mathrm{ev}\\circ(\\hat g\\times 1_A)=g$."
@@ -1415,9 +1424,10 @@ topics:
             solution_sketch: 'Let $(L,\lambda)$ be a cone over a diagram $D$ in $\mathcal C$ whose image $(FL,F\lambda)$ is a limit cone, and let $(X,\mu)$ be any cone over $D$. The image $(FX,F\mu)$ is a cone over $FD$, so there is a unique $u\colon FX\to FL$ with $F\lambda_j\circ u=F\mu_j$ for every $j$. By fullness $u=Fv$ for some $v\colon X\to L$. Then $F(\lambda_j\circ v)=F\mu_j$, and faithfulness gives $\lambda_j\circ v=\mu_j$, so $v$ is a cone map. If $v''$ is another cone map, then $Fv''$ satisfies the equations that determine $u$, so $Fv''=u=Fv$ and faithfulness gives $v''=v$. So every cone has exactly one cone map to $(L,\lambda)$, and $(L,\lambda)$ is a limit cone.'
         constraints: 'Full faithfulness and reflection of limits are tested on explicit posets and one-object categories: the number of preimages of a mediator, the pair that breaks fullness of an order-preserving map, a scheduling context counting pairs that break fullness, a dial context counting arrows missing from the image, the meet in a poset where a faithful but not full functor fails to reflect, and verdicts on reflection and on fullness. The one full-proof item is that a fully faithful functor reflects limits.'
     diagnostic_exemplar:
-      problem: "Prove that a fully faithful functor $F\\colon\\mathcal{C}\\to\\mathcal{D}$ reflects limits."
-      answer: "Let $(L,\\lambda)$ be a cone over $D$ whose image $(FL,F\\lambda)$ is a limit cone over $FD$, and let $(X,\\mu)$ be any cone over $D$. Then $(FX,F\\mu)$ is a cone over $FD$, so there is a unique $u\\colon FX\\to FL$ with $F\\lambda_j\\circ u=F\\mu_j$ for all $j$. By fullness $u=Fv$ for some $v\\colon X\\to L$; then $F(\\lambda_j\\circ v)=F\\mu_j$ and faithfulness gives $\\lambda_j\\circ v=\\mu_j$, so $v$ is a cone morphism. If $v'$ is another, $Fv'$ satisfies the equations characterizing $u$, so $Fv'=u=Fv$ and faithfulness gives $v'=v$. Hence $(L,\\lambda)$ is a limit cone."
-      solution_sketch: "Transport an arbitrary cone over $D$ down into $\\mathcal D$ and mediate there, then lift the mediating map back with fullness and verify its leg equations with faithfulness. Uniqueness downstairs comes from uniqueness upstairs plus faithfulness once more."
+      problem: 'The functor $\mathrm{Hom}(A,-)\colon\mathbf{Set}\to\mathbf{Set}$ preserves limits. Let $A$ have $3$ elements, $X$ have $3$ elements and $Y$ have $2$ elements. How many elements does $\mathrm{Hom}(A,X\times Y)$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '216'
+      solution_sketch: 'Preserving products gives $\mathrm{Hom}(A,X\times Y)\cong\mathrm{Hom}(A,X)\times\mathrm{Hom}(A,Y)$. The sizes are $3^3=27$ and $2^3=8$, so the product has $27\cdot8=216$ elements.'
     anki_seeds:
       - front: "A functor preserves limits when..."
         back: "it sends limit cones to limit cones (the canonical comparison is an isomorphism)."
@@ -1570,9 +1580,10 @@ topics:
             solution_sketch: 'The limit of the empty diagram is the terminal object. For objects $A$ and $B$, the pullback of $A\to1\leftarrow B$ is a binary product, since a cone over $A$ and $B$ is a cone over that cospan. For parallel arrows $f,g\colon A\to B$, form the product $A\times B$ and the maps $(1_A,f),(1_A,g)\colon A\to A\times B$; the pullback of these two maps has an arrow $e\colon E\to A$. The condition $(1_A,f)e=(1_A,g)e$ gives $e=e$ and $fe=ge$, and any $h$ with $fh=gh$ satisfies $(1_A,f)h=(1_A,g)h$, so $h$ factors uniquely through $e$, and $e$ is the equalizer. Every finite limit is built from finite products and an equalizer, so all finite limits exist.'
         constraints: 'Products and equalizers are built from a terminal object and pullbacks in Set with explicit finite data: the pullback over the terminal object, the pullback of $(1_A,f)$ and $(1_A,g)$ as an equalizer, an error-analysis item that pulls back $f$ and $g$ directly, a three-set combination context, a prices context, and verdicts on infinite products in the category of finite sets and on finite limits there. The one full-proof item is that a terminal object and pullbacks give all finite limits.'
     diagnostic_exemplar:
-      problem: "Prove the dual of the products-and-equalizers criterion: a category $\\mathcal C$ with all small coproducts and all coequalizers is cocomplete. Construct the colimit of an arbitrary small diagram $D\\colon\\mathcal J\\to\\mathcal C$ as a coequalizer of two maps between coproducts, and verify its universal property."
-      answer: "Form $\\coprod_j Dj$ (over the objects of $\\mathcal J$) and $\\coprod_{f\\colon j\\to j'}Dj$ (over the morphisms), and let $u,v\\colon\\coprod_f Dj\\rightrightarrows\\coprod_j Dj$ be the maps whose components on the summand indexed by $f\\colon j\\to j'$ are $\\iota_j$ and $\\iota_{j'}\\circ Df$ respectively. Let $q\\colon\\coprod_j Dj\\to Q$ be their coequalizer and set $\\gamma_j=q\\circ\\iota_j$. Then $q u=q v$ says precisely $\\gamma_j=\\gamma_{j'}\\circ Df$ for every $f\\colon j\\to j'$, so $(Q,\\gamma)$ is a cocone under $D$. Given any cocone $(X,\\delta)$, the coproduct's universal property gives $[\\delta_j]\\colon\\coprod_j Dj\\to X$, and the cocone condition $\\delta_j=\\delta_{j'}\\circ Df$ says exactly $[\\delta_j]u=[\\delta_j]v$; the coequalizer's universal property therefore factors $[\\delta_j]$ through $q$ by a unique $w\\colon Q\\to X$, and $w\\gamma_j=w q\\iota_j=[\\delta_j]\\iota_j=\\delta_j$. Any other cocone map $w'$ satisfies $w'q\\iota_j=\\delta_j$ for all $j$, hence $w'q=[\\delta_j]$, hence $w'=w$ by uniqueness of the factorisation. So $(Q,\\gamma)$ is $\\mathrm{colim}\\,D$, and every small colimit exists: $\\mathcal C$ is cocomplete."
-      solution_sketch: "Build the colimit as a coequalizer of two maps $\\coprod_{f}Dj\\rightrightarrows\\coprod_j Dj$ — one component $\\iota_j$, the other $\\iota_{j'}\\circ Df$ — chosen so that the equation $qu=qv$ says exactly that the legs form a cocone. Any cocone $(X,\\delta)$ then yields $[\\delta_j]$ by the coproduct property and factors uniquely through $q$ by the coequalizer property."
+      problem: 'The subsets of $\{1,2,3\}$, ordered by inclusion, form a complete category. Let $D$ have the three objects $\{1,2\}$, $\{2,3\}$ and $\{1,3\}$ and no non-identity morphism. How many elements does the limit of $D$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '0'
+      solution_sketch: 'The limit of a diagram in a poset is the greatest lower bound of its objects. Here that is the intersection $\{1,2\}\cap\{2,3\}\cap\{1,3\}=\varnothing$, which has $0$ elements.'
     anki_seeds:
       - front: "A category is complete when..."
         back: "it has all small limits."

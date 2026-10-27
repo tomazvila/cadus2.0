@@ -1,0 +1,16 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        INSERT INTO session_plans (user_id, session_id, plan) VALUES ($1, $2, $3)\n        ON CONFLICT (user_id) DO UPDATE\n            SET session_id = EXCLUDED.session_id, plan = EXCLUDED.plan, updated_at = now()\n        ",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Uuid",
+        "Text",
+        "Jsonb"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "bbd1b1163b13ad902499742543942ffec4e82e9ddd14c1424496ffe7d45cbb15"
+}

@@ -49,6 +49,7 @@ topics:
       - id: kp2
         name: Classify by angles
         key_prerequisites: [triangle-angle-sum]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"7","y":"0","label":null},{"x":"2","y":"2","label":null}],"right_angles":[],"angle_marks":[{"at":2,"label":"θ"}]},"caption":"A triangle with one corner marked θ"}]
         exemplars:
           - problem: 'Triangle $ABC$ has angles of $35^\circ$, $55^\circ$ and $90^\circ$. Classify the triangle by its angles.'
             answer_contract: {"kind":"label","options":[["right","a right triangle","right triangle","it is right","right-angled","a right-angled triangle","right angled","right angled triangle"],["obtuse","an obtuse triangle","obtuse triangle","it is obtuse","it's obtuse"],["acute","an acute triangle","acute triangle","it is acute","it's acute"]]}
@@ -151,6 +152,7 @@ topics:
           answer_contract: {"kind":"label","options":[["no","it is not possible","no, it is not possible","not possible","it cannot","no, it cannot","they cannot","it can't"],["yes","it is possible","yes, it is possible","possible","it can","yes, it can","they can","it's possible"]]}
           answer: 'no'
           reveal: 'The two short sticks together reach at most $3 + 4 = 7$ cm, so their free ends can never be $8$ cm apart. A straight segment is the shortest path between two points, so each side of a triangle must be shorter than the other two sides together.'
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"8","y":"0","label":null},{"x":"3","y":"4","label":null}],"right_angles":[],"angle_marks":[]},"caption":"A triangle whose two shorter sides together reach farther than the longest side"}]
         exemplars:
           - problem: 'Can segments of $4$ cm, $5$ cm and $10$ cm form a triangle?'
             answer_contract: {"kind":"label","options":[["no","it is not possible","no, it is not possible","not possible","it cannot","no, it cannot","they cannot","it can't"],["yes","it is possible","yes, it is possible","possible","it can","yes, it can","they can","it's possible"]]}
@@ -213,6 +215,7 @@ topics:
       - id: kp3
         name: Order sides and angles
         key_prerequisites: [classifying-triangles]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"8","y":"0","label":null},{"x":"2","y":"3","label":null}],"right_angles":[],"angle_marks":[{"at":2,"label":"θ"}]},"caption":"A triangle with the longest side across from the widest corner, marked θ"}]
         exemplars:
           - problem: 'In triangle $ABC$, $AB = 7$ cm, $BC = 9$ cm and $CA = 12$ cm. Which angle of the triangle is the largest?'
             answer_contract: {"kind":"label","options":[["angle B","B","∠B","angle ABC","it is angle B","the angle at B","angle at B"],["angle A","A","∠A","angle BAC","it is angle A","the angle at A","angle at A"],["angle C","C","∠C","angle ACB","it is angle C","the angle at C","angle at C"]]}
@@ -240,10 +243,10 @@ topics:
             solution_sketch: 'The perimeter gives $6x + 4 = 40$, so $x = 6$ and the sides are $AB = 12$, $BC = 15$ and $CA = 13$ cm. The sides $12$, $13$ and $15$ face the angles at $C$, $B$ and $A$, so the angles in increasing size are $C$, $B$, $A$.'
         constraints: 'distinct side lengths or angle measures; larger side faces larger angle; at most two named-answer items (largest angle, longest side), the others list angles in order, bound a side or use equal angles; contexts with plots, sails and roof trusses'
     diagnostic_exemplar:
-      problem: 'Two sides of a triangle measure $8$ and $3$. List all possible integer lengths for the third side.'
-      answer: '6, 7, 8, 9, or 10'
-      answer_contract: {kind: none}
-      solution_sketch: '$8 - 3 < x < 8 + 3$, so $5 < x < 11$.'
+      problem: 'Find the least whole number $n$ such that lengths $6$, $11$, and $n$ form a triangle.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The triangle inequality needs $6+n>11$, so $n>5$. The least whole number is $6$, and $6+11>6$ also holds.'
     anki_seeds:
       - front: "Triangle inequality: the sum of any two sides of a triangle must be..."
         back: "greater than the third side"
@@ -358,10 +361,10 @@ topics:
             solution_sketch: 'With equal sides $L$ the base is $20 - 2L$, and the triangle inequality needs $5 < L < 10$. The values $L = 6, 7, 8, 9$ give the triangles $6, 6, 8$; $7, 7, 6$; $8, 8, 4$ and $9, 9, 2$, so there are $4$.'
         constraints: 'isosceles triangles with a perimeter and one given side, tested in both cases, leg or base, against the triangle inequality; answers are a list, a length, a perimeter or a count that can be zero; contexts with pennants, wire and sails'
     diagnostic_exemplar:
-      problem: 'An isosceles triangle has perimeter $24$ and one side of length $10$. Find all possible side sets.'
-      answer: '$\{10, 10, 4\}$ and $\{7, 7, 10\}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Legs $10$: base $24 - 20 = 4$ (valid, $10 + 4 > 10$). Base $10$: legs $7$ each (valid, $7 + 7 > 10$). Both pass the triangle inequality.'
+      problem: 'Two sides of a triangle measure $9$ and $4$. How many whole numbers are possible for the length of the third side?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'The third side $x$ satisfies $9-4<x<9+4$, so $5<x<13$. The whole numbers are $6$ to $12$, which is $7$ values.'
     anki_seeds:
       - front: "The perimeter of a triangle with known sides a, b and unknown third side lies strictly between..."
         back: "a + b + |a - b| and 2(a + b)"
@@ -451,6 +454,7 @@ topics:
       - id: kp3
         name: Congruence via rigid motions
         key_prerequisites: [segment-angle-addition, coordinate-plane]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"11","y_min":"0","y_max":"8","x_tick":"1","y_tick":"1","points":[],"segments":[{"from":{"x":"2","y":"2","label":null},"to":{"x":"5","y":"2","label":null}},{"from":{"x":"5","y":"2","label":null},"to":{"x":"2","y":"4","label":null}},{"from":{"x":"2","y":"4","label":null},"to":{"x":"2","y":"2","label":null}},{"from":{"x":"6","y":"4","label":null},"to":{"x":"9","y":"4","label":null}},{"from":{"x":"9","y":"4","label":null},"to":{"x":"6","y":"6","label":null}},{"from":{"x":"6","y":"6","label":null},"to":{"x":"6","y":"4","label":null}}],"caption":"Two triangles of the same size and shape, the second one slid up and to the right"}]
         exemplars:
           - problem: 'A rotation maps triangle $ABC$ exactly onto triangle $DEF$, with $A$ to $D$, $B$ to $E$ and $C$ to $F$. If $\angle A$ measures $37^\circ$, how large is $\angle D$, in degrees?'
             answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
@@ -486,10 +490,10 @@ topics:
             solution_sketch: 'A translation preserves lengths, so $3x + 2 = 5x - 8$, which gives $x = 5$. Then $AB = 3 \cdot 5 + 2 = 17$ cm.'
         constraints: 'a single rigid motion or a rigid motion given by a reflection; read off preserved lengths and angles, justify with the property that is used, and one dilation counter-case; unknown lengths from algebra and coordinates; contexts with templates and sails'
     diagnostic_exemplar:
-      problem: 'A reflection across the $y$-axis maps $\triangle ABC$ onto $\triangle DEF$, with vertex $A(-6, 2)$ mapping to $D$. Give the coordinates of $D$, and state whether $\triangle ABC \cong \triangle DEF$ and why.'
-      answer: 'D = (6, 2); yes, the triangles are congruent — a reflection is a rigid motion (it preserves distances and angles), and a rigid motion carrying one figure onto another is exactly what congruence means'
-      answer_contract: {kind: none}
-      solution_sketch: 'Reflection across the $y$-axis negates the $x$-coordinate; rigid motions preserve lengths and angle measures.'
+      problem: 'The point $A(3, -2)$ moves by a translation $5$ units left and $4$ units up. A reflection across the $x$-axis then moves the image. Find the final coordinates of $A$.'
+      answer_contract: {"kind":"coordinates","arity":2}
+      answer: '(-2, -2)'
+      solution_sketch: 'The translation gives $(3-5, -2+4)=(-2, 2)$. The reflection across the $x$-axis negates the $y$-coordinate and gives $(-2, -2)$.'
     anki_seeds:
       - front: "The three rigid motions are..."
         back: "translations, reflections, and rotations"
@@ -552,6 +556,7 @@ topics:
       - id: kp2
         name: Recognize SAS and the included angle
         key_prerequisites: [triangle-angle-sum]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"7","y":"0","label":null},{"x":"2","y":"4","label":null}],"right_angles":[],"angle_marks":[{"at":0,"label":"θ"}]},"caption":"A triangle with the corner between two sides marked θ"}]
         exemplars:
           - problem: 'In triangles $ABC$ and $XYZ$, sides $AB$ and $BC$ are congruent to sides $XY$ and $YZ$. Which angle of triangle $ABC$ must also be congruent to the matching angle of triangle $XYZ$ for SAS to prove the triangles congruent?'
             answer_contract: {"kind":"label","options":[["angle B","∠B","B","the angle at B","angle ABC","angle CBA","∠ABC"],["angle A","∠A","A","the angle at A","angle BAC","angle CAB","∠BAC"],["angle C","∠C","C","the angle at C","angle BCA","angle ACB","∠BCA"]]}
@@ -616,10 +621,10 @@ topics:
             solution_sketch: 'Vertex $B$ matches $D$ and vertex $C$ matches $E$, so $BC$ matches $DE$. Then $2x + 7 = 5x - 8$ gives $x = 5$, and $BC = 2 \cdot 5 + 7 = 17$ cm.'
         constraints: "corresponding parts equal; linear expressions with integer solutions; some items need a second step (a perimeter, a base angle, an angle sum) or a correspondence that does not follow the letter order"
     diagnostic_exemplar:
-      problem: 'In $\triangle ABC$ and $\triangle XYZ$: $\overline{AB} \cong \overline{XY}$, $\overline{AC} \cong \overline{XZ}$, and $\angle A \cong \angle X$, where $m\angle A = (2x + 16)^\circ$ and $m\angle X = (4x - 8)^\circ$. Name the congruence criterion and find $m\angle A$, in degrees.'
-      answer: 'SAS; m∠A = 40 degrees'
-      answer_contract: {kind: none}
-      solution_sketch: '$\angle A$ is included between $\overline{AB}$ and $\overline{AC}$, so the criterion is SAS; $2x + 16 = 4x - 8$ gives $x = 12$ and $m\angle A = 40^\circ$.'
+      problem: 'In $\triangle ABC$ and $\triangle XYZ$, $\overline{AB}\cong\overline{XY}$, $\overline{AC}\cong\overline{XZ}$, and $\angle A\cong\angle X$. Here $m\angle A=(3x+5)^\circ$ and $m\angle X=(5x-25)^\circ$. Find $m\angle A$, in degrees.'
+      answer_contract: {"kind":"unit","quantity":"angle","unit":"\u00b0","allow_omitted":true}
+      answer: '50'
+      solution_sketch: 'The angles are congruent, so $3x+5=5x-25$ and $x=15$. Then $m\angle A=3\cdot 15+5=50$.'
     anki_seeds:
       - front: "SAS congruence requires the congruent angle to be ... the two congruent sides"
         back: "included between"
@@ -646,6 +651,7 @@ topics:
       - id: kp1
         name: Recognize ASA and the included side
         key_prerequisites: [sss-sas-congruence]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"8","y":"0","label":null},{"x":"3","y":"4","label":null}],"right_angles":[],"angle_marks":[{"at":0,"label":"α"},{"at":1,"label":"β"}]},"caption":"A triangle with two corners marked α and β and the side between them"}]
         exemplars:
           - problem: 'In triangles $ABC$ and $DEF$, $\angle A \cong \angle D$, $\overline{AB} \cong \overline{DE}$ and $\angle B \cong \angle E$. Which criterion shows that the triangles are congruent?'
             answer_contract: {"kind":"label","options":[["SSS congruence","SSS","side-side-side","the SSS criterion","by SSS","SSS criterion","side side side","SSS postulate"],["SAS congruence","SAS","side-angle-side","the SAS criterion","by SAS","SAS criterion","side angle side","SAS postulate"],["ASA congruence","ASA","angle-side-angle","the ASA criterion","by ASA","ASA criterion","angle side angle","ASA postulate"],["AAS congruence","AAS","angle-angle-side","the AAS criterion","by AAS","AAS criterion","angle angle side","AAS postulate"]]}
@@ -739,10 +745,10 @@ topics:
             solution_sketch: '1. $\angle A \cong \angle D$ and $\angle B \cong \angle E$ (given). 2. $m\angle C = 180^\circ - m\angle A - m\angle B$ and $m\angle F = 180^\circ - m\angle D - m\angle E$ (triangle angle sum theorem). 3. $\angle C \cong \angle F$ (substitution: the same measures are subtracted from $180^\circ$). 4. $\overline{BC} \cong \overline{EF}$ (given). 5. $\overline{BC}$ lies between $\angle B$ and $\angle C$, and $\overline{EF}$ lies between $\angle E$ and $\angle F$ (definition of an included side). 6. $\triangle ABC \cong \triangle DEF$ (ASA, from steps 1, 3, 4 and 5; this is the AAS criterion).'
         constraints: "third-angle theorem reasoning; angle pairs summing under 180; one theorem name and one criterion name; one written proof last"
     diagnostic_exemplar:
-      problem: 'In $\triangle ABC$ and $\triangle DEF$: $\angle A \cong \angle D$, $\angle B \cong \angle E$, and $\overline{BC} \cong \overline{EF}$. State the congruence criterion, and explain why the triangles are congruent even though the congruent sides are not between the marked angles.'
-      answer: 'AAS; the third angles are congruent too (each is 180° minus the other two), so the given side becomes an included side and ASA applies'
-      answer_contract: {kind: none}
-      solution_sketch: 'Third-angle theorem: $\angle C \cong \angle F$, and $\overline{BC}$ lies between $\angle B$ and $\angle C$.'
+      problem: 'In $\triangle ABC$ and $\triangle DEF$, $\angle A\cong\angle D$, $\angle B\cong\angle E$, and $\overline{AB}\cong\overline{DE}$. Here $AB=3x-4$, $DE=x+10$, and $AC=2x$. Find $DF$.'
+      answer_contract: {"kind":"exact"}
+      answer: '14'
+      solution_sketch: 'Two angles and the included side match, so ASA gives $\triangle ABC\cong\triangle DEF$. Then $3x-4=x+10$ gives $x=7$ and $DF=AC=14$.'
     anki_seeds:
       - front: "ASA vs AAS: in ASA the congruent side is ... the two angles"
         back: "included between"
@@ -807,6 +813,7 @@ topics:
       - id: kp2
         name: Identify the hypotenuse
         key_prerequisites: [pythagorean-theorem]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"6","y":"0","label":null},{"x":"0","y":"5","label":null}],"right_angles":[0],"angle_marks":[]},"caption":"A right triangle with the right angle marked at the lower left corner"}]
         exemplars:
           - problem: 'In right triangle $ABC$ the right angle is at $B$. Which side is the hypotenuse?'
             answer_contract: {"kind":"label","options":[["AC","side AC","segment AC","the side AC","CA","side CA"],["AB","side AB","segment AB","the side AB","BA","side BA"],["BC","side BC","segment BC","the side BC","CB","side CB"]]}
@@ -871,10 +878,10 @@ topics:
             solution_sketch: 'The side $AC$ lies opposite the right angle at $B$ and the side $EF$ lies opposite the right angle at $D$, so they are the matching hypotenuses. Then $3x + 5 = 5x - 9$ gives $x = 7$, and $AC = 3 \cdot 7 + 5 = 26$ cm.'
         constraints: "corresponding parts equal; linear expressions with integer solutions; some items need a second step (a leg from the Pythagorean theorem, an acute angle, a perimeter) or a correspondence that does not follow the letter order"
     diagnostic_exemplar:
-      problem: 'In right triangles $\triangle ABC$ (right angle at $C$) and $\triangle DEF$ (right angle at $F$), $\overline{AB} \cong \overline{DE}$ and $\overline{BC} \cong \overline{EF}$, with $AB = 5x - 3$ and $DE = 3x + 11$. Name the congruence criterion and find $AB$.'
-      answer: 'HL; AB = 32'
-      answer_contract: {kind: none}
-      solution_sketch: '$\overline{AB}$ and $\overline{DE}$ are the hypotenuses (opposite the right angles) and $\overline{BC}$, $\overline{EF}$ are corresponding legs, so HL applies; $5x - 3 = 3x + 11$ gives $x = 7$ and $AB = 32$.'
+      problem: 'Right triangles $\triangle ABC$ (right angle at $C$) and $\triangle DEF$ (right angle at $F$) have $AB=13$, $DE=13$, $BC=5$, and $EF=5$. Find $DF$.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'The hypotenuses and one pair of legs match, so HL gives $\triangle ABC\cong\triangle DEF$. Then $DF=AC=\sqrt{13^2-5^2}=12$.'
     anki_seeds:
       - front: "HL congruence applies only to ... triangles"
         back: "right"
@@ -970,6 +977,7 @@ topics:
       - id: kp3
         name: Write the congruence statement with correct correspondence
         key_prerequisites: [sss-sas-congruence, asa-aas-congruence]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"10","y_min":"0","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"1","label":"G"},{"x":"5","y":"1","label":"H"},{"x":"1","y":"4","label":"J"},{"x":"9","y":"2","label":"K"},{"x":"9","y":"6","label":"L"},{"x":"6","y":"2","label":"M"}],"segments":[{"from":{"x":"1","y":"1","label":null},"to":{"x":"5","y":"1","label":null}},{"from":{"x":"5","y":"1","label":null},"to":{"x":"1","y":"4","label":null}},{"from":{"x":"1","y":"4","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"9","y":"2","label":null},"to":{"x":"9","y":"6","label":null}},{"from":{"x":"9","y":"6","label":null},"to":{"x":"6","y":"2","label":null}},{"from":{"x":"6","y":"2","label":null},"to":{"x":"9","y":"2","label":null}}],"caption":"Two triangles of the same size and shape, the second one turned a quarter turn"}]
         exemplars:
           - problem: '$\triangle PQR \cong \triangle STU$. In triangle $PQR$, $\angle P = 40^\circ$ and $\angle Q = 60^\circ$. How large is angle $U$?'
             answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
@@ -1001,10 +1009,10 @@ topics:
             solution_sketch: 'The beds are congruent, so bed $CDA$ has the same perimeter as bed $ABC$. The diagonal is $\sqrt{9^2 + 12^2} = 15$ m, so the perimeter is $9 + 12 + 15 = 36$ m.'
         constraints: "vertex order in the statement must respect the correspondence; items ask for a matching side or angle, a perimeter, or the correct statement; at most two label items"
     diagnostic_exemplar:
-      problem: 'In quadrilateral $PQRS$, $\overline{PQ} \cong \overline{RQ}$ and $\overline{PS} \cong \overline{RS}$, and diagonal $\overline{QS}$ is drawn. State the triangle congruence this gives and its criterion.'
-      answer: '$\triangle PQS \cong \triangle RQS$ by SSS'
-      answer_contract: {kind: none}
-      solution_sketch: 'The shared diagonal gives $\overline{QS} \cong \overline{QS}$ (reflexive), completing three side pairs; the vertex order follows the correspondence $P \leftrightarrow R$.'
+      problem: 'Triangle $ABC$ is congruent to triangle $PQR$, with $A\leftrightarrow P$, $B\leftrightarrow Q$, and $C\leftrightarrow R$. Here $m\angle A=35^\circ$ and $m\angle B=75^\circ$. Find $m\angle R$, in degrees.'
+      answer_contract: {"kind":"unit","quantity":"angle","unit":"\u00b0","allow_omitted":true}
+      answer: '70'
+      solution_sketch: 'Corresponding angles are congruent, so $\angle R\cong\angle C$. Then $m\angle C=180-35-75=70$.'
     anki_seeds:
       - front: "The five valid triangle congruence criteria are..."
         back: "SSS, SAS, ASA, AAS, HL (right triangles)"
@@ -1042,6 +1050,7 @@ topics:
           answer_contract: {"kind":"exact"}
           answer: '68'
           reveal: 'Equal sides have equal angles opposite them, so the two other angles are equal. They share $180 - 44 = 136$ degrees, so each one measures $136 \div 2 = 68$ degrees. Equal sides always bring equal opposite angles, and the angle sum then fixes their size.'
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"8","y":"0","label":null},{"x":"4","y":"5","label":null}],"right_angles":[],"angle_marks":[{"at":0,"label":"θ"},{"at":1,"label":"θ"}]},"caption":"An isosceles triangle with equal marks at the two base corners"}]
         exemplars:
           - problem: 'Isosceles triangle $ABC$ has $AB = AC$ and $m\angle A = 40^\circ$. Find $m\angle B$.'
             answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
@@ -1104,6 +1113,7 @@ topics:
       - id: kp3
         name: Converse of the base angles theorem
         key_prerequisites: [two-step-equations]
+        visuals: [{"kind":"geometry","figure":{"shape":"polygon","vertices":[{"x":"0","y":"0","label":null},{"x":"10","y":"0","label":null},{"x":"5","y":"4","label":null}],"right_angles":[],"angle_marks":[{"at":0,"label":"θ"},{"at":1,"label":"θ"}]},"caption":"A triangle with two equal marked corners at the ends of its longest side"}]
         exemplars:
           - problem: 'In triangle $ABC$ the angles at $B$ and $C$ are equal, $AB = (5x - 7)$ cm and $AC = (2x + 8)$ cm. How long is $AB$, in cm?'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
@@ -1164,6 +1174,7 @@ topics:
       - id: kp1
         name: Medians and midpoints
         key_prerequisites: [segment-angle-addition]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"10","y_min":"0","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"1","label":"K"},{"x":"9","y":"2","label":"L"},{"x":"4","y":"7","label":"W"},{"x":"5","y":"3/2","label":"N"}],"segments":[{"from":{"x":"1","y":"1","label":null},"to":{"x":"9","y":"2","label":null}},{"from":{"x":"9","y":"2","label":null},"to":{"x":"4","y":"7","label":null}},{"from":{"x":"4","y":"7","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"4","y":"7","label":null},"to":{"x":"5","y":"3/2","label":null}}],"caption":"A triangle with a segment from one corner to the midpoint of the opposite side"}]
         exemplars:
           - problem: 'The segment $\overline{BD}$ is a median of $\triangle ABC$, where $D$ lies on $\overline{AC}$ and $AC = 18$ cm. How long is $\overline{AD}$, in cm?'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
@@ -1197,6 +1208,7 @@ topics:
       - id: kp2
         name: The centroid divides each median 2:1
         key_prerequisites: [ratios-proportions]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"12","y_min":"0","y_max":"12","x_tick":"1","y_tick":"1","points":[{"x":"0","y":"0","label":"K"},{"x":"12","y":"0","label":"L"},{"x":"6","y":"12","label":"W"},{"x":"6","y":"4","label":"Z"}],"segments":[{"from":{"x":"0","y":"0","label":null},"to":{"x":"12","y":"0","label":null}},{"from":{"x":"12","y":"0","label":null},"to":{"x":"6","y":"12","label":null}},{"from":{"x":"6","y":"12","label":null},"to":{"x":"0","y":"0","label":null}},{"from":{"x":"0","y":"0","label":null},"to":{"x":"9","y":"6","label":null}},{"from":{"x":"12","y":"0","label":null},"to":{"x":"3","y":"6","label":null}},{"from":{"x":"6","y":"12","label":null},"to":{"x":"6","y":"0","label":null}}],"caption":"A triangle with its three medians meeting at one point"}]
         exemplars:
           - problem: 'The medians of triangle $ABC$ meet at the centroid $G$. The median $\overline{AM}$ is $18$ cm long. How long is $\overline{AG}$, in cm?'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
@@ -1298,6 +1310,7 @@ topics:
       - id: kp1
         name: Circumcenter equidistant from the vertices
         key_prerequisites: [perpendicular-bisectors]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"11","y_min":"0","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"0","y":"0","label":"K"},{"x":"10","y":"0","label":"L"},{"x":"3","y":"7","label":"W"},{"x":"5","y":"2","label":"Z"}],"segments":[{"from":{"x":"0","y":"0","label":null},"to":{"x":"10","y":"0","label":null}},{"from":{"x":"10","y":"0","label":null},"to":{"x":"3","y":"7","label":null}},{"from":{"x":"3","y":"7","label":null},"to":{"x":"0","y":"0","label":null}},{"from":{"x":"5","y":"0","label":null},"to":{"x":"5","y":"2","label":null}},{"from":{"x":"1.5","y":"3.5","label":null},"to":{"x":"5","y":"2","label":null}},{"from":{"x":"6.5","y":"3.5","label":null},"to":{"x":"5","y":"2","label":null}}],"caption":"A triangle with the perpendicular bisectors of its three sides meeting at one point"}]
         exemplars:
           - problem: 'The perpendicular bisectors of the three sides of triangle $ABC$ meet at the point $P$. $PA = 13$ cm. How far is $P$ from $C$, in cm?'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
@@ -1327,6 +1340,7 @@ topics:
       - id: kp2
         name: Incenter equidistant from the sides
         key_prerequisites: [angle-bisectors]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"5","y_min":"0","y_max":"4","x_tick":"1","y_tick":"1","points":[{"x":"0","y":"0","label":"K"},{"x":"4","y":"0","label":"L"},{"x":"0","y":"3","label":"W"},{"x":"1","y":"1","label":"Z"}],"segments":[{"from":{"x":"0","y":"0","label":null},"to":{"x":"4","y":"0","label":null}},{"from":{"x":"4","y":"0","label":null},"to":{"x":"0","y":"3","label":null}},{"from":{"x":"0","y":"3","label":null},"to":{"x":"0","y":"0","label":null}},{"from":{"x":"0","y":"0","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"4","y":"0","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"0","y":"3","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"1","y":"1","label":null},"to":{"x":"1","y":"0","label":null}},{"from":{"x":"1","y":"1","label":null},"to":{"x":"0","y":"1","label":null}},{"from":{"x":"1","y":"1","label":null},"to":{"x":"1.6","y":"1.8","label":null}}],"caption":"A triangle with its three angle bisectors meeting at one point inside, and a perpendicular segment from that point to each side"}]
         exemplars:
           - problem: 'The angle bisectors of triangle $ABC$ meet at the point $I$. The perpendicular distance from $I$ to side $\overline{AB}$ is $4$ cm. What is the distance from $I$ to side $\overline{BC}$, in cm?'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
@@ -1423,6 +1437,7 @@ topics:
       - id: kp1
         name: Prove triangles congruent using shared parts
         key_prerequisites: [triangle-congruence-criteria]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"10","y_min":"0","y_max":"6","x_tick":"1","y_tick":"1","points":[{"x":"1","y":"1","label":"K"},{"x":"7","y":"1","label":"L"},{"x":"9","y":"5","label":"W"},{"x":"3","y":"5","label":"N"}],"segments":[{"from":{"x":"1","y":"1","label":null},"to":{"x":"7","y":"1","label":null}},{"from":{"x":"7","y":"1","label":null},"to":{"x":"9","y":"5","label":null}},{"from":{"x":"9","y":"5","label":null},"to":{"x":"3","y":"5","label":null}},{"from":{"x":"3","y":"5","label":null},"to":{"x":"1","y":"1","label":null}},{"from":{"x":"1","y":"1","label":null},"to":{"x":"9","y":"5","label":null}}],"caption":"A four-sided figure with one diagonal that splits it into two triangles"}]
         exemplars:
           - problem: 'In quadrilateral $ABCD$ the sides $AB$ and $AD$ are equal, the sides $CB$ and $CD$ are equal, and the diagonal $\overline{AC}$ is drawn. Which criterion proves $\triangle ABC \cong \triangle ADC$?'
             answer_contract: {"kind":"label","options":[["SSS","side-side-side","side side side","SSS congruence"],["SAS","side-angle-side","side angle side","SAS congruence"],["ASA","angle-side-angle","angle side angle","ASA congruence"],["AAS","angle-angle-side","angle angle side","AAS congruence"]]}
@@ -1493,6 +1508,7 @@ topics:
       - id: kp3
         name: Two-stage proofs through an auxiliary congruence
         key_prerequisites: [triangle-congruence-criteria, isosceles-equilateral-triangles]
+        visuals: [{"kind":"coordinate","x_min":"0","x_max":"10","y_min":"0","y_max":"8","x_tick":"1","y_tick":"1","points":[{"x":"2","y":"1","label":"K"},{"x":"8","y":"1","label":"L"},{"x":"5","y":"7","label":"W"},{"x":"5","y":"1","label":"N"}],"segments":[{"from":{"x":"2","y":"1","label":null},"to":{"x":"8","y":"1","label":null}},{"from":{"x":"8","y":"1","label":null},"to":{"x":"5","y":"7","label":null}},{"from":{"x":"5","y":"7","label":null},"to":{"x":"2","y":"1","label":null}},{"from":{"x":"5","y":"7","label":null},"to":{"x":"5","y":"1","label":null}}],"caption":"An isosceles triangle with a segment from the top corner straight down to the base"}]
         exemplars:
           - problem: 'In triangle $ABC$, $AB = AC$, and the segment $\overline{AD}$ bisects $\angle BAC$, with $D$ on $\overline{BC}$. Which criterion proves $\triangle ABD \cong \triangle ACD$?'
             answer_contract: {"kind":"label","options":[["SSS","side-side-side","side side side","SSS congruence"],["SAS","side-angle-side","side angle side","SAS congruence"],["ASA","angle-side-angle","angle side angle","ASA congruence"],["AAS","angle-angle-side","angle angle side","AAS congruence"],["HL","hypotenuse-leg","hypotenuse leg","HL congruence"]]}

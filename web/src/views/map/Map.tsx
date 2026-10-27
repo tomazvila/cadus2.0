@@ -58,6 +58,10 @@ export interface CurriculumMapProps {
   onUnauthorized: () => void;
   /** Leave the map. */
   onExit: () => void;
+  /** Open the lesson text of a topic. The map comes back with that topic picked. */
+  onRead: (id: string) => void;
+  /** The topic picked on the first paint. The map gives it back after a read. */
+  initialPicked?: string | null;
   /** The words on the leave button. Name where it goes: the dashboard, or the lesson. */
   backLabel?: string;
 }
@@ -94,13 +98,15 @@ const NO_NODES: GraphNode[] = [];
 const NO_EDGES: GraphEdge[] = [];
 
 export function CurriculumMap({
-  api, demo, onUnauthorized, onExit, backLabel = 'Back to dashboard',
+  api, demo, onUnauthorized, onExit, onRead, initialPicked = null, backLabel = 'Back to dashboard',
 }: CurriculumMapProps) {
   const call = useCall({ demo, onUnauthorized });
   const [data, setData] = useState<GraphResponse | null>(null);
   const [listMode, setListMode] = useState(readListMode);
   const [query, setQuery] = useState('');
-  const [picked, setPicked] = useState<string | null>(null);
+  const [picked, setPicked] = useState<string | null>(initialPicked);
+  // The first payload keeps the topic the learner came back with. Later payloads clear it.
+  const keepPickRef = useRef<string | null>(initialPicked);
   // Bumped by a retry. It rides in the canvas key, so a retry REMOUNTS the island and the
   // renderer memo is entered again.
   const [attempt, setAttempt] = useState(0);
@@ -129,7 +135,8 @@ export function CurriculumMap({
         if (scopeRef.current !== next) return;
         setData(payload);
         setRevision((n) => n + 1);
-        setPicked(null);
+        setPicked(keepPickRef.current);
+        keepPickRef.current = null;
       },
     );
   });
@@ -339,6 +346,9 @@ export function CurriculumMap({
             <p className="mono">{abilityLine(selected)}</p>
             <Neighbors title="Learn first" ids={before} nodes={nodes} onPick={pick} />
             <Neighbors title="Opens next" ids={after} nodes={nodes} onPick={pick} />
+            <button type="button" className="btn btn-ghost" onClick={() => { onRead(selected.id); }}>
+              Read the lesson text
+            </button>
             {selected.status === 'learning' ? (
               <ReviewSoon key={`review-${selected.id}`} api={api} call={call} topic={selected.id} />
             ) : null}

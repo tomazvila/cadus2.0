@@ -129,10 +129,10 @@ topics:
             solution_sketch: 'The rate is proportional to $\sqrt{p}$, so it has the form $k\sqrt{p}$ up to a sign. The population grows, so the rate is positive and the equation is $\frac{dp}{dt} = k\sqrt{p}$.'
         constraints: "proportionality statements with k > 0; always ask for the sign that matches the described behavior"
     diagnostic_exemplar:
-      problem: 'A quantity $y$ decreases at a rate proportional to the square of $y$. Write the differential equation, and state its order and whether it is linear.'
-      answer: '$y'' = -ky^2$; order $1$; nonlinear (the unknown appears squared).'
-      answer_contract: {kind: none}
-      solution_sketch: '"Rate of change" is $y''$, "proportional to $y^2$" gives $ky^2$, and "decreases" makes it negative. The highest derivative is the first, and $y^2$ is a nonlinear function of the unknown.'
+      problem: 'Find the order of $x\,y^{(4)} + (y'')^3 = e^x$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The order is the order of the highest derivative of $y$. The highest derivative is $y^{(4)}$, and the power on $y''$ does not change the order.'
     anki_seeds:
       - front: "The order of a differential equation is..."
         back: "the order of the highest derivative that appears."
@@ -279,10 +279,10 @@ topics:
             solution_sketch: 'Doubling in $10$ hours gives $2P_0 = P_0 e^{10k}$, so $e^{10k} = 2$. Then $k = \ln 2 / 10 \approx 0.069$ per hour.'
         constraints: "one unknown constant or exponent parameter; the resulting algebraic equation is linear or a factorable quadratic"
     diagnostic_exemplar:
-      problem: 'Show that $y^2 = x^2 + C$ defines a solution of $y\,y'' = x$, and find the value of $C$ for which the solution passes through $(1, 3)$.'
-      answer: 'Differentiating implicitly gives $2y\,y'' = 2x$, i.e. $y\,y'' = x$; and $y(1) = 3$ forces $9 = 1 + C$, so $C = 8$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Implicit differentiation verifies the family; substituting the point fits the constant.'
+      problem: 'Find the positive constant $a$ for which $y=e^{ax}$ satisfies $y''''+y''-12y=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Substitute $y=e^{ax}$ to get $a^2+a-12=0$. The roots are $3$ and $-4$, and the positive root is $3$.'
     anki_seeds:
       - front: "To verify that y = f(x) solves an ODE, you..."
         back: "compute the needed derivatives, substitute, and check the equation reduces to an identity."
@@ -585,10 +585,10 @@ topics:
             solution_sketch: 'The slope $x$ does not depend on $y$. On the line $x = 2$ every mark has slope $2$.'
         constraints: "qualitative questions: monotonicity from sign of f, symmetry of the field, identifying whether slopes depend on x, y, or both"
     diagnostic_exemplar:
-      problem: 'For $y'' = x^2 + 1$, say where the slope marks are horizontal, along which lines they are constant, and give the family of solution curves.'
-      answer: 'Nowhere horizontal: $x^2 + 1 \ge 1 > 0$, so every solution is strictly increasing. The slope depends only on $x$, so the marks are constant along vertical lines. The solutions are $y = \frac{x^3}{3} + x + C$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Horizontal marks would need $x^2 + 1 = 0$, which has no real solution; constancy along vertical lines follows from the absence of $y$; integrating gives the family.'
+      problem: 'The solution curves of $y''=xy-4$ have a slope at each point. Find the slope of the curve that passes through $(2,3)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The slope at $(x,y)$ is $xy-4$. At $(2,3)$ it is $6-4=2$.'
     anki_seeds:
       - front: "The slope field of y' = f(x, y) assigns to each point (x, y)..."
         back: "a short mark of slope f(x, y); solution curves follow the marks."
@@ -741,10 +741,10 @@ topics:
             solution_sketch: 'The equilibria are $0$, $20$ and $80$. Since $30$ lies in $(20, 80)$ where the slope is positive, the population grows toward the stable equilibrium $80$.'
         constraints: 'initial value sits strictly between or beyond the equilibria; the answer is the equilibrium that the flow carries it to, or unbounded growth'
     diagnostic_exemplar:
-      problem: "For $y' = y(y - 3)$: find all equilibria, classify their stability, and find $\\lim_{t \\to \\infty} y(t)$ for the solution with $y(0) = 1$."
-      answer: "$y = 0$ stable, $y = 3$ unstable; the solution with $y(0) = 1$ tends to $0$."
-      answer_contract: {kind: none}
-      solution_sketch: "$f > 0$ for $y < 0$, $f < 0$ on $(0,3)$, $f > 0$ for $y > 3$; from $y(0) = 1$ the solution decreases to $0$."
+      problem: 'How many equilibrium solutions does $y''=y^3-9y$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Solve $y^3-9y=0$, which gives $y(y-3)(y+3)=0$. The equilibria are $y=0$, $y=3$ and $y=-3$.'
     anki_seeds:
       - front: "Equilibrium solutions of the autonomous equation y' = f(y) are..."
         back: "the constant solutions y = c where f(c) = 0."
@@ -1041,10 +1041,10 @@ topics:
             solution_sketch: 'The solution is $D = 80e^{-0.1t}$. Setting $80e^{-0.1t} = 10$ gives $e^{-0.1t} = \frac{1}{8}$, so $t = \frac{\ln 8}{0.1} \approx 20.8$ hours.'
         constraints: 'integrations produce logarithms; the solution requires exponentiating and renaming e^C as a constant; the initial value fixes it'
     diagnostic_exemplar:
-      problem: "Find the general solution of $y' = -2xy$."
-      answer: "$y = Ce^{-x^2}$"
-      answer_contract: {kind: none}
-      solution_sketch: '$\frac{dy}{y} = -2x\,dx$ gives $\ln|y| = -x^2 + C$; exponentiate and rename the constant.'
+      problem: 'Solve $y\,y''=3x$ with $y(0)=2$ and $y>0$. Find $y(2)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Separate: $y\,dy=3x\,dx$, so $y^2=3x^2+C$. Then $y(0)=2$ gives $C=4$, so $y(2)^2=12+4=16$ and $y(2)=4$.'
     anki_seeds:
       - front: "A first-order ODE is separable when it can be written as..."
         back: "dy/dx = g(x)h(y): all y-dependence on one side, all x-dependence on the other."
@@ -1192,10 +1192,10 @@ topics:
             solution_sketch: 'Separating gives $-\frac{1}{y} = x + C$, and $y(0) = 1$ gives $C = -1$, so $y = \frac{1}{1 - x}$. The formula is not defined at $x = 1$, so the answer is no.'
         constraints: 'constant solutions are integer zeros of h(y); intervals of validity are bounded by blow-up points or by where the branch formula degenerates; contexts ask for a blow-up time or an emptying time'
     diagnostic_exemplar:
-      problem: 'Solve $y'' = -\dfrac{x}{y}$ with $y(0) = -3$, and state the interval of validity.'
-      answer: '$y = -\sqrt{9 - x^2}$ on $(-3, 3)$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Separating gives $y\,dy = -x\,dx$, so $y^2 = 9 - x^2$. The initial value $y(0) = -3$ selects the negative branch, and the square root is real (and $y \neq 0$) only for $|x| < 3$.'
+      problem: 'Solve $y''=xy^2$ with $y(0)=1$. Find $y(1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Separate: $\frac{dy}{y^2}=x\,dx$, so $-\frac1y=\frac{x^2}{2}+C$. Then $y(0)=1$ gives $C=-1$, so $y=\frac{2}{2-x^2}$ and $y(1)=2$.'
     anki_seeds:
       - front: "When you divide a separable equation by h(y), you may lose..."
         back: "the constant solutions y = c where h(c) = 0 — check for them separately."
@@ -1350,10 +1350,10 @@ topics:
             solution_sketch: 'The right side is multiplied like every other term, so $e^{2x}\cdot e^x = e^{3x}$. The left side becomes $(e^{2x}y)''$.'
         constraints: "one product-rule expansion; the point is mu' = P mu"
     diagnostic_exemplar:
-      problem: 'Write $xy'' + 3y = x^2$ ($x > 0$) in standard form, find its integrating factor $\mu$, and show that multiplying by $\mu$ turns the left side into $(\mu y)''$.'
-      answer: 'Standard form $y'' + \dfrac{3}{x}y = x$, so $\mu = e^{\int 3/x\,dx} = x^3$; and $x^3\left(y'' + \frac{3}{x}y\right) = x^3 y'' + 3x^2 y = (x^3 y)''$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Divide by $x$ to reach standard form, integrate $P = 3/x$, then check the product rule.'
+      problem: 'The linear equation $y''+\frac{3}{x}y=x^2$ has $x>0$. Its integrating factor $\mu(x)$ uses integration constant $0$. Find $\mu(2)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The integrating factor is $\mu=e^{\int 3/x\,dx}=x^3$. So $\mu(2)=2^3=8$.'
     anki_seeds:
       - front: "Integrating factor for y' + P(x)y = Q(x)?"
         back: '$\mu(x) = e^{\int P(x)\,dx}$'
@@ -1643,10 +1643,10 @@ topics:
             solution_sketch: 'Put $u = m^{1/3}$, so $u'' + \frac13 u = 1$ and $u = 3 + Ce^{-t/3}$. The condition $u(0) = 1$ gives $C = -2$, so $m = (3 - 2e^{-t/3})^3$.'
         constraints: "initial data keeps v positive near x0; state the solution explicitly"
     diagnostic_exemplar:
-      problem: 'Solve $y'' + y = y^2$ with $y(0) = 3$.'
-      answer: '$y = \dfrac{3}{3 - 2e^{x}}$'
-      answer_contract: {kind: none}
-      solution_sketch: 'With $n = 2$, put $v = y^{-1}$: dividing by $y^2$ gives $-v'' + v = 1$, i.e. $v'' - v = -1$, whose solution is $v = 1 + Ce^{x}$. Then $y = \frac{1}{1 + Ce^x}$, and $y(0) = 3$ gives $C = -\frac{2}{3}$, i.e. $y = \frac{3}{3 - 2e^x}$.'
+      problem: 'The Bernoulli equation $y''+2y=xy^3$ becomes the linear equation $v''+pv=q$ under $v=y^{-2}$. Find $p$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-4'
+      solution_sketch: 'With $v=y^{-2}$ we get $v''=-2y^{-3}y''$. Dividing the equation by $y^3$ gives $-\frac{v''}{2}+2v=x$, so $v''-4v=-2x$ and $p=-4$.'
     anki_seeds:
       - front: "A Bernoulli equation has the form..."
         back: "$y' + P(x)y = Q(x)y^n$ with $n \\neq 0, 1$."
@@ -1944,10 +1944,10 @@ topics:
             solution_sketch: 'Integrating $2xy + 4$ in $x$ gives $U = x^2y + 4x + g(y)$. Matching the $y$ slope gives $g(y) = y^3 + K$, and $U(0, 0) = 1$ gives $K = 1$. Then $U(2, 1) = 4 + 8 + 1 + 1 = 14$.'
         constraints: "leave answers implicit; the constant is fixed by evaluating F at the initial point"
     diagnostic_exemplar:
-      problem: 'Solve $(2xy - 3x^2)\,dx + (x^2 + 2y)\,dy = 0$ with $y(1) = 2$.'
-      answer: '$x^2 y - x^3 + y^2 = 5$'
-      answer_contract: {kind: none}
-      solution_sketch: '$M_y = 2x = N_x$, so the equation is exact; $F = x^2y - x^3 + y^2$ satisfies $F_x = M$ and $F_y = N$. Then $F(1,2) = 2 - 1 + 4 = 5$.'
+      problem: 'Find the constant $k$ for which $(kxy+y^2)\,dx+(3x^2+2xy)\,dy=0$ is exact.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'Exactness needs $M_y=N_x$. Here $M_y=kx+2y$ and $N_x=6x+2y$, so $k=6$.'
     anki_seeds:
       - front: "Exactness test for M dx + N dy = 0?"
         back: '$\partial M/\partial y = \partial N/\partial x$ (on a rectangle).'
@@ -2111,10 +2111,10 @@ topics:
             solution_sketch: 'The new equation is $ye^x\,dx + e^x\,dy = 0$. Here $M_y = e^x = N_x$, so it is exact. Integrating $ye^x$ in $x$ gives $F = ye^x$, and $F_y = e^x$ matches.'
         constraints: "after multiplying by mu the equation must pass the exactness test; reconstruct F as in exact equations"
     diagnostic_exemplar:
-      problem: "Solve $y\\,dx + 3x\\,dy = 0$ by finding an integrating factor."
-      answer: "$xy^3 = C$"
-      answer_contract: {kind: none}
-      solution_sketch: "$\\mu = y^2$ makes the equation $y^3\\,dx + 3xy^2\\,dy = d(xy^3) = 0$."
+      problem: 'The equation $3y\,dx+x\,dy=0$ has an integrating factor $\mu=x^k$ that makes it exact. Find $k$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'After multiplying, $M=3x^ky$ and $N=x^{k+1}$. Exactness needs $M_y=N_x$, so $3x^k=(k+1)x^k$ and $k=2$.'
     anki_seeds:
       - front: "When does M dx + N dy = 0 admit an integrating factor mu(x)?"
         back: 'When $(M_y - N_x)/N$ is a function of $x$ alone; then $\mu = e^{\int (M_y - N_x)/N\,dx}$.'
@@ -2275,10 +2275,10 @@ topics:
             solution_sketch: 'The growth factor is $16 = 2^4$, so four doublings happen in $2$ hours. One doubling takes $\frac{2}{4} = 0.5$ hours.'
         constraints: "data ratios are powers of 2 so k and the half-life come out as clean multiples of ln 2"
     diagnostic_exemplar:
-      problem: 'A population satisfies $P'' = kP$ with $P(2) = 500$ and $P(6) = 8000$. Find $k$ and $P(0)$ exactly.'
-      answer: '$k = \ln 2$; $P(0) = 125$.'
-      answer_contract: {kind: none}
-      solution_sketch: '$\frac{P(6)}{P(2)} = e^{4k} = 16$, so $k = \frac{\ln 16}{4} = \ln 2$. Then $P(0) = P(2)e^{-2k} = \frac{500}{4} = 125$.'
+      problem: 'A population of $300$ obeys $y''=ky$ and doubles every $4$ hours. Find the population after $12$ hours.'
+      answer_contract: {"kind":"exact"}
+      answer: '2400'
+      solution_sketch: 'In $12$ hours there are $3$ doublings. So the population is $300\cdot 2^3=2400$.'
     anki_seeds:
       - front: "Solution of the natural growth equation P' = kP?"
         back: "$P(t) = P_0 e^{kt}$"
@@ -2435,10 +2435,10 @@ topics:
             solution_sketch: 'It is the difference above the room that halves, not the temperature. The difference is $80$ at the start and must fall to $50 - 20 = 30$. So $\left(\frac{1}{2}\right)^{t/5} = \frac{3}{8}$, which gives $t = 5\frac{\ln(8/3)}{\ln 2}$. This is about $7.1$ minutes.'
         constraints: "target gaps are the initial gap divided by a power of 2, so times are integer multiples of the halving time"
     diagnostic_exemplar:
-      problem: "A body in a $20^{\\circ}$C room cools from $100^{\\circ}$C to $60^{\\circ}$C in $10$ minutes. When does it reach $25^{\\circ}$C?"
-      answer: "$40$ minutes"
-      answer_contract: {kind: none}
-      solution_sketch: "The gap halves every $10$ minutes: $80 \\to 40 \\to 20 \\to 10 \\to 5$ takes four halvings."
+      problem: 'A body at $90$ degrees Celsius is in a room at $20$ degrees Celsius. Its temperature obeys $T''=-k(T-20)$ and is $55$ degrees after $10$ minutes. Find $T$ after $20$ minutes, in degrees Celsius.'
+      answer_contract: {"kind":"exact"}
+      answer: '37.5'
+      solution_sketch: 'The gap $T-20$ is $70$ at the start and $35$ at $10$ minutes, so it halves each $10$ minutes. At $20$ minutes the gap is $17.5$, so $T=37.5$.'
     anki_seeds:
       - front: "Newton's law of cooling as an ODE (ambient temperature A)?"
         back: "$T' = -k(T - A)$ with $k > 0$."
@@ -2583,10 +2583,10 @@ topics:
             solution_sketch: 'Salt enters at $0.5 \cdot 6 = 3$ g/min and leaves at $\frac{6x}{120} = \frac{x}{20}$ g/min, so the long-run amount is $20 \cdot 3 = 60$ g. The solution is $x = 60\left(1 - e^{-t/20}\right)$, and $x = 30$ gives $e^{-t/20} = \frac{1}{2}$. So $t = 20 \ln 2 \approx 13.9$ minutes.'
         constraints: 'long-run amount = inflow concentration x volume; timing answers are logarithms (ln 2, ln 4, ln 16 times a time constant) rounded to one decimal place'
     diagnostic_exemplar:
-      problem: 'A $40$ L tank starts with pure water. Brine containing $3$ g/L flows in at $4$ L/min and the well-mixed solution leaves at $4$ L/min. Find the amount of salt $A(t)$ in the tank, and the time at which it reaches $60$ g.'
-      answer: '$A(t) = 120\left(1 - e^{-t/10}\right)$; it reaches $60$ g at $t = 10\ln 2$ minutes.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Balance: $A'' = 3 \cdot 4 - \frac{A}{40}\cdot 4 = 12 - \frac{A}{10}$ with $A(0) = 0$, whose solution is $A = 120(1 - e^{-t/10})$. Setting $A = 60$ gives $e^{-t/10} = \frac{1}{2}$.'
+      problem: 'A tank holds $100$ L of pure water. Brine with $0.4$ kg of salt per liter enters at $5$ L/min. The well-mixed solution leaves at $5$ L/min. Find the limiting amount of salt in the tank, in kg.'
+      answer_contract: {"kind":"exact"}
+      answer: '40'
+      solution_sketch: 'The volume stays $100$ L. Over a long time the concentration reaches $0.4$ kg/L, so the salt is $0.4\cdot100=40$ kg.'
     anki_seeds:
       - front: "In a constant-volume mixing tank, the rate of salt leaving is..."
         back: "(outflow rate) x A/V: the outflow carries the current concentration."
@@ -2725,10 +2725,10 @@ topics:
             solution_sketch: 'At $t = 0$ the exponential is $e^0 = 1$, so the denominator is $1 + 19 = 20$. Then $P(0) = \frac{3000}{20} = 150$.'
         constraints: 'P0 and K read off directly; half-capacity time is a clean logarithm ln C; verdicts name the long-run behavior in words'
     diagnostic_exemplar:
-      problem: 'Solve $P'' = 2P\left(1 - \dfrac{P}{600}\right)$ with $P(0) = 200$, and state the carrying capacity.'
-      answer: '$P(t) = \dfrac{600}{1 + 2e^{-2t}}$; carrying capacity $600$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Here $r = 2$ and $K = 600$. Partial fractions give $P = \frac{K}{1 + Ae^{-rt}}$ with $A = \frac{K - P_0}{P_0} = \frac{400}{200} = 2$.'
+      problem: 'A population obeys $P''=0.2P\left(1-\frac{P}{500}\right)$ with $P(0)=50$. Find $\lim_{t\to\infty}P(t)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '500'
+      solution_sketch: 'The equilibria are $P=0$ and $P=500$. Since $P(0)=50$ is between them, $P''>0$ and $P$ rises to $500$.'
     anki_seeds:
       - front: "In the logistic equation P' = rP(1 - P/K), K is the..."
         back: "carrying capacity: the stable equilibrium every positive solution approaches."
@@ -2878,10 +2878,10 @@ topics:
             solution_sketch: 'The model is $P = P_0 e^{kt}$. Doubling in $3$ hours gives $k = \frac{\ln 2}{3}$. Reaching $10P_0$ needs $e^{kt} = 10$, so $t = \frac{3 \ln 10}{\ln 2} \approx 10.0$ hours.'
         constraints: 'first stage determines k from one measurement; second stage inverts for a time; answers are logarithms, either in terms of the measured time t or rounded numbers'
     diagnostic_exemplar:
-      problem: 'A fish population grows at relative rate $0.4$ per year but is harvested at a constant $200$ fish per year: $P'' = 0.4P - 200$. With $P(0) = 400$, when does the population die out?'
-      answer: '$t = \dfrac{5\ln 5}{2}$ years.'
-      answer_contract: {kind: none}
-      solution_sketch: 'The equilibrium is $P = 500$, and $P = 500 + (400 - 500)e^{0.4t} = 500 - 100e^{0.4t}$. This is zero when $e^{0.4t} = 5$, i.e. $t = \frac{\ln 5}{0.4} = \frac{5\ln 5}{2}$.'
+      problem: 'A falling body has speed $v$ with $v''=10-0.5v$ and $v(0)=0$. Find $\lim_{t\to\infty}v(t)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '20'
+      solution_sketch: 'The speed levels off where $v''=0$. Then $10-0.5v=0$, so $v=20$.'
     anki_seeds:
       - front: "Equilibrium of the harvested growth model P' = kP - h?"
         back: "P = h/k — and it is unstable: solutions diverge from it on both sides."
@@ -3030,10 +3030,10 @@ topics:
             solution_sketch: 'The integral of $2y\,dy$ is $y^2$, and the integral of $-x\,dx$ is $-\frac{x^2}{2}$, so $y^2 = -\frac{x^2}{2} + c$. Hence $y^2 = -\frac{x^2}{2} + c$, that is $x^2 + 2y^2 = C$. The point $(2, 3)$ gives $C = 4 + 18 = 22$, so $y = \sqrt{\frac{22 - x^2}{2}}$.'
         constraints: 'trajectory ODEs are separable with power/log integrals; the answer is y as a function of x on the branch through the given point'
     diagnostic_exemplar:
-      problem: "Find the orthogonal trajectories of the lines $y = Cx$."
-      answer: "The circles $x^2 + y^2 = C$."
-      answer_contract: {kind: none}
-      solution_sketch: "The lines satisfy $y' = y/x$; the trajectories solve $y' = -x/y$, which integrates to $x^2 + y^2 = C$."
+      problem: 'The curve $y=Cx^2$ of a family passes through $(1,2)$. Find the slope at $(1,2)$ of the orthogonal trajectory through that point.'
+      answer_contract: {"kind":"exact"}
+      answer: '-1/4'
+      solution_sketch: 'Here $C=2$ and $y''=2Cx=4$ at $x=1$. The orthogonal trajectory has the negative reciprocal slope, $-\frac14$.'
     anki_seeds:
       - front: "To find orthogonal trajectories of a family with ODE y' = f(x, y), solve..."
         back: "$y' = -1/f(x, y)$: perpendicular curves have negative-reciprocal slopes."

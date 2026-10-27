@@ -1405,8 +1405,8 @@ topics:
             solution_sketch: 'By the quotient rule, $f^{\prime}(x) = \frac{\frac{1}{x}e^x - \ln x\cdot e^x}{e^{2x}} = \frac{1/x - \ln x}{e^x}$. Multiplying the top and bottom by $x$ gives $\frac{1 - x\ln x}{x e^x}$.'
     diagnostic_exemplar:
       problem: 'Differentiate $f(x) = x \cdot 3^x$.'
-      answer: "3^x (1 + x ln 3)"
-      answer_contract: {kind: none}
+      answer_contract: {"kind":"function","vars":["x"]}
+      answer: '3^x (1 + x ln 3)'
       solution_sketch: 'Product rule with $\frac{d}{dx}3^x = 3^x\ln 3$: $3^x + x\,3^x\ln 3$, then factor out $3^x$.'
     anki_seeds:
       - front: "d/dx a^x = ?"
@@ -1562,10 +1562,10 @@ topics:
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Matching the values is not enough, because the slopes must also agree. The left slope at $x = 3$ is $2x = 6$, so $a = 6$.'
     diagnostic_exemplar:
-      problem: 'Find $a$ and $b$ so that $f(x) = x^2$ for $x \leq 3$ and $f(x) = ax + b$ for $x > 3$ is differentiable at $x = 3$.'
-      answer: "a = 6, b = -9"
-      answer_contract: {kind: none}
-      solution_sketch: 'Two conditions, slopes first: $2(3) = a$ gives $a = 6$, and then matching values, $3^2 = 6(3) + b$, gives $b = -9$.'
+      problem: 'Let $f(x) = x^2$ for $x \leq 3$ and $f(x) = mx + b$ for $x > 3$. Find $b$ so that $f$ is differentiable at $x = 3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-9'
+      solution_sketch: 'The slopes match: $m = 2\cdot 3 = 6$. The values match: $9 = 6\cdot 3 + b$, so $b = -9$.'
     anki_seeds:
       - front: "To make a piecewise function differentiable at its seam you need TWO equations:"
         back: "branch values equal (continuity) and branch derivatives equal (matching slopes)"
@@ -2161,10 +2161,10 @@ topics:
             solution_sketch: 'The outer function $e^u$ keeps its form and the inner derivative is $\frac{1}{1 + x^2}$. So $f''(x) = \frac{e^{\arctan x}}{1 + x^2}$.'
         constraints: 'products, quotients and compositions; evaluation points where 1 - x^2 or 1 + x^2 is a clean value; exact answers'
     diagnostic_exemplar:
-      problem: 'Differentiate $f(x) = x \arctan(2x)$.'
-      answer: "arctan(2x) + 2x/(1 + 4x^2)"
-      answer_contract: {kind: none}
-      solution_sketch: 'Product rule with $\frac{d}{dx}\arctan(2x) = \frac{2}{1 + (2x)^2}$: $\arctan(2x) + \frac{2x}{1 + 4x^2}$.'
+      problem: 'Differentiate $f(x) = \arctan(x^2)$.'
+      answer_contract: {"kind":"function","vars":["x"]}
+      answer: '2x/(1 + x^4)'
+      solution_sketch: 'Chain rule with $\frac{d}{du}\arctan u = \frac{1}{1+u^2}$ and $u = x^2$: $\frac{2x}{1 + x^4}$.'
     anki_seeds:
       - front: "d/dx arcsin x and d/dx arctan x = ?"
         back: "1/√(1 - x²) and 1/(1 + x²)"
@@ -2310,8 +2310,8 @@ topics:
         constraints: 'contrast constant-base, constant-exponent, and variable-variable cases; includes a growth-model context'
     diagnostic_exemplar:
       problem: 'Differentiate $y = x^{\ln x}$ for $x > 0$.'
-      answer: "x^(ln x) (2 ln x)/x"
-      answer_contract: {kind: none}
+      answer_contract: {"kind":"function","vars":["x"]}
+      answer: 'x^(ln x) * 2 ln x / x'
       solution_sketch: '$\ln y = (\ln x)^2$, so $y''/y = 2\ln x \cdot \frac{1}{x}$ and $y'' = x^{\ln x}\cdot\frac{2\ln x}{x}$.'
     anki_seeds:
       - front: "Logarithmic differentiation procedure:"

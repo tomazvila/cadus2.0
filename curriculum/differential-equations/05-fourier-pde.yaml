@@ -149,10 +149,10 @@ topics:
             solution_sketch: 'The periodic extension of $|x|$ is continuous at $x = \pi$, because the left limit $\pi$ equals the right limit $|-\pi| = \pi$. The series converges to $\pi$.'
         constraints: "piecewise-smooth f only; evaluation points are jumps or clean multiples of pi/2 where sin/cos values are exact"
     diagnostic_exemplar:
-      problem: 'Find the Fourier coefficients $b_n$ of $f(x) = x$ on $(-\pi, \pi)$, and state the value to which its Fourier series converges at $x = \pi$.'
-      answer: '$b_n = \dfrac{2(-1)^{n+1}}{n}$ (and every $a_n = 0$, since $f$ is odd); at $x = \pi$ the series converges to $0$.'
-      answer_contract: {kind: none}
-      solution_sketch: '$b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} x\sin nx\,dx = \frac{2}{\pi}\int_0^{\pi} x\sin nx\,dx$, which by parts is $\frac{2(-1)^{n+1}}{n}$. At $x = \pi$ the periodic extension jumps from $\pi$ to $-\pi$, and the series converges to the average $0$.'
+      problem: 'The function $f(x)=3\cos 2x+5\sin x$ on $(-\pi,\pi)$ equals its Fourier series $\frac{a_0}{2}+\sum_{n=1}^{\infty}(a_n\cos nx+b_n\sin nx)$. Find $b_1$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'The series is unique. The coefficient of $\sin x$ is $5$, so $b_1=5$.'
     anki_seeds:
       - front: 'Fourier coefficient formulas on $[-\pi, \pi]$?'
         back: '$a_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f\cos nx\,dx$, $b_n = \frac{1}{\pi}\int_{-\pi}^{\pi} f\sin nx\,dx$, with constant term $a_0/2$.'
@@ -336,10 +336,10 @@ topics:
             solution_sketch: 'By parts, $\int_0^1 x\cos 2\pi x\,dx = \frac{\cos 2\pi - 1}{4\pi^2}$. Since $\cos 2\pi = 1$, this is $0$, so $a_2 = 0$. Only odd $n$ give nonzero coefficients here.'
         constraints: "L in {1, pi}; f constant or linear; coefficients must come out as clean multiples of 1/n^2 or (± signs handled via (-1)^n, never a bare plus-minus in an answer)"
     diagnostic_exemplar:
-      problem: 'Expand $f(x) = x$ on $(0, \pi)$ in a half-range cosine series: give $a_0$ and $a_n$.'
-      answer: '$a_0 = \pi$ and $a_n = \dfrac{2\left((-1)^n - 1\right)}{\pi n^2}$ (so $-\frac{4}{\pi n^2}$ for odd $n$, and $0$ for even $n$).'
-      answer_contract: {kind: none}
-      solution_sketch: 'The cosine series uses the even extension, so $a_n = \frac{2}{\pi}\int_0^{\pi} x\cos nx\,dx$; integrating by parts gives $\frac{2((-1)^n - 1)}{\pi n^2}$, and $a_0 = \frac{2}{\pi}\int_0^{\pi} x\,dx = \pi$.'
+      problem: 'The half-range cosine series of $f(x)=x$ on $(0,2)$ is $\frac{a_0}{2}+\sum_{n=1}^{\infty}a_n\cos\frac{n\pi x}{2}$. Find $a_0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The formula is $a_0=\frac{2}{L}\int_0^L f\,dx$ with $L=2$. So $a_0=\int_0^2 x\,dx=2$.'
     anki_seeds:
       - front: "Odd function on (-L, L): its Fourier series contains..."
         back: "only sines (all $a_n = 0$); an even function gives only cosines."
@@ -496,10 +496,10 @@ topics:
             solution_sketch: 'The sine coefficient has the factor $\frac{2}{\pi}$ in front of the integral. So $b_1 = \frac{2}{\pi}\cdot 10 = \frac{20}{\pi}$.'
         constraints: "initial data constant or linear, whose sine coefficients were computed in fourier-sine-cosine-series; L in {1, pi}"
     diagnostic_exemplar:
-      problem: 'Solve $u_t = u_{xx}$ on $(0, \pi)$ with $u(0,t) = u(\pi,t) = 0$ and initial temperature $u(x,0) = 50$.'
-      answer: '$u(x,t) = \sum_{n \text{ odd}} \dfrac{200}{n\pi}\,e^{-n^2 t}\sin nx$'
-      answer_contract: {kind: none}
-      solution_sketch: 'Separation gives the product solutions $e^{-n^2 t}\sin nx$, so $u = \sum b_n e^{-n^2 t}\sin nx$ with $b_n = \frac{2}{\pi}\int_0^{\pi} 50\sin nx\,dx = \frac{100(1 - (-1)^n)}{n\pi}$, which is $\frac{200}{n\pi}$ for odd $n$ and $0$ for even $n$.'
+      problem: 'Separate $u=X(x)T(t)$ in $u_t=u_{xx}$ on $(0,\pi)$ with $u(0,t)=u(\pi,t)=0$. This gives $X''''=-\lambda X$ with $X(0)=X(\pi)=0$. Find the third smallest value of $\lambda$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The nonzero solutions are $X=\sin nx$ with $\lambda=n^2$. The third smallest value is $n=3$, so $\lambda=9$.'
     anki_seeds:
       - front: "Separation of variables for the heat equation: the ansatz and what it produces?"
         back: '$u = X(x)T(t)$ turns $u_t = ku_{xx}$ into the eigenvalue problem $X'''' + \lambda X = 0$ plus $T'' = -\lambda k T$.'

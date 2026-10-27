@@ -1177,10 +1177,10 @@ topics:
             solution_sketch: 'The numerator has degree $2$ and the denominator has degree $1$, so the quotient grows without bound. There is no horizontal asymptote, because the values do not settle at one number.'
         constraints: 'compare degrees (equal, or denominator higher); name the asymptote y = c or find a parameter; one verdict item; levelling-off contexts'
     diagnostic_exemplar:
-      problem: 'Evaluate $\lim_{x \to -\infty} \frac{2x^2 + 3}{x + 5}$.'
-      answer: '-∞'
-      answer_contract: {kind: none}
-      solution_sketch: 'The numerator degree exceeds the denominator degree by one, so the quotient behaves like $2x$; as $x \to -\infty$ this tends to $-\infty$.'
+      problem: 'Evaluate $\lim_{x \to \infty} \frac{3x^2 + 1}{5x^2 - x}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3/5'
+      solution_sketch: 'The degrees are equal. The limit is the ratio of leading coefficients, $3/5$.'
     anki_seeds:
       - front: "For a rational function with equal numerator and denominator degree, lim_{x→±∞} equals..."
         back: "the ratio of the leading coefficients"
@@ -1341,10 +1341,10 @@ topics:
             solution_sketch: 'Both polynomials have degree $2$, so the horizontal asymptote is the ratio of the leading coefficients, $\frac{a}{5}$. Setting $\frac{a}{5} = 2$ gives $a = 10$.'
         constraints: "rational functions; report every vertical and horizontal asymptote, or a two-sided infinite limit"
     diagnostic_exemplar:
-      problem: 'Find all vertical asymptotes, all holes, and the horizontal asymptote of $f(x) = \frac{x - 3}{x^2 - 9}$.'
-      answer: 'vertical asymptote x = -3; hole at x = 3; horizontal asymptote y = 0'
-      answer_contract: {kind: none}
-      solution_sketch: '$f(x) = \frac{x-3}{(x-3)(x+3)} = \frac{1}{x+3}$ for $x \neq 3$: the canceled factor leaves a hole at $x = 3$, the surviving zero gives the vertical asymptote $x = -3$, and the denominator degree exceeds the numerator degree, so $y = 0$.'
+      problem: 'How many real numbers $c$ make $\lim_{x \to c^+} \frac{x}{(x-2)(x+3)}$ equal to $\infty$ or $-\infty$?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The denominator is $0$ at $x = 2$ and $x = -3$. The numerator is not $0$ at either point, so the one-sided limit is infinite at exactly these $2$ values.'
     anki_seeds:
       - front: "f has a vertical asymptote at x = a when..."
         back: "f(x) → ∞ or -∞ as x → a from the left or the right"
@@ -2088,10 +2088,10 @@ topics:
             solution_sketch: 'The function is rational, so it breaks only where the denominator is zero. Solving $x^2 - 25 = 0$ gives $x = -5$ and $x = 5$.'
         constraints: "polynomials, rational functions, and square roots; answer with the set where continuity holds or the points where it fails; at least two contexts"
     diagnostic_exemplar:
-      problem: 'Let $f(x) = \frac{x^2 - 9}{x - 3}$ for $x \neq 3$ and $f(3) = 5$. Is $f$ continuous at $x = 3$? If not, name the condition that fails.'
-      answer: 'no — f(3) = 5 is defined and the limit exists, but the third condition fails: the limit is 6, not f(3) = 5'
-      answer_contract: {kind: none}
-      solution_sketch: 'Cancel: $\frac{(x-3)(x+3)}{x-3} \to 6$ as $x \to 3$, while $f(3) = 5$.'
+      problem: 'Let $f(x) = kx + 1$ for $x < 2$ and $f(x) = x^2 + 3$ for $x \geq 2$. Find the value of $k$ for which $f$ is continuous at $x = 2$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The right side gives $f(2) = 7$. The left limit is $2k + 1$. Set $2k + 1 = 7$, so $k = 3$.'
     anki_seeds:
       - front: "f is continuous at a exactly when three conditions hold:"
         back: "f(a) is defined; lim_{x→a} f(x) exists; and the limit equals f(a)"
@@ -2516,11 +2516,10 @@ topics:
         solution_sketch: Every value strictly between $f(2) = 1$ and $f(5) = 5$ is taken inside $(2, 5)$. The whole numbers strictly between $1$ and $5$ are $2$, $3$ and $4$.
       constraints: one intermediate-value application with N not equal to 0 and one broken-hypothesis example; two contexts
     diagnostic_exemplar:
-      problem: Use the Intermediate Value Theorem to show that $f(x) = x^3 + x$ takes the value $5$ somewhere in $(1, 2)$.
-      answer: f is a polynomial, hence continuous on [1, 2], and f(1) = 2 < 5 < 10 = f(2), so the IVT gives some c in (1, 2) with f(c) = 5
-      answer_contract:
-        kind: none
-      solution_sketch: Apply the IVT with the intermediate value $N = 5$ lying between $f(1) = 2$ and $f(2) = 10$.
+      problem: 'Find the integer $n$ such that $x^3 + x - 5 = 0$ has a solution in the interval $(n, n+1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Let $f(x) = x^3 + x - 5$. Then $f(1) = -3$ and $f(2) = 5$. The sign changes, so a root lies in $(1,2)$. The function increases, so only $n = 1$ works.'
     anki_seeds:
     - front: 'IVT: if f is continuous on [a, b] and N is between f(a) and f(b), then...'
       back: f(c) = N for some c in (a, b)

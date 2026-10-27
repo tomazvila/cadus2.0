@@ -156,10 +156,10 @@ topics:
             solution_sketch: 'We have $(a + b)^5 = a^5 + 5a^4b + 10a^3b^2 + 10a^2b^3 + 5ab^4 + b^5$. Every middle coefficient is $5$ or $10$, which is $0$ modulo $5$. So $(a + b)^5 = a^5 + b^5$.'
         constraints: 'p in {2, 3, 5} for expansions; one counterexample with a composite characteristic; elements and polynomial rings over Z_p'
     diagnostic_exemplar:
-      problem: 'In a commutative ring of characteristic $5$, expand $(a + b)^5$ and justify which terms vanish. Then give the characteristic of a field with $25$ elements.'
-      answer: '$(a+b)^5 = a^5 + b^5$: by the binomial theorem the middle coefficients are $\binom{5}{1} = 5$, $\binom{5}{2} = 10$, $\binom{5}{3} = 10$, $\binom{5}{4} = 5$, each divisible by $5$, so those terms are $0$ in characteristic $5$. A field with $25 = 5^2$ elements has characteristic $5$: its prime subfield is $\mathbb{Z}_5$, and a finite field of order $p^{n}$ has characteristic the prime $p$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Only the two end terms of the binomial expansion survive — this is the Frobenius map $x \mapsto x^{p}$. A finite field has prime-power order and characteristic that prime.'
+      problem: 'Find the characteristic of the ring $\mathbb{Z}_4\times\mathbb{Z}_6$.'
+      answer_contract: {"kind":"exact"}
+      answer: '12'
+      solution_sketch: 'The characteristic is the least $n>0$ with $n\cdot 1=0$ in both parts. That is the least common multiple of $4$ and $6$, which is $12$.'
     anki_seeds:
       - front: "Characteristic of a ring with unity?"
         back: "The additive order of $1$ (or $0$ if $1$ has infinite order)."
@@ -332,10 +332,10 @@ topics:
             solution_sketch: 'The product is $(2 + 3i)(1 - i) = 2 - 2i + 3i - 3i^2 = 2 + i + 3 = 5 + i$. Its real part is $5$. The embedding $z \mapsto \frac z1$ preserves this product.'
         constraints: 'the embedding and minimality proofs in guided steps; conclude "every integral domain embeds in a field" explicitly once per set; computer-algebra pairs as contexts'
     diagnostic_exemplar:
-      problem: 'Identify the field of fractions of the integral domain $\mathbb{Z}[\sqrt{2}] = \{a + b\sqrt{2} : a, b \in \mathbb{Z}\}$ as an explicit subfield of $\mathbb{R}$, and justify your answer.'
-      answer: 'It is $\mathbb{Q}(\sqrt{2}) = \{p + q\sqrt{2} : p, q \in \mathbb{Q}\}$. Every quotient of elements of $\mathbb{Z}[\sqrt2]$ lies there: for $c + d\sqrt2 \ne 0$, $\frac{a+b\sqrt2}{c+d\sqrt2} = \frac{(a+b\sqrt2)(c-d\sqrt2)}{c^2 - 2d^2}$, and $c^2 - 2d^2 \ne 0$ because $\sqrt2$ is irrational; the result has the form $p + q\sqrt2$ with $p, q \in \mathbb{Q}$. Conversely $\mathbb{Q}(\sqrt2)$ is a field containing $\mathbb{Z}[\sqrt2]$, and any field containing a domain $D$ contains a copy of $\mathrm{Frac}(D)$ via $a/b \mapsto ab^{-1}$; since each $p + q\sqrt2$ is such a quotient, $\mathrm{Frac}(\mathbb{Z}[\sqrt2]) = \mathbb{Q}(\sqrt2)$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Rationalise the denominator with the conjugate; the norm $c^2 - 2d^2$ is nonzero by irrationality of $\sqrt2$. Then use that $\mathrm{Frac}(D)$ embeds in every field containing $D$, so it is the smallest such field.'
+      problem: 'In the field of fractions of $\mathbb{Z}[\sqrt{2}]$, the element $\frac{1}{3+2\sqrt{2}}$ equals $a+b\sqrt{2}$ with $a$ and $b$ integers. Find $a-b$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Multiply top and bottom by $3-2\sqrt{2}$. The bottom becomes $9-8=1$, so the element is $3-2\sqrt{2}$ and $a-b=3-(-2)=5$.'
     anki_seeds:
       - front: "Field of fractions of an integral domain $D$?"
         back: "Classes of pairs $\\frac{a}{b}$ ($b \\neq 0$) with $\\frac{a}{b} = \\frac{c}{d} \\iff ad = bc$; the smallest field containing $D$ (via $a \\mapsto \\frac{a}{1}$)."
@@ -502,10 +502,10 @@ topics:
             solution_sketch: 'In $\mathbb{Z}_4$ we have $2 \cdot 2 = 4 = 0$, so $2$ is a zero divisor and has no inverse. Hence $\mathbb{Z}_4$ is not a field. A field with $4$ elements is instead $\mathbb{Z}_2[x]/(x^2 + x + 1)$.'
         constraints: 'existence/size questions for orders <= 256; construction via irreducible polynomials may be quoted; arithmetic in the field with 4 elements'
     diagnostic_exemplar:
-      problem: 'Describe a field with exactly $9$ elements, justifying that it is a field, and compute the inverse of $\alpha$, the root of the polynomial you adjoin.'
-      answer: 'Take $F = \mathbb{Z}_3[x]/\langle x^2 + 1\rangle$. The polynomial $x^2 + 1$ has no root in $\mathbb{Z}_3$ ($0, 1, 2$ give $1, 2, 2$), so being of degree $2$ it is irreducible; hence $\langle x^2+1\rangle$ is maximal and the quotient is a field. Its elements are $a + b\alpha$ with $a, b \in \mathbb{Z}_3$ and $\alpha$ the class of $x$, so $|F| = 3^2 = 9$. Since $\alpha^2 = -1 = 2$, we get $\alpha \cdot 2\alpha = 2\alpha^2 = 2 \cdot 2 = 4 = 1$, so $\alpha^{-1} = 2\alpha$.'
-      answer_contract: {kind: none}
-      solution_sketch: 'Adjoin a root of an irreducible quadratic over $\mathbb{Z}_3$ (Kronecker) to get $3^2$ elements, then invert $\alpha$ using $\alpha^2 = 2$.'
+      problem: 'Find the inverse of $6$ in the field $\mathbb{Z}_{17}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'We need $6x\equiv 1 \pmod{17}$. Since $6\cdot 3=18=17+1$, the inverse is $3$.'
     anki_seeds:
       - front: "$\\mathbb{Z}_n$ is a field iff..."
         back: "$n$ is prime."
@@ -1024,9 +1024,10 @@ topics:
             solution_sketch: 'A constructible heptagon needs the constructible number $\cos(2\pi/7)$. Its minimal polynomial over $\mathbb{Q}$ is $8x^3+4x^2-4x-1$, so its degree is $3$. The degree $3$ is not a power of $2$, which contradicts the criterion.'
         constraints: 'quotable transcendence of pi; positive examples (pentagon, 15-gon, 17-gon) vs impossible ones (heptagon: degree 3)'
     diagnostic_exemplar:
-      problem: 'Using the constructibility criterion, decide which are constructible: (a) $\sqrt[3]{5}$, (b) $\sqrt{7}$, (c) a $60^\circ$ angle trisector (i.e. $\cos 20^\circ$).'
-      answer: '(a) No — degree $3$. (b) Yes — degree $2$. (c) No — degree $3$.'
-      solution_sketch: 'Minimal polynomials: $x^3 - 5$ (Eisenstein at 5), $x^2 - 7$, and $8x^3 - 6x - 1$; only powers of $2$ pass.'
+      problem: 'The polynomial $x^8-2$ is irreducible over $\mathbb{Q}$ by Eisenstein at $2$. Find $[\mathbb{Q}(\sqrt[8]{2}):\mathbb{Q}]$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'The degree of a field generated by one root equals the degree of its irreducible polynomial. Here that degree is $8$, a power of $2$.'
     anki_seeds:
       - front: "Necessary condition for a number to be straightedge-compass constructible?"
         back: "It is algebraic and $[\\mathbb{Q}(\\alpha) : \\mathbb{Q}]$ is a power of $2$."

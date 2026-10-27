@@ -63,6 +63,8 @@ mod plan;
 mod review_soon;
 mod rollover;
 mod store;
+mod today;
+mod topic_teach;
 
 pub use dashboard::{GraphQuery, export, graph, modules, status};
 pub use goal::set_xp_goal;
@@ -76,6 +78,7 @@ pub use rollover::{
     session_day,
 };
 pub(crate) use store::*;
+pub use topic_teach::topic_teach;
 
 /// The code of a failure the caller cannot fix.
 pub const INTERNAL_ERROR: &str = "internal_error";

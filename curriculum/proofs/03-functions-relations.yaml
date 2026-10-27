@@ -137,9 +137,10 @@ topics:
             solution_sketch: 'Two functions are equal when they have the same domain, the same codomain and the same value at every input. The function $g \circ f$ goes from $A$ to $C$, so $h \circ (g \circ f)$ goes from $A$ to $D$. The function $h \circ g$ goes from $B$ to $D$, so $(h \circ g) \circ f$ also goes from $A$ to $D$. Thus both sides have domain $A$ and codomain $D$. Now let $x$ be an arbitrary element of $A$. By the definition of composition, $(h \circ (g \circ f))(x) = h((g \circ f)(x)) = h(g(f(x)))$. In the same way, $((h \circ g) \circ f)(x) = (h \circ g)(f(x)) = h(g(f(x)))$. The two values are equal for every $x \in A$. All three conditions hold, so $h \circ (g \circ f) = (h \circ g) \circ f$. $\square$'
         constraints: "compare domain, codomain, and outputs pointwise"
     diagnostic_exemplar:
-      problem: 'Is $\{(x, y) \in \mathbb{R}^2 : y^2 = x\}$ a function $\mathbb{R} \to \mathbb{R}$? And do $f(x) = x^2$ on $\mathbb{R}$ and $g(x) = x^2$ on $[0, \infty)$ define the same function? Justify both answers.'
-      answer: 'The relation is not a function $\mathbb{R} \to \mathbb{R}$, on two counts: uniqueness fails, since $x = 4$ is paired with both $y = 2$ and $y = -2$; and totality fails, since no real $y$ has $y^2 = -1$, so $x = -1$ gets no image. And $f \ne g$: two functions are equal only when they have the same domain, the same codomain and the same values, and here the domains differ ($\mathbb{R}$ versus $[0,\infty)$) even though the rule is identical.'
-      solution_sketch: 'A function assigns exactly one output to every input of its domain; then recall that a function is its domain, codomain and rule taken together.'
+      problem: 'How many functions are there from a set of $2$ elements to a set of $4$ elements?'
+      answer_contract: {"kind":"exact"}
+      answer: '16'
+      solution_sketch: 'A function gives each of the $2$ inputs exactly one of $4$ outputs. The count is $4\cdot4=16$.'
     anki_seeds:
       - front: 'Formal definition of a function $f : A \to B$?'
         back: 'A subset $f \subseteq A \times B$ such that each $a \in A$ is the first coordinate of exactly one pair $(a, b) \in f$.'
@@ -275,10 +276,10 @@ topics:
             solution_sketch: 'The floor equation gives $5 \le x < 6$ and the ceiling equation gives $4 < x \le 5$. The union of these two intervals is $4 < x < 6$. The point $x = 5$ lies in both.'
         constraints: "solution sets of $\\lfloor x \\rfloor = n$ or $\\lceil x \\rceil = n$ as intervals"
     diagnostic_exemplar:
-      problem: 'Compute $\lfloor -2.4 \rfloor + \lceil 1.2 \rceil$, and describe all real $x$ with $\lceil x \rceil = 3$.'
-      answer_contract: {kind: none}
-      answer: '$\lfloor -2.4 \rfloor = -3$ (the greatest integer not exceeding $-2.4$) and $\lceil 1.2 \rceil = 2$, so the sum is $-1$. And $\lceil x \rceil = 3$ exactly when $2 < x \le 3$, i.e. $x \in (2, 3]$: the least integer at or above $x$ equals $3$ precisely for those $x$.'
-      solution_sketch: 'Round down for the floor (careful with negatives) and up for the ceiling; then read the ceiling condition as a half-open interval.'
+      problem: 'Compute $\lfloor -5.2\rfloor+\lceil 3.7\rceil$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-2'
+      solution_sketch: '$\lfloor -5.2\rfloor=-6$ and $\lceil 3.7\rceil=4$. The sum is $-2$.'
     anki_seeds:
       - front: 'Definition of $\lfloor x \rfloor$?'
         back: 'The greatest integer $\le x$ (so $\lfloor x \rfloor \le x < \lfloor x \rfloor + 1$).'
@@ -422,10 +423,10 @@ topics:
             solution_sketch: 'The depth is $h(V(t)) = \sqrt{100 - 4t}$, which needs $100 - 4t \ge 0$. Dividing $100 \ge 4t$ by $4$ gives $t \le 25$. Together with $t \ge 0$ the depth is defined for $0 \le t \le 25$.'
         constraints: "track the domain of the composite; show noncommutativity by one evaluation"
     diagnostic_exemplar:
-      problem: 'For $f(x) = x + 3$ and $g(x) = x^2$, compute $(g \circ f)(1)$ and $(f \circ g)(1)$.'
-      answer_contract: {kind: none}
-      answer: '$16$ and $4$.'
-      solution_sketch: '$g(f(1)) = g(4) = 16$; $f(g(1)) = f(1) = 4$.'
+      problem: 'Let $f(x)=2x+1$ and $g(x)=x^2-3$. Compute $(g\circ f)(2)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '22'
+      solution_sketch: '$f(2)=5$. Then $g(5)=25-3=22$.'
     anki_seeds:
       - front: 'Is function composition commutative?'
         back: 'No in general: $f \circ g \ne g \circ f$ (e.g. $x^2$ and $x + 1$).'
@@ -557,9 +558,10 @@ topics:
             solution_sketch: 'Let $a, b \in [3, \infty)$ and suppose $f(a) = f(b)$, so $a^2 - 6a + 5 = b^2 - 6b + 5$. Subtracting $5$ and moving all terms to the left gives $a^2 - b^2 - 6a + 6b = 0$. Factoring, $(a - b)(a + b) - 6(a - b) = 0$, that is, $(a - b)(a + b - 6) = 0$. A product of two real numbers is zero only if one factor is zero, so there are two cases. Case 1: $a - b = 0$, and then $a = b$. Case 2: $a + b - 6 = 0$, so $a + b = 6$. Since $a \ge 3$ and $b \ge 3$, we have $a + b \ge 6$, and equality holds only if $a = 3$ and $b = 3$. So in this case $a = b = 3$. In both cases $a = b$, so $f$ is injective on $[3, \infty)$. The restriction is needed: on all of $\mathbb{R}$ we have $f(0) = 5 = f(6)$. $\square$'
         constraints: "restricted domains where injectivity holds though it fails on all of $\\mathbb{R}$ Closed exemplars may audit general proofs of this method; do not certify proposed inferences in the problem."
     diagnostic_exemplar:
-      problem: 'Prove that $f : [0, \infty) \to \mathbb{R}$, $f(x) = x^2 + 3$, is injective, and explain why the same rule on $\mathbb{R}$ is not.'
-      answer: 'Suppose $f(a) = f(b)$ with $a, b \ge 0$. Then $a^2 + 3 = b^2 + 3$, so $a^2 = b^2$ and $(a-b)(a+b) = 0$. Either $a = b$, or $a + b = 0$ which with $a, b \ge 0$ forces $a = b = 0$; in both cases $a = b$, so $f$ is injective. On $\mathbb{R}$ the same rule is not injective: $f(-1) = 4 = f(1)$ while $-1 \ne 1$. The domain, not the formula, decides.'
-      solution_sketch: 'Assume equal outputs, factor $a^2 - b^2$, and use nonnegativity to kill the $a + b$ branch; then give the counterexample the larger domain allows.'
+      problem: 'Let $f(x)=x^2-4x$. Find the real number $b\ne1$ with $f(b)=f(1)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: '$f(1)=-3$. Solve $b^2-4b+3=0$. Then $(b-1)(b-3)=0$ and $b=3$.'
     anki_seeds:
       - front: 'Contrapositive form of injectivity?'
         back: '$a \ne b \Rightarrow f(a) \ne f(b)$ — distinct inputs give distinct outputs.'
@@ -711,9 +713,10 @@ topics:
             solution_sketch: 'Completing the square gives $f(x) = x^2 + 6x + 9 - 4 = (x + 3)^2 - 4$. Let $y \in [-4, \infty)$ be arbitrary, so $y \ge -4$ and $y + 4 \ge 0$. Because $y + 4 \ge 0$, the number $\sqrt{y + 4}$ is a real number. Put $x = -3 + \sqrt{y + 4}$. Then $x \in \mathbb{R}$, so $x$ lies in the domain. Now compute $f(x) = (x + 3)^2 - 4 = (\sqrt{y + 4})^2 - 4 = (y + 4) - 4 = y$. Since $y$ was an arbitrary element of $[-4, \infty)$, every element of the codomain has a preimage, and $f$ is surjective onto $[-4, \infty)$. $\square$'
         constraints: "maps surjective onto a stated codomain but not onto all of $\\mathbb{R}$"
     diagnostic_exemplar:
-      problem: 'Prove that $f : \mathbb{R} \to [1, \infty)$, $f(x) = x^2 + 1$, is surjective, and explain why the same rule as a map $\mathbb{R} \to \mathbb{R}$ is not.'
-      answer: 'Let $y \in [1, \infty)$. Then $y - 1 \ge 0$, so $x = \sqrt{y-1}$ is a real number, and $f(x) = (\sqrt{y-1})^2 + 1 = y$. Every element of the codomain has a preimage, so $f$ is surjective. As a map into $\mathbb{R}$ it is not: $x^2 + 1 \ge 1$ for every real $x$, so nothing maps to $0$. Surjectivity depends on the codomain, not only on the rule.'
-      solution_sketch: 'Given a target $y$, solve $f(x) = y$ and check the solution lies in the domain; then point to codomain elements that are unreachable.'
+      problem: 'Let $f(x)=\dfrac{2x+1}{x-1}$ for $x\ne1$. Find the $x$ with $f(x)=5$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Solve $2x+1=5(x-1)$. Then $6=3x$ and $x=2$.'
     anki_seeds:
       - front: 'To prove $f : A \to B$ surjective, you...'
         back: 'take an arbitrary $b \in B$ and exhibit $a \in A$ with $f(a) = b$.'
@@ -867,9 +870,10 @@ topics:
             solution_sketch: 'Injective: let $a,b\in\mathbb{Z}$ with $f(a)=f(b)$. Then $2a+1=2b+1$, so $2a=2b$ and $a=b$. So $f$ is injective. Not surjective: we show that $0$ has no preimage. Suppose $f(n)=0$ for some integer $n$. Then $2n+1=0$, so $n=-1/2$, which is not an integer. This contradicts $n\in\mathbb{Z}$. So no integer $n$ has $f(n)=0$, and $f$ is not surjective. Hence $f$ is injective but not surjective. $\square$'
         constraints: 'prove one property from its definition and refute the other with one explicit value; contexts are lockers and folders'
     diagnostic_exemplar:
-      problem: 'Prove $f : \mathbb{Z} \to \mathbb{Z}$, $f(n) = 2n$, is injective but not surjective.'
-      answer: '$2a = 2b \Rightarrow a = b$; but $1$ has no integer preimage.'
-      solution_sketch: 'If $f(a) = f(b)$ then $2a = 2b$, so $a = b$ (injective). But $f(n) = 1$ has no integer solution ($n = 1/2 \notin \mathbb{Z}$), so $f$ is not surjective. $\square$'
+      problem: 'How many injective functions are there from $\{1,2,3\}$ to $\{1,2,3,4,5\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '60'
+      solution_sketch: 'Injective means no two inputs share an output. The outputs for $1,2,3$ can be chosen in $5\cdot4\cdot3=60$ ways.'
     anki_seeds:
       - front: 'Definition: $f$ injective (one-to-one)?'
         back: '$f(a) = f(b) \Rightarrow a = b$ for all $a, b$ (equivalently $a \ne b \Rightarrow f(a) \ne f(b)$).'
@@ -1016,9 +1020,10 @@ topics:
             solution_sketch: 'Since $f$ and $g$ are bijections, the inverses $f^{-1}:B\to A$ and $g^{-1}:C\to B$ exist. Put $h=f^{-1}\circ g^{-1}:C\to A$. We show that $h$ is a two-sided inverse of $g\circ f$. First, by associativity of composition, $h\circ(g\circ f)=f^{-1}\circ(g^{-1}\circ g)\circ f=f^{-1}\circ\mathrm{id}_B\circ f=f^{-1}\circ f=\mathrm{id}_A$. Second, $(g\circ f)\circ h=g\circ(f\circ f^{-1})\circ g^{-1}=g\circ\mathrm{id}_B\circ g^{-1}=g\circ g^{-1}=\mathrm{id}_C$. So $g\circ f$ has the two-sided inverse $h$, hence $g\circ f$ is a bijection. The inverse is unique: if $k$ is also an inverse of $g\circ f$, then $k=k\circ\mathrm{id}_C=k\circ((g\circ f)\circ h)=(k\circ(g\circ f))\circ h=\mathrm{id}_A\circ h=h$. Therefore $(g\circ f)^{-1}=h=f^{-1}\circ g^{-1}$. $\square$'
         constraints: 'verify a candidate inverse by composing both ways, and note the reversed order; contexts are currency conversions and ciphers'
     diagnostic_exemplar:
-      problem: 'For bijections $f : A \to B$ and $g : B \to C$, prove that $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
-      answer: 'First, $g \circ f$ is a bijection: it is injective, since $g(f(a_1)) = g(f(a_2))$ gives $f(a_1) = f(a_2)$ by injectivity of $g$ and then $a_1 = a_2$ by injectivity of $f$; and surjective, since for $c \in C$ we may pick $b$ with $g(b) = c$ and then $a$ with $f(a) = b$. So it has a two-sided inverse. Now $(f^{-1} \circ g^{-1}) \circ (g \circ f) = f^{-1} \circ (g^{-1} \circ g) \circ f = f^{-1} \circ \mathrm{id}_B \circ f = \mathrm{id}_A$, and likewise $(g \circ f) \circ (f^{-1} \circ g^{-1}) = g \circ (f \circ f^{-1}) \circ g^{-1} = \mathrm{id}_C$. A two-sided inverse is unique, so $(g \circ f)^{-1} = f^{-1} \circ g^{-1}$.'
-      solution_sketch: 'Check that $g \circ f$ is a bijection, then verify $f^{-1} \circ g^{-1}$ composes with it to the identity on both sides and appeal to uniqueness of inverses.'
+      problem: 'Let $f\colon\mathbb{R}\to\mathbb{R}$ be $f(x)=4x-7$. Find $f^{-1}(9)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Solve $4x-7=9$. Then $4x=16$ and $x=4$.'
     anki_seeds:
       - front: 'Definition of the composition $(g \circ f)(x)$?'
         back: '$g(f(x))$: apply $f$ first, then $g$ (requires codomain of $f$ = domain of $g$).'
@@ -1314,10 +1319,10 @@ topics:
             solution_sketch: 'The condition $4\le x^2\le 9$ means $2\le|x|\le 3$. The positive side $2\le x\le 3$ is not all; the negative side $-3\le x\le -2$ also belongs to the preimage.'
         constraints: 'images and preimages of intervals under $x^2$ or affine maps, as intervals or unions; contexts are temperature conversions and heater settings'
     diagnostic_exemplar:
-      problem: 'For $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2$, find the image $f([-1, 3])$ and the preimage $f^{-1}([4, 9])$.'
-      answer_contract: {kind: none}
-      answer: '$f([-1,3]) = [0, 9]$: on $[-1,3]$ the square attains its least value $0$ at $x = 0$ and its greatest value $9$ at $x = 3$, and every value in between is attained. $f^{-1}([4,9]) = [-3,-2] \cup [2,3]$: the condition $4 \le x^2 \le 9$ says $2 \le |x| \le 3$, which allows both signs.'
-      solution_sketch: 'For the image, track the minimum and maximum of $x^2$ over the interval; for the preimage, solve the inequality in $|x|$ and keep both signs.'
+      problem: 'Let $f\colon\mathbb{Z}\to\mathbb{Z}$ be $f(x)=x^2$. How many integers lie in the preimage of $\{4,9,10\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: '$x^2=4$ gives $x=\pm2$. $x^2=9$ gives $x=\pm3$. $x^2=10$ has no integer solution.'
     anki_seeds:
       - front: 'Does $f^{-1}(T)$ require $f$ to be invertible?'
         back: 'No — the preimage $\{x : f(x) \in T\}$ is defined for every function.'
@@ -1473,9 +1478,10 @@ topics:
             solution_sketch: 'Let $x\in A$ be arbitrary. By the definition of the preimage, $x\in f^{-1}(P\cap Q)$ if and only if $f(x)\in P\cap Q$. By the definition of the intersection, this holds if and only if $f(x)\in P$ and $f(x)\in Q$. By the definition of the preimage again, $f(x)\in P$ means $x\in f^{-1}(P)$, and $f(x)\in Q$ means $x\in f^{-1}(Q)$. So the condition holds if and only if $x\in f^{-1}(P)$ and $x\in f^{-1}(Q)$, that is, if and only if $x\in f^{-1}(P)\cap f^{-1}(Q)$. Since $x$ was arbitrary, the two sets have the same elements, so $f^{-1}(P\cap Q)=f^{-1}(P)\cap f^{-1}(Q)$. $\square$'
         constraints: 'translate membership in a preimage into a condition on $f(x)$ and match the connectives; contexts are school and prices counts'
     diagnostic_exemplar:
-      problem: 'Prove that $f(S \cap T) \subseteq f(S) \cap f(T)$ for any function $f$ and subsets $S, T$ of its domain, give an example where the inclusion is strict, and decide whether $f^{-1}(C \cap D) = f^{-1}(C) \cap f^{-1}(D)$ holds in general.'
-      answer: 'Inclusion: let $y \in f(S \cap T)$, say $y = f(x)$ with $x \in S \cap T$. Then $x \in S$ gives $y \in f(S)$, and $x \in T$ gives $y \in f(T)$, so $y \in f(S) \cap f(T)$. Strictness: take $f(x) = x^2$, $S = \{1\}$, $T = \{-1\}$; then $S \cap T = \varnothing$, so $f(S \cap T) = \varnothing$, while $f(S) \cap f(T) = \{1\}$. For preimages equality always holds: $x \in f^{-1}(C \cap D)$ iff $f(x) \in C$ and $f(x) \in D$, iff $x \in f^{-1}(C)$ and $x \in f^{-1}(D)$.'
-      solution_sketch: 'Chase an element for the inclusion; equality fails when two different inputs share an output. Preimages behave better because membership is tested after applying $f$.'
+      problem: 'Let $f\colon\mathbb{Z}\to\mathbb{Z}$ be $f(x)=x^2$, $A=\{-2,-1,0,1\}$ and $B=\{1,2,3\}$. How many elements lie in $f(A)\cap f(B)$ but not in $f(A\cap B)$?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: '$f(A)=\{0,1,4\}$ and $f(B)=\{1,4,9\}$, so $f(A)\cap f(B)=\{1,4\}$. Also $A\cap B=\{1\}$, so $f(A\cap B)=\{1\}$. Only $4$ is left.'
     anki_seeds:
       - front: 'Definitions of the image $f(S)$ and preimage $f^{-1}(T)$?'
         back: '$f(S) = \{f(x) : x \in S\}$; $f^{-1}(T) = \{x : f(x) \in T\}$.'
@@ -1619,10 +1625,10 @@ topics:
             solution_sketch: 'The set $A \times A$ has $2 \cdot 2 = 4$ pairs. A relation is a choice of a subset of these $4$ pairs, so there are $2^4 = 16$ relations.'
         constraints: 'matrix encoding on sets of size at most 3; count relations as $2^{n^2}$'
     diagnostic_exemplar:
-      problem: 'On $A = \{1, 2, 3\}$ let $R = \{(a,b) : a \le b\}$. List the pairs of $R$, write its $3 \times 3$ zero-one matrix (rows indexed by the first coordinate), and say which vertices of its digraph carry loops.'
-      answer_contract: {kind: none}
-      answer: 'Pairs: $(1,1), (1,2), (1,3), (2,2), (2,3), (3,3)$. Matrix rows: $(1,1,1)$, $(0,1,1)$, $(0,0,1)$ — the entry in row $i$, column $j$ is $1$ exactly when $i \le j$. Every vertex carries a loop, since $a \le a$ for each $a$; loops are the diagonal $1$s.'
-      solution_sketch: 'List the pairs whose first coordinate is at most the second, transcribe them into the matrix, and note that loops correspond to diagonal entries.'
+      problem: 'On $\{1,2,3,4,5\}$, let $a\,R\,b$ mean that $a+b$ is even. How many entries of the $5\times5$ matrix of $R$ equal $1$?'
+      answer_contract: {"kind":"exact"}
+      answer: '13'
+      solution_sketch: 'The sum is even when both numbers are odd or both are even. There are $3\cdot3=9$ odd pairs and $2\cdot2=4$ even pairs.'
     anki_seeds:
       - front: 'A relation on a set $A$ is...'
         back: 'any subset of $A \times A$ (pairs $(a, b)$ with $a$ related to $b$).'
@@ -1777,9 +1783,10 @@ topics:
             solution_sketch: 'Reflexive. Let $x$ be an integer. Then $3x - 5x = -2x = 2(-x)$, and $-x$ is an integer, so $3x - 5x$ is even and $x R x$. Hence $R$ is reflexive. Symmetric. Let $x$ and $y$ be integers with $x R y$. Then $3x - 5y = 2a$ for some integer $a$. We compute $3y - 5x = -(3x - 5y) - 2x - 2y = -2a - 2x - 2y = 2(-a - x - y)$. Since $-a - x - y$ is an integer, $3y - 5x$ is even, so $y R x$. Hence $R$ is symmetric. Transitive. Let $x$, $y$, $z$ be integers with $x R y$ and $y R z$. Then $3x - 5y = 2a$ and $3y - 5z = 2b$ for some integers $a$ and $b$. Adding these equations gives $3x - 2y - 5z = 2a + 2b$, so $3x - 5z = 2a + 2b + 2y = 2(a + b + y)$. Since $a + b + y$ is an integer, $3x - 5z$ is even, so $x R z$. Hence $R$ is transitive.'
         constraints: 'prove a named property from its definition Closed exemplars may audit general proofs of this method; do not certify proposed inferences in the problem.'
     diagnostic_exemplar:
-      problem: 'Show that the relation "$a \mid b$" on $\mathbb{Z}^{+}$ is reflexive, antisymmetric and transitive, but not symmetric.'
-      answer: 'Reflexive: $a = a \cdot 1$, so $a \mid a$. Antisymmetric: if $a \mid b$ and $b \mid a$ with $a, b > 0$, write $b = ak$ and $a = bm$; then $a = akm$, so $km = 1$ with $k, m$ positive integers, forcing $k = m = 1$ and $a = b$. Transitive: $b = ak$ and $c = bm$ give $c = a(km)$, so $a \mid c$. Not symmetric: $2 \mid 4$ but $4 \nmid 2$.'
-      solution_sketch: 'Verify each property from the definition $a \mid b \iff b = ak$; positivity is what makes antisymmetry work, and one counterexample refutes symmetry.'
+      problem: 'How many reflexive relations are there on a set of $3$ elements?'
+      answer_contract: {"kind":"exact"}
+      answer: '64'
+      solution_sketch: 'A reflexive relation holds all $3$ pairs $(a,a)$. Each of the other $6$ pairs is in or out, so the count is $2^6=64$.'
     anki_seeds:
       - front: 'When is a relation $R$ on $A$ reflexive?'
         back: '$\forall a,\ aRa$.'
@@ -1914,10 +1921,10 @@ topics:
             solution_sketch: 'The relation has the $3$ pairs of equal ages and the $4$ pairs $(14,15)$, $(15,14)$, $(15,16)$, $(16,15)$, so $7$ pairs in all. An equivalence relation that links $14$ to $15$ and $15$ to $16$ must link all three ages, which gives $9$ pairs. So $9 - 7 = 2$ more pairs, namely $(14,16)$ and $(16,14)$.'
         constraints: 'deliver a verdict with a reason for each property; one positive and one negative case'
     diagnostic_exemplar:
-      problem: 'On $\mathbb{Z}$, define $a \sim b \iff 4 \mid (a - b)$. Check each of the three properties and give a verdict.'
-      answer_contract: {kind: none}
-      answer: 'Reflexive, symmetric, transitive — an equivalence relation.'
-      solution_sketch: '$4 \mid 0$; $4 \mid (a-b) \Rightarrow 4 \mid (b-a)$; and $4 \mid (a-b), 4 \mid (b-c) \Rightarrow 4 \mid (a-c)$ by adding.'
+      problem: 'Let $R=\{(1,1),(2,2),(3,3),(1,2),(2,1),(2,3),(3,2)\}$ on $\{1,2,3,4\}$. What is the least number of pairs to add so that $R$ is an equivalence relation?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'Add $(4,4)$ for reflexivity. Add $(1,3)$ and $(3,1)$ for transitivity. Then the classes are $\{1,2,3\}$ and $\{4\}$, and no more pairs are needed.'
     anki_seeds:
       - front: 'To show a relation is NOT an equivalence relation...'
         back: 'exhibit one property that fails, with a concrete counterexample.'
@@ -2065,9 +2072,10 @@ topics:
             solution_sketch: 'Suppose $a \equiv b \pmod n$ and $c \equiv d \pmod n$. By the definition of congruence, $n$ divides $a - b$ and $n$ divides $c - d$. So there are integers $k$ and $m$ with $a - b = nk$ and $c - d = nm$, which means $a = b + nk$ and $c = d + nm$. Multiplying these two equations gives $ac = (b + nk)(d + nm) = bd + bnm + nkd + n^2 km$. Therefore $ac - bd = n(bm + kd + nkm)$. The number $bm + kd + nkm$ is an integer, because $b$, $d$, $k$, $m$ and $n$ are integers. So $n$ divides $ac - bd$, and this means $ac \equiv bd \pmod n$.'
         constraints: 'use an equality or divisibility fact about a derived quantity Closed exemplars may audit general proofs of this method; do not certify proposed inferences in the problem.'
     diagnostic_exemplar:
-      problem: 'On $\mathbb{Z}$, define $a \sim b \iff a^2 = b^2$. Prove $\sim$ is an equivalence relation.'
-      answer: 'Reflexive, symmetric, transitive from equality of $a^2$.'
-      solution_sketch: 'Reflexive: $a^2 = a^2$. Symmetric: $a^2 = b^2 \Rightarrow b^2 = a^2$. Transitive: $a^2 = b^2$ and $b^2 = c^2 \Rightarrow a^2 = c^2$. So $\sim$ is an equivalence relation (classes $\{a, -a\}$). $\square$'
+      problem: 'On $\{-3,-2,-1,0,1,2,3\}$, let $a\sim b$ mean $a^2=b^2$. How many equivalence classes does $\sim$ have?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The classes are $\{0\}$, $\{\pm1\}$, $\{\pm2\}$ and $\{\pm3\}$.'
     anki_seeds:
       - front: 'An equivalence relation is a relation that is...'
         back: 'reflexive, symmetric, and transitive.'
@@ -2212,10 +2220,10 @@ topics:
             solution_sketch: 'Two numbers leave the same remainder on division by $3$ exactly when their difference is a multiple of $3$. We have $9 - 5 = 4$, which is not a multiple of $3$, and $5$ leaves the remainder $2$ while $9$ leaves the remainder $0$. So $5 \sim 9$ is false.'
         constraints: 'describe $[a] = \{x : x \sim a\}$ for a rule-defined relation'
     diagnostic_exemplar:
-      problem: 'On $\mathbb{Z}$ with $a \sim b \iff a - b$ even, describe $[7]$.'
-      answer_contract: {kind: none}
-      answer: 'The odd integers.'
-      solution_sketch: '$n \sim 7$ iff $n - 7$ is even iff $n$ is odd.'
+      problem: 'Two integers are equivalent if they differ by a multiple of $5$. How many elements of the set $\{1,2,\dots,30\}$ lie in the class of $3$?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The class of $3$ holds the numbers $3+5k$. In the set these are $3,8,13,18,23,28$.'
     anki_seeds:
       - front: '$[a]$ for congruence mod $n$?'
         back: '$\{a + kn : k \in \mathbb{Z}\}$.'
@@ -2368,9 +2376,10 @@ topics:
             solution_sketch: 'Let $\sim$ be an equivalence relation on $A$. Nonempty and covering: let $a \in A$. By reflexivity $a \sim a$, so $a \in [a]$. Hence every class $[a]$ is nonempty, and every element $a$ of $A$ lies in at least one class, so the union of the classes is $A$. Equal or disjoint: let $a, b \in A$ and suppose $[a] \cap [b] \neq \varnothing$. We prove $[a] = [b]$, which shows that two classes that are not equal are disjoint. Pick $x \in [a] \cap [b]$, so $x \sim a$ and $x \sim b$. By symmetry $a \sim x$, and then $a \sim x$ and $x \sim b$ give $a \sim b$ by transitivity. Now let $y \in [a]$, so $y \sim a$. Since $y \sim a$ and $a \sim b$, transitivity gives $y \sim b$, so $y \in [b]$ and $[a] \subseteq [b]$. By symmetry $b \sim a$, and the same argument with the roles of $a$ and $b$ exchanged gives $[b] \subseteq [a]$. Therefore $[a] = [b]$. So the classes are nonempty, they cover $A$, and any two of them are equal or disjoint: they form a partition of $A$. $\square$'
         constraints: "classes of an equivalence relation form a partition: count blocks, use covering and disjointness, and decide whether a relation or family is an equivalence relation or a partition; the proof item asks for the partition theorem"
     diagnostic_exemplar:
-      problem: 'Let $\sim$ be an equivalence relation on a set $A$. Prove that $[a] = [b]$ if and only if $a \sim b$, and deduce that two distinct equivalence classes are disjoint.'
-      answer: '($\Leftarrow$) Suppose $a \sim b$. For $x \in [a]$ we have $x \sim a$ and $a \sim b$, so $x \sim b$ by transitivity, giving $[a] \subseteq [b]$; using $b \sim a$ (symmetry) the same argument gives $[b] \subseteq [a]$, so $[a] = [b]$. ($\Rightarrow$) If $[a] = [b]$, then $a \in [a]$ by reflexivity, so $a \in [b]$, i.e. $a \sim b$. Deduction: if $[a] \cap [b] \ne \varnothing$, pick $x$ in both; then $x \sim a$ and $x \sim b$, so $a \sim x$ and $x \sim b$ give $a \sim b$, hence $[a] = [b]$. Contrapositively, distinct classes have empty intersection — so the classes partition $A$.'
-      solution_sketch: 'Use all three properties: transitivity for the inclusions, reflexivity for the converse, symmetry plus transitivity to turn a shared element into $a \sim b$.'
+      problem: 'How many equivalence relations are there on the set $\{1,2,3,4\}$?'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'Each equivalence relation matches one partition of the set. Partitions by block sizes: $1$ of type 4, $4$ of type 3+1, $3$ of type 2+2, $6$ of type 2+1+1, $1$ of type 1+1+1+1. The total is 15.'
     anki_seeds:
       - front: 'Equivalence class $[a]$ of an element $a$?'
         back: '$[a] = \{x : x \sim a\}$, the set of all elements equivalent to $a$.'
@@ -2497,10 +2506,10 @@ topics:
             solution_sketch: 'The chain Ann is a parent of Bob and Bob is a parent of Cy gives the pair (Ann, Cy) in $R \circ R$. Ann is not a parent of Cy, so (Ann, Cy) is not in $R$ and $R \circ R \not\subseteq R$. The relation is not transitive, so the answer is no.'
         constraints: "decide transitivity by computing R o R and testing containment in R, in contexts such as flights and family relations"
     diagnostic_exemplar:
-      problem: 'On $\{1, 2, 3\}$ let $R = \{(1,2), (2,2), (2,3)\}$. Compute $R \circ R$, and use the criterion "$R$ is transitive iff $R \circ R \subseteq R$" to decide whether $R$ is transitive.'
-      answer_contract: {kind: none}
-      answer: '$R \circ R = \{(a,c) : \exists b,\ (a,b) \in R \text{ and } (b,c) \in R\}$. Following $(1,2)$ by $(2,2)$ and by $(2,3)$ gives $(1,2)$ and $(1,3)$; following $(2,2)$ by $(2,2)$ and $(2,3)$ gives $(2,2)$ and $(2,3)$. So $R \circ R = \{(1,2), (1,3), (2,2), (2,3)\}$. Since $(1,3) \notin R$, we have $R \circ R \not\subseteq R$, so $R$ is not transitive.'
-      solution_sketch: 'Match every pair whose second coordinate starts another pair, then test the composed relation for containment in $R$.'
+      problem: 'Let $R=\{(1,2),(2,3)\}$ and $S=\{(2,5),(3,6),(3,7)\}$. The composite relation holds the pairs $(a,c)$ for which some $b$ has $(a,b)\in R$ and $(b,c)\in S$. How many pairs does it hold?'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The pair $(1,2)$ meets $(2,5)$ and gives $(1,5)$. The pair $(2,3)$ meets $(3,6)$ and $(3,7)$ and gives $(2,6)$ and $(2,7)$.'
     anki_seeds:
       - front: 'Definition of the composition $S \circ R$ of relations?'
         back: '$\{(a, c) : \exists b,\ (a, b) \in R \text{ and } (b, c) \in S\}$ — apply $R$ first.'
@@ -2639,10 +2648,10 @@ topics:
             solution_sketch: 'After $(1,3)$ and $(2,4)$ are added, the new pair $(1,3)$ chains with $(3,4)$, and $(1,2)$ chains with $(2,4)$. Both chains force $(1,4)$. The next round gives the last new pair, $(1,4)$.'
         constraints: "close small relations under chaining, count pairs of the closure, and use contexts such as roads and ancestors"
     diagnostic_exemplar:
-      problem: 'On $\{a, b, c\}$ let $R = \{(a,b), (b,c)\}$. Give the pairs added by the reflexive closure, by the symmetric closure, and by the transitive closure.'
-      answer_contract: {kind: none}
-      answer: 'Reflexive closure adds the missing loops $(a,a)$, $(b,b)$, $(c,c)$. Symmetric closure adds the reversals $(b,a)$ and $(c,b)$. Transitive closure adds $(a,c)$, forced by the chain $(a,b), (b,c)$; no further pairs are then required.'
-      solution_sketch: 'Each closure adds exactly the pairs the property demands and nothing more: loops, reversals, and composites along chains.'
+      problem: 'Let $R=\{(1,2),(2,3),(3,4)\}$ on $\{1,2,3,4\}$. How many pairs does the transitive closure of $R$ hold?'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The closure adds $(1,3)$, $(2,4)$ and $(1,4)$ to the $3$ given pairs. The total is $6$.'
     anki_seeds:
       - front: 'Reflexive closure of $R$ on $A$?'
         back: '$R \cup \{(a,a) : a \in A\}$ — the smallest reflexive relation containing $R$.'
@@ -2784,9 +2793,10 @@ topics:
             solution_sketch: 'Let $A$ be a set with at least two elements. Choose elements $a, b \in A$ with $a \neq b$. Then $\{a\}$ and $\{b\}$ are elements of $\mathcal{P}(A)$. Suppose, for contradiction, that $\{a\} \subseteq \{b\}$. Since $a \in \{a\}$, we get $a \in \{b\}$, so $a = b$, which contradicts $a \neq b$. Hence $\{a\} \not\subseteq \{b\}$. In the same way, suppose $\{b\} \subseteq \{a\}$. Since $b \in \{b\}$, we get $b \in \{a\}$, so $b = a$, again a contradiction. Hence $\{b\} \not\subseteq \{a\}$. So neither $\{a\} \subseteq \{b\}$ nor $\{b\} \subseteq \{a\}$, and the elements $X = \{a\}$ and $Y = \{b\}$ violate the condition for a total order. Therefore $\subseteq$ is not a total order on $\mathcal{P}(A)$. $\square$'
         constraints: "test comparability of all pairs to decide totality, count incomparable pairs in divisor sets, grids, subsets and contexts such as courses and boxes; the proof item asks for a proof that the subset order is not total"
     diagnostic_exemplar:
-      problem: 'Prove that $\subseteq$ is a partial order on $\mathcal{P}(\{1,2,3\})$, and decide whether it is a total order.'
-      answer: 'Reflexive: $X \subseteq X$ for every set $X$. Antisymmetric: if $X \subseteq Y$ and $Y \subseteq X$ then $X = Y$, by double inclusion. Transitive: if $X \subseteq Y$ and $Y \subseteq Z$, then $x \in X$ gives $x \in Y$ and hence $x \in Z$, so $X \subseteq Z$. So $\subseteq$ is a partial order. It is not total: $\{1\}$ and $\{2\}$ are incomparable, since neither is contained in the other.'
-      solution_sketch: 'Check the three axioms for $\subseteq$, then exhibit two incomparable subsets to rule out totality.'
+      problem: 'Order the set $\{1,2,3,4,5,6\}$ by divisibility. How many ordered pairs $(a,b)$ have $a$ dividing $b$?'
+      answer_contract: {"kind":"exact"}
+      answer: '14'
+      solution_sketch: 'Count the multiples of each $a$ in the set: $1$ has $6$, $2$ has $3$, $3$ has $2$, and $4$, $5$, $6$ have $1$ each. The total is $14$.'
     anki_seeds:
       - front: 'A partial order is a relation that is...'
         back: 'reflexive, antisymmetric, and transitive.'
@@ -2926,10 +2936,10 @@ topics:
             solution_sketch: 'A stack is a chain for the order "fits inside". The boxes $(1,1)$, $(2,3)$, $(3,4)$, $(4,5)$ and $(5,5)$ form a chain with $5$ boxes. The boxes $(4,5)$ and $(5,4)$ cannot be nested either way, so no stack contains both, and no stack has more than $5$ boxes.'
         constraints: "find longest chains and count incomparable pairs in divisor sets, power sets and drawn posets, in contexts such as project schedules and nested boxes"
     diagnostic_exemplar:
-      problem: 'For the divisors of $18$ ordered by divisibility, list the covering edges of the Hasse diagram, give a longest chain, and name an incomparable pair.'
-      answer_contract: {kind: none}
-      answer: 'The divisors are $1, 2, 3, 6, 9, 18$. Covering edges (steps with nothing strictly between): $1\!-\!2$, $1\!-\!3$, $2\!-\!6$, $3\!-\!6$, $3\!-\!9$, $6\!-\!18$, $9\!-\!18$. A longest chain has four elements, for example $1 \mid 3 \mid 9 \mid 18$ (also $1 \mid 2 \mid 6 \mid 18$ or $1 \mid 3 \mid 6 \mid 18$). An incomparable pair: $2$ and $3$, since neither divides the other ($2$ and $9$ also work).'
-      solution_sketch: 'Draw only the covering relations, omitting edges implied by transitivity, then read a longest chain and an incomparable pair off the diagram.'
+      problem: 'Order the set $\{1,2,3,4,6,12\}$ by divisibility. How many edges does its Hasse diagram have?'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'An edge joins $a$ to $b$ when $a$ divides $b$ and no element lies between them. The edges are $1\text{-}2$, $1\text{-}3$, $2\text{-}4$, $2\text{-}6$, $3\text{-}6$, $4\text{-}12$, $6\text{-}12$.'
     anki_seeds:
       - front: 'Which edges does a Hasse diagram draw?'
         back: 'Only covering relations — loops and transitively-implied edges are omitted; smaller elements sit lower.'
@@ -3066,10 +3076,10 @@ topics:
             solution_sketch: 'A task that can finish last has no task that must come after it, which is a maximal element. Task 1 must come before tasks 2 and 3, so task 1 cannot be last. Nothing must come after task 2, and nothing must come after task 3, so each can be last. The tasks are 2 and 3, and there is no maximum.'
         constraints: 'short facts from antisymmetry and finiteness; maximal elements versus a maximum, with project-order contexts'
     diagnostic_exemplar:
-      problem: 'In the poset $\{2, 3, 4, 6, 12\}$ under divisibility: find all minimal and all maximal elements, say whether a minimum exists, and find all lower bounds of $\{4, 6\}$ together with their greatest lower bound.'
-      answer_contract: {kind: none}
-      answer: 'Minimal elements: $2$ and $3$ — no other element of the set divides either. Maximal element: $12$ alone, and since every element divides $12$ it is in fact a maximum. There is no minimum: a minimum would have to divide both $2$ and $3$, and neither of them divides the other. Lower bounds of $\{4, 6\}$: the elements dividing both $4$ and $6$, i.e. just $2$; so the greatest lower bound is $2$.'
-      solution_sketch: 'Minimal means nothing lies strictly below it, while a minimum must lie below everything. For the bounds, list the elements dividing both $4$ and $6$ and take the largest.'
+      problem: 'Order the set $\{2,3,4,5,6,10,15\}$ by divisibility. How many maximal elements does it have?'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'An element is maximal if no other element of the set is a multiple of it. $2$, $3$ and $5$ have multiples in the set. The maximal elements are $4,6,10,15$.'
     anki_seeds:
       - front: 'Maximal vs maximum in a poset?'
         back: 'Maximal: nothing strictly above it. Maximum: above (or equal to) every element; a maximum is unique.'
@@ -3228,9 +3238,10 @@ topics:
             solution_sketch: 'Call the residue of an integer its remainder $0$, $1$ or $2$ on division by $3$. Every one of the five integers has one of these three residues. There are two cases. Case 1: all three residues occur among the five integers. Choose one integer of each residue, say $3p$, $3q + 1$ and $3r + 2$ with $p, q, r$ integers. Their sum is $3p + 3q + 1 + 3r + 2 = 3(p + q + r + 1)$, which is divisible by $3$. Case 2: at most two residues occur. Then the five integers lie in at most two boxes, one box for each residue that occurs. If each box held at most $2$ integers, there would be at most $4$ integers, a contradiction. By the generalized pigeonhole principle some residue $r$ is shared by at least $\lceil 5/2 \rceil = 3$ of the integers. Choose three of them, $3p + r$, $3q + r$ and $3s + r$. Their sum is $3p + 3q + 3s + 3r = 3(p + q + s + r)$, which is divisible by $3$. In both cases some three of the five integers have a sum divisible by $3$. $\square$'
         constraints: 'use residues and boxes as the holes; generalized form $\lceil n/k \rceil$; one full proof with a case split'
     diagnostic_exemplar:
-      problem: 'Prove: if $5$ points are placed in a $2 \times 2$ square, two of them are within distance $\sqrt{2}$.'
-      answer: 'Split into four unit cells; two points share a cell of diameter $\sqrt 2$.'
-      solution_sketch: 'Partition the square into four $1 \times 1$ cells. With $5$ points and $4$ cells, two points lie in the same unit cell; the largest distance within a unit square is its diagonal $\sqrt 2$, so those two are within $\sqrt 2$. $\square$'
+      problem: 'What is the least $n$ such that among any $n$ integers, at least $3$ have the same remainder on division by $5$?'
+      answer_contract: {"kind":"exact"}
+      answer: '11'
+      solution_sketch: 'There are $5$ remainders. With $10$ integers, two of each remainder is possible. With $11$ integers, some remainder appears $3$ times.'
     anki_seeds:
       - front: 'Pigeonhole principle (function form)?'
         back: 'If $f : A \to B$ with $|A| > |B|$ (finite), then $f$ is not injective: some value is taken at least twice.'
