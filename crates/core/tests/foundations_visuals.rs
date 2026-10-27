@@ -83,7 +83,8 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
         }
     }
     assert_eq!(broken, Vec::<String>::new(), "figures that fail validation");
-    assert_eq!(count, 256);
+    // 2026-10-27, slider figure on graphing-proportional-relationships/kp1: 257 figures (was 256).
+    assert_eq!(count, 257);
     assert_eq!(families.len(), 6); // 2026-10-27: was 5
 }
 
