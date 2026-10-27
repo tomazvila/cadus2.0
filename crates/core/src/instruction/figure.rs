@@ -81,17 +81,31 @@ the worked problem, or leave 'figure' out",
             clashing.join(", ")
         )));
     }
-    let shown = format!(
+    let mut shown = vec![format!(
         "{} {}",
         figure.caption().unwrap_or(""),
         figure.text_equivalent()
-    );
-    check_teach_disclosures(problem, &[shown], spec, taught).map_err(|rejection| {
-        refuse(format!(
-            "the caption or the text description of figure {index} gives away a served problem: {} \
-— leave 'figure' out",
-            rejection.message
-        ))
-    })?;
+    )];
+    // A slider figure shows every step, so every step text goes through the same test.
+    shown.extend(step_texts(figure));
+    // The check reads the last text of its list, so each text goes in a call of its own.
+    for text in shown {
+        check_teach_disclosures(problem, &[text], spec, taught).map_err(|rejection| {
+            refuse(format!(
+                "the caption or the text description of figure {index} gives away a served \
+problem: {} — leave 'figure' out",
+                rejection.message
+            ))
+        })?;
+    }
     Ok(Some(index))
+}
+
+/// The text equivalent of the figure at every slider step, or none for a still figure.
+fn step_texts(figure: &crate::visual::VisualSpec) -> Vec<String> {
+    crate::visual::render_with_motion(figure, &crate::visual::RenderOptions::default())
+        .ok()
+        .and_then(|(_, table)| table)
+        .map(|table| table.summary)
+        .unwrap_or_default()
 }

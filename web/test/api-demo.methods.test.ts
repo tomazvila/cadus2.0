@@ -322,11 +322,13 @@ describe('the demo payloads, literally', () => {
       worked_example: {
         problem: 'Simplify $\\frac{4}{6}$.',
         steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
-        // The demo page draws one figure, as the service sends it: kind, svg, text.
+        // The demo page draws one figure, as the service sends it: kind, svg, text, and the
+        // table of its slider (D-FA1).
         figure: {
           kind: 'fraction',
           svg: expect.stringContaining('<svg'),
           text: expect.stringContaining('4 of them shaded'),
+          motion: expect.objectContaining({ summary: expect.any(Array) }),
         },
       },
       reading: expect.any(Array),

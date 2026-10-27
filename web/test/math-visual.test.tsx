@@ -9,6 +9,7 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { MathVisual, MathVisuals } from '@/components/MathVisual';
 import type { RenderedVisual } from '@/lib/visual';
 import { sanitizeVisualSvg } from '@/lib/visual';
+import visualSource from '@/lib/visual.ts?raw';
 import { mountRoot } from './helpers/react';
 
 declare global {
@@ -76,6 +77,42 @@ describe('the sanitizer', () => {
     expect(sanitizeVisualSvg('<svg><line')).toBeNull();
     expect(sanitizeVisualSvg('<html><body>hi</body></html>')).toBeNull();
     expect(sanitizeVisualSvg('')).toBeNull();
+  });
+});
+
+describe('the sanitizer allowlist after the slider (D-FA1)', () => {
+  /** The words inside one `new Set([...])` block of the source. */
+  const setOf = (name: string): string[] => {
+    const block = new RegExp(`const ${name} = new Set\\(\\[([^\\]]*)\\]\\)`).exec(visualSource)![1];
+    return Array.from(block.matchAll(/'([^']+)'/g), (match) => match[1]);
+  };
+
+  it('holds the same elements and attributes as before: the slider adds none', () => {
+    expect(setOf('ELEMENTS')).toEqual([
+      'svg', 'g', 'title', 'desc', 'line', 'circle', 'rect', 'path', 'polygon', 'polyline', 'text', 'tspan',
+    ]);
+    expect(setOf('ATTRIBUTES')).toEqual([
+      'class', 'id', 'role', 'aria-labelledby', 'viewBox', 'xmlns', 'x', 'y', 'x1', 'y1', 'x2', 'y2',
+      'cx', 'cy', 'r', 'd', 'points', 'width', 'height', 'text-anchor',
+    ]);
+  });
+
+  it.each(['transform="matrix(1,0,0,1,0,0)"', 'style="opacity:0"', 'opacity="0"', 'data-x="1"', 'onload="globalThis.__pwned_visual = true"'])(
+    'fails closed on a group that carries %s',
+    (attribute) => {
+      const hostile = `<svg xmlns="http://www.w3.org/2000/svg"><g id="m0" ${attribute}><line x1="0" y1="0" x2="1" y2="1"/></g></svg>`;
+      expect(sanitizeVisualSvg(hostile)).toBeNull();
+      expect(globalThis.__pwned_visual).toBeUndefined();
+    },
+  );
+
+  it('keeps a group with an id and a nested svg with a view box', () => {
+    const drawn =
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 200"><svg x="36" y="36" width="408" height="128" viewBox="36 36 408 128" class="cadus-visual-plot">' +
+      '<g id="p-m0" class="cadus-visual-move"><line x1="0" y1="0" x2="1" y2="1" class="cadus-visual-segment"/></g></svg></svg>';
+    const figure = sanitizeVisualSvg(drawn);
+    expect(figure).not.toBeNull();
+    expect(figure?.querySelector('g#p-m0.cadus-visual-move')).not.toBeNull();
   });
 });
 

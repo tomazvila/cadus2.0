@@ -176,6 +176,9 @@ pub struct CoordinateFigure {
     /// The name and unit of the vertical axis, for example `speed (km/h)`.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub y_title: Option<String>,
+    /// One learner-set parameter and what it moves (D-FA1).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<super::Motion>,
 }
 
 /// The least length of one drawn axis, in units. A shorter axis leaves a figure
@@ -200,6 +203,7 @@ impl CoordinateFigure {
             caption: None,
             x_title: None,
             y_title: None,
+            motion: None,
         }
     }
 

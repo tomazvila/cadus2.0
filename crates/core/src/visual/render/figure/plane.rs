@@ -74,8 +74,8 @@ pub(super) struct GridFrame {
     pub(super) bounds: (f64, f64, f64, f64),
     ticks: (i64, i64),
     steps: (f64, f64),
-    width: f64,
-    height: f64,
+    pub(super) width: f64,
+    pub(super) height: f64,
 }
 
 impl GridFrame {
@@ -172,7 +172,7 @@ fn draw_regions(
     Ok(())
 }
 
-fn draw_segments(
+pub(super) fn draw_segments(
     out: &mut String,
     segments: &[Segment],
     at: &impl Fn(f64, f64) -> (f64, f64),
@@ -201,7 +201,7 @@ fn draw_segments(
     Ok(())
 }
 
-fn draw_points(
+pub(super) fn draw_points(
     out: &mut String,
     points: &[LabeledPoint],
     at: &impl Fn(f64, f64) -> (f64, f64),

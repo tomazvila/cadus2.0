@@ -1,0 +1,41 @@
+/* A figure with a slider (decision row D-FA1). Tokens only.
+   No `transition` and no `animation` live in this file: every tween runs through the Web
+   Animations API in `lib/figure-tween.ts`, so the reduced-motion branch there is the one place
+   that stops motion. */
+
+/* The reduced-motion rule of `app.css` sets a transition length of 0.01 ms for `all`. With the
+   default property `all` that makes a CSS transition of every change. A moving group takes no
+   transition, so a jump to the end state makes no Animation object. */
+.cadus-visual-move, .param-flash { transition-property: none; }
+
+/* A moving group turns about the top-left corner of the view box, in view-box units. */
+.cadus-visual-move { transform-box: view-box; transform-origin: 0 0; }
+/* A shear stretches a stroke: at slope 2 a slope-1/2 line is half as thick. The SPA adds
+   this class to a group with a matrix law only. Its stroke keeps its width on screen. A
+   group that reveals or rotates keeps the scaled stroke of the still parts. */
+.cadus-visual-shear * { vector-effect: non-scaling-stroke; }
+/* A part that is hidden at the default stays hidden with no script (print, no JS). */
+.cadus-visual-off { opacity: 0; }
+
+.param { margin-top: 0.5rem; display: grid; gap: 0.25rem; }
+.param-name { font-size: var(--fs-2); color: var(--muted); }
+.param-name::first-letter { text-transform: uppercase; }
+.param-input { width: 100%; max-width: none; min-height: 44px; margin: 0; accent-color: var(--accent); }
+.param-input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.param-input::-webkit-slider-thumb { width: 44px; height: 44px; }
+.param-input::-moz-range-thumb { width: 44px; height: 44px; }
+.param-value, .param-readout-slot {
+  position: relative; display: inline-block; align-self: start;
+  font-family: var(--mono, ui-monospace, monospace); font-variant-numeric: tabular-nums;
+}
+.param-value { padding: 0.1rem 0.4rem; border-radius: 6px; font-size: var(--fs-3); }
+.param-flash { position: absolute; inset: 0; border-radius: 6px; background: var(--accent-weak); opacity: 0; pointer-events: none; }
+.param-readouts { display: grid; gap: 0.1rem; }
+.param .param-readout { margin: 0; font-size: var(--fs-2); }
+.param-readout-label { color: var(--muted); }
+.param-readout-slot { font-size: var(--fs-2); }
+.param-ghost { position: absolute; inset: 0; pointer-events: none; white-space: nowrap; }
+
+@media (prefers-reduced-motion: reduce) {
+  .param-flash { display: none; }
+}

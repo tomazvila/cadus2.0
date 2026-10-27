@@ -11,10 +11,17 @@
  *
  * A figure the sanitizer refuses draws nothing, and the text equivalent stays. The learner
  * keeps a usable question in place of a picture that this document must not run.
+ *
+ * A figure that carries a `motion` table also gets a slider (decision row D-FA1). The table
+ * is read AFTER the sanitizer has rebuilt the SVG, and a table that does not fit the SVG
+ * gives a still figure with no slider.
  */
-import { memo, useEffect, useRef } from 'react';
+import { memo, useCallback, useMemo, useRef } from 'react';
+import { ParameterSlider } from '@/components/ParameterSlider';
+import { readMotion, type Motion } from '@/lib/motion';
 import type { RenderedVisual } from '@/lib/visual';
 import { sanitizeVisualSvg } from '@/lib/visual';
+import '../styles/fix-figure.css';
 
 export interface MathVisualProps {
   /** The rendered figure the API sent. */
@@ -22,23 +29,32 @@ export interface MathVisualProps {
 }
 
 export const MathVisual = memo(function MathVisual({ visual }: MathVisualProps) {
-  const holder = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    // The unconditional frame is attached before this component's effect runs.
-    const node = holder.current!;
-    node.replaceChildren();
-    const figure = sanitizeVisualSvg(visual.svg);
-    if (figure !== null) node.appendChild(figure);
-  }, [visual.svg]);
+  const holder = useRef<HTMLDivElement | null>(null);
+  const figure = useMemo(() => sanitizeVisualSvg(visual.svg), [visual.svg]);
+  const motion = useMemo<Motion | null>(
+    () => (figure !== null && visual.motion !== undefined ? readMotion(visual.motion, figure) : null),
+    [figure, visual.motion],
+  );
+  // The ref callback runs before the layout effect of the slider below it, so the SVG is in
+  // place when the tween engine looks for its groups.
+  const attach = useCallback(
+    (node: HTMLDivElement | null) => {
+      holder.current = node;
+      if (node === null) return;
+      node.replaceChildren();
+      if (figure !== null) node.appendChild(figure);
+    },
+    [figure],
+  );
 
   return (
     <figure className={`math-visual math-visual-${visual.kind}`} data-kind={visual.kind}>
-      <div className="math-visual-frame" ref={holder} />
+      <div className="math-visual-frame" ref={attach} />
+      {motion !== null && <ParameterSlider key={visual.svg} motion={motion} frame={holder} />}
       <figcaption className="math-visual-text">
         <details>
           <summary>Text description</summary>
-          <p>{visual.text}</p>
+          <p className="math-visual-summary">{visual.text}</p>
         </details>
       </figcaption>
     </figure>

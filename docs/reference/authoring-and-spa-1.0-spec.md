@@ -230,6 +230,22 @@ that solves a served problem. Each refusal has the code `teach-figure`. A body w
 keeps its bytes. The teach tool schema has the optional property `figure`. The user message lists
 the reference figures of the KP. The operator re-authors with `--kp-file`.
 
+**Figure with a slider (D-FA1).** A visual spec may carry the object `motion`:
+`{parameter:{name, unit?, min, max, default, step}, drives:[...]}`. The numbers are integers or
+terminating decimals. The step divides the range, the default sits on a step, and the slider has
+at most 60 steps. The figure must hold at the least, the default and the greatest value (every
+step is checked). One parameter per figure, and at most 12 moving groups. A drive names the part
+that moves: `line_slope {segment}` (the segment turns about its `from` end; the points on its `to`
+end move with it; the segment has no label), `line_intercept {segment}`, `point_x {point}`,
+`point_y {point}` (coordinate; no other segment may touch a moving end); `point {index}` (number
+line; the point has a label); `shaded` (fraction with one whole; the slider runs from 0 to the part
+count in steps of 1, at most 12 parts); `angle` (geometry angle; no label). The default of the
+parameter must equal the value the figure draws. A figure with `motion` is teach-only: the lint
+refuses an exemplar that names it (`visual_motion_on_exemplar`) and reports a step that fails
+(`visual_motion_table`). The worked example must use the word of `parameter.name`. The teach check
+runs the leak test on the text of every step. The name must let a stranger predict what moves
+("slope", not "m").
+
 **T3 — authoring cost per KP.** Every attempt writes one `model_call_log` row with
 `purpose = 'authoring'` and `user_id = NULL` (`migrations/0005_content.sql:52-57`). On store,
 the job sets `content_store.authoring_attempts` and `authoring_cost_usd` to the sum over that

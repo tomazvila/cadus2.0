@@ -86,7 +86,7 @@ fn draw_intervals(
     Ok(())
 }
 
-fn draw_points(
+pub(super) fn draw_points(
     out: &mut String,
     points: &[MarkedPoint],
     baseline: f64,

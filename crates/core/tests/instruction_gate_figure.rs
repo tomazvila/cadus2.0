@@ -172,3 +172,65 @@ fn the_older_rules_still_hold_with_a_figure_on_the_list() {
     let last = json!({"concept": "c", "worked_example": {"problem": "Compute $6^2$.", "steps": ["Likewise $9^2$ is 81."]}});
     assert_eq!(code(&last.to_string(), &spec), "teach-answer");
 }
+
+fn slider_line(max: &str) -> VisualSpec {
+    serde_json::from_value(json!({
+        "kind": "number_line", "min": "0", "max": "100", "tick": "10",
+        "points": [{"at": "62", "label": "A"}],
+        "caption": "Note: (8^2) equals",
+        "motion": {
+            "parameter": {"name": "place", "min": "60", "max": max, "default": "62", "step": "1"},
+            "drives": [{"kind": "point", "index": 0}],
+        },
+    }))
+    .unwrap()
+}
+
+fn slider_page() -> String {
+    json!({
+        "concept": "A point on a number line has a place.",
+        "worked_example": {
+            "problem": "Point A sits at one place on the line. Move the place and watch A.",
+            "steps": ["The place of A tells how far A is from zero."],
+        },
+        "figure": 0,
+    })
+    .to_string()
+}
+
+#[test]
+fn a_slider_figure_the_example_names_by_its_parameter_is_accepted() {
+    let examples = exemplars();
+    let visuals = [slider_line("62")];
+    let spec = spec_of(&examples, &visuals, &[("Compute $9^2$.", "81")]);
+    let page = gate_teach(&slider_page(), &spec).unwrap();
+    assert_eq!(page.figure, Some(0));
+}
+
+#[test]
+fn a_slider_figure_the_example_never_names_is_refused() {
+    let examples = exemplars();
+    let visuals = [slider_line("62")];
+    let spec = spec_of(&examples, &visuals, &[]);
+    let body = slider_page().replace("place", "spot");
+    let error = gate_teach(&body, &spec).unwrap_err();
+    assert_eq!(error.code, "teach-figure");
+    assert!(error.message.contains("place"), "{}", error.message);
+}
+
+#[test]
+fn a_step_text_that_solves_a_served_problem_is_refused_at_every_step() {
+    let examples = exemplars();
+    // The step texts say "at 63", "at 64" and so on. 64 is not the least, the
+    // default or the greatest value of the range 60 to 66.
+    let visuals = [slider_line("66")];
+    let served = [("Compute $8^2$.", "64")];
+    let spec = spec_of(&examples, &visuals, &served);
+    let error = gate_teach(&slider_page(), &spec).unwrap_err();
+    assert_eq!(error.code, "teach-figure");
+    assert!(error.message.contains("gives away"), "{}", error.message);
+    // The same figure with a range that never reaches 64 is clean.
+    let clean = [slider_line("63")];
+    let spec = spec_of(&examples, &clean, &served);
+    assert!(gate_teach(&slider_page(), &spec).is_ok());
+}

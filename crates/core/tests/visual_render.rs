@@ -305,6 +305,7 @@ fn a_curve_draws_a_broken_polyline_around_its_asymptote_and_its_key_points() {
             },
         ],
         caption: Some("Reference: y = 4/x".to_owned()),
+        motion: None,
     };
     let svg = render(&VisualSpec::Curve(figure), &RenderOptions::default()).unwrap();
     assert!(svg.contains("class=\"cadus-visual cadus-visual-curve\""));

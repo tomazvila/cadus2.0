@@ -21,6 +21,7 @@ fn parabola() -> CurveFigure {
         ],
         asymptotes: Vec::new(),
         caption: None,
+        motion: None,
     }
 }
 
@@ -63,6 +64,7 @@ fn natural_exponential_names_e_and_only_asserts_its_exact_intercept() {
             at: Scalar::from("0"),
         }],
         caption: None,
+        motion: None,
     };
     assert!(figure.validate().is_ok());
     assert!(figure.text_equivalent().contains("e^(1 · (x - 0))"));
@@ -99,6 +101,7 @@ fn an_exponential_checks_only_integer_steps_from_its_shift() {
             at: Scalar::from("0"),
         }],
         caption: None,
+        motion: None,
     };
     assert!(figure.validate().is_ok());
 
@@ -132,6 +135,7 @@ fn a_logarithm_checks_exact_powers_of_its_base() {
         ],
         asymptotes: vec![],
         caption: None,
+        motion: None,
     };
     assert!(figure.validate().is_ok());
 
@@ -184,6 +188,7 @@ fn a_sine_curve_checks_exact_quarter_period_points_only() {
         ],
         asymptotes: vec![],
         caption: None,
+        motion: None,
     };
     assert!(figure.validate().is_ok());
 
@@ -213,6 +218,7 @@ fn degenerate_parameters_are_refused_before_any_key_point_check() {
         key_points: vec![],
         asymptotes: vec![],
         caption: None,
+        motion: None,
     };
     assert!(matches!(
         zero_amplitude.validate(),

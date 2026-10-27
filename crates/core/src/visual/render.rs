@@ -14,12 +14,12 @@ use serde::{Deserialize, Serialize};
 use num_rational::BigRational;
 
 use super::plane::exact_text;
-use super::{LabeledPoint, Scalar, VisualError, VisualSpec};
+use super::{LabeledPoint, MotionTable, Scalar, VisualError, VisualSpec};
 
 mod figure;
 
 use figure::{
-    coordinate_body, curve_body, fraction_body, geometry_body, number_line_body,
+    coordinate_body, curve_body, fraction_body, geometry_body, motion_body, number_line_body,
     special_triangle_body,
 };
 
@@ -63,9 +63,28 @@ impl RenderOptions {
 /// The call validates first. An invalid figure gives the [`VisualError`] and no
 /// bytes, because a drawn but wrong picture teaches a wrong fact.
 pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, VisualError> {
+    render_with_motion(spec, options).map(|(svg, _)| svg)
+}
+
+/// Draw one visual as SVG, and the motion table when the figure has a `motion`.
+///
+/// The SVG shows the figure at the default value. Every moving part sits in a
+/// `<g id>` that the table names. A figure with no `motion` gives the same bytes
+/// as before and no table.
+pub fn render_with_motion(
+    spec: &VisualSpec,
+    options: &RenderOptions,
+) -> Result<(String, Option<MotionTable>), VisualError> {
     spec.validate()?;
     let (fitted, options) = fit_plane(spec, options)?;
     let options = &options;
+    if let Some(motion) = spec.motion() {
+        let steps = motion.steps()?;
+        let shown = fitted.as_ref().unwrap_or(spec);
+        let (body, groups) = motion_body(shown, options, motion, &steps)?;
+        let table = MotionTable::build(spec, motion, &steps, groups)?;
+        return Ok((frame(spec, options, &body), Some(table)));
+    }
     let body = match fitted.as_ref().unwrap_or(spec) {
         VisualSpec::NumberLine(figure) => number_line_body(figure, options)?,
         VisualSpec::Fraction(figure) => fraction_body(figure, options),
@@ -74,7 +93,7 @@ pub fn render(spec: &VisualSpec, options: &RenderOptions) -> Result<String, Visu
         VisualSpec::Curve(figure) => curve_body(figure, options)?,
         VisualSpec::SpecialTriangle(figure) => special_triangle_body(figure, options)?,
     };
-    Ok(frame(spec, options, &body))
+    Ok((frame(spec, options, &body), None))
 }
 
 /// The tallest an untitled plane grows, as a multiple of its width.
@@ -122,7 +141,7 @@ fn fit_plane(
 ///
 /// The browser never repeats the geometry: it prints these bytes and reads this
 /// text. `web/src/components/MathVisual.tsx` is the reader.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct RenderedVisual {
     /// The family: `number_line`, `fraction`, `coordinate`, or `geometry`.
     pub kind: String,
@@ -130,6 +149,9 @@ pub struct RenderedVisual {
     pub svg: String,
     /// The accessible equivalent.
     pub text: String,
+    /// The slider and the law of each moving group, or `None` for a still figure.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<MotionTable>,
 }
 
 /// Draw every figure of one problem, and drop each figure the check refuses.
@@ -145,11 +167,12 @@ pub fn render_all(specs: &[VisualSpec], prefix: &str) -> Vec<RenderedVisual> {
     let mut out = Vec::new();
     for (at, spec) in specs.iter().enumerate() {
         let options = RenderOptions::with_prefix(&format!("{prefix}-{at}"));
-        if let Ok(svg) = render(spec, &options) {
+        if let Ok((svg, motion)) = render_with_motion(spec, &options) {
             out.push(RenderedVisual {
                 kind: spec.kind().to_owned(),
                 svg,
                 text: spec.text_equivalent(),
+                motion,
             });
         }
     }

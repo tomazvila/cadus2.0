@@ -133,3 +133,28 @@ fn visual_true_is_refused() {
     let root = tree("true", POINT_LINE, &item("Find $3+4$.", "7", Some("true")));
     assert!(!lint_curriculum(&root).is_empty());
 }
+
+const SLIDER: &str = "        - {kind: number_line, min: 0, max: 10, tick: 1, points: [{at: 4, label: A}], motion: {parameter: {name: place, min: 0, max: 10, default: 4, step: 1}, drives: [{kind: point, index: 0}]}}\n";
+
+#[test]
+fn a_slider_figure_on_a_teach_page_only_is_clean() {
+    let root = tree("slider-clean", SLIDER, &item("Find $3+4$.", "7", None));
+    assert_eq!(visual_codes(&root), Vec::<String>::new());
+}
+
+#[test]
+fn a_graded_exemplar_that_names_a_slider_figure_is_refused() {
+    let root = tree(
+        "slider-exemplar",
+        SLIDER,
+        &item("Point $A$ is at $4$. Give its place.", "4", Some("0")),
+    );
+    assert_eq!(visual_codes(&root), vec!["visual_motion_on_exemplar"]);
+}
+
+#[test]
+fn a_slider_figure_whose_step_does_not_hold_is_refused() {
+    let bad = SLIDER.replace("max: 10, default: 4", "max: 12, default: 4");
+    let root = tree("slider-range", &bad, &item("Find $3+4$.", "7", None));
+    assert_eq!(visual_codes(&root), vec!["visual_motion_table"]);
+}

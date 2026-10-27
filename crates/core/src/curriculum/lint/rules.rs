@@ -11,6 +11,7 @@ use super::{Lint, Table, node, py_list_repr, py_repr};
 mod exemplars;
 mod probes;
 mod reading;
+mod visual_motion;
 mod visuals;
 
 pub(super) use exemplars::check_exemplars;

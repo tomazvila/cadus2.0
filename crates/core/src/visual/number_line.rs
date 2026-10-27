@@ -91,6 +91,9 @@ pub struct NumberLineFigure {
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// One learner-set parameter and what it moves (D-FA1).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<super::Motion>,
 }
 
 /// The serde default of a boolean field that defaults to `true`.
@@ -110,6 +113,7 @@ impl NumberLineFigure {
             intervals: Vec::new(),
             rays: Vec::new(),
             caption: None,
+            motion: None,
         }
     }
 

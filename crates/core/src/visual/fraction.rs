@@ -50,6 +50,9 @@ pub struct FractionFigure {
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// One learner-set parameter and what it moves (D-FA1).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<super::Motion>,
 }
 
 impl FractionFigure {
@@ -61,6 +64,7 @@ impl FractionFigure {
             shaded,
             shape: FractionShape::Bar,
             caption: None,
+            motion: None,
         }
     }
 
@@ -72,6 +76,7 @@ impl FractionFigure {
             shaded,
             shape: FractionShape::Circle,
             caption: None,
+            motion: None,
         }
     }
 

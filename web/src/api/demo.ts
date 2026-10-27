@@ -19,6 +19,7 @@
  */
 import { ApiError } from './client';
 import { DEMO_FIGURE } from './demo-figure';
+import { DEMO_SHADED_FIGURE, DEMO_SLOPE_FIGURE } from './demo-motion';
 import { createDemoDiagApi } from './diag';
 import type {
   ApiClient,
@@ -401,7 +402,7 @@ export function createDemoApi(): ApiClient {
         worked_example: {
           problem: 'Simplify $\\frac{4}{6}$.',
           steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
-          figure: DEMO_FIGURE,
+          figure: DEMO_SHADED_FIGURE,
         },
         reading: DEMO_READING,
       });
@@ -431,6 +432,17 @@ export function createDemoApi(): ApiClient {
               problem: 'Simplify $\\frac{4}{6}$.',
               steps: 'Both parts divide by 2, so $\\frac{4}{6}=\\frac{2}{3}$.',
               figure: DEMO_FIGURE,
+            },
+          },
+        }, {
+          kp: 'fractions/slope-of-a-line',
+          name: 'Slope of a line',
+          page: {
+            concept: 'The slope of a line says how many units it rises for each unit it runs.',
+            worked_example: {
+              problem: 'A line runs from the origin to the point T at $(4, 2)$. Move the slope and watch the line.',
+              steps: 'The line rises 2 units while it runs 4 units, so the slope is $\\frac{2}{4}=\\frac{1}{2}$.',
+              figure: DEMO_SLOPE_FIGURE,
             },
           },
         }],

@@ -24,6 +24,7 @@ fn the_geometry_polygon_draws_its_outline_its_labels_and_its_right_angle() {
             }],
         },
         caption: Some("Right triangle".to_owned()),
+        motion: None,
     };
     let svg = render(&VisualSpec::Geometry(figure), &RenderOptions::default()).unwrap();
     assert_eq!(count(&svg, "<polygon"), 1);
@@ -50,6 +51,7 @@ fn an_angle_mark_naming_a_missing_vertex_renders_no_bytes() {
             angle_marks: vec![AngleMark { at: 9, label: None }],
         },
         caption: None,
+        motion: None,
     };
     assert!(matches!(
         render(&VisualSpec::Geometry(figure), &RenderOptions::default()),
@@ -68,6 +70,7 @@ fn an_angle_diagram_draws_two_rays_an_arc_and_its_label() {
             label: Some("135°".to_owned()),
         },
         caption: Some("Reference angle".to_owned()),
+        motion: None,
     };
     let svg = render(&VisualSpec::Geometry(figure), &RenderOptions::default()).unwrap();
     assert_eq!(count(&svg, "cadus-visual-segment"), 2, "two rays");
@@ -95,6 +98,7 @@ fn a_forty_five_special_triangle_draws_its_computed_hypotenuse_label() {
             leg: Scalar::from("4"),
         },
         caption: Some("Reference: 45-45-90".to_owned()),
+        motion: None,
     };
     let svg = render(
         &VisualSpec::SpecialTriangle(figure),
@@ -114,6 +118,7 @@ fn a_thirty_sixty_special_triangle_marks_both_acute_angles() {
             short_leg: Scalar::from("3"),
         },
         caption: None,
+        motion: None,
     };
     let svg = render(
         &VisualSpec::SpecialTriangle(figure),
@@ -143,6 +148,7 @@ fn a_sas_area_special_triangle_refuses_an_angle_with_no_exact_sine() {
             included_angle_degrees: Scalar::from("60"),
         },
         caption: None,
+        motion: None,
     };
     let svg = render(
         &VisualSpec::SpecialTriangle(good),

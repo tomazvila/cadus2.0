@@ -228,7 +228,9 @@ fn visuals_of(
         .find(|exemplar| exemplar.problem.trim() == served.text.trim())
         .and_then(|exemplar| exemplar.visual)
         .and_then(|index| kp.visuals.get(index))
-        .map(|spec| cadus_core::visual::render_all(std::slice::from_ref(spec), problem_id))
+        // A graded problem never carries a slider (D-FA1): the lint refuses the
+        // pairing, and this call drops `motion` as a second guard.
+        .map(|spec| cadus_core::visual::render_all(&[spec.without_motion()], problem_id))
         .unwrap_or_default()
 }
 

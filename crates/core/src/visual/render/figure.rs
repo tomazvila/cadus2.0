@@ -3,6 +3,7 @@
 mod curve;
 mod fraction;
 mod geometry;
+mod motion;
 mod number_line;
 mod plane;
 mod special_triangle;
@@ -12,6 +13,7 @@ use super::{MARGIN, RenderOptions, inner_height, inner_width};
 pub(super) use curve::curve_body;
 pub(super) use fraction::fraction_body;
 pub(super) use geometry::geometry_body;
+pub(super) use motion::motion_body;
 pub(super) use number_line::number_line_body;
 pub(super) use plane::coordinate_body;
 pub(super) use special_triangle::special_triangle_body;

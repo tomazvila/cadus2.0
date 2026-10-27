@@ -40,6 +40,8 @@ pub(in crate::curriculum::lint) fn check_visuals(lint: &mut Lint<'_>) {
         let topic = lint.table.topics[position];
         let file = lint.table.file(position).to_owned();
         for kp in &topic.knowledge_points {
+            lint.findings
+                .extend(super::visual_motion::check_point(topic, &file, kp));
             for (at, exemplar) in kp.exemplars.iter().enumerate() {
                 check_item(
                     &mut lint.findings,

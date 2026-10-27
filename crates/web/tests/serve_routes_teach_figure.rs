@@ -41,6 +41,19 @@ fn broken_figure() -> VisualSpec {
     .unwrap()
 }
 
+/// A figure with a slider: a point that moves along a number line.
+fn moving_figure() -> VisualSpec {
+    serde_json::from_value(json!({
+        "kind": "number_line", "min": "0", "max": "10", "tick": "1",
+        "points": [{"at": "4", "label": "A"}],
+        "motion": {
+            "parameter": {"name": "place", "min": "0", "max": "10", "default": "4", "step": "1"},
+            "drives": [{"kind": "point", "index": 0}],
+        },
+    }))
+    .unwrap()
+}
+
 /// The drill fixture of the serve tests, with two figures on `addition/kp1`.
 fn curriculum() -> Curriculum {
     let mut point: KnowledgePoint = kp(
@@ -50,7 +63,7 @@ fn curriculum() -> Curriculum {
             exemplar(EXEMPLAR_TEXT_2, "13.25"),
         ],
     );
-    point.visuals = vec![good_figure(), broken_figure()];
+    point.visuals = vec![good_figure(), broken_figure(), moving_figure()];
     one_unit_curriculum(vec![
         topic(
             "addition",
@@ -195,4 +208,43 @@ async fn the_admin_show_reply_of_a_teach_row_with_a_figure_carries_figure_text()
         assert!(shown.body.get("figure_text").is_none());
     })
     .await;
+}
+
+#[tokio::test]
+async fn a_figure_with_a_slider_serves_its_motion_table_and_no_answer() {
+    let (status, reply) = served("motion@example.com", page(Some(json!(2)))).await;
+    assert_eq!(status, StatusCode::OK, "{reply}");
+    let figure = &reply["worked_example"]["figure"];
+    let motion = figure["motion"].as_object().expect("a motion table");
+    let mut names: Vec<&String> = motion.keys().collect();
+    names.sort();
+    assert_eq!(names, ["groups", "parameter", "readouts", "summary"]);
+    assert_eq!(motion["parameter"]["n"], json!(10));
+    assert_eq!(motion["parameter"]["labels"].as_array().unwrap().len(), 11);
+    assert_eq!(motion["summary"].as_array().unwrap().len(), 11);
+    let id = motion["groups"][0]["id"].as_str().unwrap();
+    assert!(
+        figure["svg"]
+            .as_str()
+            .unwrap()
+            .contains(&format!("id=\"{id}\""))
+    );
+    let mut all = Vec::new();
+    keys(&reply, &mut all);
+    for banned in ["answer", "expected", "reveal"] {
+        assert!(!all.iter().any(|key| key == banned), "{banned} in {reply}");
+    }
+}
+
+#[tokio::test]
+async fn a_still_figure_keeps_the_exact_json_of_today() {
+    let (status, reply) = served("still@example.com", page(Some(json!(0)))).await;
+    assert_eq!(status, StatusCode::OK, "{reply}");
+    let mut keys: Vec<&String> = reply["worked_example"]["figure"]
+        .as_object()
+        .unwrap()
+        .keys()
+        .collect();
+    keys.sort();
+    assert_eq!(keys, ["kind", "svg", "text"]);
 }

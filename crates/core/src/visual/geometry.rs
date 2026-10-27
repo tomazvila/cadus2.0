@@ -76,6 +76,9 @@ pub struct GeometryFigure {
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// One learner-set parameter and what it moves (D-FA1).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<super::Motion>,
 }
 
 impl GeometryFigure {
@@ -89,6 +92,7 @@ impl GeometryFigure {
                 angle_marks: Vec::new(),
             },
             caption: None,
+            motion: None,
         }
     }
 
@@ -101,6 +105,7 @@ impl GeometryFigure {
                 radius: radius.into(),
             },
             caption: None,
+            motion: None,
         }
     }
 
@@ -390,6 +395,7 @@ mod tests {
                 angle_marks: vec![],
             },
             caption: None,
+            motion: None,
         };
         assert!(matches!(
             figure.validate(),
@@ -403,6 +409,7 @@ mod tests {
                 angle_marks: vec![AngleMark { at: 9, label: None }],
             },
             caption: None,
+            motion: None,
         };
         assert!(matches!(
             bad_mark.validate(),
@@ -421,6 +428,7 @@ mod tests {
                 label: Some("60°".to_owned()),
             },
             caption: None,
+            motion: None,
         };
         assert!(figure.validate().is_ok());
         assert_eq!(

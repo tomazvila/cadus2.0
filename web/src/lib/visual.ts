@@ -12,6 +12,7 @@
  * element or one unknown attribute drops the whole figure, and the learner reads the text
  * equivalent instead.
  */
+import type { JsonValue } from '@/api/types';
 
 /** One rendered figure, as the API sends it. */
 export interface RenderedVisual {
@@ -21,6 +22,11 @@ export interface RenderedVisual {
   svg: string;
   /** The accessible equivalent: the facts of the figure in words. */
   text: string;
+  /**
+   * The table of a figure with a slider (decision row D-FA1). It is untyped here on purpose:
+   * `readMotion` in `lib/motion.ts` checks it against the rebuilt SVG before anything uses it.
+   */
+  motion?: JsonValue;
 }
 
 /** The SVG elements a figure is allowed to hold. */

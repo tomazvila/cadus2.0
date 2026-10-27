@@ -32,6 +32,14 @@ pub fn absent_terms(spec: &VisualSpec, text: &str) -> Vec<String> {
     let numbers = number_tokens(text);
     let words = letter_tokens(text);
     let mut absent: Vec<String> = Vec::new();
+    // A slider figure: the worked example must use the name of the parameter.
+    if let Some(motion) = spec.motion() {
+        let name = motion.parameter.name.trim().to_lowercase();
+        let lower = text.to_lowercase();
+        if !name.is_empty() && !name.split_whitespace().all(|word| lower.contains(word)) {
+            absent.push(motion.parameter.name.trim().to_owned());
+        }
+    }
     for label in &terms.labels {
         let digits = number_tokens(label);
         if digits.is_empty() {

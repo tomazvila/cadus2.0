@@ -32,6 +32,7 @@ mod agree;
 mod curve;
 mod fraction;
 mod geometry;
+mod motion;
 mod number_line;
 mod plane;
 mod render;
@@ -45,9 +46,13 @@ pub use agree::{absent_terms, clashing_labels};
 pub use curve::{Asymptote, CurveFigure, CurveKind};
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{AngleMark, GeometryFigure, GeometryShape};
+pub use motion::{
+    Drive, GroupLaw, Law, MAX_GROUPS, MAX_STEPS, MAX_TABLE_BYTES, Motion, MotionError, MotionTable,
+    Parameter, ParameterTable, Readout, Steps,
+};
 pub use number_line::{MarkedInterval, MarkedPoint, MarkedRay, NumberLineFigure, RayDirection};
 pub use plane::{CoordinateFigure, LabeledPoint, MIN_AXIS_SPAN, Segment, ShadedHalfPlane};
-pub use render::{RenderOptions, RenderedVisual, render, render_all};
+pub use render::{RenderOptions, RenderedVisual, render, render_all, render_with_motion};
 pub use scalar::Scalar;
 pub use special_triangle::{SpecialTriangleFigure, SpecialTriangleShape};
 
@@ -167,6 +172,9 @@ pub enum VisualError {
         /// The point, in words.
         point: String,
     },
+    /// The `motion` object of a figure is wrong (see [`MotionError`]).
+    #[error(transparent)]
+    Motion(#[from] MotionError),
 }
 
 /// The labels and values a figure names (see [`VisualSpec::item_terms`]).
@@ -241,7 +249,8 @@ impl VisualSpec {
             Self::Geometry(figure) => figure.validate(),
             Self::Curve(figure) => figure.validate(),
             Self::SpecialTriangle(figure) => figure.validate(),
-        }
+        }?;
+        self.motion().map_or(Ok(()), |motion| motion.validate(self))
     }
 
     /// What the figure names: the labels a reader sees and the values a reader
@@ -253,45 +262,10 @@ impl VisualSpec {
     /// draws them for scale and the item need not repeat them.
     #[must_use]
     pub fn item_terms(&self) -> ItemTerms {
-        const VALUE_KEYS: [&str; 6] = ["at", "from", "to", "radius", "shaded", "parts"];
-        fn walk(value: &serde_json::Value, terms: &mut ItemTerms) {
-            match value {
-                serde_json::Value::Object(map) => {
-                    let label = map
-                        .get("label")
-                        .and_then(serde_json::Value::as_str)
-                        .map(str::trim)
-                        .filter(|text| !text.is_empty());
-                    if let Some(label) = label {
-                        terms.labels.push(label.to_owned());
-                    } else {
-                        for key in VALUE_KEYS {
-                            match map.get(key) {
-                                Some(serde_json::Value::String(text)) => {
-                                    terms.values.push(text.clone());
-                                }
-                                Some(serde_json::Value::Number(number)) => {
-                                    terms.values.push(number.to_string());
-                                }
-                                _ => {}
-                            }
-                        }
-                    }
-                    for child in map.values() {
-                        walk(child, terms);
-                    }
-                }
-                serde_json::Value::Array(items) => {
-                    for child in items {
-                        walk(child, terms);
-                    }
-                }
-                _ => {}
-            }
-        }
         let mut terms = ItemTerms::default();
-        if let Ok(value) = serde_json::to_value(self) {
-            walk(&value, &mut terms);
+        // The slider range is not a value of the figure, so the walk skips `motion`.
+        if let Ok(value) = serde_json::to_value(self.without_motion()) {
+            collect_terms(&value, &mut terms);
         }
         terms
     }
@@ -311,10 +285,50 @@ impl VisualSpec {
             Self::Curve(figure) => figure.text_equivalent(),
             Self::SpecialTriangle(figure) => figure.text_equivalent(),
         };
-        match self.caption() {
+        let body = match self.caption() {
             Some(caption) => format!("{}. {body}", caption.trim().trim_end_matches('.')),
             None => body,
+        };
+        format!("{body}{}", self.slider_sentence())
+    }
+}
+
+/// The keys whose plain value an item must state.
+const VALUE_KEYS: [&str; 6] = ["at", "from", "to", "radius", "shaded", "parts"];
+/// Collect the labels and plain values of one figure, as JSON, into `terms`.
+fn collect_terms(value: &serde_json::Value, terms: &mut ItemTerms) {
+    match value {
+        serde_json::Value::Object(map) => {
+            let label = map
+                .get("label")
+                .and_then(serde_json::Value::as_str)
+                .map(str::trim)
+                .filter(|text| !text.is_empty());
+            if let Some(label) = label {
+                terms.labels.push(label.to_owned());
+            } else {
+                for key in VALUE_KEYS {
+                    match map.get(key) {
+                        Some(serde_json::Value::String(text)) => {
+                            terms.values.push(text.clone());
+                        }
+                        Some(serde_json::Value::Number(number)) => {
+                            terms.values.push(number.to_string());
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            for child in map.values() {
+                collect_terms(child, terms);
+            }
         }
+        serde_json::Value::Array(items) => {
+            for child in items {
+                collect_terms(child, terms);
+            }
+        }
+        _ => {}
     }
 }
 

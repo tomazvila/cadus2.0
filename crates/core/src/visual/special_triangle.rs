@@ -52,6 +52,9 @@ pub struct SpecialTriangleFigure {
     /// The sentence that leads the accessible equivalent.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub caption: Option<String>,
+    /// One learner-set parameter and what it moves (D-FA1).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub motion: Option<super::Motion>,
 }
 
 /// `sin(degrees) = numerator / denominator * √radicand`, for the degree
@@ -116,6 +119,7 @@ impl SpecialTriangleFigure {
                 included_angle_degrees,
             },
             caption: None,
+            motion: None,
         }
     }
 
@@ -216,6 +220,7 @@ mod tests {
                 leg: Scalar::from("4"),
             },
             caption: None,
+            motion: None,
         };
         assert!(figure.validate().is_ok());
         assert_eq!(
@@ -228,6 +233,7 @@ mod tests {
                 leg: Scalar::from("1"),
             },
             caption: None,
+            motion: None,
         };
         assert!(unit.text_equivalent().contains("hypotenuse √2."));
 
@@ -236,6 +242,7 @@ mod tests {
                 leg: Scalar::from("0"),
             },
             caption: None,
+            motion: None,
         };
         assert!(matches!(
             bad.validate(),
@@ -250,6 +257,7 @@ mod tests {
                 short_leg: Scalar::from("3"),
             },
             caption: Some("Reference example".to_owned()),
+            motion: None,
         };
         assert!(figure.validate().is_ok());
         assert_eq!(
@@ -268,6 +276,7 @@ mod tests {
                 included_angle_degrees: Scalar::from("60"),
             },
             caption: None,
+            motion: None,
         };
         assert!(figure.validate().is_ok());
         assert_eq!(
@@ -283,6 +292,7 @@ mod tests {
                 included_angle_degrees: Scalar::from("90"),
             },
             caption: None,
+            motion: None,
         };
         assert!(
             right_angle
