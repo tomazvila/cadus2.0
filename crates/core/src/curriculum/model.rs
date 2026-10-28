@@ -118,6 +118,9 @@ pub enum AnswerKind {
 /// The wire values of [`AnswerKind`], in declaration order.
 pub const ANSWER_KINDS: [&str; 4] = ["numeric", "expression", "multi-step", "proof"];
 
+/// The allowed values of the `area` field of a topic (D-VBE1).
+pub const TOPIC_AREAS: [&str; 4] = ["numbers", "models", "geometry", "data"];
+
 impl AnswerKind {
     /// The wire value.
     pub fn as_str(self) -> &'static str {
@@ -359,6 +362,17 @@ pub struct Topic {
     pub diagnostic_exemplar: Option<Exemplar>,
     #[serde(default)]
     pub anki_seeds: Vec<AnkiSeed>,
+    /// The Lithuanian program term (D-VBE1). Presentation only. It stays out of
+    /// the serialized form, so it stays out of the canonical dump and of
+    /// `review_context_digest`.
+    #[serde(default, skip_serializing)]
+    pub lt_term: Option<String>,
+    /// The program row numbers that the topic covers (D-VBE1). Not serialized.
+    #[serde(default, skip_serializing)]
+    pub program_items: Vec<u32>,
+    /// The exam area, one of [`TOPIC_AREAS`] (D-VBE1). Not serialized.
+    #[serde(default, skip_serializing)]
+    pub area: Option<String>,
 }
 
 /// One unit file, `curriculum/<course>/<nn>-<unit>.yaml`.
@@ -406,6 +420,20 @@ pub struct Course {
     /// of `review_context_digest`.
     #[serde(default, skip_serializing)]
     pub reading: Vec<ReadingEntry>,
+    /// The exam weight of each area in percent; the sum is 100 (D-VBE1). Not
+    /// serialized. The loader derives nothing from it yet.
+    #[serde(default, skip_serializing)]
+    pub exam_weights: Option<ExamWeights>,
+}
+
+/// The percent of the exam points of each area (D-VBE1).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ExamWeights {
+    pub numbers: u8,
+    pub models: u8,
+    pub geometry: u8,
+    pub data: u8,
 }
 
 /// The `courses.yaml` document. 1.0 calls the model `CourseCatalog`; the schema

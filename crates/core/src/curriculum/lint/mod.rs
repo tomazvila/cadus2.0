@@ -96,6 +96,27 @@ pub fn lint_curriculum_probes_with(root: &Path, allow_path: &Path) -> Vec<Findin
     lint.findings
 }
 
+/// The program registry rules (D-VBE1): `program_item_uncovered`,
+/// `program_item_unknown` and `program_registry`.
+///
+/// A course reads `<root>/<course>/program.yaml` when the file exists. A course
+/// with no file gets no finding. The rules are not part of [`lint_curriculum`]
+/// or [`lint_curriculum_full`], so the parity tests stay as they are. A tree
+/// that does not parse gives no finding here; the other lints report it.
+pub fn lint_curriculum_program(root: &Path) -> Vec<Finding> {
+    let parsed = parse_curriculum(root);
+    if parsed.error.is_some() {
+        return Vec::new();
+    }
+    let Some(catalog) = &parsed.catalog else {
+        return Vec::new();
+    };
+    let mut lint = Lint::new(&parsed.units, Vec::new());
+    lint.findings.clear();
+    rules::check_program(&mut lint, catalog, root);
+    lint.findings
+}
+
 fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     let parsed = parse_curriculum(root);
     if parsed.error.is_some() {

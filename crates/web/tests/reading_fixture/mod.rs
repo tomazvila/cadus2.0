@@ -33,9 +33,14 @@ pub fn entries() -> Vec<ReadingEntry> {
 /// The serve fixture of course `c1` ("Foundations"), with
 /// `reading` as the list of the course.
 pub fn curriculum(reading: Vec<ReadingEntry>) -> Curriculum {
+    curriculum_with_term(reading, None)
+}
+
+/// [`curriculum`] with `lt_term` as the Lithuanian term of the topic `addition` (D-VBE1).
+pub fn curriculum_with_term(reading: Vec<ReadingEntry>, lt_term: Option<&str>) -> Curriculum {
     let mut catalog = one_course_catalog();
     catalog.courses[0].reading = reading;
-    let topics = vec![
+    let mut topics = vec![
         topic(
             "addition",
             vec![
@@ -61,6 +66,7 @@ pub fn curriculum(reading: Vec<ReadingEntry>) -> Curriculum {
             )],
         ),
     ];
+    topics[0].lt_term = lt_term.map(str::to_owned);
     Curriculum::build(RawCurriculum {
         catalog,
         units: vec![unit("c1", "M1", topics, 0)],

@@ -64,6 +64,9 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             visual: None,
         }),
         anki_seeds: Vec::new(),
+        lt_term: None,
+        program_items: Vec::new(),
+        area: None,
     }
 }
 
@@ -77,6 +80,7 @@ pub fn graph() -> Curriculum {
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
             reading: Vec::new(),
+            exam_weights: None,
         }],
     };
     Curriculum::build(RawCurriculum {

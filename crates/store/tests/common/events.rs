@@ -63,6 +63,9 @@ pub fn graph() -> Curriculum {
             knowledge_points: Vec::new(),
             diagnostic_exemplar: None,
             anki_seeds: Vec::new(),
+            lt_term: None,
+            program_items: Vec::new(),
+            area: None,
         })
         .collect();
     Curriculum::build(RawCurriculum {
@@ -74,6 +77,7 @@ pub fn graph() -> Curriculum {
                 mastery_floor: Vec::new(),
                 mastery_floor_course: None,
                 reading: Vec::new(),
+                exam_weights: None,
             }],
         },
         units: vec![RawUnit {

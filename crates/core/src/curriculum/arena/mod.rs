@@ -321,6 +321,13 @@ impl Curriculum {
         }
     }
 
+    /// The Lithuanian program term of a topic (D-VBE1), or `None` when the
+    /// topic has none or does not exist.
+    pub fn lt_term_of_topic(&self, topic_id: &str) -> Option<&str> {
+        let idx = self.idx_of(topic_id)?;
+        self.topic(idx)?.lt_term.as_deref()
+    }
+
     /// The mastery floor of a course, ascending by load index (PEDAGOGY 1).
     ///
     /// The floor is the authored `mastery_floor` list, plus — when

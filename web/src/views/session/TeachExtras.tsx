@@ -6,6 +6,12 @@
 import type { ReactNode } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 
+/** The Lithuanian exam term of the topic (D-VBE1), as one plain line. Nothing renders when it is absent. */
+export function LtTermLine({ term }: { term: string | undefined }) {
+  if (!term) return null;
+  return <p className="teach-lt-term">{`Lithuanian exam term: ${term}`}</p>;
+}
+
 /** The words of the page, each with one plain sentence. Nothing renders for an empty list. */
 export function TermList({ terms }: { terms: { term: string; meaning: string }[] | undefined }) {
   if (!terms || terms.length === 0) return null;

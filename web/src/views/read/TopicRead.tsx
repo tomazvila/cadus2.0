@@ -12,7 +12,7 @@ import { MathBlock } from '@/components/MathBlock';
 import { Chip, LoadingBlock } from '@/components/primitives';
 import { ReadingFold } from '@/components/ReadingFold';
 import { SecondExampleFold, WorkedExample } from '@/views/session/Teach';
-import { PictureFold, TermList, WatchOutFold } from '@/views/session/TeachExtras';
+import { LtTermLine, PictureFold, TermList, WatchOutFold } from '@/views/session/TeachExtras';
 import '../../styles/fix-read.css';
 import type { ApiClient, TopicLink, TopicTeachResponse } from '@/api/types';
 
@@ -112,6 +112,7 @@ function ReadBody({ page, onOpen }: { page: TopicTeachResponse; onOpen: (id: str
         </div>
       </div>
 
+      <LtTermLine term={page.lt_term} />
       <p className="read-position">
         {`Topic ${String(page.position)} of ${String(page.count)} in ${page.course_name ?? page.course}`}
       </p>

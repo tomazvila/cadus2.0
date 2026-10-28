@@ -254,6 +254,35 @@ async fn topic_teach_serves_the_reading_list_of_the_course() {
     .await;
 }
 
+/// D-VBE1: the read route serves the Lithuanian term when the topic has one,
+/// and no key when it has none.
+#[tokio::test]
+async fn topic_teach_serves_the_lithuanian_term() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "topicltterm@example.com").await;
+        seed_content(
+            &db,
+            KEY,
+            "teach",
+            "digest-teach",
+            page_body("Addition combines counts."),
+        )
+        .await;
+
+        let with = app_with_content(
+            &db,
+            reading_fixture::curriculum_with_term(Vec::new(), Some("Sudėtis")),
+        );
+        let body = get_ok(&with, user, "/api/topics/addition/teach").await;
+        assert_eq!(body["lt_term"], "Sudėtis");
+
+        let without = app_with_content(&db, reading_fixture::curriculum(Vec::new()));
+        let plain = get_ok(&without, user, "/api/topics/addition/teach").await;
+        assert!(plain.get("lt_term").is_none(), "{plain}");
+    })
+    .await;
+}
+
 #[tokio::test]
 async fn topic_teach_serves_the_optional_parts_of_a_point() {
     TestDb::with(|db| async move {

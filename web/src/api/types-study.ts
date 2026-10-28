@@ -288,6 +288,8 @@ export interface TeachResponse {
   second_example?: { problem: string; steps: string | string[] };
   /** D-RL1: the reading list of the course of the topic. Absent when empty. */
   reading?: ReadingEntry[];
+  /** D-VBE1: the Lithuanian program term of the topic. Absent when not set. */
+  lt_term?: string;
 }
 
 /** One neighbor topic of the read page. */
@@ -309,6 +311,8 @@ export interface TopicTeachResponse {
   opens_next: TopicLink[];
   /** D-RL1: the reading list of the course. Absent when empty. */
   reading?: ReadingEntry[];
+  /** D-VBE1: the Lithuanian program term of the topic. Absent when not set. */
+  lt_term?: string;
   points: {
     kp: string;
     name: string;

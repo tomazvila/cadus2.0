@@ -315,6 +315,9 @@ mod tests {
                 knowledge_points: Vec::new(),
                 diagnostic_exemplar: None,
                 anki_seeds: Vec::new(),
+                lt_term: None,
+                program_items: Vec::new(),
+                area: None,
             })
             .collect();
         RawCurriculum {
@@ -326,6 +329,7 @@ mod tests {
                     mastery_floor: Vec::new(),
                     mastery_floor_course: None,
                     reading: Vec::new(),
+                    exam_weights: None,
                 }],
             },
             units: vec![RawUnit {

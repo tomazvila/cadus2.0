@@ -64,6 +64,9 @@ pub(crate) fn topic(id: &str, prereqs: &[(&str, f64, bool)]) -> Topic {
             visual: None,
         }),
         anki_seeds: Vec::new(),
+        lt_term: None,
+        program_items: Vec::new(),
+        area: None,
     }
 }
 
@@ -86,6 +89,7 @@ pub(crate) fn ladder(courses: &[(&str, &[&str], Vec<Topic>)]) -> Curriculum {
             mastery_floor: floor.iter().map(|id| slug(id)).collect(),
             mastery_floor_course: None,
             reading: Vec::new(),
+            exam_weights: None,
         });
         units.push(RawUnit {
             course_id: (*course).to_owned(),

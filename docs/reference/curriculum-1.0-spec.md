@@ -39,8 +39,11 @@ curriculum/
 | `courses[].mastery_floor` | list of Slug | no | `[]` |
 | `courses[].mastery_floor_course` | Slug or null | no | `null` |
 | `courses[].reading` | list of `{title, author, access, where, note}` | no | `[]` |
+| `courses[].exam_weights` | `{numbers, models, geometry, data}` or null | no | `null` (D-VBE1; whole percents 0 to 100; the sum must be 100) |
 
 New in 2.0 (D-RL1): `courses[].reading` is presentation only. It is not in the canonical dump and not in `review_context_digest`.
+
+New in 2.0 (D-VBE1): `courses[].exam_weights` is the share of the exam points of each area. The loader checks the four values and the sum. It derives nothing from them yet. The field is not in the canonical dump and not in `review_context_digest`.
 
 Both floor forms on one course = lint `mastery_floor_ambiguous`. Real file: 2 list
 form, 11 reference form.
@@ -73,6 +76,11 @@ field (`graph.py:602-614`, `:272`). All 88 files agree. Copy this behavior.
 | `knowledge_points` | list of KnowledgePoint | no | `[]` (lint: >= 1) |
 | `diagnostic_exemplar` | Exemplar or null | no | `null` (lint: required) |
 | `anki_seeds` | list of AnkiSeed | no | `[]` |
+| `lt_term` | string or null | no | `null` (D-VBE1) |
+| `program_items` | list of int (each above 0) | no | `[]` (D-VBE1) |
+| `area` | `numbers`, `models`, `geometry`, `data` or null | no | `null` (D-VBE1) |
+
+New in 2.0 (D-VBE1): `lt_term` is the Lithuanian program term of the topic. The teach page shows it as the line "Lithuanian exam term: ..." and the topic read page shows it under the title. `program_items` lists the row numbers of the program registry that the topic covers. `area` is the exam area of the topic. The three fields are presentation and lint input only. They are not in the canonical dump and not in `review_context_digest`, so no hash moves.
 
 ### PrereqEdge (`model.py:112-119`)
 
@@ -204,6 +212,7 @@ Probe rule (D-DG4, not in `lint_curriculum`; the CI binary `lint_curriculum` run
 17. `diagnostic_probe_undecidable` — `{tid}: {cause}. Write a short typed answer under a decidable contract (docs/reference/curriculum-1.0-spec.md, section 6).` The cause is: the probe has contract `none`; the probe has contract `written`; the topic kind is `proof` (or `multi-step`) and the probe has no contract; or the contract refuses the key. A topic with no `diagnostic_exemplar` gets no finding here (`missing_diagnostic_exemplar` covers it).
 18. `diagnostic_probe_allow_stale` — a line of the allow-list names an unknown topic, or a topic whose probe gives a verdict now.
 Reading-list rules (D-RL1, 2.0 full lint only, not in `lint_curriculum`): `reading_entry` — `course {id}: reading entry {n}: {problem}`: a title, author or note is empty, `access` is not `free` or `book`, `where` is empty or is a `http` text that is not an `https://` address without a space (any other text is a chapter note), or the note is longer than 159 characters. `reading_too_long` — `course {id}: reading list has {n} entries; the limit is 6`.
+Program registry rules (D-VBE1, `lint_curriculum_program`, run by the `lint_curriculum` binary; not in `lint_curriculum` or `lint_curriculum_full`): a course may hold `curriculum/<course>/program.yaml` with the shape `program: [{row: 1, lt_term: "...", excluded: "reason" | null}, ...]`. A course with no file gets no finding. `program_item_uncovered` — a row is in no `program_items` of a topic of the course and has no `excluded` reason. `program_item_unknown` — a topic of the course names a row that the registry lacks. `program_registry` — the file does not parse, a row number appears more than once, or a row number is 0.
 The allow-list is `curriculum/diag-probe-allow.txt`: one topic id per line, `#` starts a comment, a blank line is ignored, an absent file is an empty list. The environment variable `CADUS_DIAG_PROBE_ALLOW` names another file. The loader does not read this file, so the tree hash does not change. A shipped probe removes its line.
 
 Not enforced by lint: kebab-case; KP id uniqueness; duplicate/self prerequisite

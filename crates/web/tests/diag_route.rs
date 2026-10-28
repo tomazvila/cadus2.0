@@ -411,6 +411,7 @@ fn two_course_graph() -> Curriculum {
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
             reading: Vec::new(),
+            exam_weights: None,
         });
         raw.units.push(cadus_core::curriculum::RawUnit {
             course_id: course.to_owned(),

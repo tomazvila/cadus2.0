@@ -119,6 +119,9 @@ impl TopicSpec {
             knowledge_points: self.kps,
             diagnostic_exemplar: None,
             anki_seeds: Vec::new(),
+            lt_term: None,
+            program_items: Vec::new(),
+            area: None,
         }
     }
 }

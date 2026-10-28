@@ -45,6 +45,7 @@ pub fn graph() -> Curriculum {
                 mastery_floor: vec![Slug::new("addition").unwrap()],
                 mastery_floor_course: None,
                 reading: Vec::new(),
+                exam_weights: None,
             },
             Course {
                 id: Slug::new("c2").unwrap(),
@@ -53,6 +54,7 @@ pub fn graph() -> Curriculum {
                 mastery_floor: Vec::new(),
                 mastery_floor_course: None,
                 reading: Vec::new(),
+                exam_weights: None,
             },
         ],
     };

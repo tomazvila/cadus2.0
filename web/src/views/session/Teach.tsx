@@ -23,7 +23,7 @@ import { MathBlock } from '@/components/MathBlock';
 import { MathVisuals } from '@/components/MathVisual';
 import { Chip } from '@/components/primitives';
 import { ReadingFold } from '@/components/ReadingFold';
-import { DepthFold, PictureFold, TermList, WatchOutFold } from './TeachExtras';
+import { DepthFold, LtTermLine, PictureFold, TermList, WatchOutFold } from './TeachExtras';
 import '../../styles/fix-session.css';
 import type { PlanTask, TeachCheckRequest, TeachCheckResponse, TeachResponse } from '@/api/types';
 
@@ -83,6 +83,7 @@ export function Teach({ task, instruction, onContinue, onCheck }: TeachProps) {
             <WorkedExample example={example} />
             <WatchOutFold watchOut={instruction.watch_out} />
             <SecondExampleFold example={instruction.second_example} />
+            <LtTermLine term={instruction.lt_term} />
             <TermList terms={instruction.terms} />
             <ReadingFold reading={instruction.reading} />
             {canPractise ? (

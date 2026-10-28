@@ -202,3 +202,28 @@ async fn teach_on_a_lesson_serves_the_reading_list_of_the_course() {
     })
     .await;
 }
+
+/// D-VBE1: a lesson of a topic with a Lithuanian term serves it. A topic with
+/// none gives no key.
+#[tokio::test]
+async fn teach_on_a_lesson_serves_the_lithuanian_term() {
+    TestDb::with(|db| async move {
+        let user = seed_learner(&db, "teachltterm@example.com").await;
+        let with = common::app_with_content(
+            &db,
+            reading_fixture::curriculum_with_term(Vec::new(), Some("Sudėtis")),
+        );
+        seed_open_session(&db, user).await;
+        seed_teach_page(&db).await;
+
+        let (status, page) = teach_task(&with, user, LESSON).await;
+        assert_eq!(status, StatusCode::OK, "{page}");
+        assert_eq!(page["lt_term"], "Sudėtis");
+
+        let without = common::app_with_content(&db, reading_fixture::curriculum(Vec::new()));
+        let (status, plain) = teach_task(&without, user, LESSON).await;
+        assert_eq!(status, StatusCode::OK, "{plain}");
+        assert!(plain.get("lt_term").is_none(), "{plain}");
+    })
+    .await;
+}

@@ -106,5 +106,9 @@ pub async fn topic_teach(req: Ready, ApiPath(topic_id): ApiPath<String>) -> Repl
     if !reading.is_empty() {
         body["reading"] = json!(reading);
     }
+    // D-VBE1: the Lithuanian program term of the topic, only when it is set.
+    if let Some(term) = graph.lt_term_of_topic(&topic_id) {
+        body["lt_term"] = json!(term);
+    }
     reply_read(tx, body).await
 }

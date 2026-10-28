@@ -12,9 +12,14 @@
 //! allow-list `diag-probe-allow.txt` in the tree. `$CADUS_DIAG_PROBE_ALLOW`
 //! names another allow-list file.
 //!
+//! It also runs the program registry rules
+//! ([`cadus_core::curriculum::lint_curriculum_program`], D-VBE1). A course with a
+//! `program.yaml` must cover each program row or give it an `excluded` reason.
+//!
 //! The exemplar CONTENT rules (sketches, asks, the practice floor) live behind
-//! [`cadus_core::curriculum::lint_curriculum_full`]; the authoring sweep runs
-//! them from `lint_exemplars`-style checks, not from this parity-pinned binary.
+//! [`cadus_core::curriculum::lint_curriculum_full`]. The exemplar content rules
+//! and the program rules come from functions that the parity comparison does not
+//! cover. They do not come from the parity-compared `lint_curriculum` function.
 //!
 //! Usage:
 //!
@@ -29,7 +34,7 @@ use std::env;
 use std::path::PathBuf;
 use std::process::ExitCode;
 
-use cadus_core::curriculum::{lint_curriculum, lint_curriculum_probes};
+use cadus_core::curriculum::{lint_curriculum, lint_curriculum_probes, lint_curriculum_program};
 
 /// The environment variable that names the curriculum tree.
 const CURRICULUM_ENV: &str = "CADUS_CURRICULUM";
@@ -51,6 +56,7 @@ fn main() -> ExitCode {
 
     let mut findings = lint_curriculum(&path);
     findings.extend(lint_curriculum_probes(&path));
+    findings.extend(lint_curriculum_program(&path));
     if findings.is_empty() {
         println!("OK: {shown} is a valid curriculum (0 findings).");
         return ExitCode::SUCCESS;

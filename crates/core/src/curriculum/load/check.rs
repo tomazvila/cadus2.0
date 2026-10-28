@@ -4,7 +4,7 @@ use serde::Deserialize;
 use serde_norway::{Mapping, Value};
 
 use super::super::finding::Finding;
-use super::super::model::{ANKI_TYPES, ANSWER_KINDS};
+use super::super::model::{ANKI_TYPES, ANSWER_KINDS, TOPIC_AREAS};
 use super::MERGE_KEY;
 use super::message::{
     bool_message, integer_of, key_name, quoted_alternatives, string_number_message,
@@ -250,7 +250,7 @@ impl<'a> Checker<'a> {
     }
 
     fn check_course(&mut self, value: &Value) {
-        const FIELDS: [&str; 7] = [
+        const FIELDS: [&str; 8] = [
             "visuals",
             "id",
             "name",
@@ -258,6 +258,7 @@ impl<'a> Checker<'a> {
             "mastery_floor",
             "mastery_floor_course",
             "reading",
+            "exam_weights",
         ];
         let Some(map) = self.struct_map(value, "Course") else {
             return;
@@ -276,17 +277,11 @@ impl<'a> Checker<'a> {
         self.field(map, "reading", false, |checker, value| {
             checker.each(value, Self::check_reading_entry);
         });
-        self.extras(map, &FIELDS);
-    }
-
-    fn check_reading_entry(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = ["title", "author", "access", "where", "note"];
-        let Some(map) = self.struct_map(value, "ReadingEntry") else {
-            return;
-        };
-        for name in FIELDS {
-            self.field(map, name, true, Self::check_string);
-        }
+        self.field(map, "exam_weights", false, |checker, value| {
+            if !value.is_null() {
+                checker.check_exam_weights(value);
+            }
+        });
         self.extras(map, &FIELDS);
     }
 
@@ -305,7 +300,7 @@ impl<'a> Checker<'a> {
     }
 
     fn check_topic(&mut self, value: &Value) {
-        const FIELDS: [&str; 12] = [
+        const FIELDS: [&str; 15] = [
             "id",
             "name",
             "core",
@@ -318,6 +313,9 @@ impl<'a> Checker<'a> {
             "knowledge_points",
             "diagnostic_exemplar",
             "anki_seeds",
+            "lt_term",
+            "program_items",
+            "area",
         ];
         let Some(map) = self.struct_map(value, "Topic") else {
             return;
@@ -348,6 +346,19 @@ impl<'a> Checker<'a> {
         });
         self.field(map, "anki_seeds", false, |checker, value| {
             checker.each(value, Self::check_anki_seed);
+        });
+        self.field(map, "lt_term", false, |checker, value| {
+            if !value.is_null() {
+                checker.check_string(value);
+            }
+        });
+        self.field(map, "program_items", false, |checker, value| {
+            checker.each(value, Self::check_program_row);
+        });
+        self.field(map, "area", false, |checker, value| {
+            if !value.is_null() {
+                checker.check_enum(value, &TOPIC_AREAS);
+            }
         });
         self.extras(map, &FIELDS);
     }
@@ -488,30 +499,10 @@ impl<'a> Checker<'a> {
         self.extras(map, &FIELDS);
     }
 }
-#[cfg(test)]
-mod tests {
-    use super::super::super::model::Course;
-    use super::*;
+mod program;
 
-    /// The typed build behind the walk is a backstop: when the walk finds
-    /// nothing and the types still refuse the document, the finding names the
-    /// file as the location.
-    #[test]
-    fn a_document_the_types_refuse_after_a_silent_walk_is_a_schema_finding() {
-        let document: Value = serde_norway::from_str("id: c\nname: C\norder: []\n").unwrap();
-        let findings = validate::<Course, _>(&document, "courses.yaml", |_, _| {})
-            .err()
-            .unwrap_or_default();
-        assert_eq!(findings.len(), 1);
-        assert_eq!(findings[0].code, "schema");
-        assert_eq!(findings[0].file.as_deref(), Some("courses.yaml"));
-        assert_eq!(
-            findings[0].message,
-            "courses.yaml: invalid type: sequence, expected an integer, or a float with no \
-             fractional part"
-        );
-    }
-}
+#[cfg(test)]
+mod backstop_tests;
 
 #[cfg(test)]
 mod finite_tests;

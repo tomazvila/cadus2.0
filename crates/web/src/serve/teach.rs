@@ -67,6 +67,10 @@ pub async fn teach(
     if !reading.is_empty() {
         reply["reading"] = json!(reading);
     }
+    // D-VBE1: the Lithuanian program term of the topic, only when it is set.
+    if let Some(term) = graph.lt_term_of_topic(&topic) {
+        reply["lt_term"] = json!(term);
+    }
     // The try-first block carries what the learner needs to act and nothing
     // that grades the act: `answer` and `reveal` stay on the server until the
     // check route (Hard Rule 1).

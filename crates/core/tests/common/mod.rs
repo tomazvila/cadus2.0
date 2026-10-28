@@ -87,6 +87,9 @@ pub fn topic(
         knowledge_points: Vec::new(),
         diagnostic_exemplar: None,
         anki_seeds: Vec::new(),
+        lt_term: None,
+        program_items: Vec::new(),
+        area: None,
     }
 }
 
@@ -148,6 +151,7 @@ pub fn graph_of_units(units: &[(&str, Vec<Topic>)], course_id: &str) -> Curricul
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
             reading: Vec::new(),
+            exam_weights: None,
         }],
     };
     let mut raw_units = Vec::new();

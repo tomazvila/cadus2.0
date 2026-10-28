@@ -67,6 +67,7 @@ fn graph(topics: Vec<Topic>, floor: &[&str]) -> Curriculum {
                 mastery_floor: floor.iter().map(|id| slug(id)).collect(),
                 mastery_floor_course: None,
                 reading: Vec::new(),
+                exam_weights: None,
             }],
         },
         units: vec![RawUnit {

@@ -44,6 +44,7 @@ fn course(id: &str, order: i64, floor: &[&str]) -> Course {
         mastery_floor: floor.iter().map(|id| Slug::new(id).unwrap()).collect(),
         mastery_floor_course: None,
         reading: Vec::new(),
+        exam_weights: None,
     }
 }
 

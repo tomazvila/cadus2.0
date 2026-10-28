@@ -85,6 +85,9 @@ pub fn topic(id: &str, points: Vec<KnowledgePoint>) -> Topic {
         knowledge_points: points,
         diagnostic_exemplar: None,
         anki_seeds: Vec::new(),
+        lt_term: None,
+        program_items: Vec::new(),
+        area: None,
     }
 }
 
@@ -98,6 +101,7 @@ pub fn one_course_catalog() -> Catalog {
             mastery_floor: Vec::new(),
             mastery_floor_course: None,
             reading: Vec::new(),
+            exam_weights: None,
         }],
     }
 }

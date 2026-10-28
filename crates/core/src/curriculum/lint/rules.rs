@@ -10,12 +10,14 @@ use super::{Lint, Table, node, py_list_repr, py_repr};
 
 mod exemplars;
 mod probes;
+mod program;
 mod reading;
 mod visual_motion;
 mod visuals;
 
 pub(super) use exemplars::check_exemplars;
 pub(super) use probes::{check_probes, parse_allow};
+pub(super) use program::check_program;
 pub(super) use reading::check_reading;
 pub(super) use visuals::check_visuals;
 
