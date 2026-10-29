@@ -63,6 +63,7 @@ fn with_exemplar(mut topic: Topic) -> Topic {
         answer: "7".to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     });
     topic
 }

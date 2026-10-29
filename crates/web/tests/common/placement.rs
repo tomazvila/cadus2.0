@@ -62,6 +62,7 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
             answer: ANSWER.to_owned(),
             solution_sketch: Some(SKETCH.to_owned()),
             visual: None,
+            points: None,
         }),
         anki_seeds: Vec::new(),
         lt_term: None,

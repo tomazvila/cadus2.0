@@ -77,6 +77,7 @@ fn exemplars() -> Vec<Exemplar> {
         answer: "13.5".to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     }]
 }
 

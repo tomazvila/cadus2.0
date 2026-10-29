@@ -83,6 +83,7 @@ pub fn exemplar(problem: &str, answer: &str) -> Exemplar {
         answer: answer.to_string(),
         solution_sketch: None,
         visual: None,
+        points: None,
     }
 }
 

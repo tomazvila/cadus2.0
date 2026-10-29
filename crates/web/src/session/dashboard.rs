@@ -13,7 +13,7 @@ use cadus_core::curriculum::{Curriculum, TopicIdx};
 use cadus_core::event::{Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
-    FrontierReport, FrontierWait, SessionPlan, confirmations, course_scope, due_reviews,
+    FrontierReport, FrontierWait, SessionPlan, confirmations, course_scope, due_reviews, exam_sets,
     frontier_report, is_known, nearly_due, quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
@@ -44,11 +44,25 @@ fn journey(graph: &Curriculum, course: Option<&str>) -> Value {
         courses
             .into_iter()
             .map(|item| {
-                json!({
+                let mut view = json!({
                     "id": item.id.as_str(),
                     "name": item.name,
                     "current": Some(item.id.as_str()) == course,
-                })
+                });
+                // A course with `exam_weights` lists its exam sets (D-VBE3).
+                if item.exam_weights.is_some() {
+                    view["exam_sets"] = exam_sets(graph, item.id.as_str())
+                        .into_iter()
+                        .map(|id| {
+                            let name = graph
+                                .idx_of(&id)
+                                .and_then(|idx| graph.topic(idx))
+                                .map(|topic| topic.name.clone());
+                            json!({"id": id, "name": name})
+                        })
+                        .collect();
+                }
+                view
             })
             .collect(),
     )

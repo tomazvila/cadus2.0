@@ -513,6 +513,7 @@ fn finite_teach_collision_allowance_matches_the_registered_teaching_roles() {
                 answer_contract: None,
                 solution_sketch: None,
                 visual: None,
+                points: None,
             }],
             finite,
         }

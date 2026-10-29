@@ -76,6 +76,7 @@ fn practice_template_excludes_a_sibling_exemplar_problem() {
             solution_sketch: None,
             answer_contract: None,
             visual: None,
+            points: None,
         },
         cadus_core::curriculum::Exemplar {
             problem: "Compute $15^2$.".to_owned(),
@@ -83,6 +84,7 @@ fn practice_template_excludes_a_sibling_exemplar_problem() {
             solution_sketch: None,
             answer_contract: None,
             visual: None,
+            points: None,
         },
     ];
 

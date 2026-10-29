@@ -72,6 +72,7 @@ fn with_two(mut item: Topic) -> Topic {
             answer: ANSWER.to_owned(),
             solution_sketch: Some(SKETCH.to_owned()),
             visual: None,
+            points: None,
         })
         .collect();
     item

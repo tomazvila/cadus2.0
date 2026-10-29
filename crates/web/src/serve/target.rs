@@ -89,6 +89,10 @@ pub(super) fn target_of(
                 QUIZ_EXHAUSTED,
                 "This quiz has no further question to serve.",
             )?;
+            if let Some((set, kp, _)) = cadus_core::selector::parse_paper_entry(entry) {
+                // A paper entry names its knowledge point (D-VBE3).
+                return Ok(Target::new(set.to_owned(), set.to_owned(), kp.to_owned()));
+            }
             let topic = quiz_topic(entry).to_string();
             let kp = kp_or_refuse(graph, &topic, index)?;
             Ok(Target::new(topic.clone(), topic, kp))

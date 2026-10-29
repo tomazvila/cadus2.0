@@ -25,6 +25,7 @@ fn exemplar(problem: &str, answer: &str, sketch: bool) -> Exemplar {
         answer: answer.to_owned(),
         solution_sketch: sketch.then(|| format!("work {problem}")),
         visual: None,
+        points: None,
     }
 }
 
@@ -299,6 +300,7 @@ fn none_exemplar(problem: &str, answer: &str) -> Exemplar {
         answer: answer.to_owned(),
         solution_sketch: Some(format!("the worked solution of {problem}")),
         visual: None,
+        points: None,
     }
 }
 

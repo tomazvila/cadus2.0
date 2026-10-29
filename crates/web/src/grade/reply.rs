@@ -149,6 +149,7 @@ pub(super) fn buffer_quiz_answer(
     served: &ServedProblem,
     recorded: &Attempt,
     proof: Option<cadus_store::proof_grading::JobPayload>,
+    points: cadus_core::selector::ItemPoints,
 ) {
     let mut answer = json!({
             "problem_id": served.problem_id,
@@ -161,6 +162,8 @@ pub(super) fn buffer_quiz_answer(
             "correct": recorded.correct,
             "secs": recorded.secs.get(),
             "solution_sketch": served.solution_sketch,
+            "points_earned": points.earned,
+            "points_total": points.total,
     });
     if let Some(payload) = proof {
         answer["attempt_id"] = json!(recorded.attempt_id);

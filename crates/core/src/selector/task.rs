@@ -293,6 +293,29 @@ pub fn quiz_task_named(plan: &QuizPlan, difficulty_streak: i64, task_id: &str) -
     }
 }
 
+/// Build the task of a paper round of the exam set `set` (D-VBE3).
+///
+/// The `mix` holds one `paper:<set>:<kp>:<index>` entry per item, in the order
+/// of the paper. `budget_secs` is the target time of the whole paper.
+pub fn paper_task(
+    set: &str,
+    items: &[super::PaperItem],
+    budget_secs: i64,
+    difficulty_streak: i64,
+    task_id: &str,
+) -> Task {
+    Task {
+        task_id: task_id.to_owned(),
+        task_type: TaskType::Quiz,
+        n_problems: i64::try_from(items.len()).ok(),
+        mix: items.iter().map(|item| item.entry(set)).collect(),
+        difficulty_target: Some(quiz_difficulty_target(difficulty_streak).to_owned()),
+        time_budget_secs: Some(budget_secs),
+        why: format!("exam set paper; {} questions", items.len()),
+        ..Task::default()
+    }
+}
+
 /// Build a drill task (`_drill_task`, `selector.py:1033-1041`).
 pub(super) fn drill_task(tid: &str, cfg: &Config) -> Task {
     let target = cfg.drill.target_secs;

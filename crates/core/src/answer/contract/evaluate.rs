@@ -880,6 +880,51 @@ fn multipart(parts: &[AnswerPart], expected: &str, learner: &str) -> Outcome {
     if natural { decided(true) } else { strict }
 }
 
+/// The named parts of a multipart answer that the checker reads as correct,
+/// as `(correct, total)` (D-VBE3).
+///
+/// A whole answer that [`check_contract`] accepts earns every part. An answer
+/// that the checker cannot split into the named parts earns none. A part that
+/// the checker cannot decide earns nothing. A contract that is not multipart
+/// gives `None`.
+#[must_use]
+pub fn multipart_credit(
+    contract: &AnswerContract,
+    expected: &str,
+    learner: &str,
+) -> Option<(usize, usize)> {
+    let AnswerContract::Multipart { parts } = contract else {
+        return None;
+    };
+    let total = parts.len();
+    if matches!(
+        multipart(parts, expected, learner),
+        Outcome::Decided(Verdict { correct: true, .. })
+    ) {
+        return Some((total, total));
+    }
+    let Some(keys) = named_key_parts(parts, expected) else {
+        return Some((0, total));
+    };
+    let Some(given) = named_parts(parts, learner).or_else(|| {
+        ordered_parts(parts, learner).or_else(|| super::multipart_natural::tuple(parts, learner))
+    }) else {
+        return Some((0, total));
+    };
+    let right = parts
+        .iter()
+        .zip(keys)
+        .zip(given)
+        .filter(|((part, key), value)| {
+            matches!(
+                check_contract(key, value, part.contract.clone()),
+                Outcome::Decided(Verdict { correct: true, .. })
+            )
+        })
+        .count();
+    Some((right, total))
+}
+
 fn multipart_strict(parts: &[AnswerPart], expected: &str, learner: &str) -> Outcome {
     let Some(expected) = named_key_parts(parts, expected) else {
         return refused_parts();

@@ -55,6 +55,7 @@ fn proof_exemplar(problem: &str, reference: &str) -> Exemplar {
         answer: "See the solution.".to_owned(),
         solution_sketch: Some(reference.to_owned()),
         visual: None,
+        points: None,
     }
 }
 
@@ -787,6 +788,7 @@ async fn a_free_explanation_keeps_the_self_check_completion() {
                     answer: "See the solution.".to_owned(),
                     solution_sketch: Some("0 = 2 * 0.".to_owned()),
                     visual: None,
+                    points: None,
                 }],
             )],
         )]);

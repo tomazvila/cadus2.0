@@ -393,6 +393,7 @@ mod tests {
             answer: "49".to_owned(),
             solution_sketch: None,
             visual: None,
+            points: None,
         }];
         ExemplarSource::new(KP, &exemplars)
             .fill(KP, 1, 0)

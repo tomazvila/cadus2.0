@@ -72,11 +72,13 @@ const ARENA_DUE_STRIDE: usize = 5;
 /// The count of topics the committed curriculum tree holds (VBE skill wave 1,
 /// 2026-10-28; 1,064 after the Foundations merge of 2026-10-12). VBE course
 /// wave 2a (the course vbe-math), 2026-10-29: 1,127 (was 1,101).
-const ARENA_TOPICS: usize = 1_127;
+/// VBE wave 2b (the six exam sets), 2026-10-29: 1,133 (was 1,127).
+const ARENA_TOPICS: usize = 1_133;
 
 /// The count of topics the fixture puts into the states map (2026-10-29, VBE course
 /// wave 2a: 376, was 367 on 2026-10-28; 355 on 2026-10-12).
-const ARENA_LEARNED_TOPICS: usize = 376;
+/// VBE wave 2b (the six exam sets), 2026-10-29: 378 (was 376).
+const ARENA_LEARNED_TOPICS: usize = 378;
 
 /// The count of tasks every composition returns (2026-10-29, VBE course wave 2a: 129,
 /// was 127 on 2026-10-28; 109 on 2026-10-12).

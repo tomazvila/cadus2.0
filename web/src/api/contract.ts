@@ -43,6 +43,7 @@ import type {
   TaskAnswerResponse,
   QuizResultResponse,
   QuizRoundResponse,
+  QuizScope,
   TeachCheckRequest,
   TeachCheckResponse,
   TeachResponse,
@@ -125,7 +126,8 @@ export interface ApiClient {
   getProblemReport(reportId: string, signal?: AbortSignal): Promise<ProblemReportReceipt>;
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
-  startQuizRound(length: number, scope: 'course' | 'all'): Promise<QuizRoundResponse>;
+  /** `set` names the exam set when `scope` is `paper`; `length` is then ignored. */
+  startQuizRound(length: number, scope: QuizScope, set?: string): Promise<QuizRoundResponse>;
   taskTeach(taskId: string): Promise<TeachResponse>;
   topicTeach(topicId: string): Promise<TopicTeachResponse>;
   taskTeachCheck(taskId: string, body: TeachCheckRequest): Promise<TeachCheckResponse>;

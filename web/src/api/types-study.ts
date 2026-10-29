@@ -733,10 +733,19 @@ export function isQuizReceipt(reply: TaskAnswerResponse): reply is QuizReceiptRe
 export interface QuizRound {
   length: number;
   n: number;
-  scope: 'course' | 'all';
+  scope: QuizScope;
   course_name: string | null;
   target_secs: number;
+  /** `paper` for the paper of one exam set (D-VBE3); any other round is `round`. */
+  kind?: 'round' | 'paper' | undefined;
+  /** The topic id of the exam set of a paper. */
+  set?: string | null | undefined;
+  /** The name of the exam set of a paper. */
+  set_name?: string | null | undefined;
 }
+
+/** Where a quiz round takes its questions from. `paper` is the paper of one exam set. */
+export type QuizScope = 'course' | 'course_and_prereqs' | 'all' | 'paper';
 
 /** The reply of `POST /api/quiz/round`. `resumed` says a started round came back. */
 export interface QuizRoundResponse {
@@ -748,10 +757,14 @@ export interface QuizRoundResponse {
 /** Evidence released after every original quiz answer is recorded. */
 export interface QuizResultResponse {
   /** The round the quiz was; null for a quiz that came from the plan. */
-  round?: (Pick<QuizRound, 'length' | 'scope' | 'course_name'> & { n: number }) | null | undefined;
+  round?: (Pick<QuizRound, 'length' | 'scope' | 'course_name' | 'kind' | 'set'> & { n: number; form?: string | null | undefined }) | null | undefined;
   inconclusive: boolean;
   score: number;
   xp: number;
+  /** The points earned and the points asked, with the percent (D-VBE3). */
+  points_earned?: number | undefined;
+  points_total?: number | undefined;
+  percent?: number | undefined;
   practice_pending: boolean;
   practice_available: boolean;
   answers: {

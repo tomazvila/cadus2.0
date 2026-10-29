@@ -63,15 +63,18 @@ pub use mixed_review::{
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
 pub use quiz::{
-    QuizPlan, QuizQuestion, QuizRequest, QuizSampler, SeededSampler, quiz_budget, quiz_composer,
-    quiz_composer_for, quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, utc_date,
+    ItemPoints, PAPER_ENTRY, PAPER_FORM, PaperItem, PaperRefusal, QuizPlan, QuizQuestion,
+    QuizRequest, QuizSampler, SeededSampler, area_map, area_quotas, exam_sets, item_points,
+    largest_area, paper_form, parse_paper_entry, quiz_budget, quiz_composer, quiz_composer_for,
+    quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, round2, score_of, sum_points,
+    utc_date,
 };
 pub use reserve::{ValidityContext, reserve_open_plan, task_still_valid};
 pub use retention::retention_probe;
 pub use review::{
     due_reviews, importance, in_retry_delay, nearly_due, retry_available_at, review_mix,
 };
-pub use task::{Task, quiz_task_named, start_kp};
+pub use task::{Task, paper_task, quiz_task_named, start_kp};
 pub use topic_set::{TopicSet, course_scope, frontier, known_set, practiced_set};
 pub use trigger::{
     remediation_for_in_sitting, remediation_for_quiz_miss, remediation_for_repeat_fail,

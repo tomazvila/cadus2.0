@@ -33,6 +33,7 @@ fn ready_kp(id: &str) -> KnowledgePoint {
             answer: (n * 2).to_string(),
             solution_sketch: Some("add".to_owned()),
             visual: None,
+            points: None,
         })
         .collect();
     point
@@ -48,6 +49,7 @@ fn thin_kp(id: &str) -> KnowledgePoint {
             answer: (n * n).to_string(),
             solution_sketch: Some("multiply".to_owned()),
             visual: None,
+            points: None,
         })
         .collect();
     point

@@ -40,6 +40,7 @@ import { fmtClock, num } from '@/lib/format';
 import { taskKindText } from '@/lib/stageCopy';
 import { isQuizReceipt } from '@/api/types';
 import type { ApiClient, PlanTask, QuizRound, ServedProblem } from '@/api/types';
+import { roundPlace } from './roundLabel';
 
 /** `intro` is the card of a round the learner asked for: it shows before the clock starts. */
 type Phase = 'intro' | 'loading' | 'ready' | 'submitting' | 'done';
@@ -401,7 +402,7 @@ export function Quiz({
   }
 
   if (phase === 'intro' && round) {
-    const where = round.scope === 'all' ? 'all my courses' : round.course_name ?? 'my course';
+    const where = roundPlace(round);
     const minutes = Math.max(1, Math.ceil(round.target_secs / 60));
     return (
       <section className="view-quiz">

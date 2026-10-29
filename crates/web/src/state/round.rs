@@ -15,7 +15,8 @@ pub struct RecordedRound {
     pub task: RecordedReview,
     /// The question count the learner asked for.
     pub length: i64,
-    /// The scope the learner picked: `course` or `all`.
+    /// The scope the learner picked: `course`, `course_and_prereqs` or `all`. A paper round
+    /// records `paper`.
     pub scope: String,
     /// The course id for the scope `course`.
     #[serde(default)]
@@ -23,4 +24,15 @@ pub struct RecordedRound {
     /// The course name for the scope `course`.
     #[serde(default)]
     pub course_name: Option<String>,
+    /// The exam set of a paper round (D-VBE3). `None` is an ordinary round.
+    #[serde(default)]
+    pub set: Option<String>,
+}
+
+impl RecordedRound {
+    /// The kind of the round: `paper` or `round`.
+    #[must_use]
+    pub fn kind(&self) -> &'static str {
+        if self.set.is_some() { "paper" } else { "round" }
+    }
 }

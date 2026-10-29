@@ -30,6 +30,7 @@ fn proofs() -> Curriculum {
         answer: KEY.to_string(),
         solution_sketch: Some("Step 3 divides by zero.".to_string()),
         visual: None,
+        points: None,
     };
     common::one_unit_curriculum(vec![common::topic(
         "proofs",

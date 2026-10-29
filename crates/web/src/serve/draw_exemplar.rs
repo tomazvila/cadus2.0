@@ -67,6 +67,38 @@ pub(in crate::serve) fn exemplar_rows(graph: &Curriculum, target: &Target) -> Ve
     rows
 }
 
+/// The pool row of the exemplar at `index` of the target knowledge point.
+///
+/// A paper round serves its items in the fixed order of the paper (D-VBE3),
+/// so it reads the exemplar itself and skips the draw of the practice pool.
+/// `None` when the knowledge point holds no exemplar at `index`.
+pub(in crate::serve) fn paper_row(
+    graph: &Curriculum,
+    target: &Target,
+    index: usize,
+) -> Option<PoolRow> {
+    let (_, kp) = authored(graph, target)?;
+    let exemplar = kp.exemplars.get(index)?;
+    Some(PoolRow {
+        id: Uuid::nil(),
+        source: Source::Exemplar,
+        content_digest: None,
+        generation_context: None,
+        problem: PoolProblem {
+            v: POOL_ROW_VERSION,
+            text: exemplar.problem.clone(),
+            bindings: BTreeMap::new(),
+            seed: 0,
+        },
+        expected_answer: PoolAnswer {
+            v: POOL_ROW_VERSION,
+            answer_contract: exemplar.answer_contract.clone(),
+            answer: exemplar.answer.clone(),
+        },
+        instance_hash: problem_text_hash(&exemplar.problem),
+    })
+}
+
 /// The teach-only contract of one exemplar that gives no verdict.
 ///
 /// [`Exemplar::verdict_policy`] is the one rule. An explicit `kind: none`
@@ -259,6 +291,7 @@ mod tests {
             answer: "7".to_owned(),
             solution_sketch: Some("Count to 7.".to_owned()),
             visual: None,
+            points: None,
         };
         declared.answer_contract = Some(AnswerContract::None);
         assert_eq!(

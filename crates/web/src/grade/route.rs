@@ -261,8 +261,17 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         // quiz-result route enqueues it (nothing is graded or shown while the
         // quiz is open).
         let proof = written_proof.then(|| proof_grading::payload(&served, &submitted.answer));
+        let points = quiz::attempt_points(graph, &recorded);
         return quiz_receipt(
-            &state, tx, user_id, scratch, &task, &served, &recorded, closed, proof,
+            &state,
+            tx,
+            user_id,
+            scratch,
+            &task,
+            &served,
+            &recorded,
+            closed,
+            (proof, points),
         )
         .await;
     }
@@ -538,7 +547,7 @@ pub(super) async fn advance_and_fold(
     } else if task.task_type == TaskType::Review {
         review::close_review(task, recorded, events, &content.cfg, &content.curriculum)
     } else if task.task_type == TaskType::Quiz {
-        quiz::close_quiz(task, recorded, events, &content.cfg)
+        quiz::close_quiz(task, recorded, events, &content.cfg, &content.curriculum)
     } else if task.task_type == TaskType::Drill {
         drill::close_drill(task, recorded, events)
     } else {
@@ -605,9 +614,12 @@ async fn quiz_receipt(
     served: &ServedProblem,
     recorded: &Attempt,
     closed: bool,
-    proof: Option<cadus_store::proof_grading::JobPayload>,
+    (proof, points): (
+        Option<cadus_store::proof_grading::JobPayload>,
+        cadus_core::selector::ItemPoints,
+    ),
 ) -> Result<Json<Value>, ApiError> {
-    buffer_quiz_answer(&mut scratch, &task.task_id, served, recorded, proof);
+    buffer_quiz_answer(&mut scratch, &task.task_id, served, recorded, proof, points);
     scratch.served.remove(&task.task_id);
     let answered = scratch.plan_progress(&task.task_id).0;
     let receipt = json!({

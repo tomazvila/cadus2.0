@@ -63,6 +63,7 @@ mod plan;
 mod review_soon;
 mod rollover;
 mod round;
+mod round_paper;
 mod store;
 mod today;
 mod topic_teach;

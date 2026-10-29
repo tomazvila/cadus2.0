@@ -55,6 +55,7 @@ fn exemplars(policy: &FiniteObjectiveDomain) -> Vec<Exemplar> {
             answer_contract: None,
             solution_sketch: None,
             visual: None,
+            points: None,
         })
         .collect()
 }

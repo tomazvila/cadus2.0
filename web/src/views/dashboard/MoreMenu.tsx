@@ -38,7 +38,13 @@ export function MoreMenu({
           Starting questions again
         </button>
       </div>
-      <QuizRoundControl api={api} call={call} courseName={courseName} onStarted={onQuizRound} />
+      <QuizRoundControl
+        api={api}
+        call={call}
+        courseName={courseName}
+        examSets={courses.find((course) => course.current)?.exam_sets}
+        onStarted={onQuizRound}
+      />
       <h3 className="more-heading">Your daily goal</h3>
       <GoalControl api={api} call={call} goal={goal} onSaved={onGoalSaved} />
       <h3 className="more-heading">Your account</h3>

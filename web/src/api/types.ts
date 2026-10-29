@@ -162,6 +162,8 @@ export interface JourneyCourse {
   id: string;
   name: string;
   current: boolean;
+  /** The exam sets of a course that has exam weights (D-VBE3). Absent for any other course. */
+  exam_sets?: { id: string; name: string | null }[] | undefined;
 }
 
 /** The XP totals of the learner (`core::learner::XpState`). */

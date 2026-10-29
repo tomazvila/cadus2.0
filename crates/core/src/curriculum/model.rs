@@ -189,7 +189,17 @@ pub struct Exemplar {
         deserialize_with = "visual_index"
     )]
     pub visual: Option<usize>,
+    /// The exam points of this item, 1 to 11 (D-VBE3). An item with no value
+    /// counts 1 point. It stays out of the serialized form, so it stays out of
+    /// the canonical dump and of `review_context_digest`.
+    #[serde(default, skip_serializing)]
+    pub points: Option<u8>,
 }
+
+/// The fewest points one item may carry (D-VBE3).
+pub const MIN_ITEM_POINTS: u8 = 1;
+/// The most points one item may carry (D-VBE3).
+pub const MAX_ITEM_POINTS: u8 = 11;
 
 /// Read `visual:` as an index, or as `false` for "no figure".
 fn visual_index<'de, D: serde::Deserializer<'de>>(

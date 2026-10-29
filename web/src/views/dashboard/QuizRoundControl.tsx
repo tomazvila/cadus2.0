@@ -1,6 +1,7 @@
 /**
  * The timed quiz control (D-QZ1): a length, a scope, and one button.
  *
+ * A course with exam weights also offers the skills below it, and one start button for each exam set.
  * The number buttons set a size. They are not an answer menu. A press on "Continue"
  * starts the session, asks the service for the round, and opens the quiz on its ready card.
  * The clock does not start there. No button here is a primary action (W-C2): the dashboard
@@ -9,7 +10,8 @@
 import { useState } from 'react';
 import type { Call } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
-import type { ApiClient, PlanTask, QuizRound } from '@/api/types';
+import { startSetLabel } from '@/views/roundLabel';
+import type { ApiClient, PlanTask, QuizRound, QuizScope } from '@/api/types';
 
 const LENGTHS = [5, 10, 20];
 
@@ -19,23 +21,25 @@ export interface QuizRoundControlProps {
   call: Call;
   /** The name of the enrolled course, or null when none stands. */
   courseName: string | null;
+  /** The exam sets of the enrolled course. Undefined when the course has no exam weights. */
+  examSets?: { id: string; name: string | null }[] | undefined;
   /** Called with the round task, after the service answers. `resumed` is true for a round that already runs. */
   onStarted: (task: PlanTask, round: QuizRound, resumed?: boolean) => void;
 }
 
-export function QuizRoundControl({ api, call, courseName, onStarted }: QuizRoundControlProps) {
+export function QuizRoundControl({ api, call, courseName, examSets, onStarted }: QuizRoundControlProps) {
   const [length, setLength] = useState(10);
-  const [scope, setScope] = useState<'course' | 'all'>('course');
+  const [scope, setScope] = useState<Exclude<QuizScope, 'paper'>>('course');
   const [busy, setBusy] = useState(false);
   const life = useLifetime();
 
-  const show = async (): Promise<void> => {
+  const show = async (set?: string): Promise<void> => {
     setBusy(true);
     try {
       const started = await call(() => api.sessionStart());
       // A reply that lands after the view left moves nothing (F-F2-2).
       if (!started || !life.alive()) return;
-      const res = await call(() => api.startQuizRound(length, scope));
+      const res = await call(() => (set === undefined ? api.startQuizRound(length, scope) : api.startQuizRound(0, 'paper', set)));
       if (!res || !life.alive()) return;
       if (res.resumed) onStarted(res.task, res.round, true);
       else onStarted(res.task, res.round);
@@ -71,6 +75,16 @@ export function QuizRoundControl({ api, call, courseName, onStarted }: QuizRound
         >
           {courseName ?? 'My course'}
         </button>
+        {examSets === undefined ? null : (
+          <button
+            type="button"
+            className="btn"
+            aria-pressed={scope === 'course_and_prereqs'}
+            onClick={() => { setScope('course_and_prereqs'); }}
+          >
+            This course and the skills it builds on
+          </button>
+        )}
         <button
           type="button"
           className="btn"
@@ -91,6 +105,25 @@ export function QuizRoundControl({ api, call, courseName, onStarted }: QuizRound
           Continue
         </button>
       </div>
+      {examSets === undefined || examSets.length === 0 ? null : (
+        <>
+          <p className="auth-label" id="quiz-paper-label">Or take a full exam paper</p>
+          <div className="more-actions" role="group" aria-labelledby="quiz-paper-label">
+            {examSets.map((set) => (
+              <button
+                key={set.id}
+                type="button"
+                className="btn"
+                disabled={busy}
+                title="You see the number of questions and the target time before the clock starts."
+                onClick={() => { void show(set.id); }}
+              >
+                {startSetLabel(set.name, set.id)}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

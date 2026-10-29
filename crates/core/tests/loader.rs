@@ -40,20 +40,23 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     assert_eq!(catalog.courses.len(), 14, "courses");
     // Re-pinned 2026-10-28 after VBE skill wave 1: 91 unit files (was 88).
     // Re-pinned 2026-10-29 after VBE course wave 2a: 97 unit files (was 91).
-    assert_eq!(parsed.units.len(), 97, "unit files");
+    // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 98 unit files (was 97).
+    assert_eq!(parsed.units.len(), 98, "unit files");
 
     let raw = RawCurriculum::from_parsed(parsed).expect("the catalog is present");
     let topics: Vec<_> = raw.topics().collect();
     // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064).
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
-    assert_eq!(topics.len(), 1127, "topics");
-    assert_eq!(raw.topic_count(), 1127, "topics");
+    // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127).
+    assert_eq!(topics.len(), 1133, "topics");
+    assert_eq!(raw.topic_count(), 1133, "topics");
 
     let knowledge_points: usize = topics.iter().map(|t| t.topic.knowledge_points.len()).sum();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 3113 (was 3138).
     // Re-pinned 2026-10-28 after VBE skill wave 1: 3238 (was 3113).
     // Re-pinned 2026-10-29 after VBE course wave 2a: 3303 (was 3238).
-    assert_eq!(knowledge_points, 3303, "knowledge points");
+    // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 3327 (was 3303).
+    assert_eq!(knowledge_points, 3327, "knowledge points");
 
     let exemplars: usize = topics
         .iter()
@@ -68,7 +71,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-28, VBE skill wave 1: 25795 exemplars (was 25018).
     // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: 25789 (was 25795).
     // 2026-10-29, VBE course wave 2a (the course vbe-math): 26188 (was 25789).
-    assert_eq!(exemplars, 26188, "exemplars");
+    // 2026-10-29, VBE wave 2b (the six exam sets): 26374 (was 26188).
+    assert_eq!(exemplars, 26374, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).
@@ -127,7 +131,7 @@ fn the_load_index_counts_topics_in_load_order() {
     let topics: Vec<_> = raw.topics().collect();
 
     let indices: Vec<usize> = topics.iter().map(|t| t.load_index).collect();
-    assert_eq!(indices, (0..1127).collect::<Vec<usize>>());
+    assert_eq!(indices, (0..1133).collect::<Vec<usize>>());
 
     let named: Vec<&str> = topics.iter().take(3).map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
@@ -138,14 +142,14 @@ fn the_load_index_counts_topics_in_load_order() {
             "multiplication-tables"
         ]
     );
-    let last: Vec<&str> = topics[1124..].iter().map(|t| t.topic.id.as_str()).collect();
-    // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): vbe-math loads last.
+    let last: Vec<&str> = topics[1130..].iter().map(|t| t.topic.id.as_str()).collect();
+    // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): the six set topics load last (was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables).
     assert_eq!(
         last,
         vec![
-            "vbe-cp24-combinatorics",
-            "vbe-cp25-probability-models",
-            "vbe-cp26-random-variables"
+            "vbe-set4-2026-main",
+            "vbe-set5-2026-repeat",
+            "vbe-set6-lmma-mock"
         ]
     );
 

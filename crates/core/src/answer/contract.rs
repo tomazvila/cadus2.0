@@ -39,7 +39,7 @@ use serde::{Deserialize, Serialize};
 use super::{Canon, MAX_ANSWER_CHARS, Quantity, Undecidable, canonical_form};
 use structured::{label_value, multipart_values, tolerance_value, validate_shape};
 
-pub use evaluate::{check_contract, format_hint};
+pub use evaluate::{check_contract, format_hint, multipart_credit};
 pub use form::NumericForm;
 pub use property::{PropertyArg, PropertyArgs, PropertyCheck};
 pub use triage::{TriageVerdict, triage_verdict};

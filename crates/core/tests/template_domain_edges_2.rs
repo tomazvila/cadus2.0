@@ -119,6 +119,7 @@ fn spec_of(answers: &[&str]) -> Vec<Exemplar> {
             answer: (*answer).to_string(),
             solution_sketch: None,
             visual: None,
+            points: None,
         })
         .collect()
 }

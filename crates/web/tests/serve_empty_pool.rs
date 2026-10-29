@@ -34,6 +34,7 @@ fn exemplar(n: u8) -> Exemplar {
         answer: n.to_string(),
         solution_sketch: Some("Read the index.".to_owned()),
         visual: None,
+        points: None,
     }
 }
 

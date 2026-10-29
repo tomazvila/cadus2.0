@@ -62,6 +62,7 @@ pub(crate) fn topic(id: &str, prereqs: &[(&str, f64, bool)]) -> Topic {
             answer: "7".to_owned(),
             solution_sketch: None,
             visual: None,
+            points: None,
         }),
         anki_seeds: Vec::new(),
         lt_term: None,
@@ -78,6 +79,14 @@ pub(crate) fn graph(topics: Vec<Topic>) -> Curriculum {
 /// Several courses in catalog order: `(course, mastery floor, topics)`. Course
 /// `n` has order `n`, and its one module is `{course}-M`.
 pub(crate) fn ladder(courses: &[(&str, &[&str], Vec<Topic>)]) -> Curriculum {
+    ladder_weighted(courses, None)
+}
+
+/// Like [`ladder`], with `exam_weights` on the LAST course.
+pub(crate) fn ladder_weighted(
+    courses: &[(&str, &[&str], Vec<Topic>)],
+    weights: Option<crate::curriculum::ExamWeights>,
+) -> Curriculum {
     let mut catalog = Vec::new();
     let mut units = Vec::new();
     let mut first_load_index = 0;
@@ -89,7 +98,11 @@ pub(crate) fn ladder(courses: &[(&str, &[&str], Vec<Topic>)]) -> Curriculum {
             mastery_floor: floor.iter().map(|id| slug(id)).collect(),
             mastery_floor_course: None,
             reading: Vec::new(),
-            exam_weights: None,
+            exam_weights: if order + 1 == courses.len() {
+                weights
+            } else {
+                None
+            },
         });
         units.push(RawUnit {
             course_id: (*course).to_owned(),

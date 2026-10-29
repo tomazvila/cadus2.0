@@ -468,7 +468,8 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // 2026-10-08, story framing removed: (1388, 12) (was (1408, 12)).
     // 2026-10-12, Foundations merge (D-C1): (1381, 12) overall (was (1388, 12)).
     // 2026-10-28, VBE skill wave 1: (1435, 12) overall (was (1381, 12)).
-    assert_eq!((exempted, blind), (1435, 12));
+    // 2026-10-29, VBE wave 2b (the six exam sets): (1436, 12) overall (was (1435, 12)).
+    assert_eq!((exempted, blind), (1436, 12));
     // Foundations: (231, 5) (was (145, 12)).
     // 2026-10-07, courses rewrite (later): (232, 6).
     // 2026-10-08, story framing removed: (222, 6) (was (232, 6)).

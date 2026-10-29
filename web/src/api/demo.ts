@@ -465,7 +465,8 @@ export function createDemoApi(): ApiClient {
       return reply({ hint: DEMO_HINTS[hintCount - 1], hint_number: hintCount });
     },
 
-    startQuizRound: async (length, scope) => {
+    startQuizRound: async (length, scope, set) => {
+      if (scope === 'paper') refuse(422, 'invalid_request', 'The demo has no exam set' + (set ? ` ${set}` : '') + '.');
       const n = Math.min(length, 8);
       const task: PlanTask = {
         ...demoTask(0),

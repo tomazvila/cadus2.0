@@ -83,6 +83,8 @@ field (`graph.py:602-614`, `:272`). All 88 files agree. Copy this behavior.
 
 New in 2.0 (D-VBE1): `lt_term` is the Lithuanian program term of the topic. The teach page shows it as the line "Lithuanian exam term: ..." and the topic read page shows it under the title. `program_items` lists the row numbers of the program registry that the topic covers. `area` is the exam area of the topic. The three fields are presentation and lint input only. They are not in the canonical dump and not in `review_context_digest`, so no hash moves.
 
+New in 2.0 (D-VBE3): `points` is the exam value of one item, a whole number from 1 to 11. An item with no `points` counts 1 point. The loader refuses a value outside the range. The field is not in the canonical dump and not in `review_context_digest`, so no hash moves. A quiz round scores the points of the correct items over the points of all items. A multipart item with `points` earns part of them for each named part it got right.
+
 ### PrereqEdge (`model.py:112-119`)
 
 | Key | Type | Required | Constraint |
@@ -105,6 +107,7 @@ Distinct weights in the tree: 0.0, 0.2, 0.25, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.85
 | Exemplar | `problem` | str | yes | LaTeX inside `$...$` |
 | | `answer` | str | yes | |
 | | `solution_sketch` | str or null | no | `null` |
+| | `points` | int 1 to 11 or null | no | `null` (D-VBE3) |
 | AnkiSeed | `front` | str | yes | |
 | | `back` | str | yes | |
 | | `type` | enum `basic`/`cloze` | no | `basic` |

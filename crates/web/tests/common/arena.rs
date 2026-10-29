@@ -67,6 +67,7 @@ pub fn exemplar_with_solution(problem: &str, answer: &str, solution: &str) -> Ex
         answer: answer.to_string(),
         solution_sketch: Some(solution.to_string()),
         visual: None,
+        points: None,
     }
 }
 

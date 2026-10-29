@@ -126,6 +126,7 @@ pub fn solved_exemplar(problem: &str, answer: &str) -> cadus_core::curriculum::E
         answer: answer.to_owned(),
         solution_sketch: Some("Add the parts.".to_owned()),
         visual: None,
+        points: None,
     }
 }
 

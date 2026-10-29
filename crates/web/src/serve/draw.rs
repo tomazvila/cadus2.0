@@ -20,6 +20,7 @@ mod draw_exemplar;
 
 pub(super) use draw_exemplar::answer_of;
 pub(super) use draw_exemplar::exemplar_rows;
+pub(super) use draw_exemplar::paper_row;
 
 /// Take one instance out of the pool, and fall back to the exemplars (A6).
 ///

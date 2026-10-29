@@ -198,6 +198,7 @@ pub fn squares_spec() -> AuthoringSpec {
             answer: "49".to_owned(),
             solution_sketch: None,
             visual: None,
+            points: None,
         }],
         finite: None,
     }
@@ -335,6 +336,7 @@ pub fn golden_spec() -> AuthoringSpec {
                 answer: "25".to_owned(),
                 solution_sketch: Some("Borrow one ten, then subtract the ones column.".to_owned()),
                 visual: None,
+                points: None,
             },
             Exemplar {
                 answer_contract: None,
@@ -342,6 +344,7 @@ pub fn golden_spec() -> AuthoringSpec {
                 answer: "35".to_owned(),
                 solution_sketch: None,
                 visual: None,
+                points: None,
             },
         ],
         finite: None,

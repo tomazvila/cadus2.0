@@ -4,7 +4,9 @@ use serde::Deserialize;
 use serde_norway::{Mapping, Value};
 
 use super::super::finding::Finding;
-use super::super::model::{ANKI_TYPES, ANSWER_KINDS, TOPIC_AREAS};
+use super::super::model::{
+    ANKI_TYPES, ANSWER_KINDS, MAX_ITEM_POINTS, MIN_ITEM_POINTS, TOPIC_AREAS,
+};
 use super::MERGE_KEY;
 use super::message::{
     bool_message, integer_of, key_name, quoted_alternatives, string_number_message,
@@ -447,12 +449,13 @@ impl<'a> Checker<'a> {
     }
 
     fn check_exemplar(&mut self, value: &Value) {
-        const FIELDS: [&str; 5] = [
+        const FIELDS: [&str; 6] = [
             "problem",
             "answer",
             "solution_sketch",
             "answer_contract",
             "visual",
+            "points",
         ];
         let Some(map) = self.struct_map(value, "Exemplar") else {
             return;
@@ -481,6 +484,21 @@ impl<'a> Checker<'a> {
             let is_index = value.is_null() || value.is_bool() || value.as_u64().is_some();
             if !is_index {
                 checker.report("`visual` must be a whole number index or `false`");
+            }
+        });
+        self.field(map, "points", false, |checker, value| {
+            if value.is_null() {
+                return;
+            }
+            match integer_of(value) {
+                Err(message) => checker.report(&message),
+                Ok(number) if number < i64::from(MIN_ITEM_POINTS) => {
+                    checker.report_range("Input should be greater than or equal to 1");
+                }
+                Ok(number) if number > i64::from(MAX_ITEM_POINTS) => {
+                    checker.report_range("Input should be less than or equal to 11");
+                }
+                Ok(_) => {}
             }
         });
         self.extras(map, &FIELDS);

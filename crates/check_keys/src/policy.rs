@@ -30,6 +30,7 @@ pub fn key_policy(answer: &str, contract: Option<&AnswerContract>, kind: AnswerK
         answer: answer.to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     };
     match item.verdict_policy(kind) {
         Ok(_) => KeyPolicy::Verdict,
@@ -82,6 +83,7 @@ mod tests {
                         answer: answer.to_owned(),
                         solution_sketch: None,
                         visual: None,
+                        points: None,
                     };
                     let verdict = item.verdict_policy(kind).is_ok();
                     let policy = key_policy(answer, contract.as_ref(), kind);

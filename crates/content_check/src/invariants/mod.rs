@@ -81,6 +81,7 @@ pub mod testkit {
             answer: answer.to_owned(),
             solution_sketch: sketch.map(str::to_owned),
             visual: None,
+            points: None,
         };
         Item::new(exemplar, contract, AnswerKind::Numeric)
     }

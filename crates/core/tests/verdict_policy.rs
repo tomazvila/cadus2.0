@@ -74,6 +74,7 @@ fn exemplar(state: &State) -> Exemplar {
         answer: state.answer.to_owned(),
         solution_sketch: Some("Count.".to_owned()),
         visual: None,
+        points: None,
     }
 }
 
@@ -138,6 +139,7 @@ fn the_examples_of_the_brief_hold() {
         answer: "[3,-1;-5,2]".to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     };
     assert!(matrix.verdict_policy(AnswerKind::Numeric).is_ok());
     assert!(matrix.verdict_policy(AnswerKind::Proof).is_ok());
@@ -147,6 +149,7 @@ fn the_examples_of_the_brief_hold() {
         answer: "$(46, 54)$".to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     };
     assert!(pair.verdict_policy(AnswerKind::Numeric).is_ok());
     assert!(pair.verdict_policy(AnswerKind::Proof).is_err());

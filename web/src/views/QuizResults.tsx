@@ -10,6 +10,7 @@ import { useProblemReport } from './session/useProblemReport';
 import { applyReportCorrection } from './session/applyReportCorrection';
 import { QuizProofGrading } from './session/ProofGrading';
 import { isQuizReceipt, isRework } from '@/api/types';
+import { paperScoreLine, roundPlace } from './roundLabel';
 import type { AnswerResponse, ApiClient, QuizResultResponse, ServedProblem } from '@/api/types';
 
 type Props = { api: ApiClient; taskId: string; onUnauthorized: () => void };
@@ -30,8 +31,12 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
   if (practicing) return <QuizPractice api={api} taskId={taskId} onUnauthorized={onUnauthorized} />;
   if (!result) return <button type="button" className="btn" disabled={phase === 'loading'} onClick={() => load(false)}>Review results</button>;
   return <div className="quiz-results">
-    <h3>{result.round ? `Your quiz result: ${result.round.n} questions, ${result.round.scope === 'all' ? 'all my courses' : (result.round.course_name ?? 'my course')}` : 'Your quiz result'}</h3>
-    {result.inconclusive ? <p>Some answers are not marked yet. No progress or points are added until they are.</p> : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} points</p>}
+    <h3>{result.round ? `Your quiz result: ${result.round.n} questions, ${roundPlace(result.round)}` : 'Your quiz result'}</h3>
+    {result.round?.kind === 'paper' && result.points_total !== undefined
+      ? <p>{paperScoreLine(result.points_earned ?? 0, result.points_total, result.percent ?? 0)}</p>
+      : null}
+    {result.inconclusive ? <p>Some answers are not marked yet. No progress or points are added until they are.</p>
+      : result.round?.kind === 'paper' ? null : <p>{Math.round(result.score * 100)}% of marked answers right · {result.xp} points</p>}
     {result.answers.map((answer) => <article key={answer.problem_id} className="card">
       <MathBlock>{answer.text}</MathBlock>
       <p>Your answer: {answer.given_answer || '(blank)'}</p>

@@ -11,10 +11,18 @@ use crate::learner::{QuizState, TopicState};
 use crate::numeric::{round_half_even_i64_saturating, to_datetime};
 
 use super::review::float_then_id;
+mod area;
+mod paper;
+mod points;
 use super::{
     DAY_US, DIFFICULTY_TARGET, QUIZ_DIFFICULTY_TARGETS, QUIZ_MID_TARGET, QUIZ_RECENT_DAYS,
     QUIZ_RECENT_TARGET, QUIZ_RETAKE_DELAY_DAYS, QUIZ_TIME_FACTOR,
 };
+pub use area::{area_map, area_quotas, largest_area};
+pub use paper::{
+    PAPER_ENTRY, PAPER_FORM, PaperItem, PaperRefusal, exam_sets, paper_form, parse_paper_entry,
+};
+pub use points::{ItemPoints, item_points, round2, score_of, sum_points};
 
 /// The sampler the quiz composer draws with.
 ///
@@ -178,6 +186,7 @@ pub fn quiz_composer(
     let request = QuizRequest {
         length: usize::try_from(cfg.quiz.questions).unwrap_or(0),
         course: None,
+        prereqs: false,
     };
     quiz_composer_for(states, graph, cfg, t_us, sampler, learned_at, &request)
 }
@@ -189,6 +198,9 @@ pub struct QuizRequest<'a> {
     pub length: usize,
     /// The course id that limits the topics. `None` means every course.
     pub course: Option<&'a str>,
+    /// Whether the topics of the course also include every prerequisite ancestor
+    /// of them in other courses (D-VBE3). It has no effect without a course.
+    pub prereqs: bool,
 }
 
 /// Compose a quiz of the requested length and scope. It uses the same strata
@@ -203,43 +215,57 @@ pub fn quiz_composer_for(
     learned_at: Option<&BTreeMap<String, i64>>,
     request: &QuizRequest<'_>,
 ) -> QuizPlan {
+    let in_scope = scope_of(graph, request);
     let learned: Vec<String> = states
         .iter()
         .filter(|(id, state)| {
-            graph.idx_of(id).is_some_and(|idx| {
-                has_review_history(state)
-                    && request
-                        .course
-                        .is_none_or(|course| graph.course_of(idx) == course)
-            })
+            graph.idx_of(id).is_some()
+                && has_review_history(state)
+                && in_scope.as_ref().is_none_or(|set| set.contains(*id))
         })
         .map(|(id, _)| id.clone())
         .collect();
     if learned.is_empty() {
         return QuizPlan::default();
     }
-    let (recent, mid_pool, old_pool) = strata(&learned, states, t_us, learned_at);
-
     let total = request.length.min(learned.len());
-    let want_recent = QUIZ_RECENT_TARGET.min(total);
-    let want_mid = QUIZ_MID_TARGET.min(total - want_recent);
-    let want_old = total - want_recent - want_mid;
-
     let mut picked: Vec<(String, &'static str)> = Vec::new();
     let mut used: BTreeSet<String> = BTreeSet::new();
-    take_stratum(
-        sampler,
-        &recent,
-        want_recent,
-        "recent",
-        &mut picked,
-        &mut used,
-    );
-    take_stratum(sampler, &mid_pool, want_mid, "mid", &mut picked, &mut used);
-    take_stratum(sampler, &old_pool, want_old, "old", &mut picked, &mut used);
-
-    // A short stratum backfills from the rest. `take_stratum` draws nothing
-    // when the quiz is already full.
+    let weights = request
+        .course
+        .and_then(|course| graph.course(course))
+        .and_then(|course| course.exam_weights.as_ref());
+    if let (Some(weights), Some(course)) = (weights, request.course) {
+        draw_by_area(
+            &AreaDraw {
+                states,
+                t_us,
+                learned_at,
+                learned: &learned,
+                total,
+                quotas: area_quotas(total, weights),
+                areas: &area_map(graph, course),
+                fallback: largest_area(weights),
+            },
+            sampler,
+            &mut picked,
+            &mut used,
+        );
+    } else {
+        draw_pool(
+            &PoolDraw {
+                pool: &learned,
+                states,
+                t_us,
+                learned_at,
+                total,
+            },
+            sampler,
+            &mut picked,
+            &mut used,
+        );
+    }
+    // A short pool backfills from the learned topics that are left.
     let mut leftover: Vec<String> = learned
         .iter()
         .filter(|id| !used.contains(*id))
@@ -258,6 +284,100 @@ pub fn quiz_composer_for(
                 stratum,
             })
             .collect(),
+    }
+}
+
+/// The ids a round may draw from, or `None` for every course.
+fn scope_of(graph: &Curriculum, request: &QuizRequest<'_>) -> Option<BTreeSet<String>> {
+    let course = request.course?;
+    let mut set: BTreeSet<String> = BTreeSet::new();
+    for &idx in graph.topics_in_course(course) {
+        set.insert(graph.id_of(idx).to_owned());
+        if request.prereqs {
+            for ancestor in graph.ancestors(idx) {
+                set.insert(graph.id_of(ancestor).to_owned());
+            }
+        }
+    }
+    Some(set)
+}
+
+/// The inputs of the draw from one pool of topics.
+struct PoolDraw<'a> {
+    pool: &'a [String],
+    states: &'a BTreeMap<String, TopicState>,
+    t_us: i64,
+    learned_at: Option<&'a BTreeMap<String, i64>>,
+    total: usize,
+}
+
+/// Draw `total` topics from one pool with the strata of PEDAGOGY 7: up to 4
+/// recent, 2 mid, and the rest old. A short stratum backfills from the pool.
+fn draw_pool(
+    draw: &PoolDraw<'_>,
+    sampler: &mut dyn QuizSampler,
+    picked: &mut Vec<(String, &'static str)>,
+    used: &mut BTreeSet<String>,
+) {
+    let start = picked.len();
+    let total = draw.total.min(draw.pool.len());
+    let (recent, mid_pool, old_pool) = strata(draw.pool, draw.states, draw.t_us, draw.learned_at);
+    let want_recent = QUIZ_RECENT_TARGET.min(total);
+    let want_mid = QUIZ_MID_TARGET.min(total - want_recent);
+    let want_old = total - want_recent - want_mid;
+    take_stratum(sampler, &recent, want_recent, "recent", picked, used);
+    take_stratum(sampler, &mid_pool, want_mid, "mid", picked, used);
+    take_stratum(sampler, &old_pool, want_old, "old", picked, used);
+    let mut leftover: Vec<String> = draw
+        .pool
+        .iter()
+        .filter(|id| !used.contains(*id))
+        .cloned()
+        .collect();
+    leftover.sort_unstable();
+    let need = total.saturating_sub(picked.len() - start);
+    take_stratum(sampler, &leftover, need, "mid", picked, used);
+}
+
+/// The inputs of the draw by exam area.
+struct AreaDraw<'a> {
+    states: &'a BTreeMap<String, TopicState>,
+    t_us: i64,
+    learned_at: Option<&'a BTreeMap<String, i64>>,
+    learned: &'a [String],
+    total: usize,
+    quotas: [usize; 4],
+    areas: &'a BTreeMap<String, usize>,
+    /// The position of the area that takes a topic with no area.
+    fallback: usize,
+}
+
+/// Draw each exam area up to its quota (D-VBE3).
+fn draw_by_area(
+    draw: &AreaDraw<'_>,
+    sampler: &mut dyn QuizSampler,
+    picked: &mut Vec<(String, &'static str)>,
+    used: &mut BTreeSet<String>,
+) {
+    for (position, quota) in draw.quotas.iter().enumerate() {
+        let pool: Vec<String> = draw
+            .learned
+            .iter()
+            .filter(|id| draw.areas.get(*id).copied().unwrap_or(draw.fallback) == position)
+            .cloned()
+            .collect();
+        draw_pool(
+            &PoolDraw {
+                pool: &pool,
+                states: draw.states,
+                t_us: draw.t_us,
+                learned_at: draw.learned_at,
+                total: (*quota).min(draw.total),
+            },
+            sampler,
+            picked,
+            used,
+        );
     }
 }
 

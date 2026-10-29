@@ -14,6 +14,7 @@ pub fn exemplars() -> Vec<Exemplar> {
         answer: "49".to_owned(),
         solution_sketch: None,
         visual: None,
+        points: None,
     }]
 }
 

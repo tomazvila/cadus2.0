@@ -387,9 +387,17 @@ pub(crate) async fn install_next(
     // Note 101 b: the choice AUTHORS first — a point with verdict-capable exemplars or
     // an all-`none` list (self-check rows) preempts a zero-exemplar one, whose teach
     // page completes it and whose template pool (if any) never serves the lesson.
+    // D-VBE3: a paper round names the item it serves, so no sibling point stands in.
+    let paper_index = (task.task_type == TaskType::Quiz && feedback.is_none())
+        .then(|| usize::try_from(index).ok())
+        .flatten()
+        .and_then(|position| task.mix.get(position))
+        .and_then(|entry| cadus_core::selector::parse_paper_entry(entry))
+        .map(|(_, _, item)| item);
     let current_authors = ReadinessGate::authors_practice(readiness, &target.serve, &target.kp);
-    if (!ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty()
-        || !current_authors)
+    if paper_index.is_none()
+        && (!ReadinessGate::lesson_blockers(readiness, &target.serve, &target.kp).is_empty()
+            || !current_authors)
         && let Some(idx) = graph.idx_of(&target.serve)
     {
         let points: &[cadus_core::curriculum::KnowledgePoint] = graph.knowledge_points(idx);
@@ -458,9 +466,25 @@ pub(crate) async fn install_next(
         prefer_new_in_task: task.task_type == TaskType::Review && task.n_problems.unwrap_or(0) >= 2,
     };
     let drawn_for = target.kp.clone();
-    let (row, previously_claimed) =
-        super::fallback::draw_servable(state, tx, user_id, content, &mut target, windows, policy)
-            .await?;
+    let (row, previously_claimed) = match paper_index {
+        Some(item) => (
+            super::draw::paper_row(graph, &target, item)
+                .ok_or_else(|| no_problem(&target.serve))?,
+            false,
+        ),
+        None => {
+            super::fallback::draw_servable(
+                state,
+                tx,
+                user_id,
+                content,
+                &mut target,
+                windows,
+                policy,
+            )
+            .await?
+        }
+    };
     if target.kp != drawn_for && task.task_type == TaskType::Lesson && feedback.is_none() {
         // The fallback moved to a sibling point; the lesson stands there from now on.
         progress_for(scratch, task, graph).current_kp = Some(target.kp.clone());

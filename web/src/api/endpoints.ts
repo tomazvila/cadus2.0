@@ -150,7 +150,8 @@ export const api: ApiClient = {
   // field whose type it does not expect. TypeScript's excess-property check fires on
   // object LITERALS only, so a caller passing a variable would put extra keys on the wire.
   taskQuizResult: (taskId, practice = false) => request<QuizResultResponse>('POST', `/task/${seg(taskId)}/quiz-result`, { practice }),
-  startQuizRound: (length, scope) => request<QuizRoundResponse>('POST', '/quiz/round', { length, scope }),
+  startQuizRound: (length, scope, set) =>
+    request<QuizRoundResponse>('POST', '/quiz/round', scope === 'paper' ? { kind: 'paper', set: set ?? '' } : { length, scope }),
   taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
     request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
       problem_id,

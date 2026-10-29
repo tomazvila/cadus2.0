@@ -42,6 +42,7 @@ fn graded(problem: &str, answer: &str, sketch: &str) -> Exemplar {
         answer: answer.to_string(),
         solution_sketch: Some(sketch.to_string()),
         visual: None,
+        points: None,
     }
 }
 
@@ -54,6 +55,7 @@ fn teach_only(problem: &str, answer: &str, sketch: &str) -> Exemplar {
         answer: answer.to_string(),
         solution_sketch: Some(sketch.to_string()),
         visual: None,
+        points: None,
     }
 }
 

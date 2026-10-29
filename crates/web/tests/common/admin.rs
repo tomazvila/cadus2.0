@@ -107,6 +107,7 @@ pub fn graph() -> Curriculum {
             answer: "5".to_string(),
             solution_sketch: None,
             visual: None,
+            points: None,
         }],
     );
     point.name = "The first point".to_string();
