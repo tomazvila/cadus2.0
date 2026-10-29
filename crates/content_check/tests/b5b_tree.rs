@@ -215,7 +215,7 @@ fn report_of_one_course_fails_today_and_lists_each_kp_below_the_floor() {
 }
 
 #[test]
-fn report_of_the_full_tree_has_3327_kps_and_runs_in_less_than_60_seconds() {
+fn report_of_the_full_tree_has_3516_kps_and_runs_in_less_than_60_seconds() {
     let start = Instant::now();
     let result = run(&["report", "--all", "--base", &curriculum()]);
     assert!(start.elapsed().as_secs() < 60, "{:?}", start.elapsed());
@@ -232,13 +232,14 @@ fn report_of_the_full_tree_has_3327_kps_and_runs_in_less_than_60_seconds() {
     // Re-pinned 2026-10-28 after VBE skill wave 1: 3,238 (was 3,113).
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 3,303 kps (was 3,238) and 14 courses (was 13).
     // Re-pinned 2026-10-29 after VBE wave 2b (the six exam sets): 3,327 kps (was 3,303); the course count stays 14.
-    assert_eq!(result.doc["kps"].as_array().unwrap().len(), 3327);
-    assert_eq!(result.doc["courses"].as_array().unwrap().len(), 14);
+    // Re-pinned 2026-10-30 after the course fundamentals-of-mathematics (D-FOM1): 3,516 kps (was 3,327) and 15 courses (was 14).
+    assert_eq!(result.doc["kps"].as_array().unwrap().len(), 3516);
+    assert_eq!(result.doc["courses"].as_array().unwrap().len(), 15);
     let count: u64 = column(&result.doc, "courses", "kps")
         .iter()
         .map(|kps| kps.as_u64().unwrap())
         .sum();
-    assert_eq!(count, 3327);
+    assert_eq!(count, 3516);
     // Pack v2, D25: the two units whose file name is not the unit id.
     let files = column(&result.doc, "kps", "file");
     for file in [

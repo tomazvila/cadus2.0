@@ -55,7 +55,7 @@ fn codes(root: &Path) -> Vec<String> {
 const FIELDS: &str = "    lt_term: \"Lygtys\"\n    program_items: [1, 2]\n    area: models\n";
 const WEIGHTS: &str = "    exam_weights: {numbers: 15, models: 50, geometry: 20, data: 15}\n";
 const REGISTRY: &str = "program:\n  - {row: 1, lt_term: \"Lygtys\", excluded: null}\n  \
-                        - {row: 2, lt_term: \"Nelygybes\"}\n  - {row: 3, excluded: \"Not in the course\"}\n";
+                        - {row: 2, label: \"Nelygybes\"}\n  - {row: 3, excluded: \"Not in the course\"}\n";
 
 #[test]
 fn the_fields_load_and_move_no_hash_and_no_digest() {

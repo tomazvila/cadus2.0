@@ -16,7 +16,7 @@ use common::dump::{curriculum_root, fixture_arena};
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "8c62ed82c1496a9336a622f7501e1c8b730f2f08662549dd6388fa1be34b99b6";
+const TREE_HASH: &str = "96be18befa91b01b34db86cacbf2825772dd64f2a34cfbb85c75792e62d623a6";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-07, courses rewrite: dump length 13,180,744 (was 10,922,819) and a new
@@ -33,7 +33,8 @@ const TREE_HASH: &str = "8c62ed82c1496a9336a622f7501e1c8b730f2f08662549dd6388fa1
 // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: dump length 13,267,884 (was 13,271,404); hash 2d27cee6... (was 7be6a775...).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): dump length 13,565,575 (was 13,267,884); hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): dump length 13,709,049 (was 13,565,575); hash 8c62ed82... (was 0d3ac571...).
-const DUMP_LEN: usize = 13_709_049;
+// 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): dump length 15,210,810 (was 13,709,049); hash 96be18be... (was 8c62ed82...).
+const DUMP_LEN: usize = 15_210_810;
 
 #[test]
 fn the_binary_writes_the_dump_and_the_hash() {

@@ -73,16 +73,19 @@ const ARENA_DUE_STRIDE: usize = 5;
 /// 2026-10-28; 1,064 after the Foundations merge of 2026-10-12). VBE course
 /// wave 2a (the course vbe-math), 2026-10-29: 1,127 (was 1,101).
 /// VBE wave 2b (the six exam sets), 2026-10-29: 1,133 (was 1,127).
-const ARENA_TOPICS: usize = 1_133;
+/// The course fundamentals-of-mathematics (D-FOM1), 2026-10-30: 1,183 (was 1,133).
+const ARENA_TOPICS: usize = 1_183;
 
 /// The count of topics the fixture puts into the states map (2026-10-29, VBE course
 /// wave 2a: 376, was 367 on 2026-10-28; 355 on 2026-10-12).
 /// VBE wave 2b (the six exam sets), 2026-10-29: 378 (was 376).
-const ARENA_LEARNED_TOPICS: usize = 378;
+/// The course fundamentals-of-mathematics (D-FOM1), 2026-10-30: 395 (was 378).
+const ARENA_LEARNED_TOPICS: usize = 395;
 
 /// The count of tasks every composition returns (2026-10-29, VBE course wave 2a: 129,
-/// was 127 on 2026-10-28; 109 on 2026-10-12).
-const ARENA_TASKS: usize = 129;
+/// was 127 on 2026-10-28; 109 on 2026-10-12). The course fundamentals-of-mathematics
+/// (D-FOM1), 2026-10-30: 132 (was 129).
+const ARENA_TASKS: usize = 132;
 
 /// The `task_id` of the first task of every composition (2026-10-28; the
 /// review of angle-of-elevation-depression on 2026-10-12).

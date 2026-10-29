@@ -22,8 +22,10 @@ pub const PROGRAM_FILE: &str = "program.yaml";
 #[serde(deny_unknown_fields)]
 pub(in crate::curriculum::lint) struct ProgramRow {
     pub row: u32,
-    #[serde(default)]
-    pub lt_term: Option<String>,
+    /// The name of the row: a program term, a theorem label, or any short
+    /// text. `lt_term` is an accepted alias (the first registry used it).
+    #[serde(default, alias = "lt_term")]
+    pub label: Option<String>,
     #[serde(default)]
     pub excluded: Option<String>,
 }
@@ -114,7 +116,7 @@ pub(in crate::curriculum::lint) fn check_program(
                 .is_some_and(|reason| !reason.trim().is_empty());
             if !covered.contains(&row.row) && !excluded {
                 let term = row
-                    .lt_term
+                    .label
                     .as_deref()
                     .map_or_else(String::new, |term| format!(" ({term})"));
                 lint.findings.push(

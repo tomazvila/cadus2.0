@@ -14,7 +14,7 @@ use common::dump::tree;
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "8c62ed82c1496a9336a622f7501e1c8b730f2f08662549dd6388fa1be34b99b6";
+const TREE_HASH: &str = "96be18befa91b01b34db86cacbf2825772dd64f2a34cfbb85c75792e62d623a6";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -33,7 +33,8 @@ const TREE_HASH: &str = "8c62ed82c1496a9336a622f7501e1c8b730f2f08662549dd6388fa1
 // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: dump length 13,267,884 (was 13,271,404); hash 2d27cee6... (was 7be6a775...).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): dump length 13,565,575 (was 13,267,884); hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): dump length 13,709,049 (was 13,565,575); hash 8c62ed82... (was 0d3ac571...).
-const DUMP_LEN: usize = 13_709_049;
+// 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): dump length 15,210,810 (was 13,709,049); hash 96be18be... (was 8c62ed82...); topics 1183 (was 1133), courses 15 (was 14), units 105 (was 98), knowledge points 3516 (was 3327), exemplars 28373 (was 26374), prereq edges 4094 (was 3794), encompassing edges 4013 (was 3713).
+const DUMP_LEN: usize = 15_210_810;
 
 /// The `counts` object of the dump, as the oracle writes it.
 // 2026-10-12, Foundations merge (D-C1): counts re-pinned to the merged tree.
@@ -41,7 +42,7 @@ const DUMP_LEN: usize = 13_709_049;
 // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: exemplars 25789 (was 25795).
 // 2026-10-29, VBE wave 2b (the six exam sets): topics 1133 (was 1127), units 98 (was 97), knowledge points 3327 (was 3303), exemplars 26374 (was 26188), prereq edges 3794 (was 3638), encompassing edges 3713 (was 3557).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): courses 14 (was 13), topics 1127 (was 1101), units 97 (was 91), knowledge points 3303 (was 3238), exemplars 26188 (was 25789), prereq edges 3638 (was 3378), encompassing edges 3557 (was 3297).
-const COUNTS: &str = "\"counts\":{\"anki_seeds\":2218,\"courses\":14,\"encompassing_edges\":3713,\"exemplars\":26374,\"knowledge_points\":3327,\"prereq_edges\":3794,\"topics\":1133,\"units\":98}";
+const COUNTS: &str = "\"counts\":{\"anki_seeds\":2218,\"courses\":15,\"encompassing_edges\":4013,\"exemplars\":28373,\"knowledge_points\":3516,\"prereq_edges\":4094,\"topics\":1183,\"units\":105}";
 
 // --------------------------------------------------------------------------- //
 // The hash and the shape of the dump
@@ -91,13 +92,13 @@ fn canonical_dump_holds_the_literal_edge_rows_and_the_topological_ends() {
         "\"encompassing_edges\":[[\"abelian-groups\",\"binary-operations\",0.4],\
 [\"abelian-groups\",\"function-composition-inverse\",0.3],"
     ));
-    // The topological order: the first five (re-pinned 2026-10-12, Foundations merge) and the last three (re-pinned 2026-10-29, VBE wave 2b (the six exam sets)).
+    // The topological order: the first five (re-pinned 2026-10-12, Foundations merge) and the last three (re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1)).
     assert!(dump.contains(
         "\"topo_order\":[\"single-digit-addition\",\"multiplication-tables\",\
 \"place-value\",\"subtraction-facts\",\"division-facts\","
     ));
     assert!(
-        dump.ends_with("\"vbe-set4-2026-main\",\"vbe-set5-2026-repeat\",\"vbe-set6-lmma-mock\"]}")
+        dump.ends_with("\"fom-7-1-axiom-choice-zorns-lemma\",\"fom-7-2-ordinal-numbers-axiom-replacement\",\"fom-7-3-cardinal-numbers-continuum-hypothesis\"]}")
     );
     // The tree is a DAG, so the cycle field is null.
     assert!(dump.contains("\"cycle\":null,"));

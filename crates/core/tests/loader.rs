@@ -37,26 +37,30 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
 
     let catalog = parsed.catalog.clone().expect("courses.yaml loads");
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 14 courses (was 13).
-    assert_eq!(catalog.courses.len(), 14, "courses");
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 15 courses (was 14).
+    assert_eq!(catalog.courses.len(), 15, "courses");
     // Re-pinned 2026-10-28 after VBE skill wave 1: 91 unit files (was 88).
     // Re-pinned 2026-10-29 after VBE course wave 2a: 97 unit files (was 91).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 98 unit files (was 97).
-    assert_eq!(parsed.units.len(), 98, "unit files");
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 105 unit files (was 98).
+    assert_eq!(parsed.units.len(), 105, "unit files");
 
     let raw = RawCurriculum::from_parsed(parsed).expect("the catalog is present");
     let topics: Vec<_> = raw.topics().collect();
     // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064).
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127).
-    assert_eq!(topics.len(), 1133, "topics");
-    assert_eq!(raw.topic_count(), 1133, "topics");
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 1183 topics (was 1133).
+    assert_eq!(topics.len(), 1183, "topics");
+    assert_eq!(raw.topic_count(), 1183, "topics");
 
     let knowledge_points: usize = topics.iter().map(|t| t.topic.knowledge_points.len()).sum();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 3113 (was 3138).
     // Re-pinned 2026-10-28 after VBE skill wave 1: 3238 (was 3113).
     // Re-pinned 2026-10-29 after VBE course wave 2a: 3303 (was 3238).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 3327 (was 3303).
-    assert_eq!(knowledge_points, 3327, "knowledge points");
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 3516 (was 3327).
+    assert_eq!(knowledge_points, 3516, "knowledge points");
 
     let exemplars: usize = topics
         .iter()
@@ -72,7 +76,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: 25789 (was 25795).
     // 2026-10-29, VBE course wave 2a (the course vbe-math): 26188 (was 25789).
     // 2026-10-29, VBE wave 2b (the six exam sets): 26374 (was 26188).
-    assert_eq!(exemplars, 26374, "exemplars");
+    // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 28373 (was 26374).
+    assert_eq!(exemplars, 28373, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).
@@ -117,11 +122,15 @@ fn catalog_order_is_the_file_order_and_not_the_order_field() {
             "differential-equations",
             "abstract-algebra",
             "category-theory",
-            "vbe-math", // 2026-10-29, VBE course wave 2a: the new last course.
+            "vbe-math",                    // 2026-10-29, VBE course wave 2a.
+            "fundamentals-of-mathematics", // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): the new last course.
         ]
     );
     let orders: Vec<i64> = catalog.courses.iter().map(|c| c.order).collect();
-    assert_eq!(orders, vec![1, 4, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]); // 2026-10-29, VBE course wave 2a: vbe-math has order 14.
+    assert_eq!(
+        orders,
+        vec![1, 4, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
+    ); // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): order 15 added; vbe-math has order 14.
 }
 
 #[test]
@@ -131,7 +140,7 @@ fn the_load_index_counts_topics_in_load_order() {
     let topics: Vec<_> = raw.topics().collect();
 
     let indices: Vec<usize> = topics.iter().map(|t| t.load_index).collect();
-    assert_eq!(indices, (0..1133).collect::<Vec<usize>>());
+    assert_eq!(indices, (0..1183).collect::<Vec<usize>>());
 
     let named: Vec<&str> = topics.iter().take(3).map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
@@ -142,14 +151,14 @@ fn the_load_index_counts_topics_in_load_order() {
             "multiplication-tables"
         ]
     );
-    let last: Vec<&str> = topics[1130..].iter().map(|t| t.topic.id.as_str()).collect();
-    // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): the six set topics load last (was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables).
+    let last: Vec<&str> = topics[1180..].iter().map(|t| t.topic.id.as_str()).collect();
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): the last three topics of its unit 07 load last (was vbe-set4-2026-main, vbe-set5-2026-repeat, vbe-set6-lmma-mock). Before that, 2026-10-29, VBE wave 2b (the six exam sets): the six set topics loaded last (was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables).
     assert_eq!(
         last,
         vec![
-            "vbe-set4-2026-main",
-            "vbe-set5-2026-repeat",
-            "vbe-set6-lmma-mock"
+            "fom-7-1-axiom-choice-zorns-lemma",
+            "fom-7-2-ordinal-numbers-axiom-replacement",
+            "fom-7-3-cardinal-numbers-continuum-hypothesis"
         ]
     );
 
@@ -347,6 +356,7 @@ fn the_checked_in_tree_writes_no_yaml_1_1_boolean() {
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 703 core topics, 16 drill topics.
     // Re-pinned 2026-10-28 after VBE skill wave 1: 720 core topics (was 703).
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 724 core topics (was 720). The 26 checkpoint topics add 4 core topics.
-    assert_eq!(cores, 724, "core topics");
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 725 core topics (was 724). One of its 50 topics is core.
+    assert_eq!(cores, 725, "core topics");
     assert_eq!(drills, 16, "drill topics");
 }

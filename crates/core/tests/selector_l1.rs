@@ -33,7 +33,8 @@ fn compose_session_runs_on_the_full_curriculum() {
     // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064).
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127).
-    assert_eq!(graph.topic_count(), 1133);
+    // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 1183 topics (was 1133).
+    assert_eq!(graph.topic_count(), 1183);
     let states = bench_states(&graph);
     let course = graph
         .topics()

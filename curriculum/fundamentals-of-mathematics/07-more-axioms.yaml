@@ -1,0 +1,739 @@
+unit: more-axioms
+course: fundamentals-of-mathematics
+module: "Fundamentals: More Axioms"
+topics:
+  - id: fom-7-1-axiom-choice-zorns-lemma
+    name: '7.1 The Axiom of Choice, Zorn’s Lemma, and the Well-Ordering Theorem'
+    program_items: [438, 439, 440, 441, 442, 443, 444, 445, 446, 447]
+    core: false
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 840
+    prerequisites:
+      - id: fom-5-4-problem-rational-numbers
+        weight: 0.6
+        key: true
+      - id: fom-4-6-countable-sets
+        weight: 0.4
+        key: false
+      - id: fom-3-4-induction
+        weight: 0.4
+        key: false
+      - id: fom-2-5-axiom-powers-relations-functions
+        weight: 0.4
+        key: false
+      - id: partial-orders
+        weight: 0.4
+        key: false
+      - id: minimal-maximal-elements
+        weight: 0.4
+        key: false
+      - id: cartesian-products
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 7.1: the Axiom of Choice and choice functions'
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Let $A_1=\{2,5,7\}$, $A_2=\{5,9\}$ and $A_3=\{1,5\}$. Look at functions $f$ on $I=\{1,2,3\}$. Give 1 if $f(i)\in A_i$ for all $i$ and 0 if not. (a) $f(1)=2$, $f(2)=9$, $f(3)=1$. (b) $f(1)=5$, $f(2)=7$, $f(3)=5$. (c) $f(1)=7$, $f(2)=5$, $f(3)=5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'A function is a choice function when each value lies in its own set. In (a) the values 2, 9, 1 lie in $A_1,A_2,A_3$, so a = 1. In (b) the value 7 is not in $A_2$, so b = 0. In (c) the values 7, 5, 5 lie in their sets, so c = 1.'
+          - problem: 'Let $A_1=\{1,2,3\}$, $A_2=\{4,5\}$ and $A_3=\{6,7,8,9\}$. Count the choice functions. (a) Give the number of choice functions for $A_1,A_2,A_3$. (b) Give the number of choice functions for $A_1,A_2$ only. (c) Let $B_1=\{1,2\}$, $B_2=\{2,3\}$, $B_3=\{3,1\}$. Give the number of choice functions for $B_1,B_2,B_3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 24; b = 6; c = 8'
+            solution_sketch: 'Each index gives an independent pick, so the counts multiply. In (a) we get $3\cdot2\cdot4=24$. In (b) we get $3\cdot2=6$. In (c) every set has 2 elements, so $2\cdot2\cdot2=8$.'
+          - problem: 'Let $A_1=\{1,2\}$, $A_2=\varnothing$ and $A_3=\{3\}$. (a) Give the number of choice functions on $I=\{1,2,3\}$ for this family. (b) Replace $A_2$ by $\{0\}$. Give the new number of choice functions. (c) Give the number of elements of $A_1\cup A_2\cup A_3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 2; c = 3'
+            solution_sketch: 'An empty set leaves no value for $f(2)$, so a = 0. After the change there are 2 picks for $f(1)$, 1 for $f(2)$ and 1 for $f(3)$, so b = 2. The union is $\{1,2,3\}$, so c = 3.'
+          - problem: 'Let $A_1=\{4,7\}$, $A_2=\{3,9\}$ and $A_3=\{6,2\}$. Let $f(i)$ be the smallest element of $A_i$. Give (a) $f(1)$, (b) $f(2)$, (c) $f(3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 3; c = 2'
+            solution_sketch: 'The rule picks the smallest element of each set. The smallest element of $A_1$ is 4, so a = 4. The smallest element of $A_2$ is 3, so b = 3. The smallest element of $A_3$ is 2, so c = 2.'
+          - problem: 'For each positive integer $n$ let $A_n$ be the set of positive multiples of $n$. Give 1 if the rule is a choice function for the family $\{A_n\}$ and 0 if not. (a) $f(n)=n^2$. (b) $f(n)=n+1$. (c) $f(n)=3n$. (d) $f(n)=n+2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'The rule works when $f(n)$ is a multiple of $n$ for every $n$. The value $n^2$ is a multiple of $n$, so a = 1. For $n=2$ the value 3 is no multiple of 2, so b = 0. The value $3n$ is a multiple of $n$, so c = 1. For $n=3$ the value 5 is no multiple of 3, so d = 0.'
+          - problem: 'For $n=1,2,3,4$ let $A_n=\{n,-n\}$. Look at choice functions on $I=\{1,2,3,4\}$. (a) Give the number of choice functions. (b) Give the number of choice functions with $f(n)>0$ for all $n$. (c) Give the number of choice functions with $f(1)+f(2)+f(3)+f(4)=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 16; b = 1; c = 2'
+            solution_sketch: 'Each index has 2 picks, so a = $2^4$ = 16. Only the pick $f(n)=n$ keeps every value positive, so b = 1. The sum is $10-2s$, where $s$ is the sum of the indices with a negative pick. We need $s=5$, which gives the index sets $\{1,4\}$ and $\{2,3\}$, so c = 2.'
+          # source: FoM exercise 7.1-7-2
+          - problem: 'Assume Zorn''s Lemma. Prove that each family $\{A_i\}_{i\in I}$ of nonempty sets has a function $f$ on $I$ with $f(i)\in A_i$ for all $i$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Order the partial choice functions by inclusion. The union of a chain is an upper bound, so a maximal one exists, and it is defined on all of I.'
+            solution_sketch: 'Let $P$ be the set of functions $g$ with domain in $I$ and $g(i)\in A_i$ on that domain, ordered by inclusion. The empty function is in $P$. The union of a chain in $P$ is again in $P$, so it is an upper bound. Zorn''s Lemma gives a maximal $g$. If some $i$ lies outside its domain, extend $g$ by one value of $A_i$. That contradicts maximality.'
+        constraints: 'Choice functions of finite families; the Axiom of Choice from Zorn''s Lemma.'
+      - id: kp2
+        name: 'Definition 7.2 and Theorem 7.3: products and complete distributivity of union and intersection'
+        key_prerequisites: [fom-2-5-axiom-powers-relations-functions]
+        exemplars:
+          - problem: 'Let $|A_1|=2$, $|A_2|=3$ and $|A_3|=4$. (a) Give the number of elements of the product $\prod_{i=1}^{3}A_i$. (b) Give that number when $|A_3|=1$. (c) Let $I=\{1,2\}$, $A_1=\{a,b\}$ and $A_2=\varnothing$. Give the number of elements of $\prod_{i\in I}A_i$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 24; b = 6; c = 0'
+            solution_sketch: 'The product holds all choice functions, so its size is the product of the sizes. In (a) we get $2\cdot3\cdot4=24$. In (b) we get $2\cdot3\cdot1=6$. In (c) the empty set gives no choice function, so c = 0.'
+          - problem: 'Let $A_1=\{1,2\}$ and $A_2=\{2,3\}$. A function $f$ on $\{1,2\}$ is a member of $A_1\times A_2$ in the sense of Definition 7.2 exactly when $f(i)\in A_i$. Give 1 for a member and 0 for a non-member. (a) $f(1)=2$, $f(2)=3$. (b) $f(1)=3$, $f(2)=3$. (c) $f(1)=1$, $f(2)=1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'In (a) the value 2 is in $A_1$ and the value 3 is in $A_2$, so a = 1. In (b) the value 3 is not in $A_1$, so b = 0. In (c) the value 1 is not in $A_2$, so c = 0.'
+          - problem: 'Let $I=\{1,2\}$, $J_1=J_2=\{1,2\}$, $C_{11}=\{1,2\}$, $C_{12}=\{3\}$, $C_{21}=\{2,3\}$ and $C_{22}=\{4\}$. (a) Give the number of elements of $\bigcap_{i}\bigcup_{j}C_{ij}$. (b) Give the number of elements of $\bigcup_{f}\bigcap_{i}C_{i\,f(i)}$, where $f$ runs over all functions on $I$ with $f(i)\in J_i$. (c) Give the sum of the elements of the first set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 2; c = 5'
+            solution_sketch: 'For (a) the union at $i=1$ is $\{1,2,3\}$ and at $i=2$ it is $\{2,3,4\}$. Their intersection is $\{2,3\}$, so a = 2. For (b) the four functions give the sets $\{2\},\varnothing,\{3\},\varnothing$, and their union is $\{2,3\}$, so b = 2. The sum $2+3$ gives c = 5.'
+          - problem: 'Let $I=\{1,2\}$, $J_1=J_2=\{1,2\}$, $C_{11}=\{1,2,3\}$, $C_{12}=\{2,3,4\}$, $C_{21}=\{3,5\}$ and $C_{22}=\{3,6\}$. (a) Give the number of functions $f$ on $I$ with $f(i)\in J_i$. (b) Give the number of elements of $\bigcup_{i}\bigcap_{j}C_{ij}$. (c) Give the number of elements of $\bigcap_{f}\bigcup_{i}C_{i\,f(i)}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 2; c = 2'
+            solution_sketch: 'Each of the 2 indices has 2 picks, so a = 4. For (b) the sets are $C_{11}\cap C_{12}=\{2,3\}$ and $C_{21}\cap C_{22}=\{3\}$, with union $\{2,3\}$, so b = 2. For (c) the four unions are $\{1,2,3,5\}$, $\{1,2,3,6\}$, $\{2,3,4,5\}$, $\{2,3,4,6\}$. Their intersection is $\{2,3\}$, so c = 2.'
+          - problem: 'Use the sets $C_{11}=\{1,2\}$, $C_{12}=\{3\}$, $C_{21}=\{2,3\}$ and $C_{22}=\{4\}$. Give 1 if $x$ lies in $\bigcap_{i=1}^{2}\bigcup_{j=1}^{2}C_{ij}$ and 0 if not. (a) $x=1$. (b) $x=2$. (c) $x=4$. (d) $x=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 0; d = 1'
+            solution_sketch: 'The set is $\{1,2,3\}\cap\{2,3,4\}=\{2,3\}$. The number 1 is not in the second union, so a = 0. The numbers 2 and 3 lie in both unions, so b = 1 and d = 1. The number 4 is not in the first union, so c = 0.'
+          - problem: 'Count the choice functions in a product $\prod_{i\in I}J_i$. (a) Let $|I|=3$ with $|J_1|=2$, $|J_2|=3$, $|J_3|=2$. (b) Let $|I|=4$ and $|J_i|=3$ for all $i$. (c) Let $|I|=5$ and $|J_i|=2$ for all $i$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 12; b = 81; c = 32'
+            solution_sketch: 'The count is the product of the sizes of the sets $J_i$. In (a) we get $2\cdot3\cdot2=12$. In (b) we get $3^4=81$. In (c) we get $2^5=32$.'
+          # argument: Theorem 7.3
+          - problem: 'Prove the first part of the distributive law: for index sets $J_i$ and sets $C_{ij}$, the set $\bigcap_{i\in I}\bigcup_{j\in J_i}C_{ij}$ equals $\bigcup_{f\in\prod J_i}\bigcap_{i\in I}C_{i\,f(i)}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'For one inclusion, build a choice function from the sets of fitting indices. The other inclusion reads off one index for each i.'
+            solution_sketch: 'Let $x$ be in the left set. For each $i$ the set $A_i=\{j\in J_i: x\in C_{ij}\}$ is nonempty. The Axiom of Choice gives a function $g$ with $g(i)\in A_i$, so $g$ is in the product. Then $x\in\bigcap_i C_{i\,g(i)}$, so $x$ is in the right set. For the reverse inclusion, take $f$ in the product with $x\in C_{i\,f(i)}$ for all $i$. Then $x\in\bigcup_j C_{ij}$ for each $i$.'
+          # argument: Theorem 7.3
+          - problem: 'Prove the second part of the distributive law: the set $\bigcup_{i\in I}\bigcap_{j\in J_i}C_{ij}$ equals $\bigcap_{f\in\prod J_i}\bigcup_{i\in I}C_{i\,f(i)}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'One inclusion holds for every f by picking the index i0. For the other, an x outside the left set gives a choice function that avoids x.'
+            solution_sketch: 'Let $x$ be in the left set, with index $i_0$ such that $x$ lies in $C_{i_0 j}$ for all $j$. For each $f$ we have $x\in C_{i_0 f(i_0)}$, so $x$ is in the right set. Now let $x$ be outside the left set. Then each $i$ has some $j_i$ with $x\notin C_{ij_i}$. The Axiom of Choice from Axiom 7.1 gives the function $g(i)=j_i$ in the product. Then $x$ is in no set $C_{i\,g(i)}$, so $x$ is outside the right set.'
+          # source: FoM exercise 7.1-7-3
+          - problem: 'Let $F$ be a set of functions $f:X\to B$ with $X\subseteq A$, ordered by inclusion. Let $\mathcal C$ be a chain in $F$ and let $u=\bigcup\mathcal C$. Prove: (a) $u$ is a function. (b) If all members of $\mathcal C$ are injective, then $u$ is injective. (c) If $A=B$ and $\mathrm{dom}(g)=\mathrm{rng}(g)$ for all $g\in\mathcal C$, then $\mathrm{dom}(u)=\mathrm{rng}(u)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Two members of a chain are nested, so any two pairs of the union sit in one member. That member is a function, is injective, and has equal domain and range.'
+            solution_sketch: 'Two pairs of $u$ come from members $g,h$ of the chain. One of them contains the other, so both pairs lie in one member. For (a), two pairs with the same first entry lie in one function, so their second entries agree. For (b), two pairs with the same second entry lie in one injective function, so their first entries agree. For (c), the domain of $u$ is the union of the domains and the range is the union of the ranges, and these unions match term by term.'
+        constraints: 'Products as sets of choice functions; the two distributive laws.'
+      - id: kp3
+        name: 'Definition 7.4, Lemma 7.5 and Theorem 7.6: chains, maximal elements and Zorn''s Lemma'
+        key_prerequisites: [partial-orders, minimal-maximal-elements]
+        exemplars:
+          - problem: 'Order the divisors $\{1,2,3,4,6,12\}$ by divisibility. Give 1 if the subset is a chain and 0 if not. (a) $\{1,2,4,12\}$. (b) $\{2,3,6\}$. (c) $\{3,6,12\}$. (d) $\{1,4,6\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'A chain has every two elements comparable. In (a) we have $1\mid2\mid4\mid12$, so a = 1. In (b) the numbers 2 and 3 do not divide each other, so b = 0. In (c) we have $3\mid6\mid12$, so c = 1. In (d) the numbers 4 and 6 do not divide each other, so d = 0.'
+          - problem: 'Order the set $\{2,3,4,6,9,12\}$ by divisibility. (a) Give the number of maximal elements. (b) Give the number of minimal elements. (c) Give the largest number of elements in a chain.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 2; c = 3'
+            solution_sketch: 'The maximal elements have no proper multiple in the set. These are 9 and 12, so a = 2. The minimal elements have no proper divisor in the set. These are 2 and 3, so b = 2. The chain $2\mid4\mid12$ has 3 elements, and no chain has 4, so c = 3.'
+          - problem: 'Let $X=\{1,2,3\}$ and let $Z$ hold all subsets of $\{1,2\}$ and all subsets of $\{2,3\}$, ordered by inclusion. (a) Give 1 if every subset of every member of $Z$ is in $Z$ and 0 if not. (b) Give the number of maximal elements of $Z$. (c) Give the number of elements of $Z$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 6'
+            solution_sketch: 'The members are $\varnothing$, $\{1\}$, $\{2\}$, $\{3\}$, $\{1,2\}$, $\{2,3\}$, so c = 6. Each subset of a member lies in the list, so a = 1. The sets $\{1,2\}$ and $\{2,3\}$ have no larger member, so b = 2.'
+          - problem: 'Give 1 if every chain of the ordered set has an upper bound in the set and 0 if not. (a) The natural numbers with the usual order. (b) The set $\{1,\dots,10\}$ with the usual order. (c) The subsets of $\{1,2,3\}$ ordered by inclusion. (d) The real interval $[0,1)$ with the usual order.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1; d = 0'
+            solution_sketch: 'In (a) the chain of all natural numbers has no upper bound, so a = 0. In (b) the number 10 bounds every chain, so b = 1. In (c) the set $\{1,2,3\}$ bounds every chain, so c = 1. In (d) the chain $[0,1)$ has no upper bound inside the interval, so d = 0.'
+          - problem: 'Let $X=\{1,2,3\}$ and let $Z$ hold all subsets of $X$. For a set $C$ in $Z$ let $E_C$ be the set of $x\notin C$ with $C\cup\{x\}\in Z$. Let $g(C)=C\cup\{\min E_C\}$ when $E_C\ne\varnothing$, and $g(C)=C$ otherwise. Give the number of elements of $g(C)$ for (a) $C=\varnothing$, (b) $C=\{2,3\}$, (c) $C=\{1,2,3\}$, (d) $C=\{2\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 3; c = 3; d = 2'
+            solution_sketch: 'For $C=\varnothing$ we have $E_C=\{1,2,3\}$, so $g(C)=\{1\}$ and a = 1. For $C=\{2,3\}$ we have $E_C=\{1\}$, so $g(C)=\{1,2,3\}$ and b = 3. For $C=\{1,2,3\}$ the set $E_C$ is empty, so c = 3. For $C=\{2\}$ we have $E_C=\{1,3\}$, so $g(C)=\{1,2\}$ and d = 2.'
+          - problem: 'Order $\{1,\dots,10\}$ by divisibility. (a) Give the number of maximal elements. (b) Give the number of minimal elements. (c) Give the number of elements other than 6 that divide 6 or are multiples of 6.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 1; c = 3'
+            solution_sketch: 'The maximal elements have no proper multiple up to 10. These are 6, 7, 8, 9, 10, so a = 5. Only 1 has no proper divisor in the set, so b = 1. The numbers 1, 2, 3 divide 6 and no other multiple of 6 is at most 10, so c = 3.'
+          - problem: 'Look at linear independence. (a) Give the largest number of linearly independent vectors in $\mathbb{R}^3$. (b) Give the number of maximal linearly independent subsets of $\{(1,0),(0,1),(1,1)\}$ in $\mathbb{R}^2$. (c) Give the number of elements of the vector space $\mathbb{F}_3^2$ over the field with 3 elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 9'
+            solution_sketch: 'A basis of $\mathbb{R}^3$ has 3 vectors, so a = 3. Every pair of the three given vectors is independent and no 3 vectors are independent in $\mathbb{R}^2$, so b = 3. Each of the 2 coordinates takes 3 values, so c = $3^2$ = 9.'
+          # argument: Lemma 7.5
+          - problem: 'Prove the first step of Lemma 7.5. Let $X$ be a set and let $Z\subseteq\mathcal P(X)$ hold the empty set. Let every subset of a member of $Z$ lie in $Z$. Let the union of every chain in $Z$ lie in $Z$. Show that there is a map $g$ on $Z$ such that $g(C)\supseteq C$ and $g(C)$ is $C$ plus at most one new point. Show also that $g(M)=M$ forces $M$ to be maximal in $Z$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use a choice function on the nonempty subsets of X. Add the chosen point of E_C to C when E_C is nonempty, else keep C.'
+            solution_sketch: 'The Axiom of Choice gives a function $f$ on the nonempty subsets of $X$ with $f(A)\in A$. For $C\in Z$ let $E_C=\{x\in X\setminus C: C\cup\{x\}\in Z\}$. Set $g(C)=C\cup\{f(E_C)\}$ when $E_C\ne\varnothing$, and $g(C)=C$ otherwise. If $g(M)=M$, then $E_M$ is empty. Then no one-point extension of $M$ lies in $Z$, and property 1 of Lemma 7.5 shows that $M$ is maximal. The chain notion of Definition 7.4 is the tool for the next step.'
+          # argument: Lemma 7.5
+          - problem: 'Prove the second step of Lemma 7.5. Let $X$ be a set and let $Z\subseteq\mathcal P(X)$ hold the empty set. Let every subset of a member of $Z$ lie in $Z$. Let the union of every chain in $Z$ lie in $Z$. Let $g$ be a map on $Z$ such that $g(C)\supseteq C$ and $g(C)$ is $C$ plus at most one new point. Call $T\subseteq Z$ a tower when $\varnothing\in T$, $g(C)\in T$ for $C\in T$, and $\bigcup\mathcal C\in T$ for each chain $\mathcal C\subseteq T$. Show that the smallest tower $T_0$ is a chain and that $\bigcup T_0$ is a fixed point of $g$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show that the comparable sets of T0 form a tower, so T0 is a chain. Then the union M of T0 is in T0, and g(M) lies between M and M.'
+            solution_sketch: 'Call $C\in T_0$ comparable when $A\subseteq C$ or $C\subseteq A$ for all $A\in T_0$. For a comparable $C$, the set $U=\{A\in T_0: A\subseteq C \text{ or } g(C)\subseteq A\}$ is a tower, so $U=T_0$ and $g(C)$ is comparable. The union of a chain of comparable sets is comparable. So the comparable sets form a tower, and $T_0$ is a chain by Definition 7.4. Then $M=\bigcup T_0$ is in $T_0$, and $g(M)\in T_0$ gives $g(M)\subseteq M$. Also $g(M)\supseteq M$, so $g(M)=M$.'
+          # argument: Theorem 7.6
+          - problem: 'Prove Zorn''s Lemma: let $X$ be a nonempty ordered set in which every chain has an upper bound. Then $X$ has a maximal element.'
+            answer_contract: {"kind":"written"}
+            answer: 'Apply Lemma 7.5 to the family of all chains of X under inclusion. An upper bound of a maximal chain is a maximal element of X.'
+            solution_sketch: 'Let $Z$ be the set of all chains of $X$, ordered by inclusion. Every subset of a chain is a chain, and the union of a chain of chains is a chain (Exercise 7-1). Lemma 7.5 gives a maximal chain $M$. Let $m$ be an upper bound of $M$. Then $M\cup\{m\}$ is a chain, so $m\in M$ by maximality. If $x\ge m$, the same argument gives $x\in M$, so $x\le m$ and $x=m$.'
+          # source: FoM exercise 7.1-7-1
+          - problem: 'Let $X$ be an ordered set and let $\mathcal C$ be a set of chains in $X$ such that $\mathcal C$ is a chain under inclusion. Prove that $\bigcup\mathcal C$ is a chain in $X$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Two points of the union lie in two chains. These chains are nested, so both points lie in the larger one, where they are comparable.'
+            solution_sketch: 'Let $x,y\in\bigcup\mathcal C$, so $x\in C_1$ and $y\in C_2$ for chains $C_1,C_2\in\mathcal C$. Since $\mathcal C$ is a chain, one of $C_1,C_2$ contains the other. Rename them so that $C_1\subseteq C_2$, which gives $x,y\in C_2$. Since $C_2$ is a chain, $x$ and $y$ are comparable. So the union is totally ordered, as Definition 7.4 asks.'
+          # source: FoM exercise 7.1-7-7
+          - problem: 'Prove that every vector space has a basis. Apply Zorn''s Lemma to the linearly independent subsets.'
+            answer_contract: {"kind":"written"}
+            answer: 'Order the independent subsets by inclusion. The union of a chain is independent, so a maximal one exists, and it spans the space.'
+            solution_sketch: 'Let $P$ be the set of linearly independent subsets of the space $V$, ordered by inclusion. The empty set is in $P$. The union of a chain in $P$ is independent, because a finite dependence uses finitely many vectors that lie in one member. Zorn''s Lemma gives a maximal independent set $B$. If a vector $v$ lies outside the span of $B$, then $B\cup\{v\}$ is independent. That contradicts maximality, so $B$ spans $V$.'
+          # source: FoM exercise 7.1-7-8
+          - problem: 'Let $\mathbb E$ be an extension field of a field $\mathbb F$. Prove that $\mathbb E$ has a basis over $\mathbb F$, using Zorn''s Lemma.'
+            answer_contract: {"kind":"written"}
+            answer: 'View E as a vector space over F. A maximal F-independent subset exists by Zorn''s Lemma, and it spans E.'
+            solution_sketch: 'The field $\mathbb E$ is a vector space over $\mathbb F$ when we multiply by elements of $\mathbb F$. Order the $\mathbb F$-independent subsets by inclusion. A chain of such sets has an independent union, because a finite dependence lives in one member. Zorn''s Lemma gives a maximal independent set $B$. A vector outside the span of $B$ extends $B$ to a larger independent set. So $B$ spans $\mathbb E$.'
+        constraints: 'Chains, maximal elements, the tower argument and Zorn''s Lemma.'
+      - id: kp4
+        name: 'Theorem 7.7 and Definition 7.8: doubling an infinite set and well-orders'
+        key_prerequisites: [fom-4-6-countable-sets, fom-2-5-axiom-powers-relations-functions]
+        exemplars:
+          - problem: 'Give 1 if the usual order is a well-order of the set and 0 if not. (a) The natural numbers. (b) The integers. (c) The real interval $[0,1]$. (d) The set $\{1,2,3,4,5\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0; d = 1'
+            solution_sketch: 'A well-order needs a smallest element in every nonempty subset. The natural numbers have one, so a = 1. The negative integers have none, so b = 0. The open interval $(0,1)$ inside $[0,1]$ has none, so c = 0. A finite chain always has one, so d = 1.'
+          - problem: 'Give 1 if every nonempty subset has a smallest element in the order and 0 if not. (a) The set $\{1/n: n\ge1\}$ with the usual order $\le$. (b) The same set ordered by $\ge$. (c) The nonnegative rational numbers with the usual order. (d) The natural numbers ordered by $\ge$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 0; d = 0'
+            solution_sketch: 'In (a) the set itself has no smallest element, so a = 0. In (b) a smallest element for $\ge$ is the largest number, and $1/n$ with the least $n$ is one, so b = 1. In (c) the rationals above 1 have no smallest element, so c = 0. In (d) the natural numbers have no largest element, so d = 0.'
+          - problem: 'Use the usual order of the natural numbers. Give the smallest element of the set. (a) $\{x: x^2>50\}$. (b) $\{x: x \text{ is a multiple of } 7 \text{ and } x>30\}$. (c) $\{n: n!>1000\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 35; c = 7'
+            solution_sketch: 'In (a) we have $7^2=49$ and $8^2=64$, so a = 8. In (b) the multiples of 7 are 28, 35, so b = 35. In (c) we have $6!=720$ and $7!=5040$, so c = 7.'
+          - problem: 'Let $g(n,e)=2n+e$ for $n\ge0$ and $e\in\{0,1\}$. This map is a bijection from $\mathbb N_0\times\{0,1\}$ to $\mathbb N_0$. (a) Give $g(7,1)$. (b) Give the value $n$ with $g(n,e)=20$. (c) Give the value $e$ with $g(n,e)=33$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 15; b = 10; c = 1'
+            solution_sketch: 'In (a) we get $2\cdot7+1=15$. In (b) the number 20 is even, so $e=0$ and $n=10$. In (c) the number 33 is odd, so $e=1$.'
+          - problem: 'Give 1 if $A\times\{0,1\}$ is equivalent to $A$ and 0 if not. (a) $A=\mathbb N$. (b) $A=\{1,2,3\}$. (c) $A=\mathbb Z$. (d) $A=\mathbb R$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 1'
+            solution_sketch: 'For a finite set the size of $A\times\{0,1\}$ is twice the size of $A$, so b = 0. Theorem 7.7 covers every infinite set. The sets $\mathbb N$, $\mathbb Z$ and $\mathbb R$ are infinite, so a = 1, c = 1 and d = 1.'
+          - problem: 'Look at bijections $h:X\times\{0,1\}\to X$. (a) Give the number of elements of $X\times\{0,1\}$ for $X=\{1,\dots,6\}$. (b) Give 1 if such a bijection exists for $X=\{1,\dots,6\}$ and 0 if not. (c) Give 1 if such a bijection exists for $X=\mathbb N_0$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 12; b = 0; c = 1'
+            solution_sketch: 'There are 6 choices for $x$ and 2 for the second entry, so a = 12. A set of 12 elements is not equivalent to a set of 6, so b = 0. The map $(n,e)\mapsto 2n+e$ works for $\mathbb N_0$, so c = 1.'
+          - problem: 'Let $A$ be a set of size 10. (a) Give the number of elements of $A\times\{0,1\}$. (b) Give 1 if $A\times\{0,1\}$ is equivalent to $A$ and 0 if not. (c) Give the number of elements of $A\times\{0,1\}$ when $A$ has 4 elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 20; b = 0; c = 8'
+            solution_sketch: 'The product has twice as many elements as $A$. For 10 elements we get 20, so a = 20. Since 20 differs from 10, no bijection exists and b = 0. For 4 elements we get 8, so c = 8.'
+          # argument: Theorem 7.7
+          - problem: 'Prove the first step of Theorem 7.7: for an infinite set $A$, let $F$ be the set of bijections $f:X\times\{0,1\}\to X$ with $X\subseteq A$, ordered by inclusion. Show that $F$ is nonempty and that each chain in $F$ has an upper bound.'
+            answer_contract: {"kind":"written"}
+            answer: 'A countably infinite subset of A gives a member of F. The union of a chain of bijections is a bijection of the same kind.'
+            solution_sketch: 'By Theorem 4.65, every countably infinite subset $X\subseteq A$ carries a bijection $X\times\{0,1\}\to X$, so $F$ is nonempty. A function is a set of ordered pairs (Definition 2.49), so inclusion orders $F$. Let $\mathcal C$ be a chain in $F$ and let $u=\bigcup\mathcal C$. As in Exercise 7-3, $u$ is an injective function whose domain and range agree up to the form $X_u\times\{0,1\}\to X_u$. It is onto, so $u$ is in $F$ and bounds the chain.'
+          # argument: Theorem 7.7
+          - problem: 'Prove the second step of Theorem 7.7: a maximal element $h:X\times\{0,1\}\to X$ of $F$ has $A\setminus X$ finite, and then $A\times\{0,1\}$ is equivalent to $A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A minus X holds a countably infinite set C, a bijection on C enlarges h. So A minus X is finite, and moving finitely many points fixes h.'
+            solution_sketch: 'Zorn''s Lemma gives a maximal $h$. Suppose $A\setminus X$ holds a countably infinite set $C$. Theorem 4.65 gives a bijection $b$ on $C\times\{0,1\}$ onto $C$, and $h\cup b$ is a strictly larger member of $F$, which is impossible. So $A\setminus X$ is finite. If it is empty, $h$ is the bijection we need. Otherwise move a finite part of a countably infinite subset of $X$ to cover $A\setminus X$.'
+          # source: FoM exercise 7.1-7-5
+          - problem: 'Consider an order relation $\le$ on a set $S$. Assume that each nonempty subset of $S$ holds a smallest element. Prove that $\le$ is total.'
+            answer_contract: {"kind":"written"}
+            answer: 'Apply the smallest-element property to the two-point set of any x and y. The smallest of the two is below the other.'
+            solution_sketch: 'Let $x,y\in S$. The set $\{x,y\}$ is nonempty, so it has a smallest element. If that element is $x$, then $x\le y$. If it is $y$, then $y\le x$. So any two elements are comparable, which is the definition of a total order in Definition 7.8.'
+        constraints: 'Well-orders, smallest elements and the bijection of an infinite set with its double.'
+      - id: kp5
+        name: 'Example 7.9 and Theorem 7.10: the Well-Ordering Theorem'
+        key_prerequisites: [fom-3-4-induction]
+        exemplars:
+          - problem: 'Let $S=\{1,2,3\}$. Take these well-orders on subsets of $S$. $R_1$ on $\{1\}$. $R_2$ on $\{1,2\}$ with $1<2$. $R_3$ on $\{1,2\}$ with $2<1$. $R_4$ on $\{1,2,3\}$ with $1<2<3$. Write $R\sqsubseteq R''$ when the domain of $R$ lies in the domain of $R''$, each new point is above every old point, and $R''$ restricted to the old domain is $R$. Give 1 if the relation holds and 0 if not. (a) $R_1\sqsubseteq R_2$. (b) $R_1\sqsubseteq R_3$. (c) $R_2\sqsubseteq R_4$. (d) $R_3\sqsubseteq R_4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'In (a) the new point 2 is above 1, so a = 1. In (b) the new point 2 is below 1 in $R_3$, so b = 0. In (c) the new point 3 is above 1 and 2, and $R_4$ restricts to $R_2$, so c = 1. In (d) $R_4$ restricts to $1<2$, which differs from $R_3$, so d = 0.'
+          - problem: 'Let $R_e$ be the well-order $1<3<2$ on $\{1,2,3\}$. Write $R\sqsubseteq R_e$ when the domain of $R$ lies in $\{1,2,3\}$, each point outside it is above every point inside it, and $R_e$ restricted to the domain is $R$. Give 1 if the relation holds and 0 if not. (a) $R$ is $1<3$ on $\{1,3\}$. (b) $R$ is $1<2$ on $\{1,2\}$. (c) $R$ is the order on $\{1\}$. (d) $R$ is the order on $\{3\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'In (a) the new point 2 is above 1 and 3, and the restriction is $1<3$, so a = 1. In (b) the new point 3 is below 2 in $R_e$, so b = 0. In (c) the points 2 and 3 are above 1, so c = 1. In (d) the point 1 is below 3, so d = 0.'
+          - problem: 'A well-order of $\mathbb Z$ lists the integers as $0,1,-1,2,-2,3,-3,\dots$ from smallest to largest. Count positions from 1. (a) Give the position of 3. (b) Give the position of $-3$. (c) Give the integer at position 10.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 7; c = 5'
+            solution_sketch: 'The list starts $0,1,-1,2,-2,3,-3,4,-4,5$. The number 3 is the sixth entry, so a = 6. The number $-3$ is the seventh entry, so b = 7. The tenth entry is 5, so c = 5.'
+          - problem: 'Use the order $0,1,-1,2,-2,3,-3,4,-4,\dots$ of $\mathbb Z$, from smallest to largest. Give the smallest element of the set. (a) The negative integers. (b) The nonzero even integers. (c) The integers less than $-5$ in the usual order.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = -1; b = 2; c = -6'
+            solution_sketch: 'In (a) the first negative integer in the list is $-1$, so a = -1. In (b) the entries 2 and $-2$ come first, and 2 is earlier, so b = 2. In (c) the integers below $-5$ are $-6,-7,\dots$, and $-6$ is earliest, so c = -6.'
+          - problem: 'A total order on a finite set is a well-order. Give the number of total orders on a set with (a) 3 elements, (b) 4 elements, (c) 1 element.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 24; c = 1'
+            solution_sketch: 'A total order on $n$ elements lists them in a row, so there are $n!$ of them. For 3 elements we get 6. For 4 elements we get 24. For 1 element we get 1.'
+          - problem: 'Use the order $0,1,-1,2,-2,3,-3,4,\dots$ of $\mathbb Z$, from smallest to largest. Let $f(A)$ be the smallest element of $A$. Give (a) $f(\{-3,2,5\})$, (b) $f(\{-1,-2,-4\})$, (c) $f(\{7,-5,6\})$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = -1; c = -5'
+            solution_sketch: 'Positions: 2 is fourth, $-3$ is seventh, 5 is tenth, so a = 2. For b, $-1$ is third, $-2$ is fifth, $-4$ is ninth, so b = -1. For c, $-5$ is eleventh, 6 is twelfth, 7 is fourteenth, so c = -5.'
+          - problem: 'A filter on $S$ is a nonempty family of nonempty subsets of $S$ that is closed under intersection and under supersets. Let $A=\{1,2,3\}$ and let $F_T$ hold all subsets $X\subseteq A$ with $T\subseteq X$. An ultrafilter is a filter that lies in no larger filter. (a) Give the number of elements of $F_{\{1\}}$. (b) Give the number of elements of $F_{\{1,2\}}$. (c) Give 1 if $F_{\{1\}}$ is an ultrafilter and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 2; c = 1'
+            solution_sketch: 'The sets in $F_{\{1\}}$ contain 1: $\{1\},\{1,2\},\{1,3\},\{1,2,3\}$, so a = 4. The sets in $F_{\{1,2\}}$ are $\{1,2\}$ and $\{1,2,3\}$, so b = 2. A filter for a one-point set is an ultrafilter, so c = 1.'
+          - problem: 'Let $S=\{1,2,3,4\}$ and let $F$ hold all subsets of $S$ that contain $\{1,2\}$. For each $A$ give 1 if $A\in F$ or $S\setminus A\in F$, and 0 if not. (a) $A=\{1,3\}$. (b) $A=\{1,2,4\}$. (c) $A=\{3,4\}$. (d) $A=\{1,4\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1; d = 0'
+            solution_sketch: 'In (a) neither $\{1,3\}$ nor $\{2,4\}$ contains $\{1,2\}$, so a = 0. In (b) the set $\{1,2,4\}$ contains $\{1,2\}$, so b = 1. In (c) the complement $\{1,2\}$ is in $F$, so c = 1. In (d) neither $\{1,4\}$ nor $\{2,3\}$ is in $F$, so d = 0.'
+          # argument: Theorem 7.10
+          - problem: 'Prove the first step of the Well-Ordering Theorem. Let $X$ be the set of well-orders $R$ on subsets of $S$. Let $R\sqsubseteq R''$ mean: the domain of $R$ lies in the domain of $R''$, each point of the domain of $R''$ outside the domain of $R$ is above every point of the domain of $R$, and $R''$ restricted to the domain of $R$ equals $R$. Show that every chain in $X$ has an upper bound in $X$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The union of a chain of nested well-orders is an order. A nonempty subset meets one member, and its smallest element there is smallest in the union.'
+            solution_sketch: 'Let $\le=\bigcup\mathcal C$. Any two pairs of the union lie in one member, so the union is reflexive, antisymmetric and transitive. Each member is an initial segment of the union, since new points lie above old ones. Let $A$ be a nonempty subset of the domain. It meets the domain of some member in a set with a smallest element $a$, and all points outside that domain lie above it, so $a$ is smallest in $A$. Exercise 7-5 then makes the union a well-order that bounds the chain.'
+          # argument: Theorem 7.10
+          - problem: 'Prove the second step of the Well-Ordering Theorem. Let $X$ be the set of well-orders $R$ on subsets of $S$, with the order $\sqsubseteq$. Let $R\sqsubseteq R''$ mean: the domain of $R$ lies in the domain of $R''$, each point of the domain of $R''$ outside the domain of $R$ is above every point of the domain of $R$, and $R''$ restricted to the domain of $R$ equals $R$. By Zorn''s Lemma, $X$ has a maximal element $\le$ with domain $D$. Show that $D=S$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If a point s were outside D, put s on top of D. This gives a larger member of X, which contradicts maximality.'
+            solution_sketch: 'Zorn''s Lemma applies by the first step. Suppose $D\ne S$ and take $s\in S\setminus D$. Define $\le''$ on $D\cup\{s\}$ so that it equals $\le$ on $D$ and $s$ is above every point of $D$. This order is a well-order, because a nonempty subset either lies in $D$ or holds $s$ on top. Then $\le''$ is in $X$ and lies strictly above $\le$. That contradicts maximality, so $D=S$.'
+          # source: FoM exercise 7.1-7-4
+          - problem: 'Let $X$ hold the well-orders on subsets of $S$. Let $R\sqsubseteq R''$ mean: the domain of $R$ lies in the domain of $R''$, each point of the domain of $R''$ outside the domain of $R$ is above every point of the domain of $R$, and $R''$ restricted to the domain of $R$ equals $R$. Prove that $\sqsubseteq$ is an order relation on $X$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Check the three laws on the domains and restrictions. Nested domains give antisymmetry, and two restrictions combine for transitivity.'
+            solution_sketch: 'Reflexivity holds because there are no new points and the restriction of $R$ to its own domain is $R$. For antisymmetry, $R\sqsubseteq R''$ and $R''\sqsubseteq R$ give equal domains, so $R=R''$. For transitivity, let $R\sqsubseteq R''\sqsubseteq R''''$. Then the domains nest, and a point new for $R''''$ over $R$ lies above the old domain of $R$. Restricting twice returns $R$, as in the setting of Theorem 7.10.'
+          # source: FoM exercise 7.1-7-6
+          - problem: 'Assume the Well-Ordering Theorem. Prove that each family $\{A_i\}_{i\in I}$ of nonempty sets has a function $f$ on $I$ with $f(i)\in A_i$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Well-order the union of all A_i. Let f(i) be the smallest element of A_i in this order.'
+            solution_sketch: 'Let $U=\bigcup_{i\in I}A_i$. By Theorem 7.10 there is a well-order $\le$ on $U$. Each $A_i$ is a nonempty subset of $U$, so it has a smallest element. Define $f(i)$ as the smallest element of $A_i$. This definition needs no further pick, and $f(i)\in A_i$ for all $i$.'
+          # source: FoM exercise 7.1-7-9
+          - problem: 'Let $F$ be a nonempty family of nonempty subsets of $A$, closed under intersection and under supersets inside $A$. Call it a filter. An ultrafilter is a filter that lies in no larger filter. Prove: (a) the family of supersets of a nonempty $S\subseteq A$ is a filter, and for $S=\{a\}$ it is an ultrafilter. (b) The family of subsets of $\mathbb R$ with finite complement is a filter but no ultrafilter. (c) Every filter lies in an ultrafilter. (d) A filter on $S$ is an ultrafilter exactly when $A\in F$ or $S\setminus A\in F$ for all $A\subseteq S$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Check the filter laws directly, and use Zorn''s Lemma on the filters above F for part (c). A set A with A and its complement outside F enlarges F in part (d).'
+            solution_sketch: 'For (a), supersets of $S$ are closed under intersection and supersets, and a larger filter holds a set missing $a$, and then the empty set. For (b), finite complements are closed under intersection and supersets, and the family lies in the filter of supersets of a point or is split by a set whose complement and itself are infinite. For (c), order the filters above $F$ by inclusion. The union of a chain is a filter, so Zorn''s Lemma gives a maximal one. For (d), if $A$ and $S\setminus A$ are both outside $F$, add $A$ and its supersets and intersections to enlarge $F$.'
+        constraints: 'The order of extension, well-orders of the integers and filters.'
+    diagnostic_exemplar:
+      problem: 'Let $A_1=\{1,2\}$ and $A_2=\{2,3\}$. (a) Give the number of functions $f$ with $f(1)\in A_1$ and $f(2)\in A_2$. (b) Give 1 if $f(1)=2$ and $f(2)=1$ is such a function and 0 if not.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+      answer: 'a = 4; b = 0'
+      solution_sketch: 'Each index has 2 picks, so a = 4. The value $f(2)=1$ is not in $A_2$, so b = 0.'
+  - id: fom-7-2-ordinal-numbers-axiom-replacement
+    name: '7.2 Ordinal Numbers and the Axiom of Replacement'
+    program_items: [448, 449, 450, 451]
+    core: false
+    difficulty: 0.85
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 780
+    prerequisites:
+      - id: fom-7-1-axiom-choice-zorns-lemma
+        weight: 0.6
+        key: true
+      - id: fom-3-4-induction
+        weight: 0.4
+        key: false
+      - id: fom-2-6-axiom-infinity-natural-numbers
+        weight: 0.4
+        key: false
+      - id: fom-2-5-axiom-powers-relations-functions
+        weight: 0.4
+        key: false
+      - id: wop
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Proposition 7.11: elements of a natural number are sets of their smaller elements'
+        key_prerequisites: [fom-2-6-axiom-infinity-natural-numbers, fom-3-4-induction]
+        exemplars:
+          - problem: 'Use the sets $0=\varnothing$ and $n''=n\cup\{n\}$. (a) Give the number of elements of $4$. (b) Give the number of elements of $7$. (c) Give 1 if $5\in3$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 7; c = 0'
+            solution_sketch: 'The set $n$ is $\{0,1,\dots,n-1\}$, so it has $n$ elements. In (a) we get 4 and in (b) we get 7. The set $3=\{0,1,2\}$ does not hold 5, so c = 0.'
+          - problem: 'Use the sets $0=\varnothing$ and $n''=n\cup\{n\}$. Let $\subset$ mean a strict subset. (a) Give the number of $k\in5$ with $k\subset3$. (b) Give the number of $k\in6$ with $k\subset4$. (c) Give the number of $k\in4$ with $k\subset4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 4; c = 4'
+            solution_sketch: 'In (a) the elements $0,1,2$ of $5$ are strict subsets of $3$. The elements 3 and 4 are not, so a = 3. In (b) the elements $0,1,2,3$ are strict subsets of $4$, so b = 4. In (c) all elements $0,1,2,3$ are strict subsets of $4$, so c = 4.'
+          - problem: 'Use the sets $0=\varnothing$ and $n''=n\cup\{n\}$. (a) Give the number of elements of $5''$. (b) Give 1 if $3\in4$ and 0 if not. (c) Give 1 if $3\in3$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 1; c = 0'
+            solution_sketch: 'The set $5''$ is $5\cup\{5\}$, which has 6 elements, so a = 6. The set $4=\{0,1,2,3\}$ holds 3, so b = 1. The set $3=\{0,1,2\}$ does not hold 3, so c = 0.'
+          - problem: 'Use the sets $0=\varnothing$ and $n''=n\cup\{n\}$. Let $\subset$ mean a strict subset. Give 1 if the relation holds and 0 if not. (a) $4\subset6$. (b) $6\subset6$. (c) $6\subset7$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'The set $n$ is a strict subset of $m$ when $n<m$. In (a) we have $4<6$, so a = 1. In (b) a set is not a strict subset of itself, so b = 0. In (c) we have $6<7$, so c = 1.'
+          - problem: 'Let $C(x)=x\cup\{x\}$ and let $C^k$ mean $k$ steps of $C$. (a) Give the number of elements of $C(C(\varnothing))$. (b) Give the number of elements of $C^5(\varnothing)$. (c) Give the number of elements of $C^4(x)$ for $x=\{\varnothing,\{\varnothing\}\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 5; c = 6'
+            solution_sketch: 'Each step adds the set $x$ itself, which is new. In (a) we get $C(\varnothing)=\{\varnothing\}$ and then 2 elements. In (b) five steps from 0 elements give 5. In (c) four steps from 2 elements give 6.'
+          - problem: 'Let $W=\mathbb N_0\cup\{a,b\}$, where every natural number is below $a$ and $a$ is below $b$. (a) Give the number of strict upper bounds of $\mathbb N_0$ in $W$. (b) Let $W''=\mathbb N$ and $M$ be the odd numbers. Give 1 if every element of $W''\setminus M$ is a strict upper bound of $M$ and 0 if not. (c) Let $W''''=\mathbb N_0\cup\{a\}$ with $a$ on top and $M=\mathbb N_0$. Give 1 if every element of $W''''\setminus M$ is a strict upper bound of $M$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 0; c = 1'
+            solution_sketch: 'In (a) the elements $a$ and $b$ both lie above every natural number, so a = 2. In (b) the even number 2 is not above 3, so b = 0. In (c) the only outside element is $a$, and it lies above all of $M$, so c = 1.'
+          - problem: 'For $n=0,1,2,\dots$ let $s(n)$ be the sum of the numbers of elements of all $m\in n$, where $n=\{0,\dots,n-1\}$. Give (a) $s(5)$, (b) $s(8)$, (c) $s(1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 10; b = 28; c = 0'
+            solution_sketch: 'The set $m$ has $m$ elements, so $s(n)=0+1+\dots+(n-1)$. In (a) we get $0+1+2+3+4=10$. In (b) we get $28$. In (c) the only element is 0, which has 0 elements, so c = 0.'
+          # argument: Proposition 7.11
+          - problem: 'Prove by induction: with $0=\varnothing$ and $n''=n\cup\{n\}$, every $m\in n$ satisfies $m=\{k\in n: k\subset m\}$, where $\subset$ means a strict subset.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on n. An old element m uses the hypothesis, and the new element n is the set of its strict subsets in n.'
+            solution_sketch: 'For $n=0$ nothing is to prove, because $0$ has no elements. Assume the statement for $n$ and let $m\in n''$. If $m\in n$, the hypothesis gives $m=\{k\in n:k\subset m\}$, and $n\not\subset m$, so $n$ adds nothing. If $m=n$, every element of $n$ is a strict subset of $n$ by Exercise 7-11, and $n$ is not a strict subset of itself. So $n=\{k\in n'':k\subset n\}$, with the set $n''$ of Theorem 2.64 and the induction of Definition 3.53.'
+          # source: FoM exercise 7.2-7-10
+          - problem: 'Take an infinite set $W$ with a well-order. Prove that there is an increasing bijection $\varphi$ from $\mathbb N$ onto a subset $M\subseteq W$ such that each $w\in W\setminus M$ lies above all of $M$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Pick the smallest element of W, then the smallest of the rest, and so on. A w below some picked point was free earlier and smaller, so the rule picked it first.'
+            solution_sketch: 'Define $\varphi(1)$ as the smallest element of $W$. Define $\varphi(n+1)$ as the smallest element of $W\setminus\{\varphi(1),\dots,\varphi(n)\}$, which is nonempty since $W$ is infinite. The map $\varphi$ is increasing and injective. Let $w\notin M$. If $w<\varphi(n)$ for some $n$, then $w$ was free at step $n$ and smaller, in conflict with the choice of $\varphi(n)$.'
+          # source: FoM exercise 7.2-7-11
+          - problem: 'Use $0=\varnothing$ and $n''=n\cup\{n\}$. Prove that for each $n\in\mathbb N_0$ every element of $n''$ is a strict subset of $n''$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on n. The element n is inside n'', and each element of n is inside n, so n is a strict subset of n''.'
+            solution_sketch: 'For $n=0$, the set $0''=\{0\}$ holds only the element $0=\varnothing$, which is a strict subset of $\{0\}$. Assume the statement for $n$. An element $m$ of $n''$ is either in $n$ or equal to $n$. If $m\in n$, the hypothesis makes $m$ a strict subset of $n$, and so of $n''$. If $m=n$, then $n\subseteq n''$ and $n\in n''$ but $n\notin n$, so the inclusion is strict. Theorem 2.64 provides the construction.'
+          # source: FoM exercise 7.2-7-12
+          - problem: 'Let $\alpha$ and $\beta$ be ordinal numbers. Prove that $\alpha\subseteq\beta$ or $\beta\subseteq\alpha$. Assume $\alpha\not\subseteq\beta$ and look at the smallest element of $\alpha$ outside $\beta$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take the smallest element x of alpha not in beta. Then x equals the set of its predecessors, which lie in beta, so x is in beta or beta is in alpha.'
+            solution_sketch: 'Assume $\alpha\not\subseteq\beta$. Let $x$ be the smallest element of $\alpha$ with $x\notin\beta$. By Definition 7.12, each $\gamma\in x$ is smaller than $x$, so $\gamma\in\beta$ and $x\subseteq\beta$. If $\beta\setminus x$ is nonempty, let $z$ be its smallest element. Then $z\subsetneq x$, and the smallest $w\in x\setminus z$ gives $z=w\in x$, a contradiction. So $\beta\subseteq x$, hence $x=\beta\in\alpha$ and $\beta\subseteq\alpha$.'
+          # source: FoM exercise 7.2-7-14
+          - problem: 'Let $C(x)=x\cup\{x\}$ and let $C^n$ mean $n$ steps of $C$. Prove that $2\omega=\omega\cup\{C^n(\omega):n\in\mathbb N_0\}$ is an ordinal number.'
+            answer_contract: {"kind":"written"}
+            answer: 'List 2 omega as omega, then omega plus one, and so on. This order is a well-order, and every element is the set of the elements below it.'
+            solution_sketch: 'Order $2\omega$ by inclusion. Every natural number lies below $\omega$, and $\omega$ lies below $C(\omega)$, which lies below $C^2(\omega)$. A nonempty subset of $2\omega$ either meets $\omega$ in a set with a smallest element or holds a smallest term $C^k(\omega)$. So inclusion is a well-order. Each element equals the set of its smaller elements, as Definition 7.12 asks. Proposition 7.13 shows that each $C^n(\omega)$ is an ordinal number.'
+        constraints: 'Natural numbers as sets with 0 empty and successor n union {n}; induction.'
+      - id: kp2
+        name: 'Definition 7.12 to Axiom 7.14: ordinal numbers, successors and the Axiom of Replacement'
+        key_prerequisites: [fom-7-1-axiom-choice-zorns-lemma]
+        exemplars:
+          - problem: 'An ordinal number is a set $\alpha$ that is well-ordered by inclusion and has $\beta=\{\gamma\in\alpha:\gamma\subset\beta\}$ for each $\beta\in\alpha$. Give 1 if the set is an ordinal number and 0 if not. (a) $\{\varnothing,\{\varnothing\}\}$. (b) $\{\varnothing,\{\varnothing\},\{\{\varnothing\}\}\}$. (c) $\varnothing$. (d) $\{\varnothing,\{\varnothing\},\{\varnothing,\{\varnothing\}\}\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 1'
+            solution_sketch: 'Sets (a), (c) and (d) are the numbers 2, 0 and 3, which are ordinal numbers, so a = 1, c = 1 and d = 1. In (b) the elements $\{\varnothing\}$ and $\{\{\varnothing\}\}$ are not nested, so inclusion is no total order and b = 0.'
+          - problem: 'Let $\alpha''=\alpha\cup\{\alpha\}$. (a) Give the number of elements of $\alpha''$ when $\alpha$ has 3 elements. (b) Give the number of elements of $\varnothing''$. (c) Give the number of elements of $\alpha''''$, the successor of $\alpha''$, when $\alpha$ has 2 elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 1; c = 4'
+            solution_sketch: 'A successor adds one new element. In (a) we get $3+1=4$. In (b) we get $0+1=1$. In (c) two steps from 2 elements give 4.'
+          - problem: 'Call an ordinal number a successor when it has the form $\beta\cup\{\beta\}$. Give 1 for a successor and 0 if not. (a) The number 5. (b) The number 0, that is $\varnothing$. (c) The set $\omega$ of all natural numbers. (d) The set $\omega\cup\{\omega\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0; d = 1'
+            solution_sketch: 'The number 5 equals $4\cup\{4\}$, so a = 1. The empty set has no largest element, so b = 0. The set $\omega$ has no largest element, so c = 0. The set $\omega\cup\{\omega\}$ has the form $\beta\cup\{\beta\}$ with $\beta=\omega$, so d = 1.'
+          - problem: 'Use the rule of the Axiom of Replacement: collect all $b$ with $S(a,b)$ for $a\in A$. (a) Let $A=\{1,2,3,4\}$ and $S(a,b)$ be $b=a(a-1)/2$. Give the number of elements of the collected set. (b) Let $A=\{1,\dots,6\}$ and $S(a,b)$ be "$b$ is a positive divisor of $a$". Give the number of elements of the collected set. (c) Let $A=\{1,\dots,7\}$ and $S(a,b)$ be "$b$ is the remainder of $a$ divided by 3". Give the number of elements of the collected set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 6; c = 3'
+            solution_sketch: 'In (a) the values are $0,1,3,6$, so a = 4. In (b) every number from 1 to 6 divides itself, so the set is $\{1,\dots,6\}$ and b = 6. In (c) the remainders are $1,2,0$, so c = 3.'
+          - problem: 'Collect all $b$ with $S(a,b)$ for $a\in A=\{2,3,4,6\}$. Give the number of elements of the collected set. (a) $S(a,b)$ is "$b$ is a prime divisor of $a$". (b) $S(a,b)$ is "$b$ is a positive divisor of $a$". (c) $S(a,b)$ is "$b$ is a positive multiple of $a$ with $b\le12$".'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 5; c = 8'
+            solution_sketch: 'In (a) the prime divisors are 2, 3, 2, 2 and 3, so the set is $\{2,3\}$ and a = 2. In (b) the divisors give $\{1,2,3,4,6\}$, so b = 5. In (c) the multiples give $\{2,3,4,6,8,9,10,12\}$, so c = 8.'
+          - problem: 'For a number $a$ let $F(a)$ be the set of positive divisors of $a$. Give the number of elements of (a) $F(6)$, (b) $F(12)$, (c) $F(30)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 6; c = 8'
+            solution_sketch: 'The divisors of 6 are 1, 2, 3, 6, so a = 4. The divisors of 12 are 1, 2, 3, 4, 6, 12, so b = 6. The divisors of 30 are 1, 2, 3, 5, 6, 10, 15, 30, so c = 8.'
+          - problem: 'Let $A=\{1,2,3\}$ with $1=\{0\}$, $2=\{0,1\}$ and $3=\{0,1,2\}$. Give 1 if the element is disjoint from $A$ and 0 if not. (a) The element $1$. (b) The element $2$. (c) The element $3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'The element $1=\{0\}$ holds only 0, and 0 is not in $A$, so a = 1. The element $2$ holds 1, which is in $A$, so b = 0. The element $3$ holds 1 and 2, which are in $A$, so c = 0.'
+          # argument: Proposition 7.13
+          - problem: 'Prove: if $\alpha$ is an ordinal number, then its successor $\alpha''=\alpha\cup\{\alpha\}$ is an ordinal number.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show that alpha'' is well-ordered by inclusion with alpha on top. Each element of alpha'' is the set of the smaller elements, by Definition 7.12.'
+            solution_sketch: 'Each $\beta\in\alpha$ is a strict subset of $\alpha$. So $\alpha$ is the largest element of $\alpha''$ under inclusion. A nonempty subset of $\alpha''$ either lies in $\alpha$, which is well-ordered, or is $\{\alpha\}$. So inclusion well-orders $\alpha''$. For $\beta\in\alpha$ the identity of Definition 7.12 holds in $\alpha$. For $\beta=\alpha$ it holds because $\alpha=\{\gamma\in\alpha'':\gamma\subset\alpha\}$.'
+          # source: FoM exercise 7.2-7-13
+          - problem: 'Show that $\alpha\cup\{\alpha\}$ is an ordinal number for each ordinal number $\alpha$. Start with the step that each member of $\alpha$ is a strict subset of $\alpha$.'
+            answer_contract: {"kind":"written"}
+            answer: 'An element beta of alpha is the set of smaller elements of alpha, so it is a strict subset of alpha. Then alpha on top keeps the order.'
+            solution_sketch: 'Let $\beta\in\alpha$. By Definition 7.12, $\beta=\{\gamma\in\alpha:\gamma\subset\beta\}$, so $\beta\subseteq\alpha$. Also $\beta\notin\beta$, so $\beta\ne\alpha$ is clear and the inclusion is strict. Then $\alpha\cup\{\alpha\}$ is well-ordered by inclusion with $\alpha$ on top. The identity of Definition 7.12 holds for old elements and for $\alpha$, as Proposition 7.13 states.'
+          # source: FoM exercise 7.2-7-15
+          - problem: 'Take a set $A$. Let $V_0=A$ and $V_{n+1}=V_n\cup\mathcal P(V_n)$ for each natural number $n$. The superstructure over $A$ is the union of all $V_n$. (a) Prove that the superstructure over $A$ is a set. (b) Explain why the proof of (a) needs the Axiom of Replacement.'
+            answer_contract: {"kind":"written"}
+            answer: 'Build the levels by the power set step and collect them with Replacement. Without Replacement no set holds all levels.'
+            solution_sketch: 'The levels are $V_0=A$, $V_1$ and so on, one for each natural number. For (a), the Axiom of Replacement collects all levels into one set, and the union of that set is the superstructure. For (b), the axioms of power sets and unions give each single level but not the set of all levels. The model of Definition 2.62 holds each level, but the axiom of Replacement is the step that unites them.'
+          # source: FoM exercise 7.2-7-16
+          - problem: 'Take a set $W$ with a well-order. Show that an ordinal number $\alpha$ and a bijection $\varphi:W\to\alpha$ exist with this property: $x\le y$ exactly when $\varphi(x)\subseteq\varphi(y)$. Use Zorn''s Lemma on functions defined on down-sets of $W$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Order the partial order-isomorphisms from down-sets of W onto ordinals by inclusion. A maximal one is defined on all of W.'
+            solution_sketch: 'Let $P$ be the set of order-preserving bijections from a down-set of $W$ onto an ordinal number. The empty map is in $P$. The union of a chain in $P$ is in $P$, because the images nest and form an ordinal number. Zorn''s Lemma gives a maximal $\varphi$. If its domain missed a point, let $w$ be the smallest missing point. Extending $\varphi$ by $w\mapsto\varphi[\text{down-set}]$ gives a larger member of $P$ by Proposition 7.13, which contradicts maximality.'
+          # source: FoM exercise 7.2-7-17
+          - problem: 'Axiom of Replacement: let $A$ be a set and let $S(a,b)$ be a sentence. If each $a\in A$ has an element $b$ with $S(a,b)$, then a set holds these elements $b$. Axiom of Substitution: let $A$ be a set and let $S(a,b)$ be a sentence such that $\{b:S(a,b)\}$ is a set for each $a\in A$. Then there is a function $F$ on $A$ with $F(a)=\{b:S(a,b)\}$ for each $a\in A$. Prove that Replacement and Substitution are equivalent axioms.'
+            answer_contract: {"kind":"written"}
+            answer: 'Substitution gives the sets F(a), and the union of the range is the collected set. Replacement gives a set that holds all b, which cuts out each F(a).'
+            solution_sketch: 'From Substitution to Replacement: the function $F$ exists, and the union of its range is the set of all $b$ with $S(a,b)$ for some $a$. From Replacement to Substitution: first collect all pairs $(a,b)$ with $S(a,b)$ by applying Replacement to the sentence on $A$ and on the sets involved. Then for each $a$, the set $\{b:S(a,b)\}$ is a subset of a set that Replacement gives. Collect the pairs $(a,\{b:S(a,b)\})$ with Replacement again. This set is the function $F$.'
+          # source: FoM exercise 7.2-7-18
+          - problem: 'The Axiom of Regularity reads: every nonempty set $A$ holds an element $B$ with $B\cap A=\varnothing$. Prove that no set is a member of itself. Apply the axiom to $A=\{C\}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Suppose C is in C. The set A of C alone has only the element C, and C meets A in C, so no element of A is disjoint from A.'
+            solution_sketch: 'Suppose $C\in C$ and let $A=\{C\}$. The only element of $A$ is $C$, so the axiom gives $C\cap A=\varnothing$. But $C\in C$ and $C\in A$ give $C\in C\cap A$. This is a contradiction, so $C\notin C$. Theorem 2.64 shows the same fact for natural numbers.'
+        constraints: 'Ordinal numbers, the successor step and collecting values by Replacement.'
+    diagnostic_exemplar:
+      problem: 'Use the sets $0=\varnothing$ and $n''=n\cup\{n\}$. (a) Give the number of elements of $3$. (b) Give 1 if $2\in3$ and 0 if not.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+      answer: 'a = 3; b = 1'
+      solution_sketch: 'The set $3$ is $\{0,1,2\}$, so it has 3 elements and a = 3. The set holds 2, so b = 1.'
+  - id: fom-7-3-cardinal-numbers-continuum-hypothesis
+    name: '7.3 Cardinal Numbers and the Continuum Hypothesis'
+    program_items: [452, 453, 454, 455, 456, 457, 458, 459, 460, 461]
+    core: false
+    difficulty: 0.9
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 840
+    prerequisites:
+      - id: fom-7-2-ordinal-numbers-axiom-replacement
+        weight: 0.6
+        key: true
+      - id: fom-7-1-axiom-choice-zorns-lemma
+        weight: 0.4
+        key: false
+      - id: fom-5-6-uncountable-sets
+        weight: 0.4
+        key: false
+      - id: fom-4-6-countable-sets
+        weight: 0.4
+        key: false
+      - id: fom-2-5-axiom-powers-relations-functions
+        weight: 0.4
+        key: false
+      - id: schroder-bernstein
+        weight: 0.4
+        key: false
+      - id: uncountability-diagonalization
+        weight: 0.4
+        key: false
+      - id: cardinality-countability
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Theorem 7.15 and Example 7.16: counting the elements of finite sets'
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Let $A$ and $B$ be finite sets with $|A|=12$ and $|B|=9$. (a) Give $|A\cup B|$ when $A\cap B=\emptyset$. (b) Give $|A\cup B|$ when $|A\cap B|=4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 21; b = 17'
+            solution_sketch: 'Disjoint sets add, so (a) is $12+9=21$. In general $|A\cup B|=|A|+|B|-|A\cap B|$. Then (b) is $12+9-4=17$.'
+          - problem: 'Let $|A|=20$ and $|B|=25$ and $|A\cup B|=37$. (a) Give $|A\cap B|$. (b) Give $|A\setminus B|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 12'
+            solution_sketch: 'From $37=20+25-|A\cap B|$ we get $|A\cap B|=8$, so (a) is 8. The elements of $A$ outside $B$ number $20-8=12$, so (b) is 12.'
+          - problem: 'Let $|A|=4$ and $|B|=3$. (a) Give $|A\times B|$. (b) Give the number of functions from $B$ to $A$. (c) Give the number of functions from $A$ to $B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 12; b = 64; c = 81'
+            solution_sketch: 'A pair has $4$ choices for the first entry and $3$ for the second, so (a) is $4\cdot3=12$. A function from $B$ to $A$ picks one of $4$ values for each of $3$ elements, so (b) is $4^3=64$. A function from $A$ to $B$ picks one of $3$ values for each of $4$ elements, so (c) is $3^4=81$.'
+          - problem: 'Let $|A|=10$, $|B|=8$ and $|C|=6$. Let $|A\cap B|=3$, $|A\cap C|=2$, $|B\cap C|=1$ and $|A\cap B\cap C|=1$. (a) Give $|A\cup B\cup C|$. (b) Give $|A\cup B\cup C|$ when $A$, $B$ and $C$ are pairwise disjoint.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 19; b = 24'
+            solution_sketch: 'Add the three sizes: $10+8+6=24$. Subtract the pair overlaps: $24-6=18$. Add the triple overlap: $18+1=19$, so (a) is 19. Disjoint sets just add, so (b) is 24.'
+          - problem: 'A school has 100 students. In all, 60 study Spanish, 45 study French and 30 study German. Also 20 study Spanish and French, 12 study Spanish and German, 10 study French and German, and 5 study all three. (a) Count the students who study at least one of the three languages. (b) Count the students who study none of them.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 98; b = 2'
+            solution_sketch: 'Use the three-set formula: $60+45+30-20-12-10+5=98$, so (a) is 98. The other students number $100-98=2$, so (b) is 2.'
+          - problem: 'Let $|A\cup B\cup C|=62$, $|A|=40$, $|B|=30$ and $|C|=25$. Let $|A\cap B|=15$, $|A\cap C|=12$ and $|B\cap C|=10$. (a) Give $|A\cap B\cap C|$. (b) Count the elements of $A\cap B$ that are not in $C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 11'
+            solution_sketch: 'The sizes give $40+30+25-15-12-10=58$. The union is $62$, so the triple overlap is $62-58=4$ and (a) is 4. Of the $15$ elements of $A\cap B$, $4$ lie in $C$, so (b) is $15-4=11$.'
+          - problem: 'Look at the integers from 1 to 100. (a) Count those divisible by 2 or by 3. (b) Count those divisible by 2, by 3 or by 5.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 67; b = 74'
+            solution_sketch: 'There are $50$ multiples of 2, $33$ of 3, $16$ of 6, so (a) is $50+33-16=67$. For (b) add $20$ multiples of 5 and subtract $10$ for 10, $6$ for 15. Then add $3$ for 30: $103-32+3=74$.'
+          # argument: Theorem 7.15
+          - problem: 'Prove the first step: For finite sets $A$ and $B$ with $A\cap B=\emptyset$ we have $|A\cup B|=|A|+|B|$. For all finite $A$ and $B$ we have $|A\cup B|=|A|+|B|-|A\cap B|$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Match the elements of the union with a block of |A| numbers followed by |B| numbers. For the general case split the union into disjoint pieces.'
+            solution_sketch: 'Number the elements of A by 1 to |A| and those of B by |A|+1 to |A|+|B|. This is a bijection from the union onto the first |A|+|B| numbers when A and B are disjoint. In general the sets A and B minus A are disjoint, and their union is the union of A and B. So the union has |A|+|B minus A| elements. The set B is the disjoint union of B minus A and A cap B, so |B minus A| equals |B|-|A cap B|.'
+          # argument: Theorem 7.15
+          - problem: 'Prove the second step: For finite sets $A$, $B$ and $C$ we have $|A\cup B\cup C|=|A|+|B|+|C|-|A\cap B|-|A\cap C|-|B\cap C|+|A\cap B\cap C|$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Apply the two-set formula to A and the union of B and C. Then expand the size of the union of B and C and the size of the intersection of A with it.'
+            solution_sketch: 'Write the union as A joined with the union of B and C. The two-set formula from the first step gives |A|+|B cup C|-|A cap (B cup C)|. Expand |B cup C| as |B|+|C|-|B cap C| with the same formula. The set A cap (B cup C) is the union of A cap B and A cap C, which has size |A cap B|+|A cap C|-|A cap B cap C|. Substitute both and collect the terms.'
+          # argument: Theorem 7.15
+          - problem: 'Prove the third step: For finite sets $A$ and $B$ we have $|A\times B|=|A|\cdot|B|$, and the set of all functions from $B$ to $A$ has $|A|^{|B|}$ elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'Split the product into |B| disjoint copies of A. For functions use induction on |B|, since one new element of B multiplies the count by |A|.'
+            solution_sketch: 'The product A times B is the disjoint union of the sets A times one point b, over all b in B. Each of these sets has |A| elements by the bijection a to (a,b). So the union has |B| blocks of size |A|, by induction with the first step. For functions, an empty B gives exactly one function. A function on B plus a new point t is a function on B plus a value in A for t. So the count is multiplied by |A|.'
+          # source: FoM exercise 7.3-7-19
+          - problem: 'Prove three parts of the counting rules for finite sets $A$ and $B$. (a) If $A\cap B=\emptyset$, then $|A\cup B|=|A|+|B|$. Build a bijection. (b) $|A\times B|=|A|\cdot|B|$. (c) The set of functions from $B$ to $A$ has $|A|^{|B|}$ elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use a bijection onto an initial block of numbers for (a). Use disjoint blocks for (b) and induction on |B| for (c).'
+            solution_sketch: 'For (a) number A by 1 to |A| and B by |A|+1 to |A|+|B|. The numbering is a bijection from the union. For (b) the product is a disjoint union of |B| copies of A, as in Theorem 7.15. For (c) induct on |B|. One function on the empty set exists. Each new point of B multiplies the count by |A|.'
+          # source: FoM exercise 7.3-7-20
+          - problem: 'Prove the Principle of Inclusion and Exclusion: for finite sets $A_1,\dots,A_n$, the size of their union equals the sum over $k$ from $1$ to $n$ of $(-1)^{k-1}$ times the sum of the sizes of all intersections of $k$ different sets $A_j$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use induction on n. Apply the two-set formula to the union of the first n sets and the last set, then use the hypothesis on the smaller unions.'
+            solution_sketch: 'The case n=1 is clear. For the step write the union of n+1 sets as U joined with the last set, where U is the union of the first n sets. Theorem 7.15 gives |U|+|last set|-|U cap last set|. The intersection of U and the last set is the union of the n sets A_j cap the last set, so the hypothesis applies to it. Collect terms by the number k of sets in each intersection and compare signs.'
+          # source: FoM exercise 7.3-7-27
+          - problem: 'Prove: it is impossible to assign 30 people to three groups of 15 people so that every person is in at least one group and any two groups share at most 4 people.'
+            answer_contract: {"kind":"written"}
+            answer: 'By inclusion and exclusion the sizes of the pair overlaps add up to at least 15. So at least one overlap has 5 or more people.'
+            solution_sketch: 'Call the groups A, B and C. Everyone is in a group, so the union has 30 people. Theorem 7.15 gives 30=45-(sum of the three pair overlaps)+|A cap B cap C|. So the sum of the pair overlaps is 15 plus the triple overlap, which is at least 15. Three overlaps with at most 4 people each add up to at most 12. This is a contradiction.'
+          # source: FoM exercise 7.3-7-28
+          - problem: 'Prove: it is impossible to assign 30 people to three groups of 15 people so that every person is in at least one group and any two groups share at least 11 people.'
+            answer_contract: {"kind":"written"}
+            answer: 'The union has 30 people, so the triple overlap equals the pair overlaps minus 15. That is at least 18, but a triple overlap has at most 15 people.'
+            solution_sketch: 'Call the groups A, B and C. Everyone is in a group, so the union has 30 people. Theorem 7.15 gives 30=45-(sum of the three pair overlaps)+|A cap B cap C|. The pair overlaps add up to at least 33, so the triple overlap is at least 33-15=18. The triple overlap lies inside A, which has 15 people: a contradiction.'
+        constraints: 'Count unions, products and function sets of finite sets with inclusion and exclusion.'
+      - id: kp2
+        name: 'Definition 7.17 and Definition 7.18: cardinal numbers and the cardinality of a set'
+        key_prerequisites: [fom-2-5-axiom-powers-relations-functions]
+        exemplars:
+          - problem: 'An ordinal $\alpha$ is a cardinal number when $\alpha\le\beta$ for every ordinal $\beta$ equivalent to $\alpha$. Give 1 if the ordinal is a cardinal number and 0 if it is not. (a) $\omega+1$. (b) $\omega$. (c) $12$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1'
+            solution_sketch: 'The ordinal $\omega+1$ is equivalent to the smaller ordinal $\omega$, so (a) is 0. The ordinal $\omega$ is the least ordinal of its size, so (b) is 1. A finite ordinal is the only ordinal of its size, so (c) is 1.'
+          - problem: 'Look at the ordinals $7$, $\omega$, $\omega+3$, $\omega\cdot3$ and $\omega_1$, where $\omega_1$ is the least uncountable ordinal. (a) Count the ordinals in the list that are cardinal numbers. (b) Give the largest finite ordinal of the list.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 7'
+            solution_sketch: 'The ordinal $7$ is a finite ordinal, so it is a cardinal number. The ordinal $\omega$ is a cardinal number. The ordinals $\omega+3$ and $\omega\cdot3$ are countable and larger than $\omega$, so they are not. The ordinal $\omega_1$ is the least ordinal of its size, so it is. So (a) is 3. The finite ordinal in the list is 7, so (b) is 7.'
+          - problem: '(a) Count the cardinal numbers among the ten ordinals $0,1,2,\dots,9$. (b) Count the cardinal numbers among the six ordinals $\omega,\omega+1,\dots,\omega+5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 10; b = 1'
+            solution_sketch: 'Every finite ordinal is a cardinal number, so (a) is 10. Only $\omega$ is the least ordinal of its size, because the other five ordinals are equivalent to $\omega$ and larger. So (b) is 1.'
+          - problem: 'Give 1 for a sentence that is true and 0 for a sentence that is not true. (a) Every finite ordinal is a cardinal number. (b) Every infinite ordinal is a cardinal number. (c) The ordinal $\omega$ is a cardinal number. (d) Two different cardinal numbers are equivalent to the same set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'Finite ordinals are alone in their size, so (a) is 1. The ordinal $\omega+1$ is infinite and not a cardinal number, so (b) is 0. The ordinal $\omega$ is a cardinal number, so (c) is 1. A set is equivalent to exactly one cardinal number, so (d) is 0.'
+          - problem: 'Give 1 if the two sets have the same cardinality and 0 if they do not. (a) $\mathbb{N}$ and $\mathbb{Z}$. (b) $\mathbb{N}$ and $\mathbb{Q}$. (c) $\mathbb{N}$ and $\mathbb{R}$. (d) $(0,1)$ and $\mathbb{R}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0; d = 1'
+            solution_sketch: 'The set $\mathbb{Z}$ and the set $\mathbb{Q}$ are countable, so (a) and (b) are 1. The set $\mathbb{R}$ is uncountable, so (c) is 0. The map $\tan(\pi(x-1/2))$ is a bijection from $(0,1)$ onto $\mathbb{R}$, so (d) is 1.'
+          - problem: 'Give 1 if the two sets have the same cardinality and 0 if they do not. (a) The even natural numbers and $\mathbb{N}$. (b) $\mathbb{N}\times\mathbb{N}$ and $\mathbb{N}$. (c) The power set of $\mathbb{N}$ and $\mathbb{N}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'The map $n\mapsto2n$ is a bijection from $\mathbb{N}$ onto the even numbers, so (a) is 1. The product $\mathbb{N}\times\mathbb{N}$ is countable, so (b) is 1. The power set of $\mathbb{N}$ is uncountable by Cantor, so (c) is 0.'
+          - problem: 'A set $S$ has 14 elements. (a) Give the cardinality $|S|$. (b) Count the ordinals that are equivalent to $S$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 14; b = 1'
+            solution_sketch: 'The cardinality of a finite set is its number of elements, so (a) is 14. Only the ordinal $14$ has exactly 14 elements, so (b) is 1.'
+          # source: FoM exercise 7.3-7-29
+          - problem: 'Numbers serve as cardinals (a size), as ordinals (a position in an order) and as labels that only identify an object. Read the seven sentences. (1) Our team scored 7 points. (2) She finished in 3rd place. (3) Bus route 42 stops here. (4) The box holds 12 eggs. (5) He lives on the 5th floor. (6) Her phone number is 555-0143. (7) The race has 8 runners. Count the sentences where the number is (a) a cardinal, (b) an ordinal, (c) a label.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 2'
+            solution_sketch: 'The numbers in sentences 1, 4 and 7 are sizes, so (a) is 3. The numbers in sentences 2 and 5 give a position, so (b) is 2. The numbers in sentences 3 and 6 only identify a route and a phone, so (c) is 2.'
+        constraints: 'Decide which ordinals are cardinal numbers and compare the cardinality of sets.'
+      - id: kp3
+        name: 'Theorem 7.19: the Cantor-Schroeder-Bernstein Theorem'
+        key_prerequisites: [schroder-bernstein]
+        exemplars:
+          - problem: 'Let $A=B=\{0,1,2,\dots\}$ and $f(n)=g(n)=n+1$. Set $F(X)=A\setminus g[B\setminus f[X]]$ for $X\subseteq A$. (a) Count the elements of $F(\emptyset)$. (b) Give the largest element of $F(\{0,2\})$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 4'
+            solution_sketch: 'For $X=\emptyset$ we get $B\setminus f[X]=B$ and $g[B]=\{1,2,\dots\}$, so $F(\emptyset)=\{0\}$ and (a) is 1. For $X=\{0,2\}$ we get $f[X]=\{1,3\}$, so $g[B\setminus f[X]]=\{1,3,5,6,\dots\}$. Then $F(X)=\{0,2,4\}$ and (b) is 4.'
+          - problem: 'Use $f(n)=g(n)=n+1$ on $\{0,1,2,\dots\}$. The set $C$ with $C=F(C)$ is the set of even numbers. (a) Give 1 if $12\in C$ and 0 if not. (b) Give 1 if $13\in C$ and 0 if not. (c) Count the elements of $C$ below 10.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 5'
+            solution_sketch: 'The set $C$ is the set of even numbers. So $12\in C$ gives (a) is 1, and $13\notin C$ gives (b) is 0. The even numbers below 10 are $0,2,4,6,8$, so (c) is 5.'
+          - problem: 'Use $f(n)=g(n)=n+1$ on $\{0,1,2,\dots\}$ and the set $C$ of even numbers. Define $h(x)=f(x)$ for $x\in C$ and $h(x)=g^{-1}(x)$ for the other $x$. Give (a) $h(6)$, (b) $h(9)$, (c) $h(10)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 8; c = 11'
+            solution_sketch: 'The number 6 lies in $C$, so $h(6)=6+1=7$. The number 9 is not in $C$, so $h(9)=9-1=8$. The number 10 lies in $C$, so $h(10)=10+1=11$.'
+          - problem: 'Give 1 if a bijection exists between the two sets and 0 if not. (a) $\mathbb{N}$ and $\mathbb{N}\times\mathbb{N}$. (b) $\mathbb{N}$ and the power set of $\mathbb{N}$. (c) $(0,1)$ and $[0,1]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'The injections $n\mapsto(n,0)$ and $(m,n)\mapsto2^m3^n$ exist, so (a) is 1. Cantor shows that no map from $\mathbb{N}$ onto its power set exists, so (b) is 0. The inclusion maps $(0,1)$ into $[0,1]$, and $x\mapsto(x+1)/4$ maps $[0,1]$ into $(0,1)$, so (c) is 1.'
+          - problem: '(a) A set $A$ has 7 elements. Injections exist from $A$ to $B$ and from $B$ to $A$. Give $|B|$. (b) A set $B$ has 5 elements and an injection from $A$ to $B$ exists. Give the largest possible number of elements of $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 5'
+            solution_sketch: 'An injection from $A$ to $B$ gives $7\le|B|$. An injection from $B$ to $A$ gives $|B|\le7$. So (a) is 7. An injection from $A$ to $B$ gives $|A|\le5$, and 5 is possible, so (b) is 5.'
+          - problem: 'Give 1 if the sentence is true and 0 if it is not true. (a) An injection from $\mathbb{N}$ into $\mathbb{R}$ exists. (b) An injection from $\mathbb{R}$ into $\mathbb{N}$ exists. (c) A bijection from $\mathbb{N}$ onto $\mathbb{R}$ exists. (d) Injections from $\mathbb{R}$ into the power set of $\mathbb{N}$ and back exist, so a bijection between them exists.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0; d = 1'
+            solution_sketch: 'The inclusion maps $\mathbb{N}$ into $\mathbb{R}$, so (a) is 1. The set $\mathbb{R}$ is uncountable, so (b) is 0 and (c) is 0. In (d) the Cantor-Schroeder-Bernstein Theorem turns the two injections into a bijection, so (d) is 1.'
+          # argument: Theorem 7.19
+          - problem: 'Prove the first step: Let $f:A\to B$ and $g:B\to A$ be injective. Define $F(X)=A\setminus g[B\setminus f[X]]$ for $X\subseteq A$. Prove that $F$ keeps inclusion, and that $C=\bigcup\{H: H\subseteq F(H)\}$ satisfies $F(C)=C$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If X is inside Y, then F(X) is inside F(Y). The union C of all H inside F(H) satisfies C inside F(C), and applying F gives F(C) inside C.'
+            solution_sketch: 'Let X be inside Y. Then f[X] is inside f[Y], so B minus f[X] contains B minus f[Y]. Then g of the first set contains g of the second, so F(X) is inside F(Y). The union C is defined, because the empty set is inside F of the empty set. For every H inside F(H) we get H inside F(H) inside F(C), so C is inside F(C). Applying F gives F(C) inside F(F(C)), so F(C) is inside C and C=F(C).'
+          # argument: Theorem 7.19
+          - problem: 'Prove the second step: With $C=F(C)$ from the first step, build a bijection $h:A\to B$ by $h(x)=f(x)$ for $x\in C$ and $h(x)=g^{-1}(x)$ for $x\notin C$.'
+            answer_contract: {"kind":"written"}
+            answer: 'From C=F(C) the inverse of g is a bijection from the outside of C onto B minus f of C. Together with f on C this gives a bijection.'
+            solution_sketch: 'From C=F(C) we get g[B minus f[C]] equal to A minus C. So every x outside C equals g(y) for exactly one y outside f[C], and g inverse is a bijection from A minus C onto B minus f[C]. The map f is a bijection from C onto f[C]. The two pieces have disjoint images that fill B, so h is surjective. For x and y that differ, the cases with both in C or both outside C use injectivity of f or of g. If x is in C and y is not, then h(x) is in f[C] and h(y) is not.'
+          # source: FoM exercise 7.3-7-21
+          - problem: 'Prove: for any two sets $A$ and $B$, there is an injective function from $A$ to $B$ or an injective function from $B$ to $A$. Use Zorn''s Lemma on the injective functions defined on subsets of $A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Order injective partial maps from A to B by extension. A maximal map is defined on all of A, or its image is all of B, and then its inverse is an injection.'
+            solution_sketch: 'Let P be the set of injective functions from a subset of A into B, ordered by extension. A chain has the union as an upper bound, so Zorn''s Lemma in Theorem 7.7 gives a maximal element m. If some a in A is outside the domain and some b in B is outside the image, then m extended by a to b is larger. So the domain is A or the image is B. In the first case m is an injection from A to B. In the second case the inverse of m is an injection from B to A.'
+          # source: FoM exercise 7.3-7-26
+          - problem: 'Prove: if there are surjective functions $f:A\to B$ and $g:B\to A$, then there is a bijective function from $A$ to $B$. You may use the Axiom of Choice.'
+            answer_contract: {"kind":"written"}
+            answer: 'The Axiom of Choice turns each surjection into an injection back. Then the Cantor-Schroeder-Bernstein Theorem gives the bijection.'
+            solution_sketch: 'For each b in B pick one a in A with f(a)=b. This choice is an injective function from B to A. In the same way g gives an injective function from A to B. Now Theorem 7.19 applies to the two injections and gives a bijection from A to B.'
+        constraints: 'Follow the construction of the bijection on small examples and decide when a bijection exists.'
+      - id: kp4
+        name: 'Theorem 7.20, Definition 7.21 and Theorem 7.22: cardinal arithmetic with an infinite cardinal'
+        key_prerequisites: [fom-7-1-axiom-choice-zorns-lemma]
+        exemplars:
+          - problem: 'Let $\alpha=3$ and $\beta=4$ be cardinal numbers. Compute (a) $\alpha+\beta$, (b) $\alpha\beta$, (c) $\alpha^\beta$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 12; c = 81'
+            solution_sketch: 'The sum is the size of two disjoint sets, so (a) is $3+4=7$. The product is the size of the product set, so (b) is $3\cdot4=12$. The power counts functions from a 4-element set to a 3-element set, so (c) is $3^4=81$.'
+          - problem: 'Let $A=\{a,b\}$ and $B=\{1,2,3\}$. (a) Count the elements of $A\times\{0\}\cup B\times\{1\}$. (b) Count the elements of $A\times B$. (c) Count the functions from $B$ to $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 6; c = 8'
+            solution_sketch: 'The set $A\times\{0\}$ has 2 elements and $B\times\{1\}$ has 3 elements, and they are disjoint, so (a) is 5. The product has $2\cdot3=6$ elements, so (b) is 6. Each of 3 points of $B$ has 2 values, so (c) is $2^3=8$.'
+          - problem: 'Let $\alpha=9$ and $\beta=4$. Give (a) $\alpha+\beta$ and (b) $\max\{\alpha,\beta\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 13; b = 9'
+            solution_sketch: 'The sum is $9+4=13$, so (a) is 13. The larger number is 9, so (b) is 9. The two differ, which is why the rule for the sum needs one infinite cardinal.'
+          - problem: 'Give 1 if the equation is true and 0 if it is not. (a) $\aleph_0+9=\aleph_0$. (b) $\aleph_0\cdot\aleph_0=\aleph_0$. (c) $\aleph_0\cdot0=\aleph_0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'One cardinal is infinite, so the sum is the larger one and (a) is 1. Two countable sets give a countable product set, so (b) is 1. The product with the empty set is empty, so $\aleph_0\cdot0=0$ and (c) is 0.'
+          - problem: 'Let $\alpha=\aleph_1$ and $\beta=\aleph_0$, where $\aleph_1$ is the least uncountable cardinal. Give 1 if the equation is true and 0 if it is not. (a) $\alpha+\beta=\aleph_1$. (b) $\alpha\beta=\aleph_1$. (c) $\alpha+\beta=\aleph_0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'One cardinal is infinite, so both the sum and the product equal the larger one, $\aleph_1$. So (a) is 1 and (b) is 1. The sum is not $\aleph_0$, so (c) is 0.'
+          - problem: 'Give 1 if the set $A\times A$ is equivalent to $A$ and 0 if it is not. (a) $A=\mathbb{N}$. (b) $A=\mathbb{R}$. (c) $A=\mathbb{Q}$. (d) $A=\{0,1\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 1; d = 0'
+            solution_sketch: 'Each of $\mathbb{N}$, $\mathbb{R}$ and $\mathbb{Q}$ is infinite, so Theorem 7.20 gives 1 for (a), (b) and (c). The set $\{0,1\}$ is finite. The product has 4 elements and the set has 2, so (d) is 0.'
+          # argument: Theorem 7.20
+          - problem: 'Prove: if $A$ is an infinite set, then $A\times A$ is equivalent to $A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Zorn''s Lemma gives a maximal bijection from Y times Y onto Y. A smaller Y allows an extension of the bijection, so Y is equivalent to A.'
+            solution_sketch: 'Use Zorn''s Lemma on bijections from X times X onto X, for X inside A, ordered by extension; a countable X shows the set is not empty. Let g from Y times Y onto Y be maximal. If Y is not equivalent to A, Theorem 7.19 and Exercise 7-21 give an injection from Y into A minus Y. Take Z inside A minus Y equivalent to Y. By Theorem 7.7 the set Y times Z joined with Z times Z and Z times Y is equivalent to Z. So g extends to Y joined with Z, which contradicts maximality.'
+          # argument: Theorem 7.22
+          - problem: 'Prove: let $\alpha$ and $\beta$ be cardinal numbers, both not 0, with at least one of them infinite. Then $\alpha+\beta=\max\{\alpha,\beta\}$ and $\alpha\beta=\max\{\alpha,\beta\}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume alpha is the larger and infinite. Both the sum and the product are at least alpha and at most alpha times alpha, which is alpha.'
+            solution_sketch: 'Let alpha be infinite and beta at most alpha. The sum is at least alpha and at most alpha+alpha, which is the size of alpha times a 2-element set. That set is a part of alpha times alpha, which has size alpha by Theorem 7.20. The product is at least alpha, because beta is not 0, and at most alpha times alpha. Theorem 7.19 turns each pair of bounds into equality. Theorem 7.20 supplies the bound alpha times alpha.'
+          # source: FoM exercise 7.3-7-22
+          - problem: 'Prove in full detail: if $A$ is an infinite set, then $A\times A$ is equivalent to $A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Zorn''s Lemma gives a maximal bijection from Y times Y onto Y. Y is equivalent to A, because a larger A allows the bijection to grow by a copy of Y.'
+            solution_sketch: 'To prove Theorem 7.20, let F hold all bijections from X times X onto X with X inside A, ordered by extension. F is not empty, because A holds a countable set N and N times N is equivalent to N. A chain has the union of its maps as upper bound, so Zorn''s Lemma gives a maximal map on Y. If Y is not equivalent to A, Exercise 7-21 and Theorem 7.19 give a copy Z of Y inside A minus Y. The three blocks Y times Z, Z times Z and Z times Y are equivalent to Z, so the map grows to Y joined with Z.'
+          # source: FoM exercise 7.3-7-23
+          - problem: 'Prove: let $\alpha$ and $\beta$ be cardinal numbers, both not 0, with at least one of them infinite. (a) Prove $\alpha+\beta=\max\{\alpha,\beta\}$. (b) Prove $\alpha\beta=\max\{\alpha,\beta\}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take alpha infinite and at least beta. Then alpha is at most the sum and at most the product, and both are at most alpha times alpha, which equals alpha.'
+            solution_sketch: 'Let alpha be infinite with beta at most alpha. For (a), alpha is at most alpha+beta, which is at most alpha+alpha. The sum alpha+alpha is at most alpha times alpha, which is alpha by Theorem 7.20. For (b), beta is at least 1, so alpha is at most alpha times beta, which is at most alpha times alpha. Theorem 7.19 and Theorem 7.22 close both parts.'
+          # source: FoM exercise 7.3-7-25
+          - problem: 'Prove: let $\alpha,\beta$ be finite cardinals greater than 1 and let $\gamma$ be an infinite cardinal. Then $\alpha^\gamma=\beta^\gamma$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show that alpha to the gamma equals 2 to the gamma. Use 2 at most alpha at most 2 to the k, and the rules for sums and products of an infinite cardinal.'
+            solution_sketch: 'Pick k with alpha at most 2 to the power k. Then 2^gamma is at most alpha^gamma, which is at most (2^k)^gamma. By Theorem 7.23 this equals 2^(k times gamma). Theorem 7.22 gives k times gamma equal to gamma. So 2^gamma is at most alpha^gamma, which is at most 2^gamma, and Theorem 7.19 gives equality. The same holds for beta.'
+        constraints: 'Compute sums, products and powers of finite cardinals and apply the maximum rule to infinite ones.'
+      - id: kp5
+        name: 'Theorem 7.23 and Axiom 7.24: the laws of exponents and the Continuum Hypothesis'
+        key_prerequisites: [fom-5-6-uncountable-sets]
+        exemplars:
+          - problem: 'Compute (a) $2^3\cdot2^4$, (b) $3^2\cdot5^2$, (c) $(2^3)^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 128; b = 225; c = 64'
+            solution_sketch: 'The rule $\alpha^\beta\alpha^\gamma=\alpha^{\beta+\gamma}$ gives $2^7=128$, so (a) is 128. The rule $\alpha^\gamma\beta^\gamma=(\alpha\beta)^\gamma$ gives $15^2=225$, so (b) is 225. The rule $(\alpha^\beta)^\gamma=\alpha^{\beta\gamma}$ gives $2^6=64$, so (c) is 64.'
+          - problem: 'Find the number that makes each equation true. (a) $5^a\cdot5^4=5^9$. (b) $2^3\cdot b^3=14^3$. (c) $(3^c)^2=3^8$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 7; c = 4'
+            solution_sketch: 'The exponents add, so $a+4=9$ and (a) is 5. The bases multiply, so $2b=14$ and (b) is 7. The exponents multiply, so $2c=8$ and (c) is 4.'
+          - problem: 'Take pairwise disjoint sets $D$, $B$ and $C$ with $|D|=2$, $|B|=3$ and $|C|=4$. (a) Count the pairs of a function from $B$ to $D$ and a function from $C$ to $D$. (b) Count the functions from $B\times C$ to $D$. (c) Count the functions from $C$ to the set of functions from $B$ to $D$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 128; b = 4096; c = 4096'
+            solution_sketch: 'There are $2^3=8$ functions from $B$ to $D$ and $2^4=16$ from $C$ to $D$, so (a) is $8\cdot16=128$. The product $B\times C$ has 12 elements, so (b) is $2^{12}=4096$. The set of functions from $B$ to $D$ has 8 elements, so (c) is $8^4=4096$.'
+          - problem: 'Count the subsets and the functions. (a) Count the subsets of a set with 10 elements. (b) Count the functions from a 3-element set to a 4-element set. (c) Count the functions from a 4-element set to a 3-element set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1024; b = 64; c = 81'
+            solution_sketch: 'A subset is a function into $\{0,1\}$, so (a) is $2^{10}=1024$. In (b) each of 3 points has 4 values, so the count is $4^3=64$. In (c) each of 4 points has 3 values, so the count is $3^4=81$.'
+          - problem: 'Give 1 if the equation is true and 0 if it is not. (a) $2^{\aleph_0}\cdot2^{\aleph_0}=2^{\aleph_0}$. (b) $(2^{\aleph_0})^{\aleph_0}=2^{\aleph_0}$. (c) $\aleph_0^{\aleph_0}=2^{\aleph_0}$. (d) $2^{\aleph_0}=\aleph_0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 1; d = 0'
+            solution_sketch: 'By Theorem 7.23 the product equals $2^{\aleph_0+\aleph_0}=2^{\aleph_0}$, so (a) is 1. The power equals $2^{\aleph_0\cdot\aleph_0}=2^{\aleph_0}$, so (b) is 1. Also $2^{\aleph_0}\le\aleph_0^{\aleph_0}\le(2^{\aleph_0})^{\aleph_0}$, so (c) is 1. Cantor shows $2^{\aleph_0}>\aleph_0$, so (d) is 0.'
+          - problem: 'Assume the Continuum Hypothesis $2^{\aleph_0}=\aleph_1$. (a) Give the index $k$ (the number after $\aleph$) with $2^{\aleph_0}=\aleph_k$. (b) Count the cardinal numbers $\alpha$ with $\aleph_0<\alpha<2^{\aleph_0}$. (c) Give 1 if $|\mathbb{R}|=\aleph_1$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'The hypothesis gives $2^{\aleph_0}=\aleph_1$, so (a) is 1. No cardinal number lies strictly between $\aleph_0$ and $\aleph_1$, so (b) is 0. Also $|\mathbb{R}|=2^{\aleph_0}=\aleph_1$, so (c) is 1.'
+          # argument: Theorem 7.23
+          - problem: 'Prove the first step: Let $\alpha,\beta,\gamma$ be cardinal numbers. Then $\alpha^\beta\alpha^\gamma=\alpha^{\beta+\gamma}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take pairwise disjoint sets of sizes alpha, beta and gamma. A function on the union of B and C is the same as a pair of functions, one on B and one on C.'
+            solution_sketch: 'Take pairwise disjoint sets A, B and C with sizes alpha, beta and gamma. Map each function f on B joined with C to the pair of its restrictions to B and to C. This map is a bijection onto the product of the functions on B and the functions on C. So alpha^(beta+gamma) equals the size of that product, which is alpha^beta times alpha^gamma.'
+          # argument: Theorem 7.23
+          - problem: 'Prove the second step: For cardinal numbers $\alpha,\beta,\gamma$ we have $\alpha^\gamma\beta^\gamma=(\alpha\beta)^\gamma$ and $(\alpha^\beta)^\gamma=\alpha^{\beta\gamma}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Pair two functions on C into one function with pair values. Turn a function on C with function values into one function on the product of B and C.'
+            solution_sketch: 'Take sets A, B and C of sizes alpha, beta and gamma. A pair of functions (f,g) from C to A and to B gives the function sending c to (f(c),g(c)), which has values in the product of A and B. This is a bijection, so the first law holds. A function from C to the functions from B to A gives the function sending (b,c) to its value at b, defined on B times C. This is a bijection too, so the second law holds.'
+          # source: FoM exercise 7.3-7-24
+          - problem: 'Prove: for cardinal numbers $\alpha,\beta,\gamma$, (a) $\alpha^\gamma\beta^\gamma=(\alpha\beta)^\gamma$ and (b) $(\alpha^\beta)^\gamma=\alpha^{\beta\gamma}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'For (a) pair the two functions into one function with pair values. For (b) turn a function with function values into a function of two variables.'
+            solution_sketch: 'Take sets A, B and C of sizes alpha, beta and gamma. For (a) send a pair (f,g) of functions on C to the function c to (f(c),g(c)). This is a bijection onto the functions from C to the product of A and B. For (b) send a function F on C with function values to the function (b,c) to F(c)(b). This is a bijection onto the functions on B times C. Theorem 7.23 covers the first law in the same way.'
+          # source: FoM exercise 7.3-7-30
+          - problem: 'Prove: the set $\mathbb{R}$ of real numbers has the same cardinality as the power set of $\mathbb{N}$. Hint: map $(0,1)$ into the set of sequences of zeros and ones, and compare sizes.'
+            answer_contract: {"kind":"written"}
+            answer: 'Binary expansions inject (0,1) into the sequences of zeros and ones. The sequences outside the image are few, so Cantor-Schroeder-Bernstein applies.'
+            solution_sketch: 'The power set of N is equivalent to the set S of sequences of zeros and ones. Send a number of (0,1) to its binary expansion that does not end in all ones. This is an injection into S. The sequences outside the image are the ones that end in all ones, a countable set, so they number at most the image. Theorem 5.50 style counting and Theorem 7.22 give that S is equivalent to the image, so to (0,1). The map tan(pi(x-1/2)) sends (0,1) onto R.'
+        constraints: 'Apply the exponent laws to finite and infinite cardinals and read the Continuum Hypothesis.'
+    diagnostic_exemplar:
+      problem: 'Let $|A|=8$ and $|B|=5$. (a) Give $|A\cup B|$ when $A\cap B=\emptyset$. (b) Give $|A\cup B|$ when $|A\cap B|=3$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+      answer: 'a = 13; b = 10'
+      solution_sketch: 'Disjoint sets add, so (a) is $8+5=13$. With an overlap of 3 we subtract it once, so (b) is $8+5-3=10$.'

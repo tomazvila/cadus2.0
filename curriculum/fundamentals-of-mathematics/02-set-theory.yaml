@@ -1,0 +1,1152 @@
+unit: set-theory
+course: fundamentals-of-mathematics
+module: "Fundamentals: Set Theory"
+topics:
+  - id: fom-2-1-sets-objects
+    name: '2.1 Sets and Objects'
+    program_items: [68, 69, 70, 71, 72, 73, 74, 75]
+    core: false
+    difficulty: 0.35
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: fom-1-5-variables-quantifiers
+        weight: 0.6
+        key: true
+      - id: set-notation
+        weight: 0.4
+        key: false
+      - id: subset-relation-basics
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.1, Axiom 2.2, Definition 2.3 and Definition 2.4: membership and containment'
+        key_prerequisites: [set-notation, subset-relation-basics]
+        exemplars:
+          - problem: 'Let $S=\{2,4,6,8\}$. Give each truth value as 1 for true and 0 for false. (a) $4\in S$. (b) $5\in S$. (c) $8\notin S$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'The set $S$ lists 4, so (a) has the value 1. The set $S$ does not list 5, so (b) has the value 0. The set $S$ lists 8, so $8\notin S$ is wrong and (c) has the value 0.'
+          - problem: 'Let $A=\{5,7\}$. Give each truth value as 1 for true and 0 for false. (a) $A\subseteq A$. (b) $A\nsubseteq A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0'
+            solution_sketch: 'Each element of $A$ is an element of $A$, so (a) has the value 1. The symbol $\nsubseteq$ is the opposite of $\subseteq$, so (b) has the value 0.'
+          - problem: 'Let $A=\{1,2,3\}$ and $B=\{1,2,3,4,5\}$. Give each truth value as 1 for true and 0 for false. (a) $A\subseteq B$. (b) $B\subseteq A$. (c) $B\supseteq A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'Every element of $A$ lies in $B$, so (a) has the value 1. The element 4 of $B$ is not in $A$, so (b) has the value 0. The symbol $B\supseteq A$ means the same as $A\subseteq B$, so (c) has the value 1.'
+          - problem: 'Let $A=\{1,2\}$ and $B=\{1,2,3\}$. Give each truth value as 1 for true and 0 for false. (a) $A\nsubseteq B$. (b) $B\nsupseteq A$. (c) $B\nsubseteq A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 0; c = 1'
+            solution_sketch: 'We have $A\subseteq B$, so the strike-through form $A\nsubseteq B$ is wrong and (a) is 0. Also $B\supseteq A$ holds, so $B\nsupseteq A$ is wrong and (b) is 0. The element 3 of $B$ is not in $A$, so $B\nsubseteq A$ is right and (c) is 1.'
+          - problem: 'Let $A=\{1,2,3,4,5,6\}$ and $B=\{2,4,6,8,10\}$. (a) Count the elements of $A$ that lie in $B$. (b) Count the elements of $B$ that do not lie in $A$. (c) Give 1 if $A\subseteq B$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 0'
+            solution_sketch: 'The elements 2, 4 and 6 of $A$ lie in $B$, so (a) is 3. The elements 8 and 10 of $B$ are not in $A$, so (b) is 2. The element 1 of $A$ is not in $B$, so $A\nsubseteq B$ and (c) is 0.'
+          - problem: 'Let $S$ be the set of all integers from 1 to 20 that are divisible by 3. (a) Count the elements of $S$. (b) Give 1 if $12\in S$ and 0 if not. (c) Give 1 if $20\in S$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 1; c = 0'
+            solution_sketch: 'The elements of $S$ are 3, 6, 9, 12, 15 and 18, so (a) is 6. The number 12 is in this list, so (b) is 1. The number 20 is not divisible by 3, so (c) is 0.'
+          - problem: 'Count the subsets of $\{a,b,c\}$. The set with no element and the set $\{a,b,c\}$ itself both count. (a) Count all subsets. (b) Count the subsets that hold the element $a$. (c) Count the subsets with exactly 2 elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 4; c = 3'
+            solution_sketch: 'Each of the elements a, b and c is in a subset or not, so there are $2\cdot2\cdot2=8$ subsets. Four of them hold a, because b and c give 4 free choices. The 2-element subsets are $\{a,b\}$, $\{a,c\}$ and $\{b,c\}$, so (c) is 3.'
+          # source: FoM exercise 2.1-2-2
+          - problem: 'In a model of Axioms 2.1 and 2.2 the objects are the points of the plane. The sets are the straight lines of the plane. A point belongs to a line when the point lies on the line. Give each truth value as 1 for true and 0 for false. (a) The model has a set. (b) For a point $P$ and a line $L$, exactly one of the statements "$P$ lies on $L$" and "$P$ does not lie on $L$" is true. (c) Two different lines exist that share a point. (d) Two lines that share exactly one point have common points that form a line.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 1; d = 0'
+            solution_sketch: 'The plane holds lines, so Axiom 2.1 holds and (a) is 1. A point lies on a line or not, and never both, so (b) is 1. The x-axis and the y-axis share the origin, so (c) is 1. One common point is a single point and not a line, so (d) is 0.'
+          # source: FoM exercise 2.1-2-1
+          - problem: 'Prove: every set $A$ is contained in itself, that is $A\subseteq A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take any element x of A. Then x is in A already, so A is contained in A.'
+            solution_sketch: 'Use Definition 2.4. A set $A$ is contained in a set $B$ when every element of $A$ is an element of $B$. Take $B=A$ and an element $x$ of $A$. The element $x$ is an element of $A$ at once. So every element of $A$ is an element of $A$, and $A\subseteq A$ holds.'
+        constraints: 'Decide membership and containment for small sets; count elements; the items vary the sets and keep the values 1 and 0.'
+      - id: kp2
+        name: 'Definition 2.7 and Examples 2.8, 2.10 and 2.11: models of the axioms'
+        key_prerequisites: [set-notation]
+        exemplars:
+          - problem: 'A model has the numbers 1 to 6 as its objects. It has one set $S=\{1,2,3,4\}$. (a) Count the objects that lie in $S$. (b) Count the objects that do not lie in $S$. (c) Give 1 if the model has a set and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 2; c = 1'
+            solution_sketch: 'The set $S$ holds 1, 2, 3 and 4, so (a) is 4. The objects 5 and 6 are outside $S$, so (b) is 2. The model has the set $S$, so (c) is 1.'
+          - problem: 'A model has the numbers 1 to 4 as its objects. It has two sets, $S=\{1,2\}$ and $T=\{2,3\}$. (a) Count the objects that lie in both sets. (b) Count the objects that lie in at least one set. (c) Count the objects that lie in no set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 3; c = 1'
+            solution_sketch: 'Only 2 is in both $S$ and $T$, so (a) is 1. The objects 1, 2 and 3 lie in $S$ or $T$, so (b) is 3. The object 4 lies in neither set, so (c) is 1.'
+          - problem: 'Look at three models. In model 1 the objects are the numbers 1 to 5 and there is no set. In model 2 the objects are the numbers 1 to 5 and there is one set $\{1,3,5\}$. In model 3 the objects are the integers and there is one set, the set of even integers. Give 1 if Axiom 2.1 (there is a set) is true in the model and 0 if not. (a) Model 1. (b) Model 2. (c) Model 3.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1'
+            solution_sketch: 'Axiom 2.1 needs one set. Model 1 has no set, so (a) is 0. Model 2 has the set $\{1,3,5\}$, so (b) is 1. Model 3 has the set of even integers, so (c) is 1.'
+          - problem: 'A model has the letters a to e as its objects. Its sets are all the subsets of $\{a,b,c\}$ that have exactly 2 elements. (a) Count the sets of the model. (b) Count the sets that hold the object a. (c) Count the objects that lie in no set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 2'
+            solution_sketch: 'The sets are $\{a,b\}$, $\{a,c\}$ and $\{b,c\}$, so (a) is 3. Two of them hold a, so (b) is 2. The objects d and e lie in no set, so (c) is 2.'
+          - problem: 'A model has the objects 1 to 6. Its sets are $S=\{1,2,3,4,5,6\}$, $V=\{1,3\}$ and $C=\{2\}$. (a) Count the elements of $S$ that are not in $V$. (b) Give 1 if $V\subseteq S$ and 0 if not. (c) Give 1 if $C\subseteq V$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 1; c = 0'
+            solution_sketch: 'Remove 1 and 3 from the six elements of $S$. Four elements stay, so (a) is 4. Both elements of $V$ lie in $S$, so (b) is 1. The element 2 of $C$ is not in $V$, so (c) is 0.'
+          - problem: 'A model has the numbers 1 to 8 as its objects. Its sets are $S=\{1,\dots,8\}$, $E=\{2,4,6,8\}$, $O=\{1,3,5,7\}$ and $A=\{1,2,3\}$. (a) Count the sets that hold the object 3. (b) Count the sets $T$ of the model with $T\subseteq S$. (c) Count the sets $T$ of the model with $T\subseteq O$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 4; c = 1'
+            solution_sketch: 'The object 3 lies in $S$, $O$ and $A$, so (a) is 3. Every set of the model lies in $S$, so (b) is 4. Only $O$ lies in $O$, because 2 is in $A$ and 2 is not in $O$, so (c) is 1.'
+          - problem: 'A model has the numbers 1 to 12 as its objects. Its sets are the multiples of 2, the multiples of 3 and the multiples of 4 among these numbers. (a) Count the sets that hold the object 12. (b) Count the objects that lie in at least one set. (c) Count the ordered pairs of different sets $(X,Y)$ with $X\subseteq Y$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 8; c = 1'
+            solution_sketch: 'The number 12 is divisible by 2, 3 and 4, so (a) is 3. The objects 2, 3, 4, 6, 8, 9, 10 and 12 lie in a set, so (b) is 8. Only the multiples of 4 lie in the multiples of 2, so (c) is 1.'
+          # source: FoM exercise 2.1-2-3
+          - problem: 'Count the regions of Venn diagrams. A region is a group of objects that lie in exactly the same sets, and it lies in at least one set. A diagram has all regions filled when each possible region holds an object. (a) Count the regions of a diagram with 3 sets and all regions filled. (b) Count the regions of a diagram with 4 sets and all regions filled. A model has the objects 1 to 10 and the sets $\{1,\dots,5\}$, the even numbers, the odd numbers and the primes among them. (c) Count the regions that hold an object. (d) Count the objects that lie in exactly two of the four sets.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 15; c = 7; d = 3'
+            solution_sketch: 'Each object lies in or out of each set. For 3 sets that gives $2^3-1=7$ regions, and for 4 sets it gives $2^4-1=15$. In the model, the objects 3 and 5 share a region, and the objects 6, 8 and 10 share a region. That leaves 7 regions in all. The objects 1, 4 and 7 lie in exactly two sets, so (d) is 3.'
+        constraints: 'Read a small model with objects and sets; count objects, sets and regions; decide if Axiom 2.1 holds.'
+    diagnostic_exemplar:
+      problem: 'Let $S=\{7,8,9\}$. Give each truth value as 1 for true and 0 for false. (a) $8\in S$. (b) $10\in S$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+      answer: 'a = 1; b = 0'
+      solution_sketch: 'The set $S$ lists 8, so (a) is 1. The set $S$ does not list 10, so (b) is 0.'
+  - id: fom-2-2-axiom-specification
+    name: '2.2 The Axiom of Specification'
+    program_items: [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87]
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 600
+    prerequisites:
+      - id: fom-2-1-sets-objects
+        weight: 0.6
+        key: true
+      - id: fom-1-8-russells-paradox
+        weight: 0.4
+        key: false
+      - id: set-notation
+        weight: 0.4
+        key: false
+      - id: indexed-families
+        weight: 0.4
+        key: false
+      - id: union-intersection-difference
+        weight: 0.4
+        key: false
+      - id: indexed-unions-intersections
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.12 and Proposition 2.13: building a set by a property, and a set without elements'
+        key_prerequisites: [fom-2-1-sets-objects, fom-1-8-russells-paradox]
+        exemplars:
+          - problem: 'Let $S=\{1,2,3\}$ and $A=\{x\in S : x>1\}$. Give 1 for true and 0 for false. (a) Is $2\in A$? (b) Is $1\in A$? (c) Is $4\in A$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'Only elements of $S$ with $x>1$ enter $A$, so $A=\{2,3\}$. The number 2 is in $A$, so (a) is 1. The number 1 fails $x>1$, so (b) is 0. The number 4 is not in $S$, so (c) is 0.'
+          - problem: 'Let $S=\{1,2,\dots,10\}$. (a) Count the elements of $\{x\in S : x \text{ is even}\}$. (b) Count the elements of $\{x\in S : x>7\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 3'
+            solution_sketch: 'The even elements of $S$ are 2, 4, 6, 8 and 10, so (a) is 5. The elements above 7 are 8, 9 and 10, so (b) is 3.'
+          - problem: 'Let $S=\{1,2,\dots,12\}$ and $A=\{x\in S : 3 \text{ divides } x\}$. (a) Count the elements of $A$. (b) Add up the elements of $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 30'
+            solution_sketch: 'The set $A$ is $\{3,6,9,12\}$. It has 4 elements, so (a) is 4. The sum is $3+6+9+12=30$, so (b) is 30.'
+          - problem: 'Let $S=\{5,6,7,8\}$. Count the elements of the set $\{x\in S : p(x)\}$ for each open sentence. (a) $p(x)$ is $[x\in S]\vee[x\notin S]$. (b) $p(x)$ is $[x\in S]\wedge[x\notin S]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 0'
+            solution_sketch: 'In (a) the sentence holds for every object, so all 4 elements of $S$ stay. In (b) the sentence holds for no object, so the set is empty and has 0 elements.'
+          - problem: 'Let $S=\{-3,-2,-1,0,1,2,3\}$ and $A=\{x\in S : x^2<4\}$. (a) Count the elements of $A$. (b) Give the largest element of $A$. (c) Add up the elements of $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 1; c = 0'
+            solution_sketch: 'The squares below 4 belong to $-1$, $0$ and $1$, so $A=\{-1,0,1\}$. It has 3 elements, so (a) is 3. The largest element is 1, so (b) is 1. The sum is $-1+0+1=0$, so (c) is 0.'
+          - problem: 'Let $S=\{2,3,\dots,13\}$ and $A=\{x\in S : x \text{ is prime}\}$. (a) Count the elements of $A$. (b) Give the largest element of $A$. (c) Add up the elements of $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 13; c = 41'
+            solution_sketch: 'The primes in $S$ are 2, 3, 5, 7, 11 and 13. There are 6 of them, so (a) is 6. The largest is 13, so (b) is 13. The sum is $2+3+5+7+11+13=41$, so (c) is 41.'
+          # argument: Proposition 2.13
+          - problem: 'Prove: some set has no elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'Start with any set S and specify the elements x of S with x in S and x not in S. No object meets both conditions, so the new set is empty.'
+            solution_sketch: 'Axiom 2.1 gives a set S. The open sentence [x in S and x not in S] holds for no object. Axiom 2.12 turns S and this sentence into a set A. An element of A must meet the sentence, so A has no element.'
+          # source: FoM exercise 2.2-2-5
+          - problem: 'Prove: no set A has every set as an element.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume such an A exists and specify the set R of all x in A with x not in x. Then R is in R exactly when R is not in R, a contradiction.'
+            solution_sketch: 'Assume a set A has every set as an element. Axiom 2.12 gives the set R of all x in A with x not an element of x. Then R is a set, so R is in A. If R is in R, the definition of R gives R not in R. If R is not in R, then R meets the rule, so R is in R. Both cases fail, as in Russell''s paradox.'
+        constraints: 'build a subset by an open sentence and use it to reach a set without elements'
+      - id: kp2
+        name: 'Definition 2.14 to Proposition 2.16: the empty set, families of sets and the common part of a family'
+        key_prerequisites: [fom-2-1-sets-objects]
+        exemplars:
+          - problem: '(a) Count the elements of $\emptyset$. (b) Count the elements of $\{\emptyset\}$. (c) Count the elements of $\{\emptyset,\{\emptyset\}\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 2'
+            solution_sketch: 'The empty set has 0 elements. The set $\{\emptyset\}$ has one element, namely $\emptyset$, so (b) is 1. The set $\{\emptyset,\{\emptyset\}\}$ lists two different objects, so (c) is 2.'
+          - problem: 'Give 1 for true and 0 for false. (a) Is $\emptyset\in\{\emptyset,\{1\}\}$? (b) Is $\emptyset\in\{1,2\}$? (c) Is $\emptyset\subseteq\{1,2\}$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'In (a) the empty set is listed as an element, so the value is 1. In (b) the elements are 1 and 2 only, so the value is 0. In (c) the empty set has no element outside $\{1,2\}$, so the value is 1.'
+          - problem: 'Give 1 if the object is a family of sets and 0 if not. (a) $\{\{1\},\{2,3\}\}$. (b) $\{1,\{2\}\}$. (c) $\{\emptyset\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'A family of sets is a set whose elements are all sets. In (a) both elements are sets, so the value is 1. In (b) the element 1 is not a set, so the value is 0. In (c) the one element $\emptyset$ is a set, so the value is 1.'
+          - problem: 'Let $\mathcal F=\{\{1,2\},\{2,3\},\{2,4\}\}$. (a) Count the members of $\mathcal F$. (b) Count the elements of $\bigcap\mathcal F$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 1'
+            solution_sketch: 'The family lists three sets, so (a) is 3. The number 2 is in all three sets. No other number is in all three, so $\bigcap\mathcal F=\{2\}$ and (b) is 1.'
+          - problem: 'Let $\mathcal C=\{\{1,2,3,4\},\{2,3,4,5\},\{3,4,5,6\}\}$. (a) Count the elements of $\bigcap\mathcal C$. (b) Add up the elements of $\bigcap\mathcal C$. (c) Count the elements of $\{1,2,3,4\}$ that are not in $\bigcap\mathcal C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 7; c = 2'
+            solution_sketch: 'Only 3 and 4 lie in all three sets, so $\bigcap\mathcal C=\{3,4\}$ and (a) is 2. The sum is $3+4=7$, so (b) is 7. The elements 1 and 2 of the first set are left out, so (c) is 2.'
+          - problem: 'Let $\mathcal C=\{\{2,4,6,8\},\{4,8,12\},\{4,8,16,20\}\}$ and $C_0=\{4,8,12\}$. Build $I=\{x\in C_0 : x\in C \text{ for every } C\in\mathcal C\}$. (a) Count the elements of $C_0$ that the sentence tests. (b) Count the elements of $I$. (c) Add up the elements of $I$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 12'
+            solution_sketch: 'The set $C_0$ has 3 elements, so (a) is 3. The numbers 4 and 8 lie in all three sets. The number 12 is missing from the first set. So $I=\{4,8\}$, (b) is 2 and (c) is $4+8=12$.'
+          # argument: Proposition 2.16
+          - problem: 'Prove: if $\mathcal C$ is a nonempty family of sets, some set $I$ has this property. An object $x$ is in $I$ exactly when $x$ is in every member of $\mathcal C$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Pick one member C0 of the family. Specify the elements of C0 that lie in every member of the family.'
+            solution_sketch: 'The sentence [x is in every member of the family] is open. Pick a member C0 of the nonempty family. Axiom 2.12 gives the set I of all x in C0 that lie in every member. An object in every member lies in C0, so it is in I. The reverse direction holds by the definition of I.'
+          # source: FoM exercise 2.2-2-6
+          - problem: 'Prove: let $A$, $B$ and $U$ be sets with $A\subseteq U$ and $B\subseteq U$. Then $A\subseteq B$ exactly when $U\setminus B\subseteq U\setminus A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use contraposition on elements of U. An element x in A is in B exactly when x not in B implies x not in A.'
+            solution_sketch: 'Assume $A\subseteq B$ and take x in $U\setminus B$. Then x in A forces x in B, so x is not in A and x is in $U\setminus A$. Now assume $U\setminus B\subseteq U\setminus A$ and take x in A. If x is not in B, then x is in $U\setminus B$ and so not in A, which fails. So x is in B.'
+        constraints: 'work with the empty set and families, and build the common part of a family'
+      - id: kp3
+        name: 'Definition 2.17 to Proposition 2.20: intersections, disjoint families and removing elements'
+        key_prerequisites: [fom-2-1-sets-objects]
+        exemplars:
+          - problem: 'Let $A=\{1,2,3,4\}$ and $B=\{3,4,5,6\}$. (a) Count the elements of $A\cap B$. (b) Add up the elements of $A\cap B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 7'
+            solution_sketch: 'The sets share 3 and 4, so $A\cap B=\{3,4\}$. It has 2 elements, so (a) is 2. The sum is $3+4=7$, so (b) is 7.'
+          - problem: 'Let $\mathcal C=\{\{1,2,3\},\{2,3,4\},\{3,4,5\}\}$. Give 1 for true and 0 for false. (a) Does $\bigcap\mathcal C$ have exactly one element? (b) Is $\bigcap\mathcal C\subseteq\{2,3,4\}$? (c) Is $\bigcap\mathcal C\subseteq\{1,2\}$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'Only 3 lies in all three sets, so $\bigcap\mathcal C=\{3\}$ and (a) is 1. The number 3 is in $\{2,3,4\}$, so (b) is 1. The number 3 is not in $\{1,2\}$, so (c) is 0.'
+          - problem: 'A family is disjoint when its intersection has no elements. Give 1 for a disjoint family and 0 for a family that is not disjoint. (a) $\{\{1,2\},\{2,3\},\{3,1\}\}$. (b) $\{\{1,2\},\{2,3\},\{2,5\}\}$. (c) $\{\{1\},\{2\}\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'In (a) no number lies in all three sets, so the intersection is empty and the value is 1. In (b) the number 2 lies in all three sets, so the value is 0. In (c) the sets share nothing, so the value is 1.'
+          - problem: 'Let $A=\{1,2,\dots,8\}$ and $B=\{2,4,6,8,10\}$. Form the set of elements of $A$ that are not in $B$. (a) Count its elements. (b) Add up its elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 16'
+            solution_sketch: 'The elements of $A$ outside $B$ are 1, 3, 5 and 7. There are 4 of them, so (a) is 4. The sum is $1+3+5+7=16$, so (b) is 16.'
+          - problem: 'Let $\mathcal C=\{\{1,2,3,4\},\{3,4,5\},\{4,5,6,7\}\}$ and let $x$ be an element of $\bigcap\mathcal C$. (a) Count the members of $\mathcal C$ that contain $x$. (b) Give 1 if $x\in\{4,5,6,7\}$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 1'
+            solution_sketch: 'Only 4 lies in all three sets, so $x=4$. The element $x$ lies in every member, so (a) is 3. The number 4 is in $\{4,5,6,7\}$, so (b) is 1.'
+          - problem: 'Let $U=\{1,2,\dots,60\}$. Take the family of three sets: the multiples of 2 in $U$, the multiples of 3 in $U$ and the multiples of 5 in $U$. (a) Count the elements of the intersection of the family. (b) Give the largest element of the intersection.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 60'
+            solution_sketch: 'A number in all three sets is a multiple of 30. In $U$ these are 30 and 60, so (a) is 2. The largest one is 60, so (b) is 60.'
+          # argument: Proposition 2.18
+          - problem: 'Prove: let $\mathcal C$ be a family of sets and let $D$ be a member of $\mathcal C$. Then $\bigcap\mathcal C\subseteq D$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take x in the intersection. Then x lies in every member of the family, so x lies in D.'
+            solution_sketch: 'To show a subset relation, take an arbitrary x in $\bigcap\mathcal C$. By Definition 2.17, x lies in every member of the family. The set D is a member, so x lies in D. The element x was arbitrary, so every element of the intersection is in D.'
+          # argument: Proposition 2.20
+          - problem: 'Prove: for sets $A$ and $B$, some set holds exactly the elements of $A$ that are not in $B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The sentence x is not in B is open on A. Specification gives the set of all x in A with x not in B.'
+            solution_sketch: 'The sentence [x is not in B] is open for the elements of A. Axiom 2.12 applies to A and this sentence. It gives the set of all x in A with x not in B. Its elements are exactly the elements of A outside B.'
+          # source: FoM exercise 2.2-2-7
+          - problem: 'Prove: let $A$, $B$ and $U$ be sets with $A\subseteq U$ and $B\subseteq U$. Then $A\subseteq B$ exactly when $A\cap(U\setminus B)\subseteq\emptyset$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A is in B, no element of A avoids B, so the intersection is empty. An element of A outside B lies in the intersection.'
+            solution_sketch: 'Assume $A\subseteq B$. An element of $A\cap(U\setminus B)$ is in A and not in B, which fails. So the intersection has no element. Now assume the intersection has no element and take x in A. If x is not in B, x lies in the intersection, which fails. So x is in B.'
+          # source: FoM exercise 2.2-2-8
+          - problem: 'Let $A$ and $B$ be sets. (a) Prove: $A\setminus B\subseteq A$. (b) Take $A=\{1,2\}$ and $B=\{2,3\}$ and name an element of $A\setminus B$ that is not in $B$. (c) State when $A\setminus B\subseteq B$ holds.'
+            answer_contract: {"kind":"written"}
+            answer: 'Each element of A minus B lies in A, and 1 works for (b). The inclusion holds exactly when A is a subset of B.'
+            solution_sketch: 'Take x in $A\setminus B$. By definition x is in A, which gives (a). For (b) the set $A\setminus B$ is $\{1\}$, and 1 is not in B. An element of $A\setminus B$ is outside B, so the inclusion holds only if $A\setminus B$ is empty, that is $A\subseteq B$.'
+        constraints: 'compute intersections, test disjoint families and build the set of elements outside a set'
+      - id: kp4
+        name: 'Definition 2.21 to Example 2.23: the relative complement and small models of the axioms'
+        key_prerequisites: [fom-2-1-sets-objects]
+        exemplars:
+          - problem: 'Let $A=\{1,2,3,4,5\}$ and $B=\{4,5,6,7\}$. (a) Count the elements of $A\setminus B$. (b) Count the elements of $B\setminus A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2'
+            solution_sketch: 'The set $A\setminus B$ is $\{1,2,3\}$, so (a) is 3. The set $B\setminus A$ is $\{6,7\}$, so (b) is 2.'
+          - problem: 'A model has no objects. Its only set is $\emptyset$. (a) Count the sets of the model. (b) Count the elements of $\emptyset\setminus\emptyset$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0'
+            solution_sketch: 'The model holds one set, so (a) is 1. Nothing is in $\emptyset$, so nothing is in $\emptyset\setminus\emptyset$ and (b) is 0.'
+          - problem: 'Let $A=\{1,2,3\}$ and $B=\{3,4\}$. Give 1 for true and 0 for false. (a) Is $A\setminus B\subseteq A$? (b) Is $A\setminus B\subseteq B$? (c) Is $B\setminus A\subseteq A$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'We have $A\setminus B=\{1,2\}$ and $B\setminus A=\{4\}$. The set $\{1,2\}$ is in $A$, so (a) is 1. The number 1 is not in $B$, so (b) is 0. The number 4 is not in $A$, so (c) is 0.'
+          - problem: 'Let $A=\{1,2,\dots,10\}$ and let $B$ hold the multiples of 3 in $A$. (a) Count the elements of $A\setminus B$. (b) Add up the elements of $A\setminus B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 37'
+            solution_sketch: 'The set $B$ is $\{3,6,9\}$. So $A\setminus B$ has $10-3=7$ elements, and (a) is 7. The sum of $A$ is 55 and the sum of $B$ is 18, so (b) is $55-18=37$.'
+          - problem: 'A model has the objects $a$, $b$ and $c$. Its sets are all subsets of $\{a,b,c\}$. Let $A=\{a,b,c\}$ and $B=\{b\}$. (a) Count the elements of $A\setminus B$. (b) Count the sets of the model. (c) Count the sets of the model that are subsets of $A\setminus B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 8; c = 4'
+            solution_sketch: 'We have $A\setminus B=\{a,c\}$, so (a) is 2. A set of 3 objects has $2^3=8$ subsets, so (b) is 8. The subsets of $\{a,c\}$ are $\emptyset$, $\{a\}$, $\{c\}$ and $\{a,c\}$, so (c) is 4.'
+          - problem: 'Let $U=\{1,2,\dots,9\}$, $A=\{1,2,3\}$ and $B=\{2,3,4,5\}$. (a) Count the elements of $U\setminus B$. (b) Count the elements of $U\setminus A$. (c) Is $U\setminus B\subseteq U\setminus A$? Give 1 for yes and 0 for no.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 6; c = 0'
+            solution_sketch: 'We have $U\setminus B=\{1,6,7,8,9\}$, so (a) is 5. We have $U\setminus A=\{4,5,6,7,8,9\}$, so (b) is 6. The number 1 is in the first set and not in the second, so (c) is 0.'
+          # source: FoM exercise 2.2-2-4
+          - problem: 'A model has the objects $a,b,c,d,e$. Its sets are all subsets of $\{a,b,c,d,e\}$. (a) Count all sets of the model. (b) Count the sets with exactly two elements. (c) Count the sets with at least four elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 32; b = 10; c = 6'
+            solution_sketch: 'Each of 5 objects is in a subset or not, so there are $2^5=32$ sets and (a) is 32. Pairs of 5 objects number $\binom52=10$, so (b) is 10. Sets with 4 elements number 5 and the set with 5 elements is 1, so (c) is $5+1=6$.'
+          # source: FoM exercise 2.2-2-9
+          - problem: 'Let $A=\{1,2\}$, $B=\{2,3\}$, $C=\{3,1\}$. (a) Count the elements of $A$ that are not in $A\cap B$. (b) Count the elements of $A$ that are not in $B$. (c) Count the sets among $A\cap B$, $A\cap C$ and $B\cap C$ that have no elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'We have $A\cap B=\{2\}$. The element 1 of $A$ is outside it, so (a) is 1 and $A\subseteq A\cap B$ fails. The element 1 of $A$ is not in $B$, although $A\cap B$ is nonempty, so (b) is 1. The intersections are $\{2\}$, $\{1\}$ and $\{3\}$, while $A\cap B\cap C$ is empty. So none of the three is empty and (c) is 0.'
+        constraints: 'compute relative complements and count the sets of a small model'
+    diagnostic_exemplar:
+      problem: 'Let $S=\{1,2,3,4,5,6\}$ and $A=\{x\in S : x>4\}$. Count the elements of $A$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'Only 5 and 6 pass the test $x>4$. So $A=\{5,6\}$ and it has 2 elements.'
+  - id: fom-2-3-axiom-extension
+    name: '2.3 The Axiom of Extension'
+    program_items: [88, 89, 90, 91, 92, 93]
+    core: false
+    difficulty: 0.4
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 600
+    prerequisites:
+      - id: fom-2-2-axiom-specification
+        weight: 0.6
+        key: true
+      - id: fom-2-1-sets-objects
+        weight: 0.4
+        key: false
+      - id: subset-relation-basics
+        weight: 0.4
+        key: false
+      - id: subsets-power-sets
+        weight: 0.4
+        key: false
+      - id: set-identities-proofs
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.24 and Theorem 2.25: equal sets and mutual containment'
+        key_prerequisites: [subset-relation-basics]
+        exemplars:
+          - problem: 'Let $A=\{2,4,6\}$, $B=\{2,4,6\}$ and $C=\{2,4,6,8\}$. Give 1 if the two sets are equal and 0 if they are not. (a) $A$ and $B$. (b) $A$ and $C$. (c) $B$ and $C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'Two sets are equal when they have the same elements. The sets $A$ and $B$ have the same elements 2, 4 and 6, so (a) is 1. The set $C$ has the extra element 8, so (b) and (c) are 0.'
+          - problem: 'Let $A=\{1,2,3\}$ and $B=\{1,2,3,4\}$. Give 1 for a true relation and 0 for a false relation. (a) $A\subseteq B$. (b) $B\subseteq A$. (c) $A=B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'Every element of $A$ is in $B$, so (a) is 1. The element 4 is in $B$ and not in $A$, so (b) is 0. Two sets are equal only if both containments hold. So (c) is 0.'
+          - problem: 'Let $A=\{1,1,2,3,3\}$ and $B=\{3,2,1\}$. (a) Give the number of elements of $A$. (b) Give the number of elements of $B$. (c) Give 1 if $A=B$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 1'
+            solution_sketch: 'A repeated entry gives one element. So $A$ has the elements 1, 2 and 3, which is 3 elements. The set $B$ has the same 3 elements. Both sets have the same elements, so (c) is 1.'
+          - problem: 'Let $A$ hold the positive integers $k$ with $k^2<10$. Let $B$ hold the integers $k$ with $1\le k\le 4$ and $k\ne 4$. Give 1 for a true relation and 0 for a false relation. (a) $A\subseteq B$. (b) $B\subseteq A$. (c) $A=B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 1'
+            solution_sketch: 'The set $A$ is {1,2,3}, because $4^2=16$ is too big. The set $B$ is {1,2,3} too. Each set sits in the other, so (a) and (b) are 1. Then $A=B$, and (c) is 1.'
+          - problem: 'Let $A$ hold the integers from 1 to 20 that 6 divides. Let $B$ hold the integers from 1 to 20 that 3 divides. (a) Give 1 if $A\subseteq B$ and 0 if not. (b) Give 1 if $B\subseteq A$ and 0 if not. (c) Give the smallest element of $B$ that is not in $A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 3'
+            solution_sketch: 'The set $A$ is {6,12,18} and the set $B$ is {3,6,9,12,15,18}. Each element of $A$ is in $B$, so (a) is 1. The element 3 is in $B$ and not in $A$, so (b) is 0. It is the smallest such element, so (c) is 3.'
+          - problem: 'Let $A=\{1,2,3,4\}$ and $B=\{3,4,5\}$. (a) Give the number of elements of $A\setminus(A\setminus B)$. (b) Give the number of elements of $A\cap B$. (c) Give 1 if $A\setminus(A\setminus B)=A\cap B$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 2; c = 1'
+            solution_sketch: 'First $A\setminus B$ is {1,2}. Take it from $A$ and {3,4} stays, which is 2 elements. Also $A\cap B$ is {3,4}, which is 2 elements. The two sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,3,4,5\}$ and $B=\{4,5,6\}$. (a) Give the number of elements of $A\setminus(A\cap B)$. (b) Give the number of elements of $A\setminus B$. (c) Give 1 if $A\setminus(A\cap B)=A\setminus B$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 1'
+            solution_sketch: 'The set $A\cap B$ is {4,5}. Take it from $A$ and {1,2,3} stays, which is 3 elements. The set $A\setminus B$ is also {1,2,3}, which is 3 elements. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,3\}$ and $B=\{3,4\}$. (a) Give the number of elements of $B\setminus A$. (b) Give the number of elements of $A\setminus(B\setminus A)$. (c) Give the sum of the elements of $A\setminus(B\setminus A)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 3; c = 6'
+            solution_sketch: 'The set $B\setminus A$ is {4}, which is 1 element. The number 4 is not in $A$, so taking it from $A$ changes nothing. So $A\setminus(B\setminus A)=A$ has 3 elements. Their sum is $1+2+3=6$.'
+          # argument: Theorem 2.25
+          - problem: 'Prove: two sets $A$ and $B$ are equal exactly when $A\subseteq B$ and $B\subseteq A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'By the Axiom of Extension, A = B means each x is in A exactly when x is in B. Split this into two implications: the two containments.'
+            solution_sketch: 'Start with the Axiom 2.24: the sets are equal when each object x lies in A exactly when it lies in B. Write the biconditional as two implications. The first one, x in A gives x in B, is $A\subseteq B$. The second one, x in B gives x in A, is $B\subseteq A$. Every step is an equivalence, so the argument runs in both directions.'
+          # source: FoM exercise 2.3-2-10
+          - problem: 'Let $A$ and $B$ be sets. Show that $A\setminus(A\setminus B)=A\cap B$ with two containments.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments with an arbitrary element. An element of A that is not outside B lies in B, so it lies in the overlap.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. Take x in $A\setminus(A\setminus B)$. Then x is in $A$ and x is not in $A\setminus B$, so x is in $B$. Hence x is in $A\cap B$. Now take x in $A\cap B$. It is in $A$ and in $B$, so it is not in $A\setminus B$, and it lies in $A\setminus(A\setminus B)$.'
+          # source: FoM exercise 2.3-2-11
+          - problem: 'Let $A$ and $B$ be sets. Prove: $A\setminus(A\setminus B)=A\cap B$. Follow one element $x$ of $A$ through the two differences.'
+            answer_contract: {"kind":"written"}
+            answer: 'Follow x in A. Then x is not in A minus B exactly when x is in B, so x is in A minus the difference exactly when x is in A and in B.'
+            solution_sketch: 'Take x in A. The element x lies in $A\setminus B$ exactly when x is not in $B$. So x stays in $A\setminus(A\setminus B)$ exactly when x is in $B$. An element outside $A$ is in neither side. So both sides hold the same elements, as in Theorem 2.25 for the equality.'
+          # source: FoM exercise 2.3-2-12
+          - problem: 'Let $A$ and $B$ be sets. Show that $A\setminus(A\cap B)=A\setminus B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take an element of each side and show it lies in the other side. Both conditions mean that x is in A and x is not in B.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. Let x be in $A\setminus(A\cap B)$. Then x is in $A$ and x is not in $A\cap B$, so x is not in $B$. Hence x is in $A\setminus B$. Now let x be in $A\setminus B$. Then x is in $A$ and not in $B$, so x is not in $A\cap B$.'
+          # source: FoM exercise 2.3-2-13
+          - problem: 'Let $A$ and $B$ be sets. Show that $A\setminus(B\setminus A)=A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The inclusion in A is clear. For the other inclusion, an element of A is not in B minus A, because that set holds only elements outside A.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. A difference $A\setminus X$ is always inside $A$, so $A\setminus(B\setminus A)\subseteq A$. Now let x be in $A$. Every element of $B\setminus A$ is outside $A$, so x is not in $B\setminus A$. Hence x is in $A\setminus(B\setminus A)$.'
+        constraints: 'Test equality of small sets by their elements and by two containments; the items vary the sets.'
+      - id: kp2
+        name: 'Theorem 2.27, Theorem 2.28, Proposition 2.29 and Example 2.30: laws of intersection'
+        key_prerequisites: [fom-2-2-axiom-specification]
+        exemplars:
+          - problem: 'Let $A=\{1,2,3,4\}$ and $B=\{3,4,5\}$. (a) Give the number of elements of $A\cap B$. (b) Give the number of elements of $B\cap A$. (c) Give 1 if $A\cap B=B\cap A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 2; c = 1'
+            solution_sketch: 'The common elements of $A$ and $B$ are 3 and 4. So $A\cap B$ has 2 elements. The set $B\cap A$ has the same 2 elements. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,3,4,5,6\}$, $B=\{2,4,6,8\}$ and $C=\{3,4,5,6\}$. (a) Give the sum of the elements of $A\cap(B\cap C)$. (b) Give the sum of the elements of $(A\cap B)\cap C$. (c) Give the number of elements of $A\cap(B\cap C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 10; b = 10; c = 2'
+            solution_sketch: 'The set $B\cap C$ is {4,6}. Then $A\cap(B\cap C)$ is {4,6}, with sum 10. The set $A\cap B$ is {2,4,6}, and $(A\cap B)\cap C$ is {4,6}, with sum 10. The set $A\cap(B\cap C)$ has 2 elements.'
+          - problem: 'Let $A=\{1,2\}$ and $B=\{1,2,3\}$. (a) Give 1 if $A\subseteq B$ and 0 if not. (b) Give the number of elements of $A\cap B$. (c) Give 1 if $A\cap B=A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 1'
+            solution_sketch: 'Both elements of $A$ lie in $B$, so (a) is 1. The set $A\cap B$ is {1,2}, which has 2 elements. It equals $A$, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,4\}$ and $B=\{1,2,3\}$. (a) Give 1 if $A\subseteq B$ and 0 if not. (b) Give 1 if $A\cap B=A$ and 0 if not. (c) Give the number of elements of $A\cap B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 0; c = 2'
+            solution_sketch: 'The element 4 is in $A$ and not in $B$, so (a) is 0. The set $A\cap B$ is {1,2}, which is not $A$, so (b) is 0. The set {1,2} has 2 elements.'
+          - problem: 'Let $A$ hold the integers from 1 to 30 that 2 divides. Let $B$ hold the integers from 1 to 30 that 3 divides. (a) Give the number of elements of $A\cap B$. (b) Give the largest element of $A\cap B$. (c) Give 1 if $A\cap B\subseteq A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 30; c = 1'
+            solution_sketch: 'An integer is in $A\cap B$ when 6 divides it. In the range 1 to 30 these are 6, 12, 18, 24 and 30, which is 5 integers. The largest is 30. Every element of an intersection is in each set, so (c) is 1.'
+          - problem: 'Let $A=\{2,4\}$, $B=\{2,4,6,8\}$ and $C=\{1,2,3\}$. Give 1 for a true statement and 0 for a false statement. (a) $A\cap B=A$. (b) $A\cap C=A$. (c) $A\subseteq C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'Both elements of $A$ lie in $B$, so $A\cap B=A$ and (a) is 1. The element 4 is not in $C$, so $A\cap C$ is {2}, which is not $A$. Then (b) is 0. Also $A\subseteq C$ fails, so (c) is 0.'
+          - problem: 'Let $A=\{1,5,9\}$. (a) Give the number of elements of $A\cap A$. (b) Give the sum of the elements of $A\cap A$. (c) Give 1 if $A\cap A=A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 15; c = 1'
+            solution_sketch: 'An element is in $A\cap A$ when it is in $A$. So $A\cap A$ is {1,5,9}, with 3 elements. The sum is $1+5+9=15$. The sets are equal, so (c) is 1.'
+          - problem: 'A prime number $p$ is a twin prime when $p-2$ or $p+2$ is also prime. (a) Give the number of twin primes below 20. (b) Give the number of twin primes below 50. (c) Give 1 if 23 is a twin prime and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 11; c = 0'
+            solution_sketch: 'Below 20 the twin primes are 3, 5, 7, 11, 13, 17 and 19, which is 7 numbers. Below 50 we add 29, 31, 41 and 43, which gives 11 numbers. For 23 the numbers 21 and 25 are not prime, so (c) is 0.'
+          # source: FoM exercise 2.3-2-15
+          - problem: 'A twin prime is a prime $p$ for which $p-2$ or $p+2$ is prime also. The first twin prime is 3. List the twin primes in increasing order. (a) Give the 20th twin prime. (b) Give the sum of the first 20 twin primes. (c) Give the number of twin primes from 100 to 140.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 137; b = 1040; c = 6'
+            solution_sketch: 'List the twin primes in order: 3, 5, 7, 11, 13, 17, 19, 29, 31, 41, 43, 59, 61, 71, 73, 101, 103, 107, 109 and 137. The 20th is 137. The sum of the 20 numbers is 1040. Between 100 and 140 we find 101, 103, 107, 109, 137 and 139, which is 6 numbers.'
+          # source: FoM exercise 2.3-2-16
+          - problem: 'Let $A$ and $B$ be sets. The first three parts use $A=\{1,2\}$ and $B=\{1,2,3\}$. The last part uses $A=\{1,2,3\}$ and $B=\{1,2\}$. Give 1 if the implication is true for these sets and 0 if it is false. (a) If $A\subseteq B$, then $A=B$. (b) If $A\subseteq B$, then $A=B$ or $B\subseteq A$. (c) If $A\subseteq B$, then $A\cap B=B$. (d) If $A\cap B=B$, then $A\subseteq B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 0; c = 0; d = 0'
+            solution_sketch: 'Use the given sets. In (a) $A\subseteq B$ holds, but $A\ne B$, so the implication has the value 0. In (b) neither $A=B$ nor $B\subseteq A$ holds, so the value is 0. In (c) the set $A\cap B$ is {1,2}, not $B$, so the value is 0. In (d) the hypothesis $A\cap B=B$ holds, but $A\subseteq B$ fails because 3 is in $A$ only, so the value is 0.'
+          # argument: Theorem 2.27
+          - problem: 'Prove: intersection of sets is commutative. For sets $A$ and $B$, show that $A\cap B=B\cap A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. An element in both A and B is in both B and A, so it lies in B intersect A, and the reverse holds the same way.'
+            solution_sketch: 'Use Theorem 2.25: prove two containments. Let x be in $A\cap B$. Then x is in $A$ and x is in $B$, so x is in $B$ and x is in $A$, which gives $x\in B\cap A$. Now let x be in $B\cap A$. The same two facts in the other order give $x\in A\cap B$. Both containments hold, so the sets are equal.'
+          # argument: Theorem 2.28
+          - problem: 'Prove: intersection of sets is associative. For sets $A$, $B$ and $C$, show that $A\cap(B\cap C)=(A\cap B)\cap C$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. An element of either side is in A, in B and in C, so it lies in the other side too.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. Let x be in $A\cap(B\cap C)$. Then x is in $A$, in $B$ and in $C$. So x is in $A\cap B$ and in $C$, which gives $x\in(A\cap B)\cap C$. For the reverse, let x be in $(A\cap B)\cap C$. Then x is in $A$, $B$ and $C$, so x is in $A\cap(B\cap C)$.'
+          # argument: Proposition 2.29
+          - problem: 'Prove: for sets $A$ and $B$, the relation $A\subseteq B$ holds exactly when $A\cap B=A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A is inside B, the overlap of A and B is all of A. If the overlap equals A, then each element of A lies in B.'
+            solution_sketch: 'Prove two directions. First assume $A\subseteq B$. Each x in $A$ is in $B$, so $A\subseteq A\cap B$. Also $A\cap B\subseteq A$ always holds, so $A\cap B=A$ by Theorem 2.25. Now assume $A\cap B=A$ and let x be in $A$. Then x is in $A\cap B$, so x is in $B$.'
+          # source: FoM exercise 2.3-2-14
+          - problem: 'Let $A$ be a set. Show that $A\cap A=A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. An element of A is in A and in A, so it is in the intersection, and an element of the intersection is in A.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. Let x be in $A\cap A$. Then x is in $A$ by the definition of intersection. Now let x be in $A$. Then x is in $A$ and x is in $A$, so x is in $A\cap A$. This gives the equality.'
+        constraints: 'Compute intersections of small sets and test the laws; the items vary the sets.'
+    diagnostic_exemplar:
+      problem: 'Let $A=\{1,2\}$ and $B=\{2,1\}$. Give 1 if $A=B$ and 0 if not.'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Two sets are equal when they have the same elements. Both sets hold 1 and 2. So the value is 1.'
+  - id: fom-2-4-axiom-unions
+    name: '2.4 The Axiom of Unions'
+    program_items: [94, 95, 96, 97, 98, 99, 100, 101, 102]
+    core: false
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 720
+    prerequisites:
+      - id: fom-2-3-axiom-extension
+        weight: 0.6
+        key: true
+      - id: fom-2-2-axiom-specification
+        weight: 0.4
+        key: false
+      - id: fom-1-3-conjunction-disjunction-negation
+        weight: 0.4
+        key: false
+      - id: set-identities-proofs
+        weight: 0.4
+        key: false
+      - id: union-intersection-difference
+        weight: 0.4
+        key: false
+      - id: indexed-unions-intersections
+        weight: 0.4
+        key: false
+      - id: symmetric-difference
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.31, Proposition 2.32, Theorem 2.33 and Theorem 2.34: the union of a family and the union laws'
+        key_prerequisites: [fom-2-3-axiom-extension]
+        exemplars:
+          - problem: 'Let $\mathcal{C}=\{\{1,2\},\{2,3\},\{5\}\}$ be a family of sets. (a) Give the number of elements of $\bigcup\mathcal{C}$. (b) Give the sum of the elements of $\bigcup\mathcal{C}$. (c) Give 1 if $\{2,3\}\subseteq\bigcup\mathcal{C}$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 11; c = 1'
+            solution_sketch: 'The union holds every element of every member of the family. So $\bigcup\mathcal{C}=\{1,2,3,5\}$. It has 4 elements and the sum $1+2+3+5=11$. The member {2,3} lies inside the union by Proposition 2.32, so (c) is 1.'
+          - problem: 'Let $\mathcal{C}=\{\{1\},\{1,2\},\{1,2,3\}\}$. (a) Give the number of elements of $\bigcup\mathcal{C}$. (b) Give the largest element of $\bigcup\mathcal{C}$. (c) Give the number of members of $\mathcal{C}$ that are subsets of $\bigcup\mathcal{C}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 3'
+            solution_sketch: 'The union is {1,2,3}, so it has 3 elements and the largest is 3. By Proposition 2.32 each member of the family is a subset of the union. The family has 3 members, so (c) is 3.'
+          - problem: 'Let $A=\{1,3,5\}$ and $B=\{2,3,4\}$. (a) Give the number of elements of $A\cup B$. (b) Give the number of elements of $B\cup A$. (c) Give the sum of the elements of $A\cup B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 5; c = 15'
+            solution_sketch: 'The union $A\cup B$ is {1,2,3,4,5}, which has 5 elements. The union $B\cup A$ holds the same elements, so it has 5 elements too. The sum is $1+2+3+4+5=15$.'
+          - problem: 'Let $A=\{1,2\}$, $B=\{2,3\}$ and $C=\{3,4,5\}$. (a) Give the number of elements of $A\cup(B\cup C)$. (b) Give the number of elements of $(A\cup B)\cup C$. (c) Give the sum of the elements of $(A\cup B)\cup C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 5; c = 15'
+            solution_sketch: 'The set $B\cup C$ is {2,3,4,5}, so $A\cup(B\cup C)$ is {1,2,3,4,5}, which is 5 elements. The set $A\cup B$ is {1,2,3}, so $(A\cup B)\cup C$ is {1,2,3,4,5} too. The sum is 15.'
+          - problem: 'Let $A=\{4,7,9\}$. (a) Give the number of elements of $A\cup A$. (b) Give the sum of the elements of $A\cup A$. (c) Give 1 if $A\cup A=A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 20; c = 1'
+            solution_sketch: 'An element is in $A\cup A$ when it is in $A$ or in $A$, so when it is in $A$. The set is {4,7,9}, with 3 elements and the sum $4+7+9=20$. The sets are equal, so (c) is 1.'
+          - problem: 'Parts a and b use $A=\{1,2\}$ and $B=\{1,2,3\}$. Parts c and d use $A=\{1,4\}$ and $B=\{1,2,3\}$. Give 1 for a true relation and 0 for a false relation. (a) $A\subseteq B$. (b) $A\cup B=B$. (c) $A\subseteq B$. (d) $A\cup B=B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0; d = 0'
+            solution_sketch: 'For the first pair, $A\subseteq B$ holds and $A\cup B$ is {1,2,3}, which is $B$. So (a) and (b) are 1. For the second pair, 4 is in $A$ and not in $B$, so (c) is 0. Then $A\cup B=\{1,2,3,4\}$ is not $B$, so (d) is 0.'
+          - problem: 'Let $A=\{1,2\}$ and $B=\{2,5\}$. Look at the family $\{A,B\}$. (a) Give the number of elements of $\bigcup\{A,B\}$. (b) Give the sum of the elements of $\bigcup\{A,B\}$. (c) Give 1 if $\bigcup\{A,B\}=A\cup B$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 8; c = 1'
+            solution_sketch: 'The union of the family $\{A,B\}$ holds the elements of $A$ and of $B$. That is {1,2,5}, with 3 elements and the sum 8. This is the definition of $A\cup B$ in Axiom 2.31, so (c) is 1.'
+          - problem: 'Let $\mathcal{C}$ be the family of the sets $\{k,k+1\}$ for $k=1,2,3,4,5$. (a) Give the number of members of $\mathcal{C}$. (b) Give the number of elements of $\bigcup\mathcal{C}$. (c) Give the sum of the elements of $\bigcup\mathcal{C}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 6; c = 21'
+            solution_sketch: 'The family has 5 members: {1,2}, {2,3}, {3,4}, {4,5} and {5,6}. Their union is {1,2,3,4,5,6}, which is 6 elements. The sum is $1+2+3+4+5+6=21$.'
+          # source: FoM exercise 2.4-2-23
+          - problem: 'Let $A=\{1,2,3,6\}$, $B=\{3,4,5\}$ and $C=\{1,4\}$. (a) Give the sum of the elements of $A\cap B$. (b) Give the number of elements of $A\cup C$. (c) Give the sum of the elements of $A\cap(B\cup C)$. (d) Give the number of elements of $A\cup(B\cap C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 5; c = 4; d = 5'
+            solution_sketch: 'The set $A\cap B$ is {3}, with sum 3. The set $A\cup C$ is {1,2,3,4,6}, which is 5 elements. The set $B\cup C$ is {1,3,4,5}, so $A\cap(B\cup C)$ is {1,3}, with sum 4. The set $B\cap C$ is {4}, so $A\cup(B\cap C)$ is {1,2,3,4,6}, which is 5 elements.'
+          # argument: Proposition 2.32
+          - problem: 'Prove: let $\mathcal{C}$ be a family of sets and let $C$ be a member of $\mathcal{C}$. Then $C\subseteq\bigcup\mathcal{C}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take any element x of C. Since C is a member of the family, x belongs to a member of the family, so x is in the union.'
+            solution_sketch: 'Let x be an arbitrary element of $C$. The set $C$ belongs to the family $\mathcal{C}$. By Axiom 2.31 the union holds every element of every member of the family. So x is in $\bigcup\mathcal{C}$. As x was arbitrary, $C\subseteq\bigcup\mathcal{C}$.'
+          # argument: Theorem 2.33
+          - problem: 'Prove: union of sets is commutative. For sets $A$ and $B$, show that $A\cup B=B\cup A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. Being in A or in B is the same as being in B or in A, so each element of one side is in the other.'
+            solution_sketch: 'Use Axiom 2.31 for the meaning of union and Theorem 2.25 for the two containments. Let x be in $A\cup B$. Then x is in $A$ or x is in $B$. The same two cases in the other order give $x\in B\cup A$. The reverse containment follows the same way.'
+          # argument: Theorem 2.34
+          - problem: 'Prove: union of sets is associative. For sets $A$, $B$ and $C$, show that $A\cup(B\cup C)=(A\cup B)\cup C$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. Membership in either side means membership in at least one of A, B and C.'
+            solution_sketch: 'Use Axiom 2.31 and Theorem 2.25. Let x be in $A\cup(B\cup C)$. Then x is in $A$, or in $B$, or in $C$. If x is in $A$ or in $B$, it is in $A\cup B$, so it is in $(A\cup B)\cup C$. If x is in $C$, it is in $(A\cup B)\cup C$ too. The reverse containment follows the same way.'
+          # source: FoM exercise 2.4-2-17
+          - problem: 'Let $A$ and $B$ be sets. Use the definition of the union to show that $A\cup B$ and $B\cup A$ have the same elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'An element is in A union B when it is in A or in B. The same words describe B union A, so the two sets have the same elements.'
+            solution_sketch: 'Take x in $A\cup B$. Then x is in $A$ or in $B$ by Axiom 2.31. This is the condition for $x\in B\cup A$. Take x in $B\cup A$ and use the same condition. Then Theorem 2.33 follows from the Axiom of Extension.'
+          # source: FoM exercise 2.4-2-18
+          - problem: 'Let $A$, $B$ and $C$ be sets. Show that the two sets $A\cup(B\cup C)$ and $(A\cup B)\cup C$ have the same elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'Both sets hold exactly the objects that are in at least one of A, B and C.'
+            solution_sketch: 'Take x in $A\cup(B\cup C)$. By Axiom 2.31 the object x is in at least one of $A$, $B$ and $C$. This is also the condition for $x\in(A\cup B)\cup C$. Take x in the second set and use the same condition. Then Theorem 2.34 follows from the Axiom of Extension.'
+          # source: FoM exercise 2.4-2-22
+          - problem: 'Let $A$ be a set. Show that $A\cup A=A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show both containments. An element of the union is in A or in A, so it is in A, and an element of A is in the union.'
+            solution_sketch: 'Use Theorem 2.25 and prove two containments. Let x be in $A\cup A$. Then x is in $A$ or x is in $A$, so x is in $A$. Now let x be in $A$. Then x is in at least one of the two copies, so x is in $A\cup A$. By Axiom 2.31 these steps are equivalences.'
+          # source: FoM exercise 2.4-2-25
+          - problem: 'Let $A$ and $B$ be sets. Show that $A\subseteq B$ exactly when $A\cup B=B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A is inside B, the union adds nothing to B. If the union equals B, then A lies inside the union, which is B.'
+            solution_sketch: 'Use Proposition 2.29 as the model. First assume $A\subseteq B$ and let x be in $A\cup B$. If x is in $A$, then x is in $B$, so $A\cup B\subseteq B$. Also $B\subseteq A\cup B$ by Proposition 2.32. Now assume $A\cup B=B$. Each x in $A$ is in $A\cup B$, so it is in $B$.'
+          # source: FoM exercise 2.4-2-26
+          - problem: 'Let $A$ and $B$ be sets. Show that $A\cap B=A$ exactly when $A\cup B=B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Both conditions are equivalent to A being inside B. Link them with the two earlier equivalences.'
+            solution_sketch: 'By Proposition 2.29, $A\cap B=A$ holds exactly when $A\subseteq B$. By the result of exercise 2-25, $A\subseteq B$ holds exactly when $A\cup B=B$. Chain the two equivalences. The chain holds in both directions.'
+          # source: FoM exercise 2.4-2-27
+          - problem: 'Let $A$, $B$ and $U$ be sets with $A\subseteq U$ and $B\subseteq U$. Show that $A\subseteq B$ exactly when $(U\setminus A)\cup B=U$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A is inside B, each x of U is outside A or in B. If the union is U, an x of A cannot lie outside B.'
+            solution_sketch: 'Assume $A\subseteq B$ and let x be in $U$. If x is in $A$, then x is in $B$; if not, x is in $U\setminus A$. So x is in the union by Axiom 2.31, and the equality holds. Now assume the equality and let x be in $A$. If x is not in $B$, then x is outside the union, but the union is $U$. So x is in $B$.'
+        constraints: 'Compute unions of families and of small sets; the items vary the sets.'
+      - id: kp2
+        name: 'Theorem 2.35, Theorem 2.36 and Theorem 2.37: distributive laws, DeMorgan''s laws and differences'
+        key_prerequisites: [fom-1-3-conjunction-disjunction-negation]
+        exemplars:
+          - problem: 'Let $A=\{1,2,3,4\}$, $B=\{3,4,5\}$ and $C=\{4,5,6\}$. (a) Give the number of elements of $A\cap(B\cup C)$. (b) Give the number of elements of $(A\cap B)\cup(A\cap C)$. (c) Give the sum of the elements of $A\cap(B\cup C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 2; c = 7'
+            solution_sketch: 'The set $B\cup C$ is {3,4,5,6}. So $A\cap(B\cup C)$ is {3,4}, which is 2 elements with sum 7. Also $A\cap B=\{3,4\}$ and $A\cap C=\{4\}$. Their union is {3,4}, which is 2 elements.'
+          - problem: 'Let $A=\{1,2\}$, $B=\{2,3,4\}$ and $C=\{4,5\}$. (a) Give the number of elements of $A\cup(B\cap C)$. (b) Give the number of elements of $(A\cup B)\cap(A\cup C)$. (c) Give the sum of the elements of $(A\cup B)\cap(A\cup C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 7'
+            solution_sketch: 'The set $B\cap C$ is {4}, so $A\cup(B\cap C)$ is {1,2,4}, which is 3 elements. The sets $A\cup B=\{1,2,3,4\}$ and $A\cup C=\{1,2,4,5\}$ meet in {1,2,4}. That is 3 elements with sum 7.'
+          - problem: 'Let $A=\{1,2,3,4,5,6,7,8\}$, $B=\{2,4,6\}$ and $C=\{3,6,9\}$. (a) Give the number of elements of $A\setminus(B\cup C)$. (b) Give the number of elements of $(A\setminus B)\cap(A\setminus C)$. (c) Give the sum of the elements of $(A\setminus B)\cap(A\setminus C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 4; c = 21'
+            solution_sketch: 'The set $B\cup C$ is {2,3,4,6,9}. Take it from $A$ and {1,5,7,8} stays, which is 4 elements. The sets $A\setminus B=\{1,3,5,7,8\}$ and $A\setminus C=\{1,2,4,5,7,8\}$ meet in {1,5,7,8}. Its sum is 21.'
+          - problem: 'Let $A=\{1,2,3,4,5,6,7,8\}$, $B=\{2,4,6,8\}$ and $C=\{4,5,6\}$. (a) Give the number of elements of $A\setminus(B\cap C)$. (b) Give the number of elements of $(A\setminus B)\cup(A\setminus C)$. (c) Give the sum of the elements of $(A\setminus B)\cup(A\setminus C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 6; c = 26'
+            solution_sketch: 'The set $B\cap C$ is {4,6}. Take it from $A$ and {1,2,3,5,7,8} stays, which is 6 elements. The sets $A\setminus B=\{1,3,5,7\}$ and $A\setminus C=\{1,2,3,7,8\}$ join to {1,2,3,5,7,8}. Its sum is 26.'
+          - problem: 'Let $A=\{1,2,3\}$, $B=\{3,4,5\}$ and $C=\{3,5\}$. (a) Give the number of elements of $(A\cup B)\setminus C$. (b) Give the number of elements of $(A\setminus C)\cup(B\setminus C)$. (c) Give the sum of the elements of $(A\setminus C)\cup(B\setminus C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 7'
+            solution_sketch: 'The set $A\cup B$ is {1,2,3,4,5}. Take {3,5} from it and {1,2,4} stays, which is 3 elements. The sets $A\setminus C=\{1,2\}$ and $B\setminus C=\{4\}$ join to {1,2,4}. Its sum is 7.'
+          - problem: 'Let $A=\{1,2,3,4\}$, $B=\{3,4,5\}$ and $C=\{4\}$. (a) Give the number of elements of $(A\cap B)\setminus C$. (b) Give the number of elements of $(A\setminus C)\cap(B\setminus C)$. (c) Give the sum of the elements of $(A\setminus C)\cap(B\setminus C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 3'
+            solution_sketch: 'The set $A\cap B$ is {3,4}. Take {4} from it and {3} stays, which is 1 element. The sets $A\setminus C=\{1,2,3\}$ and $B\setminus C=\{3,5\}$ meet in {3}. Its sum is 3.'
+          - problem: 'Let $A$ hold the integers from 1 to 10. Let $B$ hold the even integers of $A$ and let $C$ hold the integers of $A$ that 3 divides. (a) Give the number of elements of $A\setminus(B\cup C)$. (b) Give the number of elements of $(A\setminus B)\cap(A\setminus C)$. (c) Give the sum of the elements of $A\setminus(B\cup C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 13'
+            solution_sketch: 'The union $B\cup C$ is {2,3,4,6,8,9,10}, which is 7 elements. So $A\setminus(B\cup C)=\{1,5,7\}$, which is 3 elements with sum 13. The sets of odd integers and of integers that 3 does not divide meet in {1,5,7} too. That is 3 elements.'
+          - problem: 'Let $A=\{1,2,3\}$, $B=\{1\}$ and $C=\{2\}$. (a) Give the number of elements of $A\setminus(B\cup C)$. (b) Give the number of elements of $(A\setminus B)\cup(A\setminus C)$. (c) Give 1 if the two sets are equal and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 3; c = 0'
+            solution_sketch: 'The union $B\cup C$ is {1,2}, so $A\setminus(B\cup C)=\{3\}$, which is 1 element. The sets $A\setminus B=\{2,3\}$ and $A\setminus C=\{1,3\}$ join to {1,2,3}, which is 3 elements. The sets differ, so (c) is 0. A union is not the right form here. See Theorem 2.36.'
+          # source: FoM exercise 2.4-2-30
+          - problem: 'In each part, let $L$ be the left set and $R$ the right set. Give the number of elements of $L$ minus the number of elements of $R$. (a) $A=\{1\}$, $B=\{2\}$, $L=A\cup B$ and $R=\emptyset$. (b) $A=\{1,2,3\}$, $B=\{1\}$, $C=\{2\}$, $L=A\setminus(B\cup C)$ and $R=(A\setminus B)\cup(A\setminus C)$. (c) $A=\{1,2\}$, $B=\{1\}$, $C=\{2\}$, $L=A\setminus(B\cap C)$ and $R=(A\setminus B)\cap(A\setminus C)$. (d) $A=\{1\}$, $B=\{2\}$, $C=\emptyset$, $L=(A\cup B)\setminus C$ and $R=(A\setminus C)\cap(B\setminus C)$. (e) Use the sets of part d with $L=(A\cap B)\setminus C$ and $R=(A\setminus C)\cup(B\setminus C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}}]}
+            answer: 'a=2;b=-2;c=2;d=2;e=-2'
+            solution_sketch: 'In (a) the left side is {1,2} and the right side is empty, so the difference is 2. In (b) the left side is {3} and the right side is {1,2,3}, so the difference is 1-3=-2. In (c) the left side is {1,2} and the right side is empty, so the difference is 2. In (d) the left side is {1,2} and the right side is empty, so the difference is 2. In (e) the left side is empty and the right side is {1,2}, so the difference is -2.'
+          # argument: Theorem 2.35
+          - problem: 'Prove part 1: for sets $A$, $B$ and $C$, show that $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Turn each membership into a logical statement about x. Then apply the distributive law of and over or.'
+            solution_sketch: 'Write x in the left side as: x in A and (x in B or x in C). This uses Axiom 2.31 and the definition of intersection. Apply the distributive law of Theorem 1.24: this becomes (x in A and x in B) or (x in A and x in C). That is x in $(A\cap B)\cup(A\cap C)$. Each step is an equivalence, so the sets have the same elements.'
+          # argument: Theorem 2.36
+          - problem: 'Prove part 1: for sets $A$, $B$ and $C$, show that $A\setminus(B\cup C)=(A\setminus B)\cap(A\setminus C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Turn each membership into a logical statement about x. Then the not of an or becomes an and of two nots.'
+            solution_sketch: 'Write x in the left side as: x in A and not (x in B or x in C). Apply the negation rule for or from Theorem 1.24: this is x in A and x not in B and x not in C. Repeat the x in A, as in the proof of Theorem 2.35, and group the terms. This is x in $(A\setminus B)\cap(A\setminus C)$. Theorem 3.59 later allows the omitted parentheses.'
+          # argument: Theorem 2.37
+          - problem: 'Prove: for sets $A$, $B$ and $C$, the equations $(A\cup B)\setminus C=(A\setminus C)\cup(B\setminus C)$ and $(A\cap B)\setminus C=(A\setminus C)\cap(B\setminus C)$ hold.'
+            answer_contract: {"kind":"written"}
+            answer: 'Rewrite each membership as a statement about x. Apply the distributive laws of and over or.'
+            solution_sketch: 'For the first equation, x in the left side means (x in A or x in B) and x not in C. By Theorem 2.35 and the distributive law, this is (x in A and not in C) or (x in B and not in C). For the second equation, x in A and x in B and x not in C. Repeat the not-in-C part. That gives the right side.'
+          # source: FoM exercise 2.4-2-19
+          - problem: 'Prove the second equation of the distributive laws: for sets $A$, $B$ and $C$, show that $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Turn each membership into a logical statement about x. Then apply the distributive law of or over and.'
+            solution_sketch: 'Write x in the left side as: x in A or (x in B and x in C). Apply the distributive law of Theorem 1.24: this is (x in A or x in B) and (x in A or x in C). That is x in $(A\cup B)\cap(A\cup C)$. The proof of Theorem 2.35 uses the same method, and each step is an equivalence.'
+          # source: FoM exercise 2.4-2-20
+          - problem: 'Prove the second equation of DeMorgan''s laws: for sets $A$, $B$ and $C$, show that $A\setminus(B\cap C)=(A\setminus B)\cup(A\setminus C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Turn each membership into a logical statement about x. The not of an and becomes an or of two nots.'
+            solution_sketch: 'Write x in the left side as: x in A and not (x in B and x in C). Apply the negation rule for and from Theorem 1.24: this is x in A and (x not in B or x not in C). Distribute, as in Theorem 2.36. This is x in $(A\setminus B)\cup(A\setminus C)$.'
+          # source: FoM exercise 2.4-2-21
+          - problem: 'Let $A$, $B$ and $C$ be sets. (a) Prove the first equation $(A\cup B)\setminus C=(A\setminus C)\cup(B\setminus C)$. (b) Prove the second equation $(A\cap B)\setminus C=(A\setminus C)\cap(B\setminus C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Rewrite each membership as a statement about x. Use the distributive law for part a and a repeated condition for part b.'
+            solution_sketch: 'Use the method of Theorem 2.35 for each equation. Theorem 2.37 is the statement to prove. For (a), x in A or B and not in C is the same as x in A and not in C, or x in B and not in C. For (b), x in A and in B and not in C is the same as x in A and not in C and x in B and not in C.'
+          # source: FoM exercise 2.4-2-24
+          - problem: 'Prove these four equations with two containments each. Let $A$, $B$ and $C$ be sets. (a) $A\cap(B\cup C)=(A\cap B)\cup(A\cap C)$. (b) $A\cup(B\cap C)=(A\cup B)\cap(A\cup C)$. (c) $A\setminus(B\cup C)=(A\setminus B)\cap(A\setminus C)$. (d) $A\setminus(B\cap C)=(A\setminus B)\cup(A\setminus C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'For each equation take an arbitrary element of one side, show it is in the other side, and then do the reverse. Case splits handle the unions.'
+            solution_sketch: 'Use Theorem 2.25 for each equation. For (a), take x in $A\cap(B\cup C)$. Then x is in A, and in B or in C, so x is in $A\cap B$ or in $A\cap C$. Reverse the steps for the other containment. Treat (b), (c) and (d) the same way, with the facts of Theorem 2.35 and Theorem 2.36 as a guide.'
+          # source: FoM exercise 2.4-2-29
+          - problem: 'Let $A$, $B$, $C$ be sets with $B\subseteq A$ and $C\subseteq A$. Show that $B\cup C\subseteq A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take x in the union. Then x is in B or in C, and both sets lie inside A, so x is in A.'
+            solution_sketch: 'Let x be in $B\cup C$. By Axiom 2.31, x is in $B$ or x is in $C$. If x is in $B$, then x is in $A$ because $B\subseteq A$. If x is in $C$, then x is in $A$ because $C\subseteq A$. In both cases x is in $A$.'
+        constraints: 'Compute both sides of each law for small sets; the items vary the sets.'
+      - id: kp3
+        name: 'Example 2.38 and Definition 2.39: Boolean algebra for sets and the symmetric difference'
+        key_prerequisites: [fom-2-3-axiom-extension]
+        exemplars:
+          - problem: 'The symmetric difference of $A$ and $B$ is $A\triangle B=(A\setminus B)\cup(B\setminus A)$. Let $A=\{1,2,3,4\}$ and $B=\{3,4,5,6\}$. (a) Give the number of elements of $A\triangle B$. (b) Give the sum of the elements of $A\triangle B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 14'
+            solution_sketch: 'The set $A\setminus B$ is {1,2} and $B\setminus A$ is {5,6}. Their union is {1,2,5,6}. It has 4 elements and the sum $1+2+5+6=14$.'
+          - problem: 'Let $A=\{2,4,6,8\}$ and $B=\{4,8,12\}$. (a) Give the number of elements of $A\setminus B$. (b) Give the number of elements of $B\setminus A$. (c) Give the number of elements of $A\triangle B$. (d) Give the sum of the elements of $A\triangle B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 1; c = 3; d = 20'
+            solution_sketch: 'The set $A\setminus B$ is {2,6}, which is 2 elements. The set $B\setminus A$ is {12}, which is 1 element. Their union $A\triangle B$ is {2,6,12}, which is 3 elements with sum 20.'
+          - problem: 'Let $A=\{1,2\}$ and $B=\{2,3,4\}$. (a) Give the sum of the elements of $A\triangle B$. (b) Give the sum of the elements of $B\triangle A$. (c) Give 1 if $A\triangle B=B\triangle A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 8; c = 1'
+            solution_sketch: 'The set $A\triangle B$ is {1}$\cup${3,4}={1,3,4}, with sum 8. The set $B\triangle A$ joins the same two differences in the other order. It is {1,3,4} too, with sum 8. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,3\}$. (a) Give the number of elements of $A\triangle A$. (b) Give the number of elements of $A\triangle\emptyset$. (c) Give 1 if $A\triangle\emptyset=A$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 3; c = 1'
+            solution_sketch: 'Here $A\setminus A$ is empty, so $A\triangle A$ is empty, with 0 elements. The set $A\setminus\emptyset$ is $A$ and $\emptyset\setminus A$ is empty. So $A\triangle\emptyset=A$, with 3 elements, and (c) is 1.'
+          - problem: 'Let $A=\{1,2,3,5\}$ and $B=\{2,5,7\}$. (a) Give the sum of the elements of $(A\cup B)\setminus(A\cap B)$. (b) Give the sum of the elements of $A\triangle B$. (c) Give 1 if the two sets are equal and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 11; b = 11; c = 1'
+            solution_sketch: 'The union is {1,2,3,5,7} and the intersection is {2,5}. Their difference is {1,3,7}, with sum 11. Also $A\setminus B=\{1,3\}$ and $B\setminus A=\{7\}$, so $A\triangle B=\{1,3,7\}$ with sum 11. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2\}$, $B=\{2,3\}$ and $C=\{3,4\}$. (a) Give the sum of the elements of $(A\triangle B)\triangle C$. (b) Give the sum of the elements of $A\triangle(B\triangle C)$. (c) Give 1 if the two sets are equal and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 5; c = 1'
+            solution_sketch: 'The set $A\triangle B$ is {1,3}. Then $(A\triangle B)\triangle C$ is {1,4}, with sum 5. The set $B\triangle C$ is {2,4}. Then $A\triangle(B\triangle C)$ is {1,4}, with sum 5. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1\}$, $B=\{2\}$ and $C=\{3\}$. (a) Give the number of elements of $(A\cup B)\cup(A\cup C)$. (b) Give the number of elements of $(A\cup B)\cup C$. (c) Give 1 if the two sets are equal and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 1'
+            solution_sketch: 'The set $A\cup B$ is {1,2} and $A\cup C$ is {1,3}. Their union is {1,2,3}, which is 3 elements. The set $(A\cup B)\cup C$ is {1,2,3}, which is 3 elements. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A=\{1,2,3,4\}$, $B=\{3,4,5\}$ and $C=\{4,5,6\}$. (a) Give the sum of the elements of $A\cap(B\triangle C)$. (b) Give the sum of the elements of $(A\cap B)\triangle(A\cap C)$. (c) Give 1 if the two sets are equal and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 1'
+            solution_sketch: 'The set $B\triangle C$ is {3,6}. So $A\cap(B\triangle C)$ is {3}, with sum 3. The set $A\cap B$ is {3,4} and $A\cap C$ is {4}. Their symmetric difference is {3}, with sum 3. The sets are equal, so (c) is 1.'
+          - problem: 'Let $A$ have 10 elements and $B$ have 7 elements. Let $A\cap B$ have 4 elements. (a) Give the number of elements of $A\cup B$. (b) Give the number of elements of $A\setminus B$. (c) Give the number of elements of $A\triangle B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 13; b = 6; c = 9'
+            solution_sketch: 'The union has $10+7-4=13$ elements. The set $A\setminus B$ has $10-4=6$ elements. The set $B\setminus A$ has $7-4=3$ elements. The two differences do not overlap, so $A\triangle B$ has $6+3=9$ elements.'
+          # source: FoM exercise 2.4-2-31
+          - problem: 'Let $A$, $B$ and $C$ be sets. For each equation, list the membership patterns of an element $x$ (in or out of $A$, $B$ and $C$) that put $x$ in the left side. Do the same for the right side. Show that the two lists agree. (a) $(A\cap B)\cap(A\cap C)=(A\cap B)\cap C$. (b) $A\triangle B=(A\cup B)\setminus(A\cap B)$. (c) $A\triangle(B\triangle C)=(A\triangle B)\triangle C$. (d) $A\cap(B\triangle C)=(A\cap B)\triangle(A\cap C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Compare the patterns of membership in A, B and C. Both sides of each part give the same list, so the sets are equal.'
+            solution_sketch: 'Use Theorem 2.25: both sides hold the same elements when they hold the same membership patterns. For (a), both sides need x in A, B and C. For (b), both sides need x in exactly one of A and B. For (c) and (d), write the patterns of each side and compare them. The lists agree for each part.'
+          # source: FoM exercise 2.4-2-32
+          - problem: 'Let $A$, $B$ and $C$ be sets. Prove each equation by taking an element of one side and showing it is in the other side, and back. (a) $(A\cap B)\cap(A\cap C)=(A\cap B)\cap C$. (b) $A\triangle B=(A\cup B)\setminus(A\cap B)$. (c) $A\triangle B=B\triangle A$. (d) $A\triangle(B\triangle C)=(A\triangle B)\triangle C$. (e) $A\cap(B\triangle C)=(A\cap B)\triangle(A\cap C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'For each part take an arbitrary x of one side, trace it through the definitions to the other side, and then do the reverse. Case splits handle the differences.'
+            solution_sketch: 'Use Theorem 2.25 for each part. For (a), x in both sides means x is in A, B and C. For (b), x is in exactly one of A and B, which is x in the union and not in the intersection. For (c), the definition of the symmetric difference is symmetric in A and B. For (d) and (e), sort x by membership in A, B and C and check each case.'
+          # source: FoM exercise 2.4-2-33
+          - problem: 'Let $A$, $B$ and $C$ be sets. Prove each equation with the laws of Boolean algebra for sets, not with elements. (a) $(A\cap B)\cap(A\cap C)=(A\cap B)\cap C$. (b) $A\triangle B=(A\cup B)\setminus(A\cap B)$. (c) $A\triangle B=B\triangle A$. (d) $A\triangle(B\triangle C)=(A\triangle B)\triangle C$. (e) $A\cap(B\triangle C)=(A\cap B)\triangle(A\cap C)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Rewrite step by step with the commutative, associative and distributive laws. Cite the law at each step.'
+            solution_sketch: 'Rewrite each left side with the laws. Use Theorem 2.27 and Theorem 2.33 to swap the order. Use Theorem 2.28 and Theorem 2.34 to regroup. Use Theorem 2.35, Theorem 2.36 and Theorem 2.37 to distribute and to remove differences. For (a), regroup to get A intersect A, then use A intersect A equals A. Cite the law at each step.'
+          # source: FoM exercise 2.4-2-28
+          - problem: 'Let $A$, $B$ and $U$ be sets with $A\subseteq U$ and $B\subseteq U$. Show that $A=\emptyset$ exactly when $((U\setminus A)\cap B)\cup(A\cap(U\setminus B))=B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If A is empty, the left side is B. For the reverse, an element of A either lies in B or lies outside B, and each case contradicts the equation.'
+            solution_sketch: 'Assume $A=\emptyset$. Then $U\setminus A=U$ and $A\cap(U\setminus B)=\emptyset$, so the left side is $U\cap B=B$. Now assume the equation and let x be in $A$. If x is in $B$, x is in the left side only through $(U\setminus A)\cap B$, which fails because x is in $A$. If x is not in $B$, x is in $A\cap(U\setminus B)$, so x is in the left side, which is $B$. Both cases fail, so $A$ is empty.'
+        constraints: 'Compute symmetric differences and test identities for small sets; the items vary the sets.'
+    diagnostic_exemplar:
+      problem: 'Let $A=\{1,2\}$ and $B=\{2,3\}$. Give the number of elements of $A\cup B$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The union holds 1, 2 and 3. The element 2 counts one time. So the union has 3 elements.'
+  - id: fom-2-5-axiom-powers-relations-functions
+    name: '2.5 The Axiom of Powers, Relations, and Functions'
+    program_items: [103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123]
+    core: false
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 600
+    prerequisites:
+      - id: fom-2-4-axiom-unions
+        weight: 0.6
+        key: true
+      - id: fom-2-3-axiom-extension
+        weight: 0.4
+        key: false
+      - id: fom-2-2-axiom-specification
+        weight: 0.4
+        key: false
+      - id: cartesian-products
+        weight: 0.4
+        key: false
+      - id: functions-formal-definition
+        weight: 0.4
+        key: false
+      - id: subsets-power-sets
+        weight: 0.4
+        key: false
+      - id: functions-injective-surjective
+        weight: 0.4
+        key: false
+      - id: uncountability-diagonalization
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.40, Example 2.41, Theorem 2.42 and Definition 2.43: power sets and the ordered pair as a set'
+        key_prerequisites: [subsets-power-sets]
+        exemplars:
+          - problem: 'Let $S$ be a set with $n$ elements. Give the number of elements of $P(S)$ in each case. (a) $n=0$. (b) $n=1$. (c) $n=5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 32'
+            solution_sketch: 'A set with $n$ elements has $2^n$ subsets. For $n=0$ the value is 1, for $n=1$ the value is 2, and for $n=5$ the value is 32.'
+          - problem: 'Let $S=\{1,2,3\}$. For each set below, give 1 if it is an element of $P(S)$ and 0 if it is not. (a) $\{1,3\}$. (b) $\{1,4\}$. (c) $\emptyset$. (d) $\{1,2,3\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 1'
+            solution_sketch: 'An element of $P(S)$ is a subset of $S$. The sets $\{1,3\}$, $\emptyset$ and $\{1,2,3\}$ are subsets of $S$, so they get 1. The set $\{1,4\}$ holds 4, which is not in $S$, so it gets 0.'
+          - problem: 'Use the definition $(a,b):=\{\{a\},\{a,b\}\}$ of an ordered pair. (a) Give the number of elements of the set $(2,5)$. (b) Give the number of elements of the set $(3,3)$. (c) Give 1 if $(2,5)=(5,2)$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 1; c = 0'
+            solution_sketch: 'The set $(2,5)$ is $\{\{2\},\{2,5\}\}$, so (a) is 2. The set $(3,3)$ is $\{\{3\},\{3,3\}\}=\{\{3\}\}$, so (b) is 1. The sets $\{2\}$ and $\{5\}$ differ, so $(2,5)\ne(5,2)$ and (c) is 0.'
+          - problem: 'Suppose $\{\{a\},\{a,b\}\}=\{\{3\},\{3,7\}\}$. Give the value of each expression. (a) $a$. (b) $b$. (c) $a+b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 7; c = 10'
+            solution_sketch: 'Two ordered pairs are equal exactly when their first entries and their second entries are equal. So $a=3$ and $b=7$. Then $a+b=10$.'
+          - problem: 'Suppose $\{\{a\},\{a,b\}\}=\{\{6\}\}$. (a) Give the value of $a$. (b) Give the value of $b$. (c) Give the number of elements of $\{\{a\},\{a,b\}\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 6; c = 1'
+            solution_sketch: 'The right side has one element, $\{6\}$. So $\{a\}=\{6\}$ and $a=6$. Also $\{a,b\}=\{6\}$ forces $b=6$, and the set has 1 element.'
+          - problem: 'Let $S_0=\emptyset$ and $S_{k+1}=P(S_k)$. Give the number of elements of each set. (a) $S_1$. (b) $S_2$. (c) $S_3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 4'
+            solution_sketch: 'The set $S_1=\{\emptyset\}$ has 1 element. The set $S_2$ has $2^1=2$ elements. The set $S_3$ has $2^2=4$ elements.'
+          # source: FoM exercise 2.5-2-36
+          - problem: 'Let $A=\{a,b,c,d\}$ and let $B=\{1,2,3,4\}$. (a) Give the number of elements of $P(A)$. (b) Give the number of elements of $P(B)$. (c) Give the number of subsets of $A$ that have exactly 3 elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a=16;b=16;c=4'
+            solution_sketch: 'A set with 4 elements has $2^4=16$ subsets, so (a) and (b) are 16. A 3 element subset leaves out one of the 4 elements. So (c) is 4.'
+          # source: FoM exercise 2.5-2-37
+          - problem: 'Consider the set $\{1,2,3,4,5\}$. (a) Give the number of its subsets with exactly two elements. (b) Give the number of those subsets that contain the element 1. (c) Give the sum of the two numbers in the subset that holds the two largest elements.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a=10;b=4;c=9'
+            solution_sketch: 'There are $\binom{5}{2}=10$ pairs, so (a) is 10. A pair with the element 1 needs one more element from 4 choices, so (b) is 4. The two largest elements are 4 and 5, and 4+5=9, so (c) is 9.'
+          # source: FoM exercise 2.5-2-34
+          - problem: 'Let $f:A\to B$ be a function. Prove all three facts. (a) If $A$ is not empty, then $f$ is injective exactly when some function $g:B\to A$ has $g\circ f=\mathrm{id}_A$. (b) $f$ is surjective exactly when some function $h:B\to A$ has $f\circ h=\mathrm{id}_B$. (c) $f$ is bijective exactly when some function $k:B\to A$ has $k\circ f=\mathrm{id}_A$ and $f\circ k=\mathrm{id}_B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Build the one-sided inverse by sending each element of B to a chosen preimage. Read the identity back, and join (a) and (b) for (c).'
+            solution_sketch: 'For (a), let f be injective. Set g(f(x))=x on the range of f and send every other element of B to one fixed element of A. For the converse, g(f(x))=g(f(y)) gives x=y. For (b), pick one preimage h(y) for each y, so f(h(y))=y; the converse holds because f(h(y))=y shows y is a value. For (c), join (a) and (b), and show g=g(f(h))=h so one function k works.'
+          # source: FoM exercise 2.5-2-35
+          - problem: 'Let $f:A\to B$ be a function. (a) Prove that $f$ is bijective if $f$ has an inverse. (b) Prove that two inverses $g,h:B\to A$ of $f$ are equal.'
+            answer_contract: {"kind":"written"}
+            answer: 'An inverse gives f(g(y))=y, so f is onto, and g(f(x))=x, so f is one-to-one. For inverses g and h, g(y)=g(f(h(y)))=h(y).'
+            solution_sketch: 'Use Definition 2.57 for the inverse g. For (a), the identity f(g(y))=y shows each y is a value of f. The identity g(f(x))=x shows f(x)=f(y) gives x=y. For (b), compute g(y)=g(f(h(y)))=h(y) for every y in B. So g=h.'
+          # argument: Theorem 2.42
+          - problem: 'Prove: Let $a,b,c,d$ be objects. Then $\{\{a\},\{a,b\}\}=\{\{c\},\{c,d\}\}$ holds exactly when $a=c$ and $b=d$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Split into two cases: if {a}={c,d} all four objects are equal; otherwise {a}={c} and {a,b}={c,d} give a=c and b=d.'
+            solution_sketch: 'Use Definition 2.43 for both sides. If a=c and b=d, the two sets are the same set. For the converse, treat the case {a}={c,d} first. Then a=c=d, and the other element gives {a,b}={c}, so b=c as well. In the other case {a}={c}, so a=c, and c is not d. Then {a,b}={c,d} forces b=d.'
+        constraints: 'Count subsets, test membership in a power set, and read an ordered pair as a set of sets.'
+      - id: kp2
+        name: 'Definition 2.44, Definition 2.45, Definition 2.47 and Example 2.48: products, relations, domain and range'
+        key_prerequisites: [cartesian-products]
+        exemplars:
+          - problem: 'Let $A$ have 3 elements and let $B$ have 4 elements. Give the number of elements of each set. (a) $A\times B$. (b) $B\times A$. (c) $A\times A$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 12; b = 12; c = 9'
+            solution_sketch: 'A product has as many elements as the product of the two sizes. So $|A\times B|=3\cdot4=12$ and $|B\times A|=12$. Also $|A\times A|=3\cdot3=9$.'
+          - problem: 'Let $A=\{1,2\}$ and $B=\{3,4\}$. For each pair, give 1 if it is an element of $A\times B$ and 0 if not. (a) $(1,3)$. (b) $(3,1)$. (c) $(2,4)$. (d) $(2,2)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'A pair is in $A\times B$ when its first entry is in $A$ and its second entry is in $B$. The pairs (1,3) and (2,4) pass, so they get 1. The pair (3,1) has 3 first, and (2,2) has 2 second, so both get 0.'
+          - problem: 'On the set $\{1,2,3,4\}$ let $a\sim b$ mean $a<b$. (a) Give the number of pairs in the relation $\sim$. (b) Give the number of elements of $\mathrm{dom}(\sim)$. (c) Give the number of elements of $\mathrm{rng}(\sim)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 3; c = 3'
+            solution_sketch: 'The pairs are (1,2), (1,3), (1,4), (2,3), (2,4) and (3,4), so (a) is 6. The first entries are 1, 2 and 3, so (b) is 3. The second entries are 2, 3 and 4, so (c) is 3.'
+          - problem: 'Let $R=\{(1,2),(1,3),(2,3),(4,2)\}$ be a relation from $\{1,2,3,4\}$ to $\{1,2,3,4\}$. (a) Give the number of elements of $\mathrm{dom}(R)$. (b) Give the number of elements of $\mathrm{rng}(R)$. (c) Give the sum of the elements of $\mathrm{rng}(R)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 5'
+            solution_sketch: 'The first entries are 1, 2 and 4, so the domain has 3 elements. The second entries are 2 and 3, so the range has 2 elements. Their sum is 2+3=5.'
+          - problem: 'Let $A$ have 2 elements and let $B$ have 3 elements. (a) Give the number of elements of $A\times B$. (b) Give the number of relations from $A$ to $B$. (c) Give the number of relations from $A$ to $B$ that have exactly one pair.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = 64; c = 6'
+            solution_sketch: 'The product has $2\cdot3=6$ elements, so (a) is 6. A relation is a subset of the product, so there are $2^6=64$ relations. A relation with one pair is a one element subset, so (c) is 6.'
+          - problem: 'Call a relation $\sim$ symmetric when $a\sim b$ always gives $b\sim a$. On $\{1,2,3\}$, give 1 if the relation is symmetric and 0 if not. (a) $\{(1,2),(2,1),(3,3)\}$. (b) $\{(1,2),(2,3)\}$. (c) $a\sim b$ means $a<b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0'
+            solution_sketch: 'In (a) every pair has its reverse, so the value is 1. In (b) the pair (1,2) has no reverse (2,1), so the value is 0. In (c) we have 1<2 but not 2<1, so the value is 0.'
+          # source: FoM exercise 2.5-2-38
+          - problem: 'Look at the power set of $\{1,2,3,4\}$ and sort its elements by size. Give the number of elements with the given size. (a) Size 0. (b) Size 1. (c) Size 2. (d) Size 3. (e) Size 4.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}}]}
+            answer: 'a=1;b=4;c=6;d=4;e=1'
+            solution_sketch: 'The number of subsets of size $k$ is $\binom{4}{k}$. These values are 1, 4, 6, 4 and 1. Their sum is 16, the size of the power set.'
+          # source: FoM exercise 2.5-2-39
+          - problem: 'Let $A=\{1,2,3,4\}$ and $B=\{a,b,c,d,e\}$. Four relations are given. $R_1=\{(1,a),(2,b),(3,c),(4,d)\}$ from $A$ to $B$. $R_2=\{(1,a),(2,b),(3,c),(3,d)\}$ from $A\setminus\{4\}$ to $B$. $R_3=\{(1,a),(2,b),(3,c),(4,c)\}$ from $A$ to $B$. $R_4=\{(1,a),(2,b),(3,c),(4,a)\}$ from $A$ to $B\setminus\{d,e\}$. Give 1 for true and 0 for false in each part below. A relation that is no function is neither injective nor surjective. (a) $R_1$ is a function. (b) $R_1$ is injective. (c) $R_1$ is surjective. (d) $R_2$ is a function. (e) $R_2$ is injective. (f) $R_2$ is surjective. (g) $R_3$ is a function. (h) $R_3$ is injective. (i) $R_3$ is surjective. (j) $R_4$ is a function. (k) $R_4$ is injective. (l) $R_4$ is surjective.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}},{"name":"g","contract":{"kind":"exact"}},{"name":"h","contract":{"kind":"exact"}},{"name":"i","contract":{"kind":"exact"}},{"name":"j","contract":{"kind":"exact"}},{"name":"k","contract":{"kind":"exact"}},{"name":"l","contract":{"kind":"exact"}}]}
+            answer: 'a=1;b=1;c=0;d=0;e=0;f=0;g=1;h=0;i=0;j=1;k=0;l=1'
+            solution_sketch: 'In R_1 every element of A has one output and no output repeats, so (a) and (b) are 1. The element e of B has no input, so (c) is 0. In R_2 the element 3 has two outputs, so (d), (e) and (f) are 0. In R_3 the outputs of 3 and 4 are equal, so (g) is 1 and (h) and (i) are 0. In R_4 the outputs a, b and c all occur and a repeats, so (j) is 1, (k) is 0 and (l) is 1.'
+          # source: FoM exercise 2.5-2-40
+          - problem: 'For each pair of functions, give 1 if the two functions are inverses of each other and 0 if not. (a) $f,g:\mathbb{R}\to\mathbb{R}$ with $f(x)=2x+8$ and $g(x)=\frac{x}{2}-4$. (b) $f:\mathbb{R}\to\mathbb{R}$ with $f(x)=x^2+4$ and $g:[4,\infty)\to\mathbb{R}$ with $g(x)=\sqrt{x-4}$. (c) $f,g:\mathbb{R}\setminus\{2\}\to\mathbb{R}\setminus\{2\}$ with $f(x)=g(x)=\frac{2x+1}{x-2}$. (d) $f,g:\mathbb{R}\to\mathbb{R}$ with $f(x)=\sqrt[3]{4x+1}$ and $g(x)=\frac{x^3+1}{4}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a=1;b=0;c=1;d=0'
+            solution_sketch: 'In (a), f(g(x))=x-8+8=x and g(f(x))=x, so the value is 1. In (b), f is not injective, and the domain of g is not the codomain of f, so the value is 0. In (c), f(f(x))=5x/5=x, so the value is 1. In (d), f(g(x)) is the cube root of x^3+2, which differs from x, so the value is 0.'
+        constraints: 'Form pairs of a product, count relations, and find the domain and the range of a relation.'
+      - id: kp3
+        name: 'Definition 2.49, Example 2.51, Definition 2.52 and Proposition 2.53: functions, injective and surjective'
+        key_prerequisites: [functions-formal-definition, functions-injective-surjective]
+        exemplars:
+          - problem: 'Each relation goes from $\{1,2,3\}$ to $\{4,5\}$. Give 1 if it is a function and 0 if not. (a) $\{(1,4),(2,4),(3,5)\}$. (b) $\{(1,4),(2,5)\}$. (c) $\{(1,4),(1,5),(2,4),(3,4)\}$. (d) $\{(1,5),(2,5),(3,5)\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 0; d = 1'
+            solution_sketch: 'A function needs exactly one output for each input. Relations (a) and (d) pass, so they get 1. In (b) the input 3 has no output, and in (c) the input 1 has two outputs, so both get 0.'
+          - problem: 'Let $f:\{1,2,3\}\to\{4,5,6\}$ with $f(1)=5$, $f(2)=6$, $f(3)=4$, and let $g:\{1,2,3\}\to\{a,b,c\}$ with $g(1)=a$, $g(2)=a$, $g(3)=b$. For each statement, give 1 if it is true and 0 if not. (a) $f$ is injective. (b) $f$ is surjective. (c) $g$ is injective. (d) $g$ is surjective.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0; d = 0'
+            solution_sketch: 'The function f uses the three outputs 5, 6 and 4 once each, so f is injective and surjective: the values are 1 and 1. The function g sends 1 and 2 to a, so g is not injective: the value is 0. The element c is never an output of g, so g is not surjective: the value is 0.'
+          - problem: 'Give the number of functions of each kind. (a) All functions from $\{1,2,3\}$ to $\{a,b\}$. (b) Injective functions from $\{1,2\}$ to $\{a,b,c\}$. (c) Injective functions from $\{1,2,3\}$ to $\{a,b\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 6; c = 0'
+            solution_sketch: 'Each of 3 inputs has 2 choices, so (a) is $2^3=8$. The first input has 3 choices and the second has 2 choices left, so (b) is 6. Three inputs cannot have 3 different outputs in a set of 2 elements, so (c) is 0.'
+          - problem: 'Let $f:\{1,2,3,4\}\to\{1,2,3,4\}$ with $f(1)=2$, $f(2)=3$, $f(3)=2$, $f(4)=3$. (a) Give the number of ordered pairs $(x,y)$ with $x\ne y$ and $f(x)=f(y)$. (b) Give 1 if $f$ is injective and 0 if not. (c) Give the number of such pairs for the function $g(x)=x$ on the same set.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 0; c = 0'
+            solution_sketch: 'The pairs are (1,3), (3,1), (2,4) and (4,2), so (a) is 4. Since such pairs exist, f is not injective and (b) is 0. The function g never repeats an output, so it has 0 such pairs.'
+          - problem: 'Let $f:\{-2,-1,0,1,2\}\to\{0,1,4\}$ with $f(x)=x^2$. (a) Give the number of elements $x$ with $f(x)=4$. (b) Give the least element $a$ with $f(a)=f(1)$. (c) Give 1 if $f$ is injective and 0 if not. (d) Give 1 if $f$ is surjective and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = -1; c = 0; d = 1'
+            solution_sketch: 'Both -2 and 2 give 4, so (a) is 2. The inputs with the value f(1)=1 are -1 and 1, so (b) is -1. Because -1 and 1 share an output, f is not injective and (c) is 0. The outputs 4, 1, 0 all occur, so (d) is 1.'
+          # source: FoM exercise 2.5-2-42
+          - problem: 'Some functions below are one-to-one. When $f$ is one-to-one, give the value of the inverse of $f$ at the given number. When $f$ is not one-to-one, give 0. Every inverse value asked for here is not 0. (a) $f(x)=4x+7$, at the number 15. (b) $f(x)=x^2+3$, at the number 7. (c) $f:\mathbb{R}\setminus\{2\}\to\mathbb{R}$ with $f(x)=\frac{3x+1}{x-2}$, at the number 4. (d) $f(x)=2x^3-9$, at the number $-7$. (e) $f:\mathbb{R}\setminus\{1\}\to\mathbb{R}$ with $f(x)=\frac{5}{x-1}$, at the number 1. (f) $f(x)=|x-2|$, at the number 3. (g) $f(x)=\sqrt[3]{35-x}$, at the number 2.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}},{"name":"g","contract":{"kind":"exact"}}]}
+            answer: 'a=2;b=0;c=9;d=1;e=6;f=0;g=27'
+            solution_sketch: 'In (a), 4x+7=15 gives x=2. In (b) and (f) two inputs share an output, so the value is 0. In (c), solve (3x+1)/(x-2)=4 to get x=9. In (d), 2x^3-9=-7 gives x=1. In (e), 5/(x-1)=1 gives x=6. In (g), 35-x=8 gives x=27.'
+          # source: FoM exercise 2.5-2-43
+          - problem: 'Four functions go from $\mathbb{R}$ to $\mathbb{R}$. $F_1(x)=x^3$. $F_2(x)=x^2$. $F_3(x)=2^x$. $F_4(x)=x^3-x$. Give 1 for true and 0 for false. (a) $F_1$ is injective. (b) $F_1$ is surjective. (c) $F_2$ is injective. (d) $F_2$ is surjective. (e) $F_3$ is injective. (f) $F_3$ is surjective. (g) $F_4$ is injective. (h) $F_4$ is surjective.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}},{"name":"g","contract":{"kind":"exact"}},{"name":"h","contract":{"kind":"exact"}}]}
+            answer: 'a=1;b=1;c=0;d=0;e=1;f=0;g=0;h=1'
+            solution_sketch: 'The cube is injective and takes every real value, so (a) and (b) are 1. The square repeats outputs and never takes -1, so (c) and (d) are 0. The function 2^x is injective but takes only positive values, so (e) is 1 and (f) is 0. For x^3-x, the inputs 0 and 1 share the output 0, so (g) is 0; it takes every real value, so (h) is 1.'
+          # source: FoM exercise 2.5-2-41
+          - problem: 'Prove that $f:\mathbb{R}\to\mathbb{R}$ with $f(x)=x^2+1$ and $g:\mathbb{R}\to\mathbb{R}$ with $g(x)=\sqrt{|x-1|}$ are not inverses of each other. Then decide whether $f$ and $h:[1,\infty)\to\mathbb{R}$ with $h(x)=\sqrt{x-1}$ are inverses of each other, and justify the decision.'
+            answer_contract: {"kind":"written"}
+            answer: 'Test x=0 for g: f(g(0))=2. Test x=-1 for h: h(f(-1))=1, not -1, because f is not injective on R.'
+            solution_sketch: 'Use Definition 2.57. First compute g(0)=1 and f(g(0))=2, which differs from 0, so f and g are not inverses. Next compute f(-1)=2 and h(2)=1, which differs from -1. So h(f(x)) is not x for all x. Thus f and h are not inverses either. Restricted to [0,infinity) for f, the pair is inverse.'
+          # argument: Proposition 2.53
+          - problem: 'Prove: Let $f:A\to B$ be a function. Then $f$ is injective exactly when $f(x)=f(y)$ implies $x=y$ for all $x,y\in A$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The two implications are contrapositives of each other, so they are logically equivalent.'
+            solution_sketch: 'Use Definition 2.52. Injective means that x differs from y implies f(x) differs from f(y). The contrapositive of this implication is: f(x)=f(y) implies x=y. An implication and its contrapositive have the same truth value for all x and y. So the two conditions are equivalent.'
+        constraints: 'Decide if a relation is a function, test injective and surjective, and count functions.'
+      - id: kp4
+        name: 'Example 2.54, Definition 2.55, Example 2.56, Definition 2.57 and Example 2.58: composition, identity and inverse'
+        key_prerequisites: [functions-formal-definition, functions-injective-surjective]
+        exemplars:
+          - problem: 'Let $f(x)=2x+1$ and $g(x)=x^2$ for all real $x$. Give the value of each expression. (a) $(f\circ g)(3)$. (b) $(g\circ f)(3)$. (c) $(f\circ f)(1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 19; b = 49; c = 7'
+            solution_sketch: 'First g(3)=9 and f(9)=19, so (a) is 19. First f(3)=7 and g(7)=49, so (b) is 49. First f(1)=3 and f(3)=7, so (c) is 7.'
+          - problem: 'Let $g:\{1,2,3\}\to\{a,b,c\}$ with $g(1)=b$, $g(2)=c$, $g(3)=a$, and let $f:\{a,b,c\}\to\{4,5\}$ with $f(a)=4$, $f(b)=5$, $f(c)=4$. (a) Give $(f\circ g)(1)$. (b) Give $(f\circ g)(2)$. (c) Give $(f\circ g)(3)$. (d) Give the number of elements of the range of $f\circ g$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 4; c = 4; d = 2'
+            solution_sketch: 'Since g(1)=b and f(b)=5, (a) is 5. Since g(2)=c and f(c)=4, (b) is 4. Since g(3)=a and f(a)=4, (c) is 4. The values 5 and 4 occur, so the range has 2 elements.'
+          - problem: 'Let $A=\{1,2,3\}$ and let $\mathrm{id}_A=\{(a,a):a\in A\}$. (a) Give the number of pairs in $\mathrm{id}_A$. (b) Let $f(x)=x+10$ on $A$. Give $(f\circ\mathrm{id}_A)(2)$. (c) Give 1 if $\mathrm{id}_A$ is bijective and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 12; c = 1'
+            solution_sketch: 'The set has one pair (a,a) for each of the 3 elements, so (a) is 3. Since id(2)=2 and f(2)=12, (b) is 12. The identity repeats no output and misses none, so (c) is 1.'
+          - problem: 'Let $f(x)=3x-5$ for all real $x$ and let $g$ be the inverse of $f$. (a) Give $g(4)$. (b) Give $g(f(7))$. (c) Give $f(g(-2))$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 7; c = -2'
+            solution_sketch: 'Solve 3x-5=4 to get x=3, so (a) is 3. The identity g(f(x))=x gives (b) as 7. The identity f(g(y))=y gives (c) as -2.'
+          - problem: 'Let $f:\{1,2,3\}\to\{a,b,c\}$ with $f(1)=c$, $f(2)=a$, $f(3)=b$, and let $g$ be the inverse of $f$. Give each value. (a) $g(a)$. (b) $g(b)$. (c) $g(c)$. (d) $(g\circ f)(3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 3; c = 1; d = 3'
+            solution_sketch: 'The inverse reverses each pair. Since f(2)=a, g(a)=2. Since f(3)=b, g(b)=3. Since f(1)=c, g(c)=1. Also g(f(3))=3.'
+          - problem: 'Let $f:\mathbb{R}\setminus\{3\}\to\mathbb{R}\setminus\{2\}$ with $f(x)=\frac{2x+1}{x-3}$ and let $g:\mathbb{R}\setminus\{2\}\to\mathbb{R}\setminus\{3\}$ with $g(y)=\frac{3y+1}{y-2}$. Give each value. (a) $f(4)$. (b) $g(9)$. (c) $g(3)$. (d) $f(10)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 9; b = 4; c = 10; d = 3'
+            solution_sketch: 'Compute f(4)=9/1=9. Compute g(9)=28/7=4, which returns the input of (a). Compute g(3)=10/1=10. Compute f(10)=21/7=3, which returns the input of (c).'
+          - problem: 'Let $f:\mathbb{R}\setminus\{1\}\to\mathbb{R}$ with $f(x)=\frac{x+3}{x-1}$. (a) Give $f(3)$. (b) Give $f(5)$. (c) Give the one real number that is not a value of $f$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 2; c = 1'
+            solution_sketch: 'Compute f(3)=6/2=3 and f(5)=8/4=2. Solve (x+3)/(x-1)=y to get x=(y+3)/(y-1). This needs y different from 1, so the number 1 is not a value of f, and (c) is 1.'
+          # source: FoM exercise 2.5-2-44
+          - problem: 'Give a counterexample for each of five statements. (a) Each injective function has all of $B$ as its set of values. (b) Each surjective function sends different inputs to different outputs. (c) If $f:A\to B$ and $g:B\to A$ are functions with $g\circ f=\mathrm{id}_A$, then $f$ is surjective. (d) If $f:A\to B$ and $g:B\to A$ are functions with $f\circ g=\mathrm{id}_B$, then $f$ is injective. (e) Each relation is a function.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use small finite sets: {1} into {1,2} for (a) and (c), {1,2} onto {1} for (b) and (d), and a relation with one input and two outputs for (e).'
+            solution_sketch: 'For (a) and (c), take f from {1} to {1,2} with f(1)=1. Then f is injective, and g with g(1)=g(2)=1 gives g(f(x))=x, but 2 is not a value of f. For (b) and (d), take f from {1,2} to {1} and g(1)=1. Then f(g(1))=1, but f(1)=f(2). For (e), take the relation {(1,1),(1,2)} from {1} to {1,2}, where the input 1 has two outputs.'
+          # source: FoM exercise 2.5-2-45
+          - problem: 'Let $A$ and $B$ be sets. Prove that there is a set whose elements are exactly $A$ and $B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'A and B are subsets of A union B, so {A,B} sits inside P(A union B). Specification then selects the sets equal to A or B.'
+            solution_sketch: 'The union of A and B is a set by the Axiom of Unions. By Axiom 2.40, P(A union B) is a set. Both A and B are subsets of A union B, so both are elements of that power set. Apply the Axiom of Specification to P(A union B) with the property X=A or X=B. The new set has exactly the elements A and B.'
+          # source: FoM exercise 2.5-2-46
+          - problem: 'Let $X$, $Y$, $Z$ be sets. Prove all four equalities. (a) $X\times(Y\cup Z)=(X\times Y)\cup(X\times Z)$. (b) $X\times(Y\cap Z)=(X\times Y)\cap(X\times Z)$. (c) $(X\cup Y)\times Z=(X\times Z)\cup(Y\times Z)$. (d) $(X\cap Y)\times Z=(X\times Z)\cap(Y\times Z)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take an arbitrary pair (p,q) and unfold each side with the definition of the product. Use the rule for union or intersection on one entry.'
+            solution_sketch: 'Use Definition 2.44 and the definitions of union and intersection. For (a), the pair (p,q) lies in X times (Y union Z) exactly when p is in X and q is in Y or in Z. That holds exactly when (p,q) is in X times Y or in X times Z. The proofs of (b), (c) and (d) follow the same steps. In (b) and (d) replace the word or by the word and.'
+        constraints: 'Compose functions, use the identity function, and check values of an inverse function.'
+      - id: kp5
+        name: 'Definition 2.59, Theorem 2.60, Definition 2.61 and Definition 2.62: equivalent sets, Cantor''s diagonal set, indexed families and the superstructure'
+        key_prerequisites: [uncountability-diagonalization, fom-2-4-axiom-unions]
+        exemplars:
+          - problem: 'Give 1 if the two sets are equivalent and 0 if not. (a) $\{1,2,3\}$ and $\{x,y,z\}$. (b) $\{1,2,3\}$ and $\{1,2,3,4\}$. (c) $P(\{1,2\})$ and $\{1,2,3,4\}$. (d) $P(\{1,2\})$ and $\{1,2,3\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1; d = 0'
+            solution_sketch: 'Finite sets are equivalent exactly when they have the same number of elements. Both sets of (a) have 3 elements, so the value is 1. The set $P(\{1,2\})$ has 4 elements, so (c) is 1 and (d) is 0. The sets of (b) have 3 and 4 elements, so (b) is 0.'
+          - problem: 'Let $X=\{1,2,3\}$. (a) Give the number of elements of $P(X)$. (b) Give the number of bijective functions from $X$ to $P(X)$. (c) Give the difference of the number of elements of $P(X)$ and of $X$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 8; b = 0; c = 5'
+            solution_sketch: 'The set $P(X)$ has $2^3=8$ elements, so (a) is 8. A bijection needs equal sizes, but 3 differs from 8, so (b) is 0. The difference is 8-3=5.'
+          - problem: 'Let $X=\{1,2,3\}$ and let $f:X\to P(X)$ with $f(1)=\{1,2\}$, $f(2)=\{3\}$, $f(3)=\{1,3\}$. Let $B=\{x\in X:x\notin f(x)\}$. (a) Give the number of elements of $B$. (b) Give the sum of the elements of $B$. (c) Give the number of elements $b$ of $X$ with $f(b)=B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 0'
+            solution_sketch: 'Test each x. We have 1 in f(1) and 3 in f(3), so those two stay out of B. We have 2 not in f(2)={3}, so B={2}. Then (a) is 1 and (b) is 2. No f(b) equals {2}, so (c) is 0.'
+          - problem: 'Let $X=\{1,2,3\}$ and let $f:X\to P(X)$ with $f(1)=\emptyset$, $f(2)=\{1,2\}$, $f(3)=\{2\}$. Let $B=\{x\in X:x\notin f(x)\}$. Give 1 if the element is in $B$ and 0 if not. (a) The element 1. (b) The element 2. (c) The element 3.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'The element 1 is not in f(1), which is empty, so (a) is 1. The element 2 is in f(2), so (b) is 0. The element 3 is not in f(3)={2}, so (c) is 1.'
+          - problem: 'Let $S_1=\{1,2,3\}$, $S_2=\{2,3,4\}$ and $S_3=\{3,4,5\}$ be an indexed family with $I=\{1,2,3\}$. (a) Give the number of elements of $\bigcup_{i\in I}S_i$. (b) Give the number of elements of $\bigcap_{i\in I}S_i$. (c) Give the sum of the elements of $\bigcup_{i\in I}S_i$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 1; c = 15'
+            solution_sketch: 'The union is {1,2,3,4,5}, so (a) is 5. Only 3 lies in all three sets, so (b) is 1. The sum 1+2+3+4+5 is 15.'
+          - problem: 'For $i\in\{2,3\}$ let $S_i$ be the set of all multiples of $i$ in $\{1,2,\dots,10\}$. (a) Give the number of elements of $\bigcup_{i}S_i$. (b) Give the number of elements of $\bigcap_{i}S_i$. (c) Give the sum of the elements of $\bigcap_{i}S_i$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; b = 1; c = 6'
+            solution_sketch: 'The set S_2 holds 5 elements and S_3 holds 3 elements. They share only 6, so the union has 5+3-1=7 elements. The intersection is {6}, so (b) is 1 and (c) is 6.'
+          - problem: 'Let $V_0=\emptyset$ and $V_n=V_{n-1}\cup P(V_{n-1})$. Give the number of elements of each set. (a) $V_1$. (b) $V_2$. (c) $V_3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 4'
+            solution_sketch: 'The set V_1 is $\{\emptyset\}$ and has 1 element. The set V_2 adds $\{\{\emptyset\}\}$ and $\{\emptyset,\{\emptyset\}\}$ to V_1 and drops repeats, which gives $\{\emptyset,\{\emptyset\}\}$ with 2 elements. The power set of V_2 has 4 elements and holds V_2, so V_3 has 4 elements.'
+          # argument: Theorem 2.60
+          - problem: 'Prove: For every set $X$, there is no bijective function from $X$ to $P(X)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume a bijection f. The set of all x outside f(x) equals f(b) for some b, and b in f(b) fails both ways.'
+            solution_sketch: 'Assume f from X to P(X) is a bijection. Define B as the set of all x in X with x not in f(x). Since f is surjective, B=f(b) for some b in X. If b is in B, then b is in f(b)=B, but the definition of B gives b not in f(b). If b is not in B, then b is not in f(b), so the definition puts b in B. Both cases fail, which is a contradiction.'
+          # source: FoM exercise 2.5-2-47
+          - problem: 'Let $\{C_i\}_{i\in I}$ be an indexed family of sets, let $\mathcal{C}$ be a family of sets, and let $X$ be a set. Both $I$ and $\mathcal{C}$ are not empty. Prove all four laws. (a) $X\setminus\bigcup_{i\in I}C_i=\bigcap_{i\in I}(X\setminus C_i)$. (b) $X\setminus\bigcup\mathcal{C}=\bigcap\{X\setminus C:C\in\mathcal{C}\}$. (c) $X\setminus\bigcap_{i\in I}C_i=\bigcup_{i\in I}(X\setminus C_i)$. (d) $X\setminus\bigcap\mathcal{C}=\bigcup\{X\setminus C:C\in\mathcal{C}\}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Fix x. Unfold each side with the definitions of union and intersection, and use the opposite of a quantified statement.'
+            solution_sketch: 'Use Definition 2.61 for the unions and intersections. For (a), x is in the left side exactly when x is in X and no C_i holds x. That means every i has x in X and x not in C_i, which is membership in the right side. For (c), x is in the left side exactly when x is in X and some C_i misses x. That is membership in the union of the sets X minus C_i. Laws (b) and (d) follow in the same way with C in the family.'
+          # source: FoM exercise 2.5-2-48
+          - problem: 'Prove that no model of the axioms of set theory that include the Axiom of Powers is finite.'
+            answer_contract: {"kind":"written"}
+            answer: 'Repeat the power set step from the empty set. By Theorem 2.60 each new set has more elements than the one before, so the sets never stop.'
+            solution_sketch: 'Start with S_0 as the empty set and let S_(n+1) be P(S_n); each exists by Axiom 2.40. By Theorem 2.60, S_n is not equivalent to P(S_n). Also S_n embeds in P(S_n) by sending x to the set with only x. So the sizes grow strictly with n. A finite model holds only finitely many sets, which is a contradiction.'
+          # source: FoM exercise 2.5-2-49
+          - problem: 'Prove that no model of the axioms of set theory that include the Axiom of Powers has a surrounding universe that is a set. Use the proof of Theorem 2.60.'
+            answer_contract: {"kind":"written"}
+            answer: 'If a set U holds all sets, every subset of U lies in U, so the map x to x sends U onto P(U). The diagonal set of Theorem 2.60 then gives a contradiction.'
+            solution_sketch: 'Assume the universe U is a set. By Axiom 2.40, P(U) is a set of the model, so it lies in U. Every subset of U is a set of the model, so it is an element of U. The map from U to P(U) that sends x to x is then surjective. Theorem 2.60 shows no surjection from U onto P(U) exists, so U is no set.'
+        constraints: 'Compare the sizes of sets, build the diagonal set, and compute unions and intersections of a family.'
+    diagnostic_exemplar:
+      problem: 'Let $S=\{a,b,c,d\}$. Give the number of elements of $P(S)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '16'
+      solution_sketch: 'The set $S$ has 4 elements. A subset keeps or drops each element. So $P(S)$ has $2^4=16$ elements.'
+  - id: fom-2-6-axiom-infinity-natural-numbers
+    name: '2.6 The Axiom of Infinity and the Natural Numbers'
+    program_items: [124, 125]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 600
+    prerequisites:
+      - id: fom-2-5-axiom-powers-relations-functions
+        weight: 0.6
+        key: true
+      - id: fom-2-3-axiom-extension
+        weight: 0.4
+        key: false
+      - id: fom-2-2-axiom-specification
+        weight: 0.4
+        key: false
+      - id: infinite-sets
+        weight: 0.4
+        key: false
+      - id: wop
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axiom 2.63: a set that holds the empty set and is closed under the successor step'
+        key_prerequisites: []
+        exemplars:
+          - problem: 'Let $a=\emptyset$. (a) Give the number of elements of $a\cup\{a\}$. (b) Let $b=\{\emptyset\}$. Give the number of elements of $b\cup\{b\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2'
+            solution_sketch: 'For $a=\emptyset$ the set $a\cup\{a\}$ equals $\{\emptyset\}$, which has 1 element. For $b=\{\emptyset\}$ the set $b\cup\{b\}$ equals $\{\emptyset,\{\emptyset\}\}$. It has 2 elements, so a = 1 and b = 2.'
+          - problem: 'Let $a=\{\emptyset,\{\emptyset\}\}$. (a) Give the number of elements of $a$. (b) Give the number of elements of $a\cup\{a\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 2; b = 3'
+            solution_sketch: 'The set $a$ has the two elements $\emptyset$ and $\{\emptyset\}$, so a = 2. The set $a$ is not an element of $a$. So $a\cup\{a\}$ has the 2 old elements and 1 new element, and b = 3.'
+          - problem: 'Let $a=\{\emptyset,\{\emptyset\}\}$. Give 1 for true and 0 for false. (a) $\emptyset\in a\cup\{a\}$. (b) $\emptyset\in\emptyset$. (c) $a\in a\cup\{a\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'The set $a\cup\{a\}$ holds $\emptyset$, so (a) is 1. The empty set has no element, so (b) is 0. The set $a$ is the new element of $a\cup\{a\}$, so (c) is 1.'
+          - problem: 'Start with $\emptyset$ and form $x\cup\{x\}$ again and again. Each step uses the set from the step before. (a) Give the number of elements after 3 steps. (b) Give the number after 5 steps. (c) Give the number after 10 steps.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 5; c = 10'
+            solution_sketch: 'Each step adds exactly 1 new element, because a set at this stage is not an element of itself. The start set has 0 elements. After 3, 5 and 10 steps the counts are 3, 5 and 10.'
+          - problem: 'Let $a=\{\emptyset,\{\emptyset\}\}$. Give 1 for true and 0 for false. (a) $a\subseteq a\cup\{a\}$. (b) $a\in a$. (c) $\{\emptyset\}\in a\cup\{a\}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0; c = 1'
+            solution_sketch: 'Every element of $a$ is an element of $a\cup\{a\}$, so (a) is 1. The elements of $a$ are $\emptyset$ and $\{\emptyset\}$, and $a$ is neither, so (b) is 0. The set $\{\emptyset\}$ is an element of $a$, so (c) is 1.'
+          - problem: 'Let $a=\{\emptyset,\{\emptyset\},\{\{\emptyset\}\}\}$. (a) Give the number of elements of $a$. (b) Give the number of elements of $a\cup\{a\}$. (c) Give 1 if $\{\{\emptyset\}\}\in a\cup\{a\}$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 4; c = 1'
+            solution_sketch: 'The three listed sets are different, so $a$ has 3 elements. The set $a$ is not one of them, so $a\cup\{a\}$ has 4 elements. The set $\{\{\emptyset\}\}$ is in $a$, so c = 1.'
+        constraints: 'build and count the sets from the empty set with the step x union x-singleton'
+      - id: kp2
+        name: 'Theorem 2.64: the natural numbers and the Peano properties'
+        key_prerequisites: [fom-2-2-axiom-specification, fom-2-3-axiom-extension]
+        exemplars:
+          - problem: 'Let $1=\{\emptyset\}$ and $n''=n\cup\{n\}$. (a) Give the number of elements of $1$. (b) Give the number of elements of $1''$. (c) Give the number of elements of $(1'')''$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2; c = 3'
+            solution_sketch: 'The set $1$ holds only $\emptyset$, so a = 1. The set $1''$ equals $\{\emptyset,\{\emptyset\}\}$ and has 2 elements. The set $(1'')''$ adds the new element $1''$, so it has 3 elements.'
+          - problem: 'Let $1=\{\emptyset\}$, $n''=n\cup\{n\}$ and $2=1''$. Use the Peano properties of the natural numbers. Give 1 for true and 0 for false. (a) Some natural number has the successor 1. (b) Some natural number has the successor 2. (c) Every natural number has a successor that is a natural number.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1'
+            solution_sketch: 'No natural number has 1 as its successor, so (a) is 0. The number 1 has the successor 2, so (b) is 1. Property 2 gives every natural number a successor in the set, so (c) is 1.'
+          - problem: 'Read $n''$ as $n+1$ for the usual natural numbers. (a) Give $12''$. (b) Give the natural number whose successor is $9$. (c) Give $(20'')''$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 13; b = 8; c = 22'
+            solution_sketch: 'Here $12''=12+1=13$. The number with successor $9$ is $9-1=8$. Then $(20'')''=(20+1)+1=22$. The three answers are 13, 8 and 22.'
+          - problem: 'A set $S\subseteq\mathbb{N}$ holds $1$. Each successor of an element of $S$ is again in $S$. Give 1 for true and 0 for false. (a) $4\in S$. (b) $100\in S$. (c) Some natural number is not in $S$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 1; c = 0'
+            solution_sketch: 'Principle of Induction: such a set $S$ equals $\mathbb{N}$. So every natural number is in $S$, which gives (a) = 1 and (b) = 1. No natural number lies outside $S$, so (c) = 0.'
+          - problem: 'Let $S=\{n\in\mathbb{N}: n\ge 3\}$. Give 1 for true and 0 for false. (a) $1\in S$. (b) For each $n\in S$ the successor $n''$ is in $S$. (c) $S=\mathbb{N}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 0'
+            solution_sketch: 'Since $1<3$, the number $1$ is not in $S$, so (a) is 0. If $n\ge 3$ then $n''=n+1\ge 3$, so (b) is 1. The number $1$ is in $\mathbb{N}$ but not in $S$, so (c) is 0.'
+          - problem: '(a) Give the number of natural numbers whose successor is $1$. (b) Give the number of natural numbers whose successor is $6$. (c) Give the number of natural numbers $n$ with $n''=n$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 0'
+            solution_sketch: 'The element 1 is not a successor, so a = 0. If two natural numbers have the same successor, they are equal. So at most one number has the successor 6, and it is 5, so b = 1. No natural number equals its successor, so c = 0.'
+          - problem: 'Let $n''=n\cup\{n\}$. Let $3=\{\emptyset,\{\emptyset\},\{\emptyset,\{\emptyset\}\}\}$. (a) Give the number of elements of $3$. (b) Give the number of elements $m$ of $3$ with $m\subseteq 3$. (c) Give 1 if $3\subseteq 3''$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 3; c = 1'
+            solution_sketch: 'The set $3$ lists 3 different elements, so a = 3. Each element of $3$ is a subset of $3$, so b = 3. Also $3''=3\cup\{3\}$ holds all of $3$, so c = 1.'
+          - problem: 'Here $\mathbb{N}$ is the intersection of all sets that contain $1$, do not contain $\emptyset$ and hold the successor $n''=n\cup\{n\}$ of each of their elements $n$. Let $1=\{\emptyset\}$. Let $1=\{\emptyset\}$. Give 1 for true and 0 for false. (a) $\emptyset\in\mathbb{N}$. (b) $1\in\mathbb{N}$. (c) $1''\in\mathbb{N}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 0; b = 1; c = 1'
+            solution_sketch: 'The construction removes $\emptyset$ from every successor set, so $\emptyset$ is not in $\mathbb{N}$ and a = 0. Property 1 puts $1$ in $\mathbb{N}$. Property 2 puts $1''$ in $\mathbb{N}$.'
+          # argument: Theorem 2.64
+          - problem: 'Prove the first step: the set $\mathbb{N}$, the intersection of all successor sets, contains $1$ and holds the successor of each of its elements. Here a successor set contains $1$, does not contain $\emptyset$, and holds the successor of each of its elements.'
+            answer_contract: {"kind":"written"}
+            answer: 'Every successor set holds 1 and is closed under successor. An element of the intersection lies in every successor set, so its successor does too.'
+            solution_sketch: 'Let $I$ be the set from Axiom 2.63. Use the Axiom of Specification (see Proposition 2.18) to form the set of all successor sets inside the power set of $I$, and let $\mathbb{N}$ be its intersection. Every successor set contains $1$, so $1\in\mathbb{N}$. Let $n\in\mathbb{N}$. Then $n$ is in every successor set, so $n''$ is in every successor set. Hence $n''\in\mathbb{N}$.'
+          # argument: Theorem 2.64
+          - problem: 'Prove the second step: no natural number has the successor $1$. Here $1=\{\emptyset\}$ and $n''=n\cup\{n\}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The equation forces x to be the empty set. The empty set lies in no successor set, so it is not a natural number.'
+            solution_sketch: 'Assume $1=x''$ for some $x\in\mathbb{N}$. Then $\{\emptyset\}=x\cup\{x\}$. This forces $x=\emptyset$. By the construction, $\emptyset$ lies in no successor set. So $\emptyset\notin\mathbb{N}$, which contradicts $x\in\mathbb{N}$. Compare Theorem 2.25 for equality of sets.'
+          # argument: Theorem 2.64
+          - problem: 'Prove the third step. Let $S\subseteq\mathbb{N}$ be a set with $1\in S$ and with $n''\in S$ for each $n\in S$. Then $S=\mathbb{N}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'S is a successor set, so the natural numbers lie inside S. Also S lies inside the natural numbers, so the sets are equal.'
+            solution_sketch: 'The set $S$ is a successor set, because $S\subseteq\mathbb{N}$ and $\emptyset\notin\mathbb{N}$. Since $\mathbb{N}$ is the intersection of all successor sets, $\mathbb{N}\subseteq S$ (see Proposition 2.18). By assumption $S\subseteq\mathbb{N}$. Mutual containment gives $S=\mathbb{N}$ by Theorem 2.25.'
+          # argument: Theorem 2.64
+          - problem: 'Prove the fourth step: for all $m,n\in\mathbb{N}$ with $m''=n''$ we have $m=n$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Show by induction that each element of a natural number is a subset of it. Then m differing from n gives a contradiction.'
+            solution_sketch: 'First apply induction (step three) to $S=\{n\in\mathbb{N}:\text{each element of }n\text{ is a subset of }n\}$. Then $1\in S$. If $n\in S$ and $m\in n''=n\cup\{n\}$, then $m=n\subseteq n''$ or $m\in n$, so $m\subseteq n\subseteq n''$. Now let $m''=n''$ and $m\ne n$. Then $n\in m$ and $m\in n$, so $n\subseteq m$ and $m\subseteq n$. Theorem 2.25 gives $m=n$, a contradiction.'
+          # source: FoM exercise 2.6-2-50
+          - problem: 'Part (a): let $m,n\in\mathbb{N}$ with $n\subseteq m$. Prove $m\notin n$. Part (b): prove $n\notin n$ for each $n\in\mathbb{N}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on the form that no superset of n is an element of n, then take m equal to n for (b).'
+            solution_sketch: 'Let $S=\{n\in\mathbb{N}:\text{no superset }m\text{ of }n\text{ is an element of }n\}$. For $n=1=\{\emptyset\}$, an element of $1$ is $\emptyset$, which is not in $\mathbb{N}$. Let $n\in S$ and let $m\supseteq n''$. If $m\in n''$, then $m\in n$ or $m=n$. The first case contradicts $n\in S$, since $m\supseteq n$. The second case gives $n\in n$ and $n\supseteq n$, which also contradicts $n\in S$; taking $m=n$ gives (b).'
+          # source: FoM exercise 2.6-2-51
+          - problem: 'Prove that the map $f:\mathbb{N}\to\mathbb{N}$ with $f(n)=n''$ is injective and is not surjective.'
+            answer_contract: {"kind":"written"}
+            answer: 'Property 5 of Theorem 2.64 gives injectivity. Property 3 gives that 1 has no preimage.'
+            solution_sketch: 'If $f(m)=f(n)$, then $m''=n''$. By property 5 of Theorem 2.64, $m=n$, so $f$ is injective. By property 3, no $n$ has $n''=1$. So $1$ is not in the image of $f$, and $f$ is not surjective.'
+          # source: FoM exercise 2.6-2-52
+          - problem: 'Prove that $n\neq n''$ for every natural number $n$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on the set of n that differ from their successor. Property 3 gives the base case and property 5 gives the step.'
+            solution_sketch: 'Let $S=\{n\in\mathbb{N}:n\ne n''\}$. By property 3 of Theorem 2.64, $1$ is not a successor, so $1\ne 1''$ and $1\in S$. Let $n\in S$. If $n''=(n'')''$, then property 5 gives $n=n''$, which contradicts $n\in S$. So $n''\in S$, and the Principle of Induction gives $S=\mathbb{N}$.'
+          # source: FoM exercise 2.6-2-53
+          - problem: 'Let $m\in\mathbb{N}$. Prove that $m=1$ or $m=n''$ for some $n\in\mathbb{N}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on the set of m that equal 1 or are a successor. The number 1 is in it, and each successor is in it.'
+            solution_sketch: 'Let $S$ be the set of all $m\in\mathbb{N}$ with $m=1$ or $m=n''$ for some $n\in\mathbb{N}$. Then $1\in S$. Let $m\in S$. The element $m''$ is the successor of $m$, and $m\in\mathbb{N}$, so $m''\in S$. By the Principle of Induction in Theorem 2.64, $S=\mathbb{N}$.'
+        constraints: 'successors, the Principle of Induction, and the proof steps of the construction'
+    diagnostic_exemplar:
+      problem: 'Let $1=\{\emptyset\}$ and $n''=n\cup\{n\}$. Give the number of elements of $(1'')''$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The set $1''$ equals $\{\emptyset,\{\emptyset\}\}$ and has 2 elements. The set $(1'')''$ adds $1''$ as a new element. So it has 3 elements.'
