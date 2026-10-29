@@ -5293,3 +5293,125 @@ topics:
       - front: "For a projectile height model h(t): hitting the ground means ___, and the maximum height is at ___"
         back: "h = 0; the vertex, t = −b/(2a)"
         type: basic
+
+  - id: biquadratic-equations
+    lt_term: 'bikvadratinės lygtys'
+    name: Biquadratic Equations
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: quadratics-in-form
+        weight: 0.6
+        key: true
+      - id: quadratic-formula
+        weight: 0.5
+        key: false
+      - id: zero-product-property
+        weight: 0.3
+        key: false
+      - id: square-root-property
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Substitution u=x^2'
+        key_prerequisites: [quadratics-in-form, quadratic-formula, square-root-property]
+        exemplars:
+          - problem: 'Solve $x^4-5x^2+4=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-2, -1, 1, 2'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-5u+4=0$, so $u=1$ or $u=4$. Then $x^2=1$ gives $x=\pm1$, and $x^2=4$ gives $x=\pm2$.'
+          - problem: 'Solve $x^4-13x^2+36=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-3, -2, 2, 3'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-13u+36=0$, so $u=4$ or $u=9$. Then $x=\pm2$ or $x=\pm3$.'
+          - problem: 'Solve $x^4-3x^2-4=0$. List all real roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-2, 2'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-3u-4=0$, so $u=4$ or $u=-1$. A square is not negative, so reject $u=-1$. Then $x^2=4$ and $x=\pm2$.'
+          - problem: 'Solve $4x^4-17x^2+4=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-2, -1/2, 1/2, 2'
+            solution_sketch: 'Put $u=x^2$. Then $4u^2-17u+4=0$, so $u=4$ or $u=\frac14$. Then $x=\pm2$ or $x=\pm\frac12$.'
+          - problem: 'Solve $x^4+x^2-12=0$. List all real roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-sqrt(3), sqrt(3)'
+            solution_sketch: 'Put $u=x^2$. Then $u^2+u-12=0$, so $u=3$ or $u=-4$. Reject $u=-4$. Then $x^2=3$ and $x=\pm\sqrt3$.'
+          - problem: 'Find the sum of the squares of all real roots of $x^4-7x^2+12=0$.'
+            answer_contract: {"kind":"exact"}
+            answer: '14'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-7u+12=0$, so $u=3$ or $u=4$. The roots are $\pm\sqrt3$ and $\pm2$. The sum of squares is $3+3+4+4=14$.'
+        constraints: 'ax^4+bx^2+c=0 with integer coefficients; both values of u are rational; roots are integers, simple fractions or square roots; negative u values are rejected'
+      - id: kp2
+        name: 'Number of real roots from the signs of u'
+        key_prerequisites: [quadratics-in-form, square-root-property]
+        exemplars:
+          - problem: 'How many different real roots has $x^4-10x^2+9=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-10u+9=0$, so $u=1$ or $u=9$. Both are positive. Each gives two roots, so there are 4.'
+          - problem: 'How many different real roots has $x^4+5x^2+6=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'Put $u=x^2$. Then $u^2+5u+6=0$, so $u=-2$ or $u=-3$. Both are negative, and $x^2$ is not negative. There are 0 real roots.'
+          - problem: 'How many different real roots has $x^4-x^2-6=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Put $u=x^2$. Then $u^2-u-6=0$, so $u=3$ or $u=-2$. Only $u=3$ is valid, and it gives two roots. There are 2.'
+          - problem: 'How many different real roots has $x^4-6x^2+9=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Put $u=x^2$. Then $(u-3)^2=0$, so $u=3$ only. It gives $x=\pm\sqrt3$. There are 2 different roots.'
+          - problem: 'How many different real roots has $x^4+x^2=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Put $u=x^2$. Then $u(u+1)=0$, so $u=0$ or $u=-1$. Reject $u=-1$. The value $u=0$ gives one root, $x=0$.'
+          - problem: 'How many different real roots has $x^4-13x^2=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Factor: $x^2(x^2-13)=0$. The value $x^2=0$ gives $x=0$. The value $x^2=13$ gives $x=\pm\sqrt{13}$. There are 3.'
+        constraints: 'count of different real roots; u values are integers; cases with two positive u, one positive and one negative u, two negative u, a double u, and u=0; answers 0 to 4'
+      - id: kp3
+        name: 'Parameter that gives a set number of roots'
+        key_prerequisites: [quadratics-in-form, quadratic-formula, zero-product-property]
+        exemplars:
+          - problem: 'Find $p$ so that $x^4-6x^2+p=0$ has exactly 3 different real roots.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'Three roots need $u=x^2=0$ as one value of $u$, and the other value of $u$ positive. Put $u=0$: $p=0$. Then $u^2-6u=0$ gives $u=0$ or $u=6$, and the roots are $0$ and $\pm\sqrt6$.'
+          - problem: 'Find $p$ so that $x^4-4x^2+p=0$ has exactly one value of $x^2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Put $u=x^2$. The equation $u^2-4u+p=0$ has one root when the discriminant is zero. So $16-4p=0$ and $p=4$.'
+          - problem: 'Find $p$ so that $x^4+px^2+4=0$ has exactly 2 different real roots.'
+            answer_contract: {"kind":"exact"}
+            answer: '-4'
+            solution_sketch: 'Put $u=x^2$. Two roots need one positive value of $u$ that repeats. The discriminant $p^2-16=0$ gives $p=4$ or $p=-4$. For $p=4$, $u=-2$ gives no root. So $p=-4$, and $u=2$ gives $x=\pm\sqrt2$.'
+          - problem: 'The equation $x^4-5x^2+p=0$ has the root $x=2$. Find the sum of the squares of all its real roots.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'Put $x=2$: $16-20+p=0$, so $p=4$. Then $u^2-5u+4=0$ gives $u=1$ or $u=4$. The roots are $\pm1$ and $\pm2$. The sum of squares is $1+1+4+4=10$.'
+          - problem: 'How many integers $p$ give the equation $x^4-5x^2+p=0$ four different real roots?'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'Put $u=x^2$. Four roots need two different positive values of $u$. The discriminant gives $25-4p>0$, so $p<6.25$. The product gives $p>0$. The integers $1$ to $6$ fit, so there are 6.'
+          - problem: 'The equation $x^4-10x^2+p=0$ has four different real roots. In increasing order, they form an arithmetic progression. Find $p$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'The roots are $-s,-r,r,s$ with $0<r<s$. Equal gaps give $s-r=2r$, so $s=3r$. Then $u=r^2$ and $u=9r^2$ have the sum $10r^2=10$. So $r^2=1$ and $p=9r^4=9$.'
+        constraints: 'x^4+bx^2+c=0 where one coefficient is the parameter p; conditions: exactly 3 roots, exactly 2 roots, a root given, a count of integer p, roots in arithmetic progression; the answer is one number'
+    diagnostic_exemplar:
+      problem: 'Find the number of different real roots of $x^4-17x^2+16=0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'Put $u=x^2$. Then $u^2-17u+16=0$, so $u=1$ or $u=16$. Both are positive and give two roots each. There are 4.'
+    anki_seeds:
+      - front: "For $ax^4+bx^2+c=0$, put $u=$ ___ and reject every $u$ that is ___"
+        back: "$x^2$; negative"
+        type: basic
+      - front: "Each positive value of $u=x^2$ gives ___ real roots; $u=0$ gives ___"
+        back: "two; one"
+        type: basic

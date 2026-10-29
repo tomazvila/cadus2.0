@@ -222,7 +222,7 @@ pub fn report_mismatch(name: &str, tz: Option<&str>, actual: &str, expected: &st
     );
     panic!(
         "FOLD CHANGED: {name} in {zone} does not reproduce the committed fold.\n{}\n{index}\n\
-         The committed values were re-based 2026-10-12 after the Foundations merge (D-C1). \
+         The committed values were re-based 2026-10-12 after the Foundations merge (D-C1) and 2026-10-28 after VBE skill wave 1. \
          A fold change that is intended re-bases them again; an unintended one is a bug.",
         first_difference(actual, expected)
     );

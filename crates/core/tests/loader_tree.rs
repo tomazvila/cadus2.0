@@ -121,7 +121,8 @@ fn the_checked_in_tree_uses_no_yaml_1_1_form() {
 
     let files = yaml_files(&curriculum_root());
     // Spec section 1: 88 unit files plus `courses.yaml`.
-    assert_eq!(files.len(), 96, "YAML files in the tree");
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 91 unit files, 99 YAML files (was 96).
+    assert_eq!(files.len(), 99, "YAML files in the tree");
 
     let mut hits: Vec<String> = Vec::new();
     for path in &files {

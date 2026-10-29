@@ -47,7 +47,8 @@ const CONFIG_HASH: &str = "797575e985c12149";
 /// The fold digest of `stream_1.jsonl`. Re-based 2026-10-12 after the
 /// Foundations merge (D-C1): it pins the 2.0 fold on the merged graph, not the
 /// 1.0 value `docs/plans/M3.md` recorded.
-const STREAM_1_UTC: &str = "a97242182f4555a9f7d4201ce1a5517f0f2b1679b8d8d7e634dd6c324ad3fc3e";
+// Re-based 2026-10-28 after VBE skill wave 1 (was a9724218...3fc3e).
+const STREAM_1_UTC: &str = "e03fd6df01158e1d0402b1e85f2775be24a07184cc47420da5b45ebc8282bd15";
 
 /// The non-UTC zone the digests file carries beside UTC.
 const NEW_YORK: &str = "America/New_York";

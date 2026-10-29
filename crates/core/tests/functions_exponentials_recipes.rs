@@ -19,7 +19,8 @@ fn recipe_keys() -> Vec<String> {
 #[test]
 fn every_functions_exponentials_kp_is_practicable_assessable_and_has_solutions() {
     let keys = recipe_keys();
-    assert_eq!(keys.len(), 90, "one entry per knowledge point of the unit");
+    // 2026-10-28, VBE skill wave 1: 100 entries (was 90); three new topics and natural-exponential-function/kp4.
+    assert_eq!(keys.len(), 100, "one entry per knowledge point of the unit");
     common::readiness::assert_kps_ready(&keys);
 }
 

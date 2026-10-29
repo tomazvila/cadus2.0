@@ -14,7 +14,7 @@ use common::dump::{curriculum_root, fixture_arena};
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
-const TREE_HASH: &str = "a216bf58f4c1abebbdda856fd703713c91c51dc7d39579d776fedc3937c1a81e";
+const TREE_HASH: &str = "2d27cee6d60991a81fcceaba217ed8b26c6583361a1b89a7dff3e1ba099e0d33";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-07, courses rewrite: dump length 13,180,744 (was 10,922,819) and a new
@@ -27,7 +27,9 @@ const TREE_HASH: &str = "a216bf58f4c1abebbdda856fd703713c91c51dc7d39579d776fedc3
 // 2026-10-12, Foundations merge (D-C1): dump length 12,927,302 (was 13,002,620), measured with `dump_curriculum curriculum`; hash re-pinned (was b34ac9ee...1548).
 // 2026-10-27, placement probes (490 topics) and reference figures (307 knowledge points): dump length 12,915,255 (was 12,927,302), measured with `dump_curriculum curriculum`; hash re-pinned (was ed934ce6...8a89).
 // 2026-10-27, slider figure on graphing-proportional-relationships/kp1: dump length 12,915,740 (was 12,915,255), measured with `dump_curriculum curriculum`; hash re-pinned (was 7c5e0bec...200b).
-const DUMP_LEN: usize = 12_915_740;
+// 2026-10-28, VBE skill wave 1: dump length 13,271,404 (was 12,915,740), measured with `dump_curriculum curriculum`; hash re-pinned (was a216bf58...a81e).
+// 2026-10-29, VBE skill wave 1: six written items left two Foundations points: dump length 13,267,884 (was 13,271,404); hash 2d27cee6... (was 7be6a775...).
+const DUMP_LEN: usize = 13_267_884;
 
 #[test]
 fn the_binary_writes_the_dump_and_the_hash() {

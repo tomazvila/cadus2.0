@@ -13,3 +13,5 @@ The committed drafts stay pending; this directory performs no import or approval
 The arithmetic Teach rows identified in `manifest.json` are exact mirrors of the integrated `arithmetic-core` repairs. When one of those source rows changes, update its shard, review digest, shard hashes, and canonical array hashes together.
 
 The Foundations merge of 2026-10-12 (D-C1) re-keyed the moved steps in every file here, dropped the rows of 25 twin steps, and left 713 Teach pages, 585 selected source templates, and 199 retired ones. The historical archive rows follow the same keys; their file hashes are re-pinned in `historical-archive/index.json`.
+
+VBE skill wave 1 (2026-10-28) added 42 Foundations points after this archive. They have no source template and no retired row. `docs/reports/whole-course-teach-later-points.json` lists each one with its date. Their Teach pages come from the worker authoring path. The archive counts stay at 784 canonical points, 585 selected templates and 199 retired ones.

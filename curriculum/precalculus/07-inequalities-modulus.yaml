@@ -1,0 +1,430 @@
+unit: inequalities-modulus
+course: precalculus
+module: "Inequalities with Modulus, Exponentials and Logarithms"
+topics:
+  - id: modulus-equations-inequalities
+    lt_term: 'lygtys su moduliais; nelygybės su moduliais'
+    name: Equations and Inequalities with Moduli
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: absolute-value-equations
+        weight: 0.6
+        key: true
+      - id: modulus-real-numbers
+        weight: 0.4
+        key: false
+      - id: basic-absolute-value-inequalities
+        weight: 0.4
+        key: false
+      - id: polynomial-inequalities
+        weight: 0.3
+        key: false
+      - id: quadratic-equations-factoring
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Equation |f(x)|=g(x) with a case split'
+        key_prerequisites: [absolute-value-equations, quadratic-equations-factoring]
+        exemplars:
+          - problem: 'Find all roots of $|x-5|=x+1$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '2'
+            solution_sketch: 'Case $x\ge5$: $x-5=x+1$ has no root. Case $x<5$: $5-x=x+1$ gives $x=2$. The right side is $3\ge0$ and $2<5$, so the root is valid. The answer is 2.'
+          - problem: 'Find all roots of $|x-3|=2x$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '1'
+            solution_sketch: 'The right side must be at least 0, so $x\ge0$. Case $x-3=2x$ gives $x=-3$, which fails $x\ge0$. Case $3-x=2x$ gives $x=1$, which fits. The answer is 1.'
+          - problem: 'Find all roots of $|2x+1|=x+4$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-5/3, 3'
+            solution_sketch: 'Case $2x+1=x+4$ gives $x=3$, and $x+4=7\ge0$. Case $2x+1=-(x+4)$ gives $x=-\frac53$, and $x+4=\frac73\ge0$. Both roots are valid. The answer is $-\frac53$ and 3.'
+          - problem: 'Find all roots of $|x+2|+x=6$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '2'
+            solution_sketch: 'Write the equation as $|x+2|=6-x$. Case $x+2=6-x$ gives $x=2$, and $6-x=4\ge0$. Case $x+2=x-6$ has no root. The answer is 2.'
+          - problem: 'Find all roots of $|x^2-4|=3x$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '1, 4'
+            solution_sketch: 'The right side must be at least 0, so $x\ge0$. Case $x^2-4=3x$ gives $x=4$ or $x=-1$, and only $x=4$ fits. Case $x^2-4=-3x$ gives $x=1$ or $x=-4$, and only $x=1$ fits. The answer is 1 and 4.'
+          - problem: 'Find all roots of $|x^2-1|=2x+2$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1, 3'
+            solution_sketch: 'The right side must be at least 0, so $x\ge-1$. Case $x^2-1=2x+2$ gives $x=3$ or $x=-1$, and both fit. Case $x^2-1=-2x-2$ gives $x=-1$, which was found. The answer is $-1$ and 3.'
+        constraints: 'equations |f(x)|=g(x) with f linear or quadratic; every root is checked against g(x)>=0; some case roots fail the check; answers are whole numbers or simple fractions'
+      - id: kp2
+        name: 'Inequality |f(x)| compared with a or g(x)'
+        key_prerequisites: [basic-absolute-value-inequalities, polynomial-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ with $|x-2|<5$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-3 < x < 7'
+            solution_sketch: 'The inequality means $-5<x-2<5$. Add 2 to every part. The answer is $-3<x<7$.'
+          - problem: 'Find all $x$ with $|3x-1|\ge8$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= -7/3 or x >= 3'
+            solution_sketch: 'The inequality means $3x-1\ge8$ or $3x-1\le-8$. The first gives $x\ge3$. The second gives $x\le-\frac73$.'
+          - problem: 'Find all $x$ with $|x-3|\ge x-1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= 2'
+            solution_sketch: 'If $x\ge3$, the inequality becomes $x-3\ge x-1$, which is false. If $x<3$, it becomes $3-x\ge x-1$, so $x\le2$. The answer is $x\le2$.'
+          - problem: 'Find all $x$ with $|x+1|<2x-1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 2'
+            solution_sketch: 'The inequality means $-(2x-1)<x+1<2x-1$. The right part gives $x>2$. The left part gives $x>0$. Both hold only for $x>2$.'
+          - problem: 'Find all $x$ with $|x^2-5x|<6$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-1 < x < 2 or 3 < x < 6'
+            solution_sketch: 'The inequality means $-6<x^2-5x<6$. The right part gives $(x-6)(x+1)<0$, so $-1<x<6$. The left part gives $(x-2)(x-3)>0$, so $x<2$ or $x>3$. Intersect the two sets.'
+          - problem: 'Find all $x$ with $|x^2-4x|<3x$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 < x < 7'
+            solution_sketch: 'The inequality means $-3x<x^2-4x<3x$. The right part gives $0<x<7$. The left part gives $x(x-1)>0$, so $x<0$ or $x>1$. Both hold for $1<x<7$.'
+        constraints: 'inequalities |f(x)|<a, |f(x)|>=a, |f(x)|<g(x) and |f(x)|>=g(x); f is linear or quadratic; answers are intervals or unions of intervals'
+      - id: kp3
+        name: 'Two moduli and the interval split'
+        key_prerequisites: [modulus-real-numbers, absolute-value-equations]
+        exemplars:
+          - problem: 'Solve for $x$ when two moduli are equal, with $|2x-1|=|x+4|$. Find all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1, 5'
+            solution_sketch: 'Two numbers have equal moduli when they are equal or opposite. Case $2x-1=x+4$ gives $x=5$. Case $2x-1=-(x+4)$ gives $x=-1$. The answer is $-1$ and 5.'
+          - problem: 'Find all roots of $|x-1|+|x+2|=5$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-3, 2'
+            solution_sketch: 'The points to split at are $-2$ and 1. For $x\ge1$ the equation is $2x+1=5$, so $x=2$. For $-2\le x<1$ the sum is 3, so no root. For $x<-2$ the equation is $-2x-1=5$, so $x=-3$.'
+          - problem: 'Find all $x$ with $|x-3|>|x+1|$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < 1'
+            solution_sketch: 'For $x\ge3$ the inequality is $-4>0$, which is false. For $-1\le x<3$ it is $3-x>x+1$, so $x<1$. For $x<-1$ it is $4>0$, which is true. The union is $x<1$.'
+          - problem: 'Find all $x$ with $|x-2|+|x+1|<5$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2 < x < 3'
+            solution_sketch: 'For $x\ge2$ the inequality is $2x-1<5$, so $2\le x<3$. For $-1\le x<2$ the sum is 3, which is less than 5. For $x<-1$ it is $-2x+1<5$, so $-2<x<-1$. The union is $-2<x<3$.'
+          - problem: 'Find all $x$ with $|x+1|+2|x-2|\le7$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-4/3 <= x <= 10/3'
+            solution_sketch: 'For $x\ge2$ the inequality is $3x-3\le7$, so $2\le x\le\frac{10}3$. For $-1\le x<2$ it is $5-x\le7$, which holds for the whole part. For $x<-1$ it is $3-3x\le7$, so $-\frac43\le x<-1$.'
+          - problem: 'Find all $x$ with $|x|+|x-4|=4$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x <= 4'
+            solution_sketch: 'For $x\ge4$ the equation is $2x-4=4$, so $x=4$. For $0\le x<4$ the sum is $x+4-x=4$, so every $x$ of this part is a solution. For $x<0$ the equation is $4-2x=4$, so $x=0$, which is not below 0. The set is $0\le x\le4$.'
+        constraints: 'equations and inequalities with two moduli, and one item with an added multiple; the split points are numbers; the learner works on each interval and joins the results'
+    diagnostic_exemplar:
+      problem: 'Find the greatest root of $|x-2|=3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'Either $x-2=3$ or $x-2=-3$. The roots are 5 and $-1$. The greatest is 5.'
+    anki_seeds:
+      - front: "To solve $|f(x)|=g(x)$, split into $f(x)=g(x)$ and $f(x)=-g(x)$. Then keep a root only if $g(x)$ is ... ."
+        back: "not negative"
+        type: basic
+      - front: "$|f(x)|<a$ with $a>0$ is the same as $-a<f(x)$ and $f(x)$ ... $a$."
+        back: "< (is less than)"
+        type: basic
+  - id: rational-inequality-systems-mixed
+    lt_term: 'racionaliųjų nelygybių sistemos; mišrios sistemos'
+    name: Systems of Rational Inequalities and Mixed Systems
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: rational-inequalities
+        weight: 0.6
+        key: true
+      - id: polynomial-inequalities
+        weight: 0.4
+        key: false
+      - id: and-or-inequalities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'System of two rational inequalities'
+        key_prerequisites: [rational-inequalities, and-or-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ that satisfy both $\frac{x-1}{x+2}>0$ and $x<4$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < -2 or 1 < x < 4'
+            solution_sketch: 'The first inequality holds for $x<-2$ or $x>1$. The second holds for $x<4$. The common part is $x<-2$ or $1<x<4$.'
+          - problem: 'Find all $x$ that satisfy both $\frac{x-3}{x+1}\le0$ and $\frac{x+2}{x-1}\ge0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 < x <= 3'
+            solution_sketch: 'The first inequality holds for $-1<x\le3$. The second holds for $x\le-2$ or $x>1$. The common part is $1<x\le3$.'
+          - problem: 'Find all $x$ that satisfy both $\frac{x}{x-2}<1$ and $\frac{x+3}{x-1}\ge0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= -3 or 1 < x < 2'
+            solution_sketch: 'Move 1 to the left: $\frac{2}{x-2}<0$, so $x<2$. The second inequality holds for $x\le-3$ or $x>1$. The common part is $x\le-3$ or $1<x<2$.'
+          - problem: 'Find all $x$ that satisfy both $\frac1{x-1}<\frac1{x+1}$ and $\frac{3x+1}{x-2}\ge0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-1 < x <= -1/3'
+            solution_sketch: 'Move the right side to the left: $\frac{2}{(x-1)(x+1)}<0$, so $-1<x<1$. The second inequality holds for $x\le-\frac13$ or $x>2$. The common part is $-1<x\le-\frac13$.'
+          - problem: 'Find all $x$ that satisfy both $\frac{2x-1}{x+3}\ge1$ and $x^2<25$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-5 < x < -3 or 4 <= x < 5'
+            solution_sketch: 'Move 1 to the left: $\frac{x-4}{x+3}\ge0$, so $x<-3$ or $x\ge4$. The second inequality holds for $-5<x<5$. The common part is $-5<x<-3$ or $4\le x<5$.'
+          - problem: 'Find all $x$ that satisfy both $\frac{x^2-4}{x-3}\ge0$ and $\frac{x-1}{x+2}\le0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2 < x <= 1'
+            solution_sketch: 'The first inequality holds for $-2\le x\le2$ or $x>3$. The second holds for $-2<x\le1$, and $x=-2$ is excluded. The common part is $-2<x\le1$.'
+        constraints: 'systems of two inequalities, each with the unknown in a denominator, or one rational and one polynomial; the learner solves each and intersects the sets; answers are intervals or unions'
+      - id: kp2
+        name: 'Mixed system of an equation and an inequality'
+        key_prerequisites: [rational-inequalities, polynomial-inequalities, and-or-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ that satisfy both $x^2-5x+6=0$ and $x>2.5$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '3'
+            solution_sketch: 'The equation gives $x=2$ or $x=3$. Only $x=3$ is greater than 2.5. The answer is 3.'
+          - problem: 'Find all $x$ that satisfy both $x^2-x-6=0$ and $\frac{x-1}{x+4}>0$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '3'
+            solution_sketch: 'The equation gives $x=3$ or $x=-2$. At $x=3$ the fraction is $\frac27>0$. At $x=-2$ the fraction is $-\frac32<0$. The answer is 3.'
+          - problem: 'Find all $x$ that satisfy both $|x-1|=3$ and $\frac{x-2}{x+3}<0$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-2'
+            solution_sketch: 'The equation gives $x=4$ or $x=-2$. The inequality holds for $-3<x<2$. Only $x=-2$ lies in this interval. The answer is $-2$.'
+          - problem: 'Find all $x$ that satisfy both $|x-1|=x^2-1$ and $\frac{x+1}{x-2}>0$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-2'
+            solution_sketch: 'For $x\ge1$ the equation gives $x^2-x=0$, so $x=1$. For $x<1$ it gives $x^2+x-2=0$, so $x=-2$. At $x=1$ the fraction is $-2<0$. At $x=-2$ it is $\frac14>0$. The answer is $-2$.'
+          - problem: 'Find all $x$ that satisfy both $x^2=2x+3$ and $\frac{x-5}{x-3}>0$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1'
+            solution_sketch: 'The equation gives $x=3$ or $x=-1$. At $x=3$ the fraction has no value. At $x=-1$ it is $\frac{-6}{-4}>0$. The answer is $-1$.'
+          - problem: 'Find all $x$ that satisfy both $x^3-x=0$ and $\frac{x}{x-1}<1$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1, 0'
+            solution_sketch: 'The equation gives $x=-1$, $x=0$ or $x=1$. The inequality is $\frac{1}{x-1}<0$, so $x<1$. This excludes $x=1$. The answer is $-1$ and 0.'
+        constraints: 'one equation (quadratic, cubic or with a modulus) and one inequality with one unknown; the learner finds the roots and keeps those that satisfy the inequality; answers are lists of numbers'
+    diagnostic_exemplar:
+      problem: 'Find the smallest integer $x$ that satisfies both $x>1$ and $\frac{x}{x-2}>0$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The fraction is positive for $x<0$ or $x>2$. With $x>1$ the common part is $x>2$. The smallest integer is 3.'
+    anki_seeds:
+      - front: "The solution set of a system of two inequalities is the ... of the two solution sets."
+        back: "intersection"
+        type: basic
+      - front: "In a mixed system, test each root of the equation in the ... ."
+        back: "inequality"
+        type: basic
+  - id: exponential-inequalities
+    lt_term: 'rodiklinės nelygybės'
+    name: Exponential Inequalities
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: exponential-equations-same-base
+        weight: 0.6
+        key: true
+      - id: exponential-equations
+        weight: 0.4
+        key: false
+      - id: graphs-of-exponential-functions
+        weight: 0.4
+        key: false
+      - id: polynomial-inequalities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Inequality a^f > a^g and the rule for a>1 and 0<a<1'
+        key_prerequisites: [exponential-equations-same-base, graphs-of-exponential-functions]
+        exemplars:
+          - problem: 'Find all $x$ with $2^{3x-1}>2^{x+5}$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 3'
+            solution_sketch: 'The base 2 is greater than 1, so the sign stays. Then $3x-1>x+5$, so $2x>6$. The answer is $x>3$.'
+          - problem: 'Find all $x$ with $9^x<27$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < 3/2'
+            solution_sketch: 'Write $9^x=3^{2x}$ and $27=3^3$. The base 3 is greater than 1, so $2x<3$. The answer is $x<\frac32$.'
+          - problem: 'Find all $x$ with $\left(\frac13\right)^{2x}\ge\left(\frac13\right)^{x+4}$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= 4'
+            solution_sketch: 'The base $\frac13$ is between 0 and 1, so the sign turns. Then $2x\le x+4$. The answer is $x\le4$.'
+          - problem: 'Find all $x$ with $4^x\le8^{x-1}$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x >= 3'
+            solution_sketch: 'Write both sides with base 2: $2^{2x}\le2^{3x-3}$. The base is greater than 1, so $2x\le3x-3$. The answer is $x\ge3$.'
+          - problem: 'Find all $x$ with $\left(\frac12\right)^{x^2}>\frac1{16}$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2 < x < 2'
+            solution_sketch: 'Write $\frac1{16}=\left(\frac12\right)^4$. The base is between 0 and 1, so the sign turns: $x^2<4$. The answer is $-2<x<2$.'
+          - problem: 'Find all $x$ with $4^{x^2}\le2^{x+6}$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-3/2 <= x <= 2'
+            solution_sketch: 'Write $4^{x^2}=2^{2x^2}$. The base 2 is greater than 1, so $2x^2\le x+6$. Then $(2x+3)(x-2)\le0$. The answer is $-\frac32\le x\le2$.'
+        constraints: 'inequalities a^f(x) compared with a^g(x) after the same base; bases above 1 and between 0 and 1; f and g are linear or quadratic'
+      - id: kp2
+        name: 'Inequality with the substitution u=a^x'
+        key_prerequisites: [exponential-equations, polynomial-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ with $4^x-3\cdot2^x+2<0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x < 1'
+            solution_sketch: 'Put $u=2^x$ with $u>0$. Then $u^2-3u+2<0$, so $1<u<2$. Since $2^0=1$ and $2^1=2$, the answer is $0<x<1$.'
+          - problem: 'Find all $x$ with $9^x-4\cdot3^x+3\ge0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= 0 or x >= 1'
+            solution_sketch: 'Put $u=3^x$ with $u>0$. Then $(u-1)(u-3)\ge0$, so $u\le1$ or $u\ge3$. The answer is $x\le0$ or $x\ge1$.'
+          - problem: 'Find all $x$ with $4^x-2^{x+1}-8>0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 2'
+            solution_sketch: 'Put $u=2^x$ with $u>0$. Then $u^2-2u-8>0$, so $(u-4)(u+2)>0$. Since $u>0$, this means $u>4$. The answer is $x>2$.'
+          - problem: 'Find all $x$ with $25^x-30\cdot5^x+125\le0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 <= x <= 2'
+            solution_sketch: 'Put $u=5^x$ with $u>0$. Then $(u-5)(u-25)\le0$, so $5\le u\le25$. The answer is $1\le x\le2$.'
+          - problem: 'Find all $x$ with $3^x+3^{2-x}\le10$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x <= 2'
+            solution_sketch: 'Write $3^{2-x}=\frac{9}{3^x}$ and put $u=3^x$. Then $u+\frac9u\le10$. Multiply by $u>0$: $(u-1)(u-9)\le0$. The answer is $0\le x\le2$.'
+          - problem: 'Find all $x$ with $\left(\frac14\right)^x-6\left(\frac12\right)^x+8<0$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2 < x < -1'
+            solution_sketch: 'Put $u=\left(\frac12\right)^x$, so $\left(\frac14\right)^x=u^2$. Then $(u-2)(u-4)<0$, so $2<u<4$. Since $u=2^{-x}$, this means $1<-x<2$. The answer is $-2<x<-1$.'
+        constraints: 'inequalities that become quadratic in u=a^x; u is always positive; the learner solves for u and goes back to x; answers are intervals or unions'
+    diagnostic_exemplar:
+      problem: 'Find all $x$ with $2^x>8$. Write the answer as an inequality in $x$.'
+      answer_contract: {"kind":"inequality_union"}
+      answer: 'x > 3'
+      solution_sketch: 'Write $8=2^3$. The base 2 is greater than 1, so $x>3$.'
+    anki_seeds:
+      - front: "For $a>1$, $a^{f}>a^{g}$ means $f$ ... $g$."
+        back: "> (is greater than)"
+        type: basic
+      - front: "For $0<a<1$, $a^{f}>a^{g}$ means $f$ ... $g$."
+        back: "< (is less than)"
+        type: basic
+  - id: logarithmic-inequalities
+    lt_term: 'logaritminės nelygybės'
+    name: Logarithmic Inequalities
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: logarithmic-equations
+        weight: 0.6
+        key: true
+      - id: graphs-of-logarithmic-functions
+        weight: 0.4
+        key: false
+      - id: rational-inequalities
+        weight: 0.4
+        key: false
+      - id: exponential-inequalities
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Inequality with base above 1 and the domain'
+        key_prerequisites: [logarithmic-equations, graphs-of-logarithmic-functions]
+        exemplars:
+          - problem: 'Find all $x$ with $\log_2(x-1)<3$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 < x < 9'
+            solution_sketch: 'The argument must be positive: $x>1$. The base is greater than 1, so $x-1<2^3=8$ and $x<9$. The answer is $1<x<9$.'
+          - problem: 'Find all $x$ with $\log_3(2x+1)\ge2$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x >= 4'
+            solution_sketch: 'The base is greater than 1, so $2x+1\ge3^2=9$ and $x\ge4$. This also gives $2x+1>0$. The answer is $x\ge4$.'
+          - problem: 'Find all $x$ with $\log_5(x+3)>\log_5(2x-1)$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1/2 < x < 4'
+            solution_sketch: 'Domain: $2x-1>0$, so $x>\frac12$. The base is greater than 1, so $x+3>2x-1$ and $x<4$. The answer is $\frac12<x<4$.'
+          - problem: 'Find all $x$ with $\log_2 x+\log_2(x-2)\le3$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '2 < x <= 4'
+            solution_sketch: 'Domain: $x>2$. Join the logarithms: $\log_2(x^2-2x)\le3$, so $x^2-2x\le8$. Then $(x-4)(x+2)\le0$, so $-2\le x\le4$. With $x>2$ the answer is $2<x\le4$.'
+          - problem: 'Find all $x$ with $\log_2(x^2-3x)>2$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < -1 or x > 4'
+            solution_sketch: 'The base is greater than 1, so $x^2-3x>4$. Then $(x-4)(x+1)>0$, so $x<-1$ or $x>4$. Here $x^2-3x>4>0$, so the domain holds. The answer is $x<-1$ or $x>4$.'
+          - problem: 'Find all $x$ with $\log_3(x-1)+\log_3(x+1)<1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 < x < 2'
+            solution_sketch: 'Domain: $x>1$. Join the logarithms: $\log_3(x^2-1)<1$, so $x^2-1<3$ and $x^2<4$. With $x>1$ the answer is $1<x<2$.'
+        constraints: 'logarithmic inequalities with a base above 1; the learner writes the domain first and keeps only the part of the result inside the domain; answers are intervals or unions'
+      - id: kp2
+        name: 'Inequality with base between 0 and 1'
+        key_prerequisites: [logarithmic-equations, graphs-of-logarithmic-functions, rational-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ with $\log_{1/2}x>2$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x < 1/4'
+            solution_sketch: 'The base is between 0 and 1, so the sign turns. Then $0<x<\left(\frac12\right)^2=\frac14$. The answer is $0<x<\frac14$.'
+          - problem: 'Find all $x$ with $\log_{1/3}(x-1)\le-1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x >= 4'
+            solution_sketch: 'The base is between 0 and 1, so the sign turns. Then $x-1\ge\left(\frac13\right)^{-1}=3$. The answer is $x\ge4$.'
+          - problem: 'Find all $x$ with $\log_{1/2}(2x-3)<\log_{1/2}(x+1)$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 4'
+            solution_sketch: 'The base is between 0 and 1, so the sign turns: $2x-3>x+1$, so $x>4$. For $x>4$ both arguments are positive. The answer is $x>4$.'
+          - problem: 'Find all $x$ with $\log_{1/2}(x^2-1)>-3$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-3 < x < -1 or 1 < x < 3'
+            solution_sketch: 'The sign turns, so $0<x^2-1<2^3=8$. Then $1<x^2<9$. The answer is $-3<x<-1$ or $1<x<3$.'
+          - problem: 'Find all $x$ with $\log_{1/2}x+\log_{1/2}(x+1)\ge-1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x <= 1'
+            solution_sketch: 'Domain: $x>0$. Join the logarithms: $\log_{1/2}(x^2+x)\ge-1$. The sign turns, so $x^2+x\le2$. Then $(x+2)(x-1)\le0$. With $x>0$ the answer is $0<x\le1$.'
+          - problem: 'Find all $x$ with $\log_{1/4}\frac{x-1}{x+2}\ge-1$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x <= -3 or x > 1'
+            solution_sketch: 'The sign turns, so $0<\frac{x-1}{x+2}\le4$. The first part gives $x<-2$ or $x>1$. The second part gives $\frac{x+3}{x+2}\ge0$, so $x\le-3$ or $x>-2$. Intersect the sets.'
+        constraints: 'logarithmic inequalities with base 1/2, 1/3 or 1/4; the sign turns; the domain stays; answers are intervals or unions'
+      - id: kp3
+        name: 'Constant on the right side and a power under the logarithm'
+        key_prerequisites: [logarithmic-equations, exponential-inequalities]
+        exemplars:
+          - problem: 'Find all $x$ with $\log_{10}(x+5)\le2$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-5 < x <= 95'
+            solution_sketch: 'Domain: $x+5>0$. The base is greater than 1, so $x+5\le10^2=100$. The answer is $-5<x\le95$.'
+          - problem: 'Find all $x$ with $\log_2(x^3)>6$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 4'
+            solution_sketch: 'The domain is $x>0$. The base is greater than 1, so $x^3>2^6=64$. Then $x>4$. The answer is $x>4$.'
+          - problem: 'Find all $x$ with $\log_3(x^2)<2$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-3 < x < 0 or 0 < x < 3'
+            solution_sketch: 'The domain is $x\ne0$. The base is greater than 1, so $x^2<9$ and $-3<x<3$. Remove $x=0$. The answer is $-3<x<0$ or $0<x<3$.'
+          - problem: 'Find all $x$ with $\log_2\left((x+1)^2\right)\le4$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-5 <= x < -1 or -1 < x <= 3'
+            solution_sketch: 'The domain is $x\ne-1$. The base is greater than 1, so $(x+1)^2\le16$ and $-5\le x\le3$. Remove $x=-1$. The answer is $-5\le x<-1$ or $-1<x\le3$.'
+          - problem: 'Find all $x$ with $\log_{1/2}(x^2)\ge-4$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-4 <= x < 0 or 0 < x <= 4'
+            solution_sketch: 'The domain is $x\ne0$. The base is between 0 and 1, so the sign turns: $x^2\le\left(\frac12\right)^{-4}=16$. Then $-4\le x\le4$. Remove $x=0$.'
+          - problem: 'Find all $x$ with $\log_3\left((x-1)^2\right)>4$. Write the answer as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < -8 or x > 10'
+            solution_sketch: 'The base is greater than 1, so $(x-1)^2>81$. Then $|x-1|>9$. This gives $x-1>9$ or $x-1<-9$. The answer is $x<-8$ or $x>10$.'
+        constraints: 'constant on the right side and a power under the logarithm; an even power puts x and -x in the domain; answers are intervals or unions with removed points'
+    diagnostic_exemplar:
+      problem: 'Find the largest integer $x$ with $\log_2 x<3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'The domain is $x>0$. The base is greater than 1, so $x<8$. The largest integer is 7.'
+    anki_seeds:
+      - front: "For base $a>1$, $\\log_a f>\\log_a g$ means $f$ ... $g$ and $g>0$."
+        back: "> (is greater than)"
+        type: basic
+      - front: "For base $0<a<1$, $\\log_a f>\\log_a g$ means $f$ ... $g$ and $f>0$."
+        back: "< (is less than)"
+        type: basic

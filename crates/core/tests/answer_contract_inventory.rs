@@ -120,7 +120,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
             }
         }
     }
-    assert_eq!(rows.len(), 5742); // 2026-10-12, Foundations merge (D-C1): 5742 (was 5907); 2026-10-07, courses rewrite (was 3828; 5,906 before the figure and whole-number pass)
+    assert_eq!(rows.len(), 5994); // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: 5994 (was 6000); // 2026-10-28, VBE skill wave 1: 6000 (was 5742); 2026-10-12, Foundations merge (D-C1): 5742 (was 5907); 2026-10-07, courses rewrite (was 3828; 5,906 before the figure and whole-number pass)
     // The pre-unit corpus had 2,084 authored contracts; 47 newly reviewed
     // measured-output KP exemplars brought the count to 2,131, and the
     // exponents-radicals and polynomials-quadratics rewrites (06: 63 -> 442,
@@ -131,7 +131,7 @@ fn current_inventory_covers_every_exemplar_and_preserves_the_review_snapshot() {
         rows.iter()
             .filter(|row| !row["existing_contract"].is_null())
             .count(),
-        5627 // 2026-10-12, Foundations merge (D-C1): 5627 of 5742 (was 5792 of 5907)
+        5879 // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: 5879 of 5994 (was 5885 of 6000); 2026-10-28, VBE skill wave 1: 5885 of 6000 (was 5627 of 5742); 2026-10-12, Foundations merge (D-C1): 5627 of 5742 (was 5792 of 5907)
     );
     assert!(rows.iter().all(|row| row["automatic_approval"] == false));
     let current_keys: BTreeSet<_> = rows.iter().map(identity).collect();

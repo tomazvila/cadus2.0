@@ -281,6 +281,76 @@ topics:
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'The function $f(x)=2x^2+C$ must satisfy $f(2)=8+C=9$. So $C=1$ and the correct function is $2x^2+1$.'
         constraints: 'one initial condition; C is a small integer'
+      - id: kp4
+        name: 'Antiderivative of f(ax+b)'
+        key_prerequisites: [reverse-power-rule, derivatives-trig, derivatives-exp-log]
+        exemplars:
+          - problem: 'Find $\int \cos(2x)\,dx$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'sin(2x)/2 + C'
+            solution_sketch: 'The derivative of $\sin(2x)$ is $2\cos(2x)$. So divide by the inner factor $2$. The answer is $\frac12\sin(2x)+C$.'
+          - problem: 'Find $\int e^{3x+1}\,dx$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'e^(3x+1)/3 + C'
+            solution_sketch: 'The derivative of $e^{3x+1}$ is $3e^{3x+1}$. So divide by the inner factor $3$. The answer is $\frac13 e^{3x+1}+C$.'
+          - problem: 'Find $\int (4x-5)^3\,dx$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: '(4x-5)^4/16 + C'
+            solution_sketch: 'The power rule gives $\frac{(4x-5)^4}{4}$ for the outer function. Divide by the inner factor $4$. The answer is $\frac{(4x-5)^4}{16}+C$.'
+          - problem: 'Find $\int \frac{1}{2x+3}\,dx$ for $x>-\frac32$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'ln(2x+3)/2 + C'
+            solution_sketch: 'The derivative of $\ln(2x+3)$ is $\frac{2}{2x+3}$. So divide by the inner factor $2$. The answer is $\frac12\ln(2x+3)+C$.'
+          - problem: 'Find $\int \sin(5-x)\,dx$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'cos(5-x) + C'
+            solution_sketch: 'The derivative of $\cos(5-x)$ is $-\sin(5-x)\cdot(-1)=\sin(5-x)$. The inner factor is $-1$, so the minus signs cancel. The answer is $\cos(5-x)+C$.'
+          - problem: 'Find $\int \frac{1}{(3-2x)^2}\,dx$ for $x\neq\frac32$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: '1/(2*(3-2x)) + C'
+            solution_sketch: 'An antiderivative of $u^{-2}$ is $-u^{-1}$. The inner factor is $-2$, so divide by $-2$. This gives $\frac{1}{2(3-2x)}+C$.'
+        constraints: 'the rule: if F is an antiderivative of f, then F(ax+b)/a is an antiderivative of f(ax+b); the inner function is linear with a not 0 and the outer function comes from the basic table'
+      - id: kp5
+        name: 'Justify the properties of antiderivatives (sum, constant multiple)'
+        key_prerequisites: [reverse-power-rule, derivatives-trig]
+        exemplars:
+          - problem: 'The function $x^3$ is an antiderivative of $f$. The function $e^x$ is an antiderivative of $g$. Find all antiderivatives of $f(x)+g(x)$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'x^3 + e^x + C'
+            solution_sketch: 'An antiderivative of a sum is the sum of the antiderivatives. So $x^3+e^x$ is an antiderivative of $f+g$. All others differ by a constant, so the answer is $x^3+e^x+C$.'
+          - problem: 'The function $\sin x$ is an antiderivative of $f(x)=\cos x$. Find all antiderivatives of $5f(x)$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: '5sin(x) + C'
+            solution_sketch: 'A constant factor stays when you take an antiderivative. So $5\sin x$ is an antiderivative of $5f$. The answer is $5\sin x+C$.'
+          - problem: 'The functions $F(x)=x^2$ and $G(x)=x^2+7$ are both antiderivatives of $f(x)=2x$. Compute $G(x)-F(x)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'Two antiderivatives of one function differ by a constant. Here $G(x)-F(x)=x^2+7-x^2=7$.'
+          - problem: 'The function $x^5$ is an antiderivative of $f$. The function $\sin x$ is an antiderivative of $g$. Find all antiderivatives of $f(x)-g(x)$.'
+            answer_contract: {"kind":"function","vars":["x"],"up_to_constant":true}
+            answer: 'x^5 - sin(x) + C'
+            solution_sketch: 'An antiderivative of a difference is the difference of the antiderivatives. So $x^5-\sin x$ is an antiderivative of $f-g$. All others differ by a constant, so the answer is $x^5-\sin x+C$.'
+          - problem: 'The function $F(x)=x^3$ is an antiderivative of $f$. Find the antiderivative of $-4f(x)$ whose graph passes through the point $(1,0)$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '-4x^3 + 4'
+            solution_sketch: 'A constant factor stays when you take an antiderivative. So the antiderivatives of $-4f$ are $-4x^3+C$. The point $(1,0)$ gives $-4+C=0$, so $C=4$. The answer is $-4x^3+4$.'
+          - problem: 'The function $x^4$ is an antiderivative of $f$. The function $e^{2x}$ is an antiderivative of $g$. Find the antiderivative $H$ of $3f(x)+2g(x)$ with $H(0)=5$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '3x^4 + 2e^(2x) + 3'
+            solution_sketch: 'The antiderivatives of $3f+2g$ are $3x^4+2e^{2x}+C$. Then $H(0)=2+C=5$, so $C=3$. The answer is $3x^4+2e^{2x}+3$.'
+          - problem: 'Write a proof that if $F$ and $G$ are antiderivatives of $f$ and $g$, then $F+G$ is an antiderivative of $f+g$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The derivative of a sum is the sum of the derivatives. So (F + G)'' = F'' + G''. Since F'' = f and G'' = g, we get (F + G)'' = f + g. So F + G is an antiderivative of f + g.'
+            solution_sketch: 'Differentiate $F+G$ term by term. The result is $f+g$.'
+          - problem: 'Write a proof that if $F$ is an antiderivative of $f$ and $k$ is a constant, then $kF$ is an antiderivative of $kf$.'
+            answer_contract: {"kind":"written"}
+            answer: 'A constant factor stays in a derivative, so (kF)'' = k F''. Since F'' = f, we get (kF)'' = k f. So kF is an antiderivative of kf.'
+            solution_sketch: 'Differentiate $kF$. The constant $k$ stays and $F''=f$ gives $kf$.'
+          - problem: 'Write a proof that if $F$ is an antiderivative of $f$ and $a\neq 0$, then $\frac1a F(ax+b)$ is an antiderivative of $f(ax+b)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use the chain rule. The derivative of F(ax+b) is F''(ax+b) times a, which is a f(ax+b). So the derivative of 1/a times F(ax+b) is 1/a times a f(ax+b), which is f(ax+b). So 1/a times F(ax+b) is an antiderivative of f(ax+b).'
+            solution_sketch: 'The chain rule gives $\left(F(ax+b)\right)''=a f(ax+b)$. Multiply by $\frac1a$ to cancel the factor $a$. The result is $f(ax+b)$.'
+        constraints: 'six decidable items use the sum, difference, constant multiple and constant rules on given antiderivatives; three written items prove the rules by differentiation'
     diagnostic_exemplar:
       problem: 'Find $f(x)$ given $f''(x) = 4x + \cos x$ and $f(0) = 3$.'
       answer: "2x^2 + sin x + 3"

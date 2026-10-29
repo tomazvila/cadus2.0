@@ -4541,6 +4541,35 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The logarithm undoes the exponential, so $\ln(e^5)=5$. The exponential undoes the logarithm, so $e^{\ln3}=3$, and the sum is $5+3=8$.'
+      - id: kp4
+        name: 'State why e is irrational and which set holds it'
+        key_prerequisites: [graphs-of-exponential-functions, common-natural-logarithms]
+        exemplars:
+          - problem: 'The number $e$ is $2.71828\ldots$ Find the largest integer that is less than $e$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The number $e$ is between $2$ and $3$. So the largest integer below $e$ is $2$.'
+          - problem: 'How many of the numbers $\sqrt{4}$, $\frac{22}{7}$, $e$, $\pi$, $0.\overline{3}$ and $\sqrt{5}$ are irrational?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The numbers $\sqrt{4}=2$, $\frac{22}{7}$ and $0.\overline{3}=\frac{1}{3}$ are fractions of integers. The numbers $e$, $\pi$ and $\sqrt{5}$ are not. So 3 numbers are irrational.'
+          - problem: 'How many of the numbers $e$, $e^0$, $\ln e$, $e-e$ and $\sqrt{e^2}$ are irrational?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Compute: $e^0=1$, $\ln e=1$, $e-e=0$, and $\sqrt{e^2}=e$. The numbers $1$ and $0$ are rational. Only $e$ and $\sqrt{e^2}$ are irrational, so the answer is 2.'
+          - problem: 'How many of the numbers $\ln 1$, $e^{\ln 5}$, $e+1$, $\frac{e}{e}$, $\sqrt{9}$ and $e\cdot 0$ are rational?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'Compute: $\ln 1=0$, $e^{\ln 5}=5$, $\frac{e}{e}=1$, $\sqrt{9}=3$ and $e\cdot 0=0$. These five numbers are rational. Only $e+1$ is irrational, so the answer is 5.'
+          - problem: 'The number $e$ is $2.71828\ldots$ Find the largest integer that is less than $3e$.'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'Compute $3e=8.15484\ldots$ The largest integer below this number is $8$.'
+          - problem: 'The number $e$ is $2.71828\ldots$ Find the sum of all integers $n$ with $|n-e|<2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The condition gives $e-2<n<e+2$, so $0.718\ldots<n<4.718\ldots$. The integers are $1,2,3,4$. Their sum is $10$.'
+        constraints: 'e is a real number that is not a fraction p/q; decidable items count rational and irrational numbers in a list; written items explain decimal expansions and sums'
     diagnostic_exemplar:
       problem: 'Using $e \approx 2.71828$, evaluate $e^{\ln 5} + e^{2}$ to two decimal places.'
       answer: "12.39"
@@ -4699,4 +4728,367 @@ topics:
         type: basic
       - front: "Doubling time for continuous growth at rate r?"
         back: "t = ln 2 / r"
+        type: basic
+
+  - id: log-identity-base-rules
+    lt_term: 'pagrindinė logaritminė tapatybė; pagrindo keitimas'
+    name: Logarithm Identity and Base Rules
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: logarithm-properties
+        weight: 0.6
+        key: true
+      - id: change-of-base-formula
+        weight: 0.5
+        key: false
+      - id: exponential-equations
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Identity a^(log_a b)=b'
+        key_prerequisites: [logarithm-properties, exponential-equations]
+        exemplars:
+          - problem: 'Compute $5^{\log_5 7}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The base of the power equals the base of the logarithm. So $a^{\log_a b}=b$ applies with $a=5$ and $b=7$. The value is 7.'
+          - problem: 'Compute $3^{\log_3 12-\log_3 4}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Use the quotient rule: $\log_3 12-\log_3 4=\log_3 3$. Then $3^{\log_3 3}=3$. The value is 3.'
+          - problem: 'Compute $2^{3+\log_2 5}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '40'
+            solution_sketch: 'Split the power: $2^{3+\log_2 5}=2^3\cdot 2^{\log_2 5}$. The identity gives $2^{\log_2 5}=5$. So the value is $8\cdot 5=40$.'
+          - problem: 'Compute $9^{\log_3 4}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '16'
+            solution_sketch: 'Write $9=3^2$. Then $9^{\log_3 4}=3^{2\log_3 4}=3^{\log_3 16}$. The identity gives 16.'
+          - problem: 'Find $x$ when $6^{\log_6(2x-1)}=11$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The identity turns the left side into $2x-1$. So $2x-1=11$ and $x=6$. The argument $2\cdot 6-1=11$ is positive, so the root is valid.'
+          - problem: 'Compute $3^{2\log_3 5-1}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '25/3'
+            solution_sketch: 'Split the power: $3^{2\log_3 5}\cdot 3^{-1}$. Now $3^{2\log_3 5}=3^{\log_3 25}=25$. So the value is $25/3$.'
+        constraints: 'a power whose exponent holds a logarithm of the same base; the base is a small integer; the argument is an integer; answers are integers or simple fractions; no figure'
+      - id: kp2
+        name: 'Rule (1/t) log_b a = log_(b^t) a'
+        key_prerequisites: [logarithm-properties, change-of-base-formula]
+        exemplars:
+          - problem: 'Find $\log_{25}125$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/2'
+            solution_sketch: 'Write $25=5^2$ and $125=5^3$. The rule gives $\log_{5^2}5^3=\frac{1}{2}\cdot 3$. The value is $3/2$.'
+          - problem: 'Find $\log_8 16$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4/3'
+            solution_sketch: 'Write $8=2^3$ and $16=2^4$. The rule gives $\log_{2^3}2^4=\frac13\cdot 4$. The value is $4/3$.'
+          - problem: 'Find $\log_{27}9$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2/3'
+            solution_sketch: 'Write $27=3^3$ and $9=3^2$. The rule gives $\frac13\log_3 9=\frac13\cdot 2$. The value is $2/3$.'
+          - problem: 'Find $\log_5 y$ when $\log_{25}y=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The rule gives $\log_{25}y=\frac12\log_5 y$. So $\log_5 y=2\cdot 3=6$.'
+          - problem: 'Compute $\log_{16}8+\log_4 2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/4'
+            solution_sketch: 'The rule gives $\log_{16}8=\frac14\log_2 8=\frac34$. Also $\log_4 2=\frac12$. The sum is $\frac34+\frac12=\frac54$.'
+          - problem: 'Find $\log_9 b+\log_{27}b$ when $\log_3 b=8$.'
+            answer_contract: {"kind":"exact"}
+            answer: '20/3'
+            solution_sketch: 'The rule gives $\log_9 b=\frac12\log_3 b=4$. It also gives $\log_{27}b=\frac13\log_3 b=\frac83$. The sum is $4+\frac83=\frac{20}{3}$.'
+        constraints: 'a base that is a power of the base of a known logarithm; integer powers of 2, 3 or 5; answers are fractions; the rule 1/t log_b a = log_(b^t) a is on the formula sheet'
+      - id: kp3
+        name: 'Express log of a product through two given logarithms'
+        key_prerequisites: [logarithm-properties, change-of-base-formula]
+        exemplars:
+          - problem: 'Let $a=\log_2 3$ and $b=\log_2 5$. Express $\log_2 15$ through $a$ and $b$.'
+            answer_contract: {"kind":"function","vars":["a","b"]}
+            answer: 'a+b'
+            solution_sketch: 'Write $15=3\cdot 5$. The product rule gives $\log_2 15=\log_2 3+\log_2 5$. So the answer is $a+b$.'
+          - problem: 'Let $a=\lg 2$. Express $\lg 5$ through $a$.'
+            answer_contract: {"kind":"function","vars":["a"]}
+            answer: '1-a'
+            solution_sketch: 'Write $5=10/2$. The quotient rule gives $\lg 5=\lg 10-\lg 2$. So the answer is $1-a$.'
+          - problem: 'Let $a=\lg 2$ and $b=\lg 3$. Express $\lg 12$ through $a$ and $b$.'
+            answer_contract: {"kind":"function","vars":["a","b"]}
+            answer: '2*a+b'
+            solution_sketch: 'Write $12=2^2\cdot 3$. The product rule and the power rule give $\lg 12=2\lg 2+\lg 3$. So the answer is $2a+b$.'
+          - problem: 'Let $a=\log_3 2$. Express $\log_3 24$ through $a$.'
+            answer_contract: {"kind":"function","vars":["a"]}
+            answer: '3*a+1'
+            solution_sketch: 'Write $24=2^3\cdot 3$. Then $\log_3 24=3\log_3 2+\log_3 3$. So the answer is $3a+1$.'
+          - problem: 'Let $a=\lg 5$. Express $\log_{25}2$ through $a$.'
+            answer_contract: {"kind":"function","vars":["a"]}
+            answer: '(1-a)/(2*a)'
+            solution_sketch: 'Use the change of base: $\log_{25}2=\frac{\lg 2}{\lg 25}$. Here $\lg 2=1-a$ and $\lg 25=2a$. So the answer is $\frac{1-a}{2a}$.'
+          - problem: 'Let $a=\lg 2$ and $b=\lg 3$. Express $\log_6 5$ through $a$ and $b$.'
+            answer_contract: {"kind":"function","vars":["a","b"]}
+            answer: '(1-a)/(a+b)'
+            solution_sketch: 'Use the change of base: $\log_6 5=\frac{\lg 5}{\lg 6}$. Here $\lg 5=1-a$ and $\lg 6=a+b$. So the answer is $\frac{1-a}{a+b}$.'
+        constraints: 'express a logarithm through one or two given logarithms with base 2, 3 or 10; split the argument into a product of the given numbers and 10; the answer is a linear expression or a fraction in a and b'
+    diagnostic_exemplar:
+      problem: 'Compute $11^{\log_{11}6}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '6'
+      solution_sketch: 'The base of the power equals the base of the logarithm. So the identity gives 6.'
+    anki_seeds:
+      - front: "$a^{\\log_a b}=$ ___"
+        back: "$b$"
+        type: basic
+      - front: "$\\frac{1}{k}\\log_a b=\\log_{\\ ?}\\,b$ : the new base is ___"
+        back: "$a^k$"
+        type: basic
+
+  - id: exp-log-graph-recognition-models
+    lt_term: 'rodiklinė ir logaritminė funkcijos; grafikų atpažinimas; modeliavimas'
+    name: 'Exponential and Logarithmic Functions: Graphs and Models'
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: graphs-of-exponential-functions
+        weight: 0.6
+        key: true
+      - id: graphs-of-logarithmic-functions
+        weight: 0.5
+        key: false
+      - id: exponential-growth-decay
+        weight: 0.4
+        key: false
+      - id: inverse-functions
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Formula of an exponential function from a graph point'
+        key_prerequisites: [graphs-of-exponential-functions, exponential-growth-decay]
+        exemplars:
+          - problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(3,8)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The point gives $a^3=8$. So $a=2$.'
+          - problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(-1,\frac15)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The point gives $a^{-1}=\frac15$. So $a=5$.'
+          - problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(2,\frac14)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/2'
+            solution_sketch: 'The point gives $a^2=\frac14$. Since $a>0$, $a=\frac12$.'
+          - problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(4,81)$. Write the formula of the function.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'y=3^x'
+            solution_sketch: 'The point gives $a^4=81$. Since $a>0$, $a=3$. The formula is $y=3^x$.'
+          - problem: 'The graph of $y=k\cdot 2^x$ passes through the point $(3,24)$. Write the formula of the function.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'y=3*2^x'
+            solution_sketch: 'The point gives $k\cdot 2^3=24$, so $8k=24$ and $k=3$. The formula is $y=3\cdot 2^x$.'
+          - problem: 'The graph of $y=k\cdot a^x$ with $a>0$ passes through the points $(0,5)$ and $(2,45)$. Write the formula of the function.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'y=5*3^x'
+            solution_sketch: 'The point $(0,5)$ gives $k=5$. The point $(2,45)$ gives $5a^2=45$, so $a^2=9$ and $a=3$. The formula is $y=5\cdot 3^x$.'
+        constraints: 'formula y=a^x or y=k*a^x; the base a is a positive integer or a simple fraction; one or two points with integer or unit-fraction ordinates; no figure'
+      - id: kp2
+        name: 'Formula of a logarithmic function from a graph point'
+        key_prerequisites: [graphs-of-logarithmic-functions, inverse-functions]
+        exemplars:
+          - problem: 'The graph of $y=\log_a x$ passes through the point $(8,3)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The point gives $\log_a 8=3$, so $a^3=8$. Then $a=2$.'
+          - problem: 'The graph of $y=\log_a x$ passes through the point $(\frac{1}{25},-2)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The point gives $a^{-2}=\frac{1}{25}$. Then $a^2=25$. Since $a>0$, $a=5$.'
+          - problem: 'The graph of $y=\log_a x$ passes through the point $(4,-2)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/2'
+            solution_sketch: 'The point gives $a^{-2}=4$. Then $a^2=\frac14$. Since $a>0$, $a=\frac12$.'
+          - problem: 'The graph of $y=\log_a x$ passes through the point $(125,3)$. Find the base $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The point gives $\log_a 125=3$, so $a^3=125$. Then $a=5$. The base is $5$.'
+          - problem: 'The graph of $y=\log_2(x+k)$ passes through the point $(5,3)$. Find $k$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The point gives $\log_2(5+k)=3$. So $5+k=2^3=8$ and $k=3$.'
+          - problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(2,9)$. The graph of its inverse function is $y=\log_a x$. What is the ordinate of the point of this inverse graph with abscissa $27$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The point gives $a^2=9$, so $a=3$. The ordinate is $\log_3 27$. Since $3^3=27$, the ordinate is 3.'
+        constraints: 'formula y=log_a x, or y=log_2(x+k); the base a is 2, 3, 5 or 1/2; the given point has an integer or unit-fraction abscissa; no figure'
+      - id: kp3
+        name: 'Model with a logarithmic function'
+        key_prerequisites: [graphs-of-logarithmic-functions, exponential-growth-decay]
+        exemplars:
+          - problem: 'The pH of a solution is $\mathrm{pH}=-\lg c$, where $c$ is the concentration of hydrogen ions in mol/L. Find the pH when $c=10^{-4}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Substitute: $\mathrm{pH}=-\lg 10^{-4}$. Since $\lg 10^{-4}=-4$, the pH is 4.'
+          - problem: 'The pH of a solution is $\mathrm{pH}=-\lg c$, where $c$ is the concentration of hydrogen ions in mol/L. The pH is 3. Find $c$ in mol/L.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/1000'
+            solution_sketch: 'From $-\lg c=3$ we get $\lg c=-3$. So $c=10^{-3}=\frac{1}{1000}$.'
+          - problem: 'The sound level in decibels is $L=10\lg\frac{I}{I_0}$, where $I_0=10^{-12}$ W/m$^2$. A sound has intensity $I=10^{-6}$ W/m$^2$. Find $L$ in decibels.'
+            answer_contract: {"kind":"exact"}
+            answer: '60'
+            solution_sketch: 'The ratio is $\frac{I}{I_0}=10^{6}$. So $L=10\lg 10^6=10\cdot 6=60$.'
+          - problem: 'The pH of a solution is $\mathrm{pH}=-\lg c$. The pH of a solution falls from 5 to 3. By what factor does the concentration $c$ grow?'
+            answer_contract: {"kind":"exact"}
+            answer: '100'
+            solution_sketch: 'The first concentration is $10^{-5}$. The second is $10^{-3}$. The ratio is $10^{-3}\div 10^{-5}=10^2=100$.'
+          - problem: 'The sound level in decibels is $L=10\lg\frac{I}{I_0}$. A sound level rises from 40 decibels to 70 decibels. By what factor does the intensity $I$ grow?'
+            answer_contract: {"kind":"exact"}
+            answer: '1000'
+            solution_sketch: 'The rise is $70-40=30$. Then $10\lg\frac{I_2}{I_1}=30$. So $\frac{I_2}{I_1}=10^3=1000$.'
+          - problem: 'The magnitude of an earthquake is $M=\frac{2}{3}\lg\frac{E}{E_0}$, where $E$ is the released energy. An earthquake has magnitude $M=6$. Find the ratio $\frac{E}{E_0}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10^9'
+            solution_sketch: 'From $\frac23\lg\frac{E}{E_0}=6$ we get $\lg\frac{E}{E_0}=9$. So $\frac{E}{E_0}=10^9$.'
+        constraints: 'models with a given formula in lg: pH, sound level, earthquake magnitude; the formula is in the problem; the numbers give powers of 10; answers are integers or powers of 10'
+    diagnostic_exemplar:
+      problem: 'The graph of $y=a^x$ with $a>0$ passes through the point $(2,49)$. Find $a$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'The point gives $a^2=49$. Since $a>0$, $a=7$.'
+    anki_seeds:
+      - front: "The graph of $y=\\log_a x$ passes through the point $(1,\\ ?)$. The ordinate is ___"
+        back: "0, for every base $a$"
+        type: basic
+      - front: "pH $=$ ___ (formula with $c$, the hydrogen ion concentration)"
+        back: "$-\\lg c$"
+        type: basic
+
+  - id: exp-log-equations-new-unknown-base
+    lt_term: 'rodiklinės ir logaritminės lygtys; naujas nežinomasis; nežinomasis logaritmo pagrinde'
+    name: 'Exponential and Logarithmic Equations: New Unknown and Unknown Base'
+    core: false
+    difficulty: 0.7
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: exponential-equations
+        weight: 0.6
+        key: true
+      - id: logarithmic-equations
+        weight: 0.5
+        key: false
+      - id: quadratics-in-form
+        weight: 0.4
+        key: false
+      - id: checking-a-solution
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Exponential equation t*a^(2x)+k*a^x+p=0 with u=a^x'
+        key_prerequisites: [exponential-equations, quadratics-in-form]
+        exemplars:
+          - problem: 'Solve $9^x-4\cdot 3^x+3=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '0, 1'
+            solution_sketch: 'Put $u=3^x$. Then $9^x=u^2$ and $u^2-4u+3=0$. The roots are $u=1$ and $u=3$. So $3^x=1$ gives $x=0$ and $3^x=3$ gives $x=1$.'
+          - problem: 'Solve $4^x-6\cdot 2^x+8=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '1, 2'
+            solution_sketch: 'Put $u=2^x$. Then $u^2-6u+8=0$, so $u=2$ or $u=4$. Both are positive. So $x=1$ or $x=2$.'
+          - problem: 'Solve $5^{2x}-4\cdot 5^x-5=0$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Put $u=5^x$ with $u>0$. Then $u^2-4u-5=0$, so $u=5$ or $u=-1$. Reject $u=-1$, because $5^x>0$. Then $5^x=5$ and $x=1$.'
+          - problem: 'Solve $4^x-2^{x+1}-8=0$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Write $2^{x+1}=2\cdot 2^x$. Put $u=2^x$ with $u>0$. Then $u^2-2u-8=0$, so $u=4$ or $u=-2$. Reject $u=-2$. Then $2^x=4$ and $x=2$.'
+          - problem: 'Solve $2\cdot 4^x-5\cdot 2^x+2=0$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1, 1'
+            solution_sketch: 'Put $u=2^x$. Then $2u^2-5u+2=0$, so $u=2$ or $u=\frac12$. Both are positive. So $x=1$ or $x=-1$.'
+          - problem: 'Solve $4^x+4^{-x}=\frac{65}{8}$. List all roots.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-3/2, 3/2'
+            solution_sketch: 'Put $u=4^x$. Then $4^{-x}=\frac1u$ and $u+\frac1u=\frac{65}{8}$. This gives $8u^2-65u+8=0$, so $u=8$ or $u=\frac18$. Then $4^x=8$ gives $x=\frac32$, and $4^x=\frac18$ gives $x=-\frac32$.'
+        constraints: 'equation reduces to a quadratic in u=a^x with a=2, 3, 4, 5 or 9; some items have a root u<=0 that the solver rejects; roots x are integers or halves'
+      - id: kp2
+        name: 'Logarithmic equation with the unknown in the base'
+        key_prerequisites: [logarithmic-equations, checking-a-solution]
+        exemplars:
+          - problem: 'Solve $\log_x 25=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'By the definition, $x^2=25$. So $x=5$ or $x=-5$. A base must be positive, so reject $x=-5$. The root is 5.'
+          - problem: 'Solve $\log_x 64=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'By the definition, $x^3=64$. So $x=4$. The base 4 is positive and not equal to 1.'
+          - problem: 'Solve $\log_x\frac18=-3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'By the definition, $x^{-3}=\frac18$. So $x^3=8$ and $x=2$. The base 2 is valid.'
+          - problem: 'Solve $\log_x 7=\frac12$.'
+            answer_contract: {"kind":"exact"}
+            answer: '49'
+            solution_sketch: 'By the definition, $x^{1/2}=7$. Square both sides: $x=49$. The base 49 is valid.'
+          - problem: 'Solve $\log_x(3x+4)=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'By the definition, $x^2=3x+4$. So $x^2-3x-4=0$, and $x=4$ or $x=-1$. A base must be positive, so reject $x=-1$. The root is 4.'
+          - problem: 'Solve $\log_{x-1}(x+5)=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'By the definition, $(x-1)^2=x+5$. So $x^2-3x-4=0$, and $x=4$ or $x=-1$. The base $x-1$ must be positive and not 1. For $x=-1$ the base is $-2$, so reject it. The root is 4.'
+        constraints: 'log_x(c)=n or log_(x-1)(x+5)=2; convert with the definition; reject a base that is negative, zero or 1; one root remains'
+      - id: kp3
+        name: 'Domain and root check'
+        key_prerequisites: [checking-a-solution, logarithmic-equations, exponential-equations]
+        exemplars:
+          - problem: 'How many integers $x$ are in the domain of $\log_x(10-x)$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The base needs $x>0$ and $x\ne 1$. The argument needs $10-x>0$, so $x<10$. The integers are 2, 3, 4, 5, 6, 7, 8, 9. There are 8.'
+          - problem: 'Solve $\log_2(x+1)+\log_2(x-1)=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The domain needs $x>1$. The product rule gives $\log_2(x^2-1)=3$, so $x^2-1=8$. Then $x=3$ or $x=-3$. Reject $x=-3$, because it is outside the domain. The root is 3.'
+          - problem: 'Solve $\log_x(x+6)=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'By the definition, $x^2=x+6$. So $x^2-x-6=0$, and $x=3$ or $x=-2$. A base must be positive, so reject $x=-2$. The root is 3.'
+          - problem: 'How many real roots has $4^x+3\cdot 2^x+2=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'Put $u=2^x$ with $u>0$. Then $u^2+3u+2=0$, so $u=-1$ or $u=-2$. Both are negative, so reject both. There are 0 real roots.'
+          - problem: 'Solve $\sqrt{x+2}=x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Square both sides: $x+2=x^2$. So $x^2-x-2=0$, and $x=2$ or $x=-1$. Check $x=-1$: $\sqrt{1}=1$ is not equal to $-1$. Reject it. The root is 2.'
+          - problem: 'Solve $\lg(x^2-4)=\lg(3x)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The domain needs $x^2-4>0$ and $3x>0$. The equation gives $x^2-4=3x$, so $x^2-3x-4=0$. Then $x=4$ or $x=-1$. For $x=-1$, $3x<0$, so reject it. The root is 4.'
+        constraints: 'equations with a logarithm, a root or an exponential; every item has a domain condition or a rejected root; one number or a count as the answer'
+    diagnostic_exemplar:
+      problem: 'Solve $\log_x 81=4$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'By the definition, $x^4=81$. The base must be positive, so $x=3$.'
+    anki_seeds:
+      - front: "In $t\\cdot a^{2x}+k\\cdot a^x+p=0$, put $u=$ ___ and reject every $u$ with ___"
+        back: "$a^x$; $u\\le 0$"
+        type: basic
+      - front: "In $\\log_x b$ the base $x$ must be ___"
+        back: "positive and not equal to 1"
         type: basic

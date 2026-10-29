@@ -1332,6 +1332,47 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Suppose, for contradiction, that there are only finitely many primes, and list all of them as $p_1, p_2, \dots, p_k$. This list is not empty, since $2$ is prime. Let $N = p_1 p_2 \cdots p_k + 1$. Then $N > 1$, so $N$ has a prime divisor $q$, because every integer greater than $1$ has a prime divisor. Since $p_1, \dots, p_k$ are all the primes, $q = p_i$ for some $i$. Then $q$ divides $p_1 p_2 \cdots p_k$, and $q$ divides $N$, so $q$ divides the difference $N - p_1 p_2 \cdots p_k = 1$. But a prime is at least $2$ and cannot divide $1$. This is a contradiction. Hence there are infinitely many primes.'
         constraints: "construct an object that contradicts the finiteness/nonexistence assumption. Items are computed steps of the method, verdict labels with balanced keys, and one written proof. The stem must not state the decisive result or the direction of a verdict."
+      - id: kp4
+        name: 'Prove that sqrt(2) is irrational'
+        key_prerequisites: [contradiction-template, rational-number-proofs]
+        exemplars:
+          - problem: 'Let $p$ and $q$ be positive integers with $\sqrt{2}=\frac{p}{q}$. Squaring gives $p^2=2q^2$. Find the remainder of $p^2$ on division by $2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'The number $p^2$ equals $2q^2$, so $2$ divides it. The remainder is $0$.'
+          - problem: 'Let $p$ and $q$ be positive integers with $p^2=2q^2$. Then $p$ is even, so $p=2m$ for an integer $m$. Then $q^2=km^2$. Find $k$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Replace $p$ by $2m$: $4m^2=2q^2$. Divide by $2$: $q^2=2m^2$. So $k=2$.'
+          - problem: 'Find how many integers $n$ from $1$ to $20$ make $\sqrt{n}$ irrational.'
+            answer_contract: {"kind":"exact"}
+            answer: '16'
+            solution_sketch: 'The root $\sqrt{n}$ is rational only when $n$ is a perfect square. The squares from $1$ to $20$ are $1, 4, 9, 16$. So $20-4=16$ numbers give an irrational root.'
+          - problem: 'Let $p$ and $q$ be positive integers with $p^2=3q^2$. Then $p$ is divisible by $3$, so $p=3m$ for an integer $m$. Then $q^2=km^2$. Find $k$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Replace $p$ by $3m$: $9m^2=3q^2$. Divide by $3$: $q^2=3m^2$. So $k=3$.'
+          - problem: 'How many integers $n$ from $30$ to $50$ make $\sqrt{n}$ a rational number?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The root $\sqrt{n}$ is rational only when $n$ is a perfect square. The squares from $30$ to $50$ are $36$ and $49$. So the answer is 2.'
+          - problem: 'Let $p$ be an integer that is not divisible by $3$. Find the remainder of $p^2$ on division by $3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Write $p=3k+1$ or $p=3k+2$. Then $p^2=9k^2+6k+1$ or $p^2=9k^2+12k+4$. Both leave the remainder $1$.'
+          - problem: 'Prove that $\sqrt{2}$ is irrational. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume $\sqrt{2}=\frac{p}{q}$ with positive integers $p$ and $q$ that have no common factor. Then $p^2=2q^2$, so $p^2$ is even and $p$ is even. Write $p=2m$. Then $4m^2=2q^2$, so $q^2=2m^2$ and $q$ is even. Now $p$ and $q$ share the factor $2$. This contradicts the assumption. So $\sqrt{2}$ is irrational.'
+            solution_sketch: 'Assume $\sqrt{2}=\frac{p}{q}$ in lowest terms. Show that $p$ and $q$ are both even. This is a contradiction.'
+          - problem: 'Let $p$ be an integer. Prove that if $p^2$ is even, then $p$ is even. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use the contrapositive. Let $p$ be odd, so $p=2k+1$. Then $p^2=4k^2+4k+1=2(2k^2+2k)+1$. This is odd. So if $p^2$ is even, then $p$ is not odd, and $p$ is even.'
+            solution_sketch: 'Assume $p$ is odd. Write $p=2k+1$ and square it. The square is odd.'
+          - problem: 'Use the fact that $\sqrt{2}$ is irrational. Prove that $1+\sqrt{2}$ is irrational. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume $1+\sqrt{2}=r$ with $r$ rational. Then $\sqrt{2}=r-1$. The difference of two rational numbers is rational. So $\sqrt{2}$ is rational. This contradicts the fact that $\sqrt{2}$ is irrational. So $1+\sqrt{2}$ is irrational.'
+            solution_sketch: 'Assume that $1+\sqrt{2}$ is rational. Subtract $1$. The result is a rational $\sqrt{2}$, which is a contradiction.'
+        constraints: 'the assumption sqrt(2)=p/q in lowest terms and the parity steps that follow; decidable items find one step of the proof; written items write a full proof'
     diagnostic_exemplar:
       problem: 'How many pairs of integers $(x, y)$ satisfy $x^2 - y^2 = 6$?'
       answer_contract: {"kind":"exact"}

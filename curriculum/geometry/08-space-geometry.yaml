@@ -1,0 +1,727 @@
+unit: space-geometry
+course: geometry
+module: "Space Geometry"
+topics:
+  - id: space-lines-planes
+    lt_term: 'stereometrijos aksiomos; tiesių ir plokštumų padėtys; lygiagretumo požymis'
+    name: 'Lines and Planes in Space: Axioms, Positions, Parallelism'
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: points-lines-planes
+        weight: 0.6
+        key: true
+      - id: parallel-lines-transversals
+        weight: 0.4
+        key: false
+      - id: writing-geometric-proofs
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axioms and the plane through a line and a point'
+        key_prerequisites: [points-lines-planes]
+        exemplars:
+          - problem: 'Four points of space lie in no common plane, and no three of them lie on one line. How many different planes pass through three of the four points?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Each set of three points that do not lie on one line fixes exactly one plane. Four points give four sets of three. So there are 4 planes.'
+          - problem: 'A line $a$ and a point $P$ outside $a$ lie in space. How many planes contain both $a$ and $P$?'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Take two points of $a$. Together with $P$ they do not lie on one line, so they fix one plane. This plane contains $a$ and $P$. The answer is 1.'
+          - problem: 'Five points of space are given. No three of them lie on one line and no four of them lie in one plane. How many different planes pass through three of the five points?'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'Each set of three points fixes one plane. No plane holds a fourth point, so different sets give different planes. The number of sets is $\binom{5}{3}=10$.'
+          - problem: 'A line $a$ meets a plane $\alpha$ in two different points. How many points of $a$ lie outside $\alpha$?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'If a line has two points in a plane, the whole line lies in the plane. So no point of $a$ lies outside $\alpha$. The answer is 0.'
+          - problem: 'Two lines meet at exactly one point. How many planes contain both lines?'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Take the common point and one more point on each line. These three points do not lie on one line, so they fix one plane. This plane holds both lines. The answer is 1.'
+          - problem: 'The points $A$, $B$ and $C$ do not lie on one line. The point $D$ lies in the plane $ABC$. How many planes contain all four points $A$, $B$, $C$ and $D$?'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'The points $A$, $B$ and $C$ fix exactly one plane. The point $D$ lies in this plane. So only this plane holds all four points. The answer is 1.'
+        constraints: 'counting problems on points, lines and planes in space; answers are whole numbers; no figure; the reason is the axiom that three points off one line fix one plane, or that a line with two points in a plane lies in it'
+      - id: kp2
+        name: 'Positions of lines and planes in a solid'
+        key_prerequisites: [parallel-lines-transversals]
+        exemplars:
+          - problem: 'In a cube $ABCDA_1B_1C_1D_1$, how many of the 12 edges are skew to the edge $AB$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Three edges are parallel to $AB$ and four edges meet $AB$. The edge $AB$ itself is one more. The other $12-1-3-4=4$ edges are skew to $AB$.'
+          - problem: 'A cube has six faces. How many of the six face planes are parallel to a given edge and do not contain it?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Two face planes contain the edge. Two more face planes meet the edge at its ends. The two remaining face planes are parallel to the edge. The answer is 2.'
+          - problem: 'A regular triangular prism $ABCA_1B_1C_1$ has 9 edges. How many of them are skew to the edge $AB$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The edge $AB$ meets $BC$, $CA$, $AA_1$ and $BB_1$. It is parallel to $A_1B_1$. The other $9-1-4-1=3$ edges ($B_1C_1$, $A_1C_1$ and $CC_1$) are skew to $AB$.'
+          - problem: 'Two different planes share the point $O$. How many lines lie in both planes?'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Two different planes that share a point share a whole line through that point. They share no second line. The answer is 1.'
+          - problem: 'The three faces of a cube that meet at one vertex lie in three planes. How many lines lie in all three planes?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'Each two of the planes meet in an edge of the cube. The three edges are different lines through the vertex. No line lies in all three planes. The answer is 0.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has 12 face diagonals. How many of them are skew to the base diagonal $AC$?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The diagonal $A_1C_1$ is parallel to $AC$. The diagonals $BD$, $AB_1$, $AD_1$, $CB_1$ and $CD_1$ meet $AC$. The other $12-1-1-5=5$ diagonals are skew to $AC$.'
+        constraints: 'counting of edges, face diagonals and planes of a cube or prism that are parallel, intersecting or skew; letters follow the standard names $ABCDA_1B_1C_1D_1$; answers are whole numbers'
+      - id: kp3
+        name: 'Criterion for a line parallel to a plane'
+        key_prerequisites: [parallel-lines-transversals, points-lines-planes]
+        exemplars:
+          - problem: 'A line $a$ is parallel to a line $b$. The line $b$ lies in a plane $\alpha$ and $a$ does not lie in $\alpha$. How many points do $a$ and $\alpha$ share?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'A line outside a plane that is parallel to a line of the plane is parallel to the plane. So $a$ and $\alpha$ share no point. The answer is 0.'
+          - problem: 'The edge of a cube is $6$ cm. How far, in centimeters, is the edge $AB$ from the plane of the face $A_1B_1C_1D_1$?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The edge $AB$ is parallel to $A_1B_1$, which lies in the plane. So $AB$ is parallel to the plane. Every point of $AB$ is at the distance $AA_1=6$ cm from the plane.'
+          - problem: 'In a triangular pyramid $SABC$, the points $M$ and $N$ are the midpoints of $SA$ and $SB$. The edge $AB$ is $14$ cm long. How long is $MN$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '7'
+            solution_sketch: 'The segment $MN$ joins two midpoints of the triangle $SAB$. So $MN$ is parallel to $AB$ and $MN=\frac{1}{2}AB$. Then $MN=7$ cm.'
+          - problem: 'A cube has 12 edges. How many of them are parallel to the plane of the face $ABCD$ and do not lie in it?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The four edges of the top face are parallel to edges of the face $ABCD$, so they are parallel to its plane. The four vertical edges meet the plane. The four edges of $ABCD$ lie in it. The answer is 4.'
+          - problem: 'A line $a$ is parallel to a plane $\alpha$. A plane $\beta$ contains $a$ and meets $\alpha$ along a line $c$. How many points do $a$ and $c$ share?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'The lines $a$ and $c$ lie in the plane $\beta$. The line $a$ has no point in $\alpha$, so it has no point on $c$. Two lines in one plane with no common point are parallel. They share 0 points.'
+          - problem: 'A line $a$ is parallel to a plane $\alpha$. The point $P$ of $a$ is $9$ cm from $\alpha$. The point $Q$ of $a$ is $12$ cm from $P$. How far is $Q$ from $\alpha$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '9'
+            solution_sketch: 'All points of a line parallel to a plane have the same distance from the plane. So $Q$ is as far from $\alpha$ as $P$. The distance is 9 cm.'
+        constraints: 'criterion: a line outside a plane and parallel to a line of the plane is parallel to the plane; items use cubes, pyramids and distances that stay equal; answers are whole numbers or lengths'
+    diagnostic_exemplar:
+      problem: 'Two different parallel lines lie in space. How many planes contain both lines?'
+      answer_contract: {"kind":"exact"}
+      answer: '1'
+      solution_sketch: 'Take two points on the first line and one point on the second line. These three points do not lie on one line, so they fix one plane. The plane holds both lines. The answer is 1.'
+    anki_seeds:
+      - front: "Three points that do not lie on one line fix exactly ... plane(s)."
+        back: "one"
+        type: basic
+      - front: "A line outside a plane is parallel to the plane if it is parallel to ... of the plane."
+        back: "a line"
+        type: basic
+  - id: space-perpendicularity
+    lt_term: 'tiesė statmena plokštumai; pasvirusis ir projekcija; trijų statmenų teorema'
+    name: Perpendicularity in Space
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 140
+    prerequisites:
+      - id: space-lines-planes
+        weight: 0.6
+        key: true
+      - id: pythagorean-theorem
+        weight: 0.5
+        key: false
+      - id: perpendicular-bisectors
+        weight: 0.3
+        key: false
+      - id: writing-geometric-proofs
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Criterion for a line perpendicular to a plane'
+        key_prerequisites: [space-lines-planes, pythagorean-theorem]
+        exemplars:
+          - problem: 'A line is perpendicular to two intersecting lines of a plane $\alpha$. What angle, in degrees, does it make with any other line of $\alpha$ that passes through the common point?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'A line perpendicular to two intersecting lines of a plane is perpendicular to the plane. So it is perpendicular to every line of the plane. The angle is $90^\circ$.'
+          - problem: 'The segment $SA$ is perpendicular to the plane of the triangle $ABC$. $SA=12$ cm and $AB=5$ cm. How long is $SB$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'The segment $SA$ is perpendicular to the line $AB$ of the plane. So the triangle $SAB$ has a right angle at $A$. Then $SB=\sqrt{12^2+5^2}=13$ cm.'
+          - problem: 'In a rectangular box $ABCDA_1B_1C_1D_1$, the edge $AA_1$ is perpendicular to the edges $AB$ and $AD$. How many of the 12 edges are perpendicular to the plane $ABCD$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The edge $AA_1$ is perpendicular to two intersecting lines of the plane $ABCD$, so it is perpendicular to the plane. The edges $BB_1$, $CC_1$ and $DD_1$ are parallel to $AA_1$, so they are perpendicular to the plane too. The answer is 4.'
+          - problem: 'The segment $PA$ is perpendicular to the plane of the rectangle $ABCD$. $PA=12$ cm, $AB=3$ cm and $AD=4$ cm. How long is $PC$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'The diagonal $AC$ of the rectangle is $\sqrt{3^2+4^2}=5$ cm. The segment $PA$ is perpendicular to $AC$. Then $PC=\sqrt{12^2+5^2}=13$ cm.'
+          - problem: 'A line is perpendicular to a plane at the center of a circle of radius $8$ cm in that plane. A point $P$ of the line is $15$ cm from the center. How far is $P$ from a point of the circle, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '17'
+            solution_sketch: 'The line is perpendicular to every radius of the circle. So the triangle formed by $P$, the center and the point of the circle has a right angle at the center. The distance is $\sqrt{15^2+8^2}=17$ cm.'
+          - problem: 'In a cube $ABCDA_1B_1C_1D_1$, what is the angle, in degrees, between the edge $AA_1$ and the line $BD$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'The edge $AA_1$ is perpendicular to the plane $ABCD$. The line $BD$ lies in this plane. So the angle is $90^\circ$.'
+        constraints: 'criterion: a line perpendicular to two intersecting lines of a plane is perpendicular to the plane; items use right triangles with a perpendicular segment; lengths in centimeters or angles in degrees'
+      - id: kp2
+        name: 'Oblique line and orthogonal projection'
+        key_prerequisites: [pythagorean-theorem]
+        exemplars:
+          - problem: 'The point $P$ is $8$ cm from a plane $\alpha$. An oblique segment $PA$ with $PA=17$ cm ends at $A$ in $\alpha$. How long is the projection of $PA$ on $\alpha$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '15'
+            solution_sketch: 'The perpendicular from $P$, the projection and $PA$ form a right triangle with hypotenuse $PA$. The projection is $\sqrt{17^2-8^2}=15$ cm.'
+          - problem: 'An oblique segment $10$ cm long makes an angle of $30^\circ$ with a plane. How long is its projection on the plane, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '5*sqrt(3)'
+            solution_sketch: 'The projection is the leg next to the angle of $30^\circ$ in a right triangle with hypotenuse 10 cm. So it is $10\cos 30^\circ=5\sqrt{3}$ cm.'
+          - problem: 'An oblique segment $12$ cm long has a projection $6$ cm long on a plane. What angle, in degrees, does the segment make with the plane?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The cosine of the angle is projection over segment: $\frac{6}{12}=\frac{1}{2}$. So the angle is $60^\circ$.'
+          - problem: 'The point $P$ is $12$ cm from a plane $\alpha$. The oblique segments $PA$ and $PB$ have projections of $5$ cm and $9$ cm on $\alpha$. How long is the longer segment, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '15'
+            solution_sketch: 'The longer segment has the longer projection, so it is $PB$. Then $PB=\sqrt{12^2+9^2}=15$ cm.'
+          - problem: 'Two oblique segments from one point to a plane are $13$ cm and $15$ cm long. The projection of the shorter one is $5$ cm long. How long is the projection of the longer one, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '9'
+            solution_sketch: 'The distance from the point to the plane is $\sqrt{13^2-5^2}=12$ cm. The longer projection is $\sqrt{15^2-12^2}=9$ cm.'
+          - problem: 'A segment $AB$ is $20$ cm long. The point $A$ is $7$ cm from a plane and the point $B$ is $19$ cm from the same plane, on the same side. How long is the projection of $AB$ on the plane, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '16'
+            solution_sketch: 'The difference of the distances is $19-7=12$ cm. This is one leg of a right triangle with hypotenuse $AB$. The projection is the other leg: $\sqrt{20^2-12^2}=16$ cm.'
+        constraints: 'an oblique segment, its projection and the perpendicular from its end form a right triangle; items give two of the three sides or an angle; lengths in centimeters'
+      - id: kp3
+        name: 'Theorem of three perpendiculars and its converse'
+        key_prerequisites: [space-lines-planes, perpendicular-bisectors]
+        exemplars:
+          - problem: 'The segment $SA$ is perpendicular to the plane $ABC$, and the side $BC$ is perpendicular to $AB$. What angle, in degrees, do $SB$ and $BC$ make?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'The line $AB$ is the projection of $SB$ on the plane $ABC$. The line $BC$ of the plane is perpendicular to the projection. By the theorem of three perpendiculars, $BC$ is perpendicular to $SB$. The angle is $90^\circ$.'
+          - problem: 'The segment $SA$ is perpendicular to the plane of the rectangle $ABCD$. $SA=6$ cm and $AD=8$ cm. How far is $S$ from the line $CD$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '10'
+            solution_sketch: 'The line $CD$ is perpendicular to $AD$, the projection of $SD$. By the theorem of three perpendiculars, $SD$ is perpendicular to $CD$. So the distance is $SD=\sqrt{6^2+8^2}=10$ cm.'
+          - problem: 'The segment $SA$ is perpendicular to the plane $ABC$. The oblique segment $SB$ is perpendicular to the line $BC$ of the plane. What is the measure of $\angle ABC$, in degrees?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'By the converse of the theorem of three perpendiculars, a line of the plane that is perpendicular to the oblique segment is perpendicular to its projection $AB$. So $\angle ABC=90^\circ$.'
+          - problem: 'The segment $SC$ is perpendicular to the plane of the triangle $ABC$ with $\angle C=90^\circ$. $AC=15$ cm, $BC=20$ cm and $SC=5$ cm. How far is $S$ from the line $AB$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'In the triangle $ABC$, $AB=25$ cm and the altitude $CH$ is $\frac{15\cdot 20}{25}=12$ cm. By the theorem of three perpendiculars, $SH$ is perpendicular to $AB$. Then $SH=\sqrt{5^2+12^2}=13$ cm.'
+          - problem: 'The point $P$ is $4$ cm from a plane $\alpha$. Its projection on $\alpha$ is $O$, and $O$ is $3$ cm from a line $l$ of $\alpha$. How far is $P$ from $l$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '5'
+            solution_sketch: 'The segment from $O$ to $l$ is perpendicular to $l$. By the theorem of three perpendiculars, the segment from $P$ to the same foot is perpendicular to $l$. Its length is $\sqrt{4^2+3^2}=5$ cm.'
+          - problem: 'A rhombus $ABCD$ has diagonals $AC=8$ cm and $BD=6$ cm that meet at $O$. The segment $SO$ is perpendicular to the plane of the rhombus and $SO=3.2$ cm. How far is $S$ from the side $AB$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '4'
+            solution_sketch: 'The side $AB$ is $\sqrt{4^2+3^2}=5$ cm. The distance from $O$ to $AB$ is $\frac{4\cdot 3}{5}=2.4$ cm. By the theorem of three perpendiculars, the distance from $S$ is $\sqrt{3.2^2+2.4^2}=4$ cm.'
+        constraints: 'items use a perpendicular to a plane and a line of the plane; the answer is a distance from a point to a line or an angle of $90^\circ$; lengths in centimeters'
+    diagnostic_exemplar:
+      problem: 'The segment $PA$ is perpendicular to the plane of a square $ABCD$. $PA=8$ cm and $AB=6$ cm. Find the length of $PB$ in centimeters.'
+      answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+      answer: '10'
+      solution_sketch: 'The segment $PA$ is perpendicular to the line $AB$ of the plane. So the triangle $PAB$ has a right angle at $A$. Then $PB=\sqrt{8^2+6^2}=10$ cm.'
+    anki_seeds:
+      - front: "A line is perpendicular to a plane if it is perpendicular to ... lines of the plane that intersect."
+        back: "two"
+        type: basic
+      - front: "The theorem of three perpendiculars: a line of the plane perpendicular to the projection of an oblique line is also perpendicular to ..."
+        back: "the oblique line"
+        type: basic
+  - id: space-angles-distances
+    lt_term: 'kampai ir atstumai erdvėje; dvisienis kampas'
+    name: Angles and Distances in Solids
+    core: false
+    difficulty: 0.62
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: space-perpendicularity
+        weight: 0.6
+        key: true
+      - id: right-triangle-trig
+        weight: 0.5
+        key: false
+      - id: law-of-cosines
+        weight: 0.4
+        key: false
+      - id: distance-midpoint-formulas
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Distance from a point to a line or a plane and between skew lines'
+        key_prerequisites: [space-perpendicularity]
+        exemplars:
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $6$ cm. What is the distance between the skew edges $AB$ and $DD_1$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The edge $AD$ is perpendicular to both $AB$ and $DD_1$. So $AD$ is the common perpendicular, and the distance is $AD=6$ cm.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $4$ cm. How far is the vertex $A$ from the plane $BB_1D_1D$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '2*sqrt(2)'
+            solution_sketch: 'The diagonal $AC$ is perpendicular to $BD$ and to $DD_1$, so it is perpendicular to the plane $BB_1D_1D$. The foot is the midpoint $O$ of $AC$. The distance is $AO=\frac{4\sqrt{2}}{2}=2\sqrt{2}$ cm.'
+          - problem: 'A regular quadrilateral pyramid has base side $8$ cm and height $3$ cm. How far is the apex from a side of the base, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '5'
+            solution_sketch: 'The foot of the height is the center of the base. It is $4$ cm from each side. By the theorem of three perpendiculars, the distance from the apex to a side is $\sqrt{3^2+4^2}=5$ cm.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $5$ cm. What is the distance between the planes $AB_1D_1$ and $BC_1D$, in centimeters?'
+            answer_contract: {"kind":"exact"}
+            answer: '5*sqrt(3)/3'
+            solution_sketch: 'The diagonal $AC_1$ of the cube is perpendicular to both planes. The two planes cut it into three equal parts. So the distance is $\frac{AC_1}{3}=\frac{5\sqrt{3}}{3}$ cm.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $12$ cm. What is the distance between the skew lines $AA_1$ and $BD$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '6*sqrt(2)'
+            solution_sketch: 'The line $AA_1$ is parallel to the plane $BB_1D_1D$. So the distance equals the distance from $A$ to this plane, which is $AO$, half of the diagonal $AC$. Then $AO=\frac{12\sqrt{2}}{2}=6\sqrt{2}$ cm.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $6$ cm. How far is the vertex $D_1$ from the line $AC$, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '3*sqrt(6)'
+            solution_sketch: 'The triangle $AD_1C$ has three sides equal to the face diagonal $6\sqrt{2}$ cm. The distance from $D_1$ to $AC$ is its altitude: $6\sqrt{2}\cdot\frac{\sqrt{3}}{2}=3\sqrt{6}$ cm.'
+        constraints: 'distances in a cube or pyramid found with a perpendicular and a right triangle; the common perpendicular of two skew lines is an edge or a segment of the solid; lengths in centimeters, some with a root'
+      - id: kp2
+        name: 'Angle between two lines and between a line and a plane'
+        key_prerequisites: [right-triangle-trig, law-of-cosines]
+        exemplars:
+          - problem: 'In a cube $ABCDA_1B_1C_1D_1$, what is the angle, in degrees, between the lines $AB_1$ and $BC_1$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The line $BC_1$ is parallel to $AD_1$. So the angle is $\angle B_1AD_1$. The triangle $AB_1D_1$ has three equal sides, the face diagonals. The angle is $60^\circ$.'
+          - problem: 'A regular quadrilateral pyramid has lateral edge $10$ cm and base diagonal $10$ cm. What angle, in degrees, does a lateral edge make with the base plane?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The projection of a lateral edge on the base is half the diagonal, $5$ cm. The cosine of the angle is $\frac{5}{10}=\frac{1}{2}$. So the angle is $60^\circ$.'
+          - problem: 'A line makes an angle of $45^\circ$ with a plane. A point of the line is $7$ cm from the plane. How far along the line is this point from the plane, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '7*sqrt(2)'
+            solution_sketch: 'The distance to the plane is the leg opposite the angle of $45^\circ$. The length along the line is the hypotenuse: $\frac{7}{\sin 45^\circ}=7\sqrt{2}$ cm.'
+          - problem: 'In a cube $ABCDA_1B_1C_1D_1$, what is the angle, in degrees, between the face diagonal $A_1B$ and the edge $AD$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'The edge $AD$ is perpendicular to the plane $ABB_1A_1$. The line $A_1B$ lies in this plane. So the angle is $90^\circ$.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has a space diagonal $AC_1$. What is the cosine of the angle between $AC_1$ and the edge $AB$?'
+            answer_contract: {"kind":"exact"}
+            answer: 'sqrt(3)/3'
+            solution_sketch: 'Let the edge be $a$. Then $AC_1=a\sqrt{3}$. In the right triangle $ABC_1$, the cosine of the angle at $A$ is $\frac{a}{a\sqrt{3}}=\frac{\sqrt{3}}{3}$.'
+          - problem: 'A rectangular box has edges $3$ cm, $4$ cm and $12$ cm. What is the sine of the angle between its space diagonal and the base with the sides $3$ cm and $4$ cm?'
+            answer_contract: {"kind":"exact"}
+            answer: '12/13'
+            solution_sketch: 'The space diagonal is $\sqrt{3^2+4^2+12^2}=13$ cm. The height is $12$ cm, the leg opposite the angle. So the sine is $\frac{12}{13}$.'
+        constraints: 'angles from right triangles built with a projection, or from a translated line; answers are degrees or an exact sine or cosine; no decimal rounding'
+      - id: kp3
+        name: 'Dihedral angle and the angle of a face and the base'
+        key_prerequisites: [right-triangle-trig]
+        exemplars:
+          - problem: 'A regular quadrilateral pyramid has base side $8$ cm and height $4$ cm. What angle, in degrees, does a lateral face make with the base?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '45'
+            solution_sketch: 'The angle is at the midpoint of a base side, between the apothem and its projection. The tangent is $\frac{4}{4}=1$. So the angle is $45^\circ$.'
+          - problem: 'A regular quadrilateral pyramid has base side $6$ cm and height $3\sqrt{3}$ cm. What angle, in degrees, does a lateral face make with the base?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The projection of the apothem is half the base side, $3$ cm. The tangent of the angle is $\frac{3\sqrt{3}}{3}=\sqrt{3}$. So the angle is $60^\circ$.'
+          - problem: 'A regular triangular pyramid has base side $6\sqrt{3}$ cm and height $\sqrt{3}$ cm. What angle, in degrees, does a lateral face make with the base?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '30'
+            solution_sketch: 'The inscribed circle of the base has radius $\frac{6\sqrt{3}}{2\sqrt{3}}=3$ cm. The tangent of the angle is $\frac{\sqrt{3}}{3}$. So the angle is $30^\circ$.'
+          - problem: 'In a cube $ABCDA_1B_1C_1D_1$, what is the dihedral angle, in degrees, between the planes $ABCD$ and $ABC_1D_1$?'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '45'
+            solution_sketch: 'Both planes contain the edge $AB$. The edges $AD$ and $AD_1$ are perpendicular to $AB$, so the angle $\angle DAD_1$ measures the dihedral angle. The triangle $DAD_1$ is right and isosceles, so the angle is $45^\circ$.'
+          - problem: 'A regular quadrilateral pyramid has base side $10$ cm and apothem $13$ cm. What is the cosine of the angle between a lateral face and the base?'
+            answer_contract: {"kind":"exact"}
+            answer: '5/13'
+            solution_sketch: 'The projection of the apothem on the base is half the base side, $5$ cm. The cosine of the angle is $\frac{5}{13}$.'
+          - problem: 'A triangle has area $24$ cm$^2$ and lies in a plane that makes an angle of $60^\circ$ with a plane $\alpha$. What is the area of its orthogonal projection on $\alpha$, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '12'
+            solution_sketch: 'The area of the projection is the area of the triangle times the cosine of the angle between the planes. So it is $24\cos 60^\circ=12$ cm$^2$.'
+        constraints: 'dihedral angles of pyramids and cubes found with a tangent or cosine in a right triangle; the area of a projection equals the area times the cosine of the angle; answers in degrees, exact ratios or square centimeters'
+    diagnostic_exemplar:
+      problem: 'A segment from a point to a plane is a perpendicular of $12$ cm. Another segment from the same point to the plane makes an angle of $30^\circ$ with the plane. How long is this oblique segment, in centimeters?'
+      answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+      answer: '24'
+      solution_sketch: 'The perpendicular is the leg opposite the angle of $30^\circ$. The oblique segment is the hypotenuse. So its length is $\frac{12}{\sin 30^\circ}=24$ cm.'
+    anki_seeds:
+      - front: "The angle between a line and a plane is the angle between the line and its ... on the plane."
+        back: "projection"
+        type: basic
+      - front: "The area of the projection of a figure equals its area times ... of the angle between the planes."
+        back: "the cosine"
+        type: basic
+  - id: polyhedra-terms-sections
+    lt_term: 'briaunainiai; nupjautinė piramidė; pjūviai'
+    name: 'Polyhedra: Terms, Truncated Pyramids, Sections'
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 170
+    prerequisites:
+      - id: space-lines-planes
+        weight: 0.4
+        key: false
+      - id: surface-area-solids
+        weight: 0.6
+        key: true
+      - id: volume-prisms
+        weight: 0.4
+        key: false
+      - id: volume-pyramids-cones-spheres
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Prism, parallelepiped diagonal, regular pyramid, apothem and lateral edge'
+        key_prerequisites: [surface-area-solids, volume-prisms]
+        exemplars:
+          - problem: 'A rectangular parallelepiped has edges $2$ cm, $3$ cm and $6$ cm. How long is its diagonal, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '7'
+            solution_sketch: 'The square of the diagonal is the sum of the squares of the three edges: $4+9+36=49$. So the diagonal is $7$ cm.'
+          - problem: 'A regular quadrilateral pyramid has base side $10$ cm and height $12$ cm. How long is its apothem, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'The apothem, the height and half the base side form a right triangle. So the apothem is $\sqrt{12^2+5^2}=13$ cm.'
+          - problem: 'A regular quadrilateral pyramid has base side $8\sqrt{2}$ cm and lateral edge $17$ cm. How long is its height, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '15'
+            solution_sketch: 'The base diagonal is $16$ cm, and half of it is $8$ cm. The height, half the diagonal and the lateral edge form a right triangle. The height is $\sqrt{17^2-8^2}=15$ cm.'
+          - problem: 'All edges of a regular triangular pyramid are $6$ cm long. How long is its apothem, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '3*sqrt(3)'
+            solution_sketch: 'Each lateral face is an equilateral triangle with side $6$ cm. The apothem is the altitude of this face: $6\cdot\frac{\sqrt{3}}{2}=3\sqrt{3}$ cm.'
+          - problem: 'A right prism has a rhombus as its base, with diagonals of $6$ cm and $8$ cm. The height of the prism is $10$ cm. What is the area of its lateral surface, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '200'
+            solution_sketch: 'The side of the rhombus is $\sqrt{3^2+4^2}=5$ cm, so the perimeter is $20$ cm. The lateral area is perimeter times height: $20\cdot 10=200$ cm$^2$.'
+          - problem: 'The diagonal of a cube is $6\sqrt{3}$ cm long. How long is an edge of the cube, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The diagonal of a cube with edge $a$ is $a\sqrt{3}$. So $a\sqrt{3}=6\sqrt{3}$ and $a=6$ cm.'
+        constraints: 'terms: diagonal of a parallelepiped, apothem and height of a regular pyramid, lateral edge, lateral surface of a right prism; right triangles built inside the solid; lengths and areas in centimeters'
+      - id: kp2
+        name: 'Truncated pyramid'
+        key_prerequisites: [volume-pyramids-cones-spheres]
+        exemplars:
+          - problem: 'A truncated pyramid has bases of area $4$ cm$^2$ and $16$ cm$^2$ and a height of $6$ cm. What is its volume, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '56'
+            solution_sketch: 'Use $V=\frac{1}{3}H\left(S_1+\sqrt{S_1S_2}+S_2\right)$. Then $V=\frac{1}{3}\cdot 6\cdot(4+8+16)=56$ cm$^3$.'
+          - problem: 'A regular truncated pyramid has square bases with sides $3$ cm and $9$ cm. Its height is $4$ cm. What is its volume, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '156'
+            solution_sketch: 'The base areas are $9$ and $81$, and $\sqrt{9\cdot 81}=27$. So $V=\frac{1}{3}\cdot 4\cdot(9+27+81)=156$ cm$^3$.'
+          - problem: 'A regular truncated quadrilateral pyramid has square bases with sides $4$ cm and $10$ cm. Its lateral edge is $6$ cm long. How high is it, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '3*sqrt(2)'
+            solution_sketch: 'The half-diagonals of the bases differ by $\frac{(10-4)\sqrt{2}}{2}=3\sqrt{2}$ cm. The lateral edge is the hypotenuse of a right triangle with this leg. The height is $\sqrt{6^2-18}=3\sqrt{2}$ cm.'
+          - problem: 'A regular truncated quadrilateral pyramid has square bases with sides $2$ cm and $14$ cm. Its height is $8$ cm. How long is its apothem, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '10'
+            solution_sketch: 'The sides of the bases differ by $12$ cm, so the horizontal leg is $6$ cm. The apothem is $\sqrt{8^2+6^2}=10$ cm.'
+          - problem: 'A regular truncated quadrilateral pyramid has square bases with sides $4$ cm and $10$ cm and an apothem of $5$ cm. What is the area of its lateral surface, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '140'
+            solution_sketch: 'The perimeters of the bases are $16$ cm and $40$ cm. The lateral area is $\frac{16+40}{2}\cdot 5=140$ cm$^2$.'
+          - problem: 'A plane parallel to the base of a pyramid cuts off a small pyramid at one third of the height from the apex. The small pyramid has volume $5$ cm$^3$. What is the volume of the truncated pyramid that remains, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '130'
+            solution_sketch: 'The ratio of the heights is $\frac{1}{3}$, so the ratio of the volumes is $\frac{1}{27}$. The whole pyramid has volume $135$ cm$^3$. The truncated pyramid has $135-5=130$ cm$^3$.'
+        constraints: 'regular truncated pyramids with square bases; the formula of the volume is on the formula sheet; the apothem and the height form a right triangle with half the difference of the base sides; volumes in cubic centimeters'
+      - id: kp3
+        name: 'Section of a polyhedron by a plane'
+        key_prerequisites: [space-lines-planes]
+        exemplars:
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $6$ cm. A plane passes through the edges $AB$ and $C_1D_1$. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true,"form":"simplest_radical"}
+            answer: '36*sqrt(2)'
+            solution_sketch: 'The section is the rectangle $ABC_1D_1$. Its sides are $AB=6$ cm and $BC_1=6\sqrt{2}$ cm. The area is $36\sqrt{2}$ cm$^2$.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $4$ cm. A plane passes through the vertices $A$, $C$ and $B_1$. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true,"form":"simplest_radical"}
+            answer: '8*sqrt(3)'
+            solution_sketch: 'The section is the triangle $AB_1C$. Its three sides are face diagonals of $4\sqrt{2}$ cm, so it is equilateral. Its area is $\frac{\sqrt{3}}{4}\cdot 32=8\sqrt{3}$ cm$^2$.'
+          - problem: 'A regular quadrilateral pyramid has base side $6\sqrt{2}$ cm and height $8$ cm. A plane passes through the apex and a diagonal of the base. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '48'
+            solution_sketch: 'The base diagonal is $12$ cm. The section is a triangle with base $12$ cm and height $8$ cm. Its area is $\frac{1}{2}\cdot 12\cdot 8=48$ cm$^2$.'
+          - problem: 'A plane passes through the midpoints of six edges of a cube with edge $4$ cm. The section is a regular hexagon. What is its perimeter, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '12*sqrt(2)'
+            solution_sketch: 'Each side of the hexagon joins the midpoints of two edges of one face. It is half of the face diagonal: $2\sqrt{2}$ cm. The perimeter is $6\cdot 2\sqrt{2}=12\sqrt{2}$ cm.'
+          - problem: 'A plane parallel to the base cuts a pyramid at half of the height from the apex. The area of the base is $50$ cm$^2$. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '12.5'
+            solution_sketch: 'The section is similar to the base with the ratio $\frac{1}{2}$. So its area is $\frac{1}{4}\cdot 50=12.5$ cm$^2$.'
+          - problem: 'A regular triangular prism has base side $6$ cm and height $8$ cm. A plane passes through one lateral edge and the midpoint of the opposite base edge. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true,"form":"simplest_radical"}
+            answer: '24*sqrt(3)'
+            solution_sketch: 'The section is a rectangle. One side is the altitude of the base triangle, $3\sqrt{3}$ cm. The other side is the height of the prism, $8$ cm. The area is $24\sqrt{3}$ cm$^2$.'
+        constraints: 'sections of a cube, a pyramid and a prism; the section is a rectangle, a triangle or a regular hexagon; areas and perimeters, some with a root'
+    diagnostic_exemplar:
+      problem: 'A rectangular parallelepiped has edges $4$ cm, $4$ cm and $7$ cm. Find its diagonal in centimeters.'
+      answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+      answer: '9'
+      solution_sketch: 'The square of the diagonal is $16+16+49=81$. So the diagonal is $9$ cm.'
+    anki_seeds:
+      - front: "The apothem of a regular pyramid is the ... of a lateral face."
+        back: "altitude from the apex"
+        type: basic
+      - front: "A plane parallel to the base cuts a pyramid at ratio $k$ of the height. The areas of the section and the base have the ratio ..."
+        back: "$k^2$"
+        type: basic
+  - id: solids-of-revolution-sections
+    lt_term: 'sukiniai; nupjautinis kūgis; rutulio dalys; ašiniai pjūviai'
+    name: 'Solids of Revolution: Terms, Truncated Cone, Sections'
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 170
+    prerequisites:
+      - id: volume-cylinders
+        weight: 0.5
+        key: false
+      - id: volume-pyramids-cones-spheres
+        weight: 0.6
+        key: true
+      - id: surface-area-solids
+        weight: 0.4
+        key: false
+      - id: right-triangle-trig
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Cylinder and cone terms and the axial section'
+        key_prerequisites: [volume-cylinders]
+        exemplars:
+          - problem: 'A cylinder has radius $6$ cm and height $5$ cm. How long is a diagonal of its axial section, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '13'
+            solution_sketch: 'The axial section is a rectangle with sides $12$ cm and $5$ cm. Its diagonal is $\sqrt{12^2+5^2}=13$ cm.'
+          - problem: 'The axial section of a cylinder is a square with area $64$ cm$^2$. What is the radius of the cylinder, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '4'
+            solution_sketch: 'The side of the square is $8$ cm. It equals the diameter of the base. So the radius is $4$ cm.'
+          - problem: 'A cone has radius $6$ cm and height $8$ cm. How long is its generatrix, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '10'
+            solution_sketch: 'The generatrix, the height and the radius form a right triangle. So the generatrix is $\sqrt{6^2+8^2}=10$ cm.'
+          - problem: 'The axial section of a cone is an equilateral triangle with side $10$ cm. How high is the cone, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '5*sqrt(3)'
+            solution_sketch: 'The height of the cone is the altitude of the triangle. It is $10\cdot\frac{\sqrt{3}}{2}=5\sqrt{3}$ cm.'
+          - problem: 'The axial section of a cone has area $48$ cm$^2$. The height of the cone is $8$ cm. What is the radius of the base, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The axial section is a triangle with base $2r$ and height $8$ cm. Its area is $r\cdot 8=48$. So $r=6$ cm.'
+          - problem: 'A cylinder has height $10$ cm. A diagonal of its axial section is $26$ cm long. What is the radius of the base, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '12'
+            solution_sketch: 'The diagonal, the height and the diameter form a right triangle. The diameter is $\sqrt{26^2-10^2}=24$ cm. So the radius is $12$ cm.'
+        constraints: 'terms: radius, height, generatrix, axial section of a cylinder and of a cone; the axial section is a rectangle or an isosceles triangle; lengths in centimeters'
+      - id: kp2
+        name: 'Truncated cone and ball segment'
+        key_prerequisites: [volume-pyramids-cones-spheres]
+        exemplars:
+          - problem: 'A truncated cone has base radii $3$ cm and $7$ cm and height $3$ cm. How long is its generatrix, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '5'
+            solution_sketch: 'The radii differ by $4$ cm. The generatrix, the height and this difference form a right triangle. So the generatrix is $\sqrt{3^2+4^2}=5$ cm.'
+          - problem: 'A truncated cone has base radii $2$ cm and $5$ cm and a generatrix of $4$ cm. What is the area of its lateral surface, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '28*pi'
+            solution_sketch: 'Use $S=\pi(R+r)l$. Then $S=\pi\cdot 7\cdot 4=28\pi$ cm$^2$.'
+          - problem: 'A truncated cone has base radii $1$ cm and $4$ cm and height $3$ cm. What is its volume, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '21*pi'
+            solution_sketch: 'Use $V=\frac{1}{3}\pi H(R^2+Rr+r^2)$. Then $V=\frac{1}{3}\pi\cdot 3\cdot(16+4+1)=21\pi$ cm$^3$.'
+          - problem: 'A segment of a ball with radius $6$ cm has height $3$ cm. What is its volume, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '45*pi'
+            solution_sketch: 'Use $V=\frac{1}{3}\pi H^2(3R-H)$. Then $V=\frac{1}{3}\pi\cdot 9\cdot(18-3)=45\pi$ cm$^3$.'
+          - problem: 'A segment of a ball with radius $5$ cm has height $2$ cm. What is the area of its curved surface, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '20*pi'
+            solution_sketch: 'Use $S=2\pi RH$. Then $S=2\pi\cdot 5\cdot 2=20\pi$ cm$^2$.'
+          - problem: 'The axial section of a truncated cone is an isosceles trapezoid with bases $8$ cm and $20$ cm and legs $10$ cm. How high is the truncated cone, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '8'
+            solution_sketch: 'The bases of the trapezoid differ by $12$ cm, so the horizontal leg of the right triangle is $6$ cm. The height is $\sqrt{10^2-6^2}=8$ cm.'
+        constraints: 'truncated cone and segment of a ball; formulas of the lateral surface and the volume are on the formula sheet; answers with $\pi$ are written as a multiple of pi'
+      - id: kp3
+        name: 'Section parallel to the base'
+        key_prerequisites: [volume-pyramids-cones-spheres, right-triangle-trig]
+        exemplars:
+          - problem: 'A plane cuts a ball of radius $13$ cm at the distance $5$ cm from its center. What is the radius of the section circle, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '12'
+            solution_sketch: 'The ball radius to the edge of the section is the hypotenuse of a right triangle. The legs are the distance $5$ cm and the section radius. So the radius is $\sqrt{13^2-5^2}=12$ cm.'
+          - problem: 'A plane parallel to the base cuts a cone at half of the height from the apex. The base radius is $10$ cm. What is the radius of the section, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '5'
+            solution_sketch: 'The section is similar to the base with the ratio $\frac{1}{2}$. So its radius is $5$ cm.'
+          - problem: 'A cone has height $12$ cm and base radius $12$ cm. A plane parallel to the base is $3$ cm from the apex. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '9*pi'
+            solution_sketch: 'The ratio of similarity is $\frac{3}{12}=\frac{1}{4}$. So the section radius is $3$ cm and the area is $9\pi$ cm$^2$.'
+          - problem: 'A cylinder has radius $4$ cm and height $9$ cm. A plane parallel to the base cuts the cylinder. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '16*pi'
+            solution_sketch: 'Every section parallel to the base of a cylinder is a circle equal to the base. Its area is $\pi\cdot 4^2=16\pi$ cm$^2$.'
+          - problem: 'A plane cuts a ball of radius $10$ cm. The area of the section circle is $64\pi$ cm$^2$. How far is the plane from the center, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The radius of the section is $8$ cm. The distance from the center is $\sqrt{10^2-8^2}=6$ cm.'
+          - problem: 'A cone has height $10$ cm and base radius $15$ cm. A plane parallel to the base cuts off a small cone of height $4$ cm. What is the radius of the section, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The ratio of similarity is $\frac{4}{10}$. So the section radius is $15\cdot\frac{4}{10}=6$ cm.'
+        constraints: 'plane sections parallel to the base of a cone, a cylinder and a ball; similar figures give the ratio; a section of a ball uses a right triangle; lengths in centimeters'
+    diagnostic_exemplar:
+      problem: 'A cone has generatrix $13$ cm and height $12$ cm. Find the area of its base in square centimeters.'
+      answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+      answer: '25*pi'
+      solution_sketch: 'The radius is $\sqrt{13^2-12^2}=5$ cm. So the area of the base is $25\pi$ cm$^2$.'
+    anki_seeds:
+      - front: "The axial section of a cone is a(n) ... triangle."
+        back: "isosceles"
+        type: basic
+      - front: "A plane at the distance $d$ from the center of a ball of radius $R$ cuts a circle of radius ..."
+        back: "$\\sqrt{R^2-d^2}$"
+        type: basic
+  - id: solid-measures-model
+    lt_term: 'paviršiaus plotas ir tūris; tūris kaip vieno kintamojo funkcija'
+    name: Surface Areas and Volumes from Angles, Sections and One Variable
+    core: false
+    difficulty: 0.68
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: polyhedra-terms-sections
+        weight: 0.5
+        key: true
+      - id: solids-of-revolution-sections
+        weight: 0.5
+        key: false
+      - id: space-angles-distances
+        weight: 0.5
+        key: false
+      - id: similar-solids-scaling
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Area and volume from a given angle or distance'
+        key_prerequisites: [space-angles-distances, polyhedra-terms-sections]
+        exemplars:
+          - problem: 'A regular quadrilateral pyramid has base side $6$ cm. Its lateral faces make an angle of $60^\circ$ with the base. What is its volume, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true,"form":"simplest_radical"}
+            answer: '36*sqrt(3)'
+            solution_sketch: 'The height is $3\tan 60^\circ=3\sqrt{3}$ cm, because $3$ cm is half the base side. The volume is $\frac{1}{3}\cdot 36\cdot 3\sqrt{3}=36\sqrt{3}$ cm$^3$.'
+          - problem: 'A cone has a generatrix of $10$ cm. The generatrix makes an angle of $30^\circ$ with the base plane. What is the volume of the cone, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '125*pi'
+            solution_sketch: 'The height is $10\sin 30^\circ=5$ cm and the radius is $10\cos 30^\circ=5\sqrt{3}$ cm. The volume is $\frac{1}{3}\pi\cdot 75\cdot 5=125\pi$ cm$^3$.'
+          - problem: 'A diagonal of the axial section of a cylinder is $20$ cm long. It makes an angle of $30^\circ$ with the base plane. What is the volume of the cylinder, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '750*pi'
+            solution_sketch: 'The height is $20\sin 30^\circ=10$ cm. The diameter is $20\cos 30^\circ=10\sqrt{3}$ cm, so $r^2=75$. The volume is $\pi\cdot 75\cdot 10=750\pi$ cm$^3$.'
+          - problem: 'A rectangular box has a base with sides $3$ cm and $4$ cm. Its space diagonal makes an angle of $45^\circ$ with the base. What is the volume of the box, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The diagonal of the base is $5$ cm. The angle of $45^\circ$ makes the height equal to $5$ cm. The volume is $3\cdot 4\cdot 5=60$ cm$^3$.'
+          - problem: 'A regular quadrilateral pyramid has height $4$ cm. Its lateral faces make an angle of $45^\circ$ with the base. What is the area of its lateral surface, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true,"form":"simplest_radical"}
+            answer: '64*sqrt(2)'
+            solution_sketch: 'Half the base side equals the height, $4$ cm, so the base side is $8$ cm and the base area is $64$ cm$^2$. The lateral area is the base area over $\cos 45^\circ$, which is $64\sqrt{2}$ cm$^2$.'
+          - problem: 'A plane cuts a ball at the distance $3$ cm from its center. The section circle has area $16\pi$ cm$^2$. What is the volume of the ball, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '500*pi/3'
+            solution_sketch: 'The section radius is $4$ cm. The radius of the ball is $\sqrt{3^2+4^2}=5$ cm. The volume is $\frac{4}{3}\pi\cdot 125=\frac{500\pi}{3}$ cm$^3$.'
+        constraints: 'a given angle or distance fixes the height and the radius; then use the volume or area formula from the sheet; answers in cubic or square centimeters, some with a root or with $\pi$'
+      - id: kp2
+        name: 'Volume as a function of one variable'
+        key_prerequisites: [solids-of-revolution-sections, polyhedra-terms-sections]
+        exemplars:
+          - problem: 'A regular quadrilateral pyramid has lateral edge $\sqrt{43}$ cm and base side $x$ cm. Its volume is $V(x)=\frac{1}{3}x^2\sqrt{43-\frac{x^2}{2}}$ cm$^3$. Find $V(6)$.'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'Put $x=6$. Then $43-\frac{36}{2}=25$ and the root is $5$. So $V(6)=\frac{1}{3}\cdot 36\cdot 5=60$ cm$^3$.'
+          - problem: 'A closed cylinder has total surface area $24\pi$ cm$^2$ and radius $r$ cm. Its height is $h=\frac{12-r^2}{r}$ cm. What is the volume of the cylinder for $r=2$, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '16*pi'
+            solution_sketch: 'For $r=2$, the height is $\frac{12-4}{2}=4$ cm. The volume is $\pi r^2h=\pi\cdot 4\cdot 4=16\pi$ cm$^3$.'
+          - problem: 'A cone has generatrix $10$ cm and base radius $r$ cm. Its volume is $V(r)=\frac{\pi}{3}r^2\sqrt{100-r^2}$ cm$^3$. Find $V(6)$.'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '96*pi'
+            solution_sketch: 'Put $r=6$. Then $\sqrt{100-36}=8$. So $V(6)=\frac{\pi}{3}\cdot 36\cdot 8=96\pi$ cm$^3$.'
+          - problem: 'A rectangular box has a square base with side $x$ cm and total surface area $96$ cm$^2$. Its height is $h=\frac{48-x^2}{2x}$ cm. What is its volume for $x=4$, in cubic centimeters?'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '64'
+            solution_sketch: 'For $x=4$, the height is $\frac{48-16}{8}=4$ cm. The volume is $x^2h=16\cdot 4=64$ cm$^3$.'
+          - problem: 'A box with a square base has volume $V(x)=x^2(12-x)$ cm$^3$, where $x$ cm is the side of the base and $0<x<12$. Which integer $x$ gives $V(x)=256$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'Test $x=8$: $V(8)=64\cdot 4=256$. The equation $x^3-12x^2+256=0$ factors as $(x-8)^2(x+4)=0$, so $x=8$ is the only value in the interval.'
+          - problem: 'A segment of a ball with radius $6$ cm has height $x$ cm. Its volume is $V(x)=\frac{\pi}{3}x^2(18-x)$ cm$^3$. Find $V(6)$.'
+            answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+            answer: '144*pi'
+            solution_sketch: 'Put $x=6$. Then $V(6)=\frac{\pi}{3}\cdot 36\cdot 12=144\pi$ cm$^3$. This is the volume of a half ball.'
+        constraints: 'the volume is given as a formula in one variable; the item asks for a value, or for the value of the variable that gives a given volume; no derivative is needed; volumes in cubic centimeters'
+      - id: kp3
+        name: 'Area and perimeter of a section'
+        key_prerequisites: [polyhedra-terms-sections, solids-of-revolution-sections]
+        exemplars:
+          - problem: 'A cone has base radius $13$ cm and height $12$ cm. A plane passes through the apex and a chord of the base that is $5$ cm from the center of the base. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '156'
+            solution_sketch: 'The half chord is $\sqrt{13^2-5^2}=12$ cm, so the chord is $24$ cm. The distance from the apex to the chord is $\sqrt{12^2+5^2}=13$ cm. The area is $\frac{1}{2}\cdot 24\cdot 13=156$ cm$^2$.'
+          - problem: 'A cube $ABCDA_1B_1C_1D_1$ has edge $6$ cm. A plane passes through the midpoints of $AB$, $AD$ and $AA_1$. What is the perimeter of the section, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true,"form":"simplest_radical"}
+            answer: '9*sqrt(2)'
+            solution_sketch: 'The section is an equilateral triangle. Each side joins two midpoints on one face, so it is half of a face diagonal: $3\sqrt{2}$ cm. The perimeter is $9\sqrt{2}$ cm.'
+          - problem: 'A plane cuts a ball of radius $10$ cm at the distance $6$ cm from the center. What is the perimeter of the section circle, in centimeters?'
+            answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
+            answer: '16*pi'
+            solution_sketch: 'The radius of the section is $\sqrt{10^2-6^2}=8$ cm. The perimeter is $2\pi\cdot 8=16\pi$ cm.'
+          - problem: 'A regular quadrilateral pyramid has base side $8$ cm and height $6$ cm. A plane parallel to the base passes through the midpoint of the height. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '16'
+            solution_sketch: 'The section is a square similar to the base with the ratio $\frac{1}{2}$. Its side is $4$ cm. Its area is $16$ cm$^2$.'
+          - problem: 'A truncated cone has base radii $3$ cm and $7$ cm and height $6$ cm. What is the area of its axial section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '60'
+            solution_sketch: 'The axial section is a trapezoid with bases $6$ cm and $14$ cm and height $6$ cm. Its area is $\frac{6+14}{2}\cdot 6=60$ cm$^2$.'
+          - problem: 'A right prism has a square base with side $4$ cm and height $9$ cm. A plane passes through two opposite lateral edges. What is the area of the section, in square centimeters?'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true,"form":"simplest_radical"}
+            answer: '36*sqrt(2)'
+            solution_sketch: 'The section is a rectangle. One side is the base diagonal $4\sqrt{2}$ cm. The other side is the height $9$ cm. The area is $36\sqrt{2}$ cm$^2$.'
+        constraints: 'sections of a cone, a cube, a ball, a pyramid, a truncated cone and a prism; the item asks for the area or the perimeter of the section; lengths in centimeters and areas in square centimeters'
+    diagnostic_exemplar:
+      problem: 'A cylinder has base radius $5$ cm. A diagonal of its axial section is $26$ cm long. Find the volume of the cylinder in cubic centimeters.'
+      answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
+      answer: '600*pi'
+      solution_sketch: 'The diameter is $10$ cm. The height is $\sqrt{26^2-10^2}=24$ cm. The volume is $\pi\cdot 25\cdot 24=600\pi$ cm$^3$.'
+    anki_seeds:
+      - front: "A face of a regular pyramid makes the angle $\\varphi$ with the base. The area of the lateral surface equals the area of the base divided by ..."
+        back: "$\\cos\\varphi$"
+        type: basic
+      - front: "A plane parallel to the base cuts a solid at the ratio $k$ of the height. The volumes have the ratio ..."
+        back: "$k^3$"
+        type: basic

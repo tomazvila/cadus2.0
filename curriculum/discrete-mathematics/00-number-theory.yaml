@@ -949,3 +949,119 @@ topics:
       - front: "Why is RSA hard to break but easy to use?"
         back: 'Encrypting needs only $n$ and $e$; finding $d$ requires $\varphi(n)$, which in practice requires factoring $n$.'
         type: basic
+
+  - id: numbers-with-given-remainder
+    lt_term: 'natūraliųjų skaičių, dalijant iš d gaunama liekana r, aibė'
+    name: Sets of Numbers with a Given Remainder
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: division-algorithm
+        weight: 0.6
+        key: true
+      - id: set-notation
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Write n = d*k + r'
+        key_prerequisites: [division-algorithm]
+        exemplars:
+          - problem: 'The natural numbers $n$ leave remainder $2$ when divided by $5$. Write $n$ as an expression in the integer $k\ge 0$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '5*k+2'
+            solution_sketch: 'A number with remainder $2$ after division by $5$ has the form $5k+2$. Here $k$ is the quotient.'
+          - problem: 'The natural numbers $n$ leave remainder $1$ when divided by $8$. Write $n$ as an expression in the integer $k\ge 0$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '8*k+1'
+            solution_sketch: 'A number with remainder $1$ after division by $8$ has the form $8k+1$. Here $k$ is the quotient.'
+          - problem: 'A natural number $n$ gives remainder $4$ when divided by $9$. Write $n$ as an expression in the quotient $k$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '9*k+4'
+            solution_sketch: 'We have $n=9k+4$ with the quotient $k$. The remainder $4$ is smaller than $9$.'
+          - problem: 'A natural number has the form $12k+7$. Find its remainder when divided by $4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The term $12k$ is a multiple of $4$. The term $7$ gives $7=4+3$. So the remainder is 3.'
+          - problem: 'A natural number $n$ gives remainder $4$ when divided by $10$. Find the last digit of $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'We have $n=10k+4$. The term $10k$ ends in $0$. So the last digit of $n$ is 4.'
+          - problem: 'A natural number $n$ gives remainder $3$ when divided by $8$. Find the remainder of $2n$ when divided by $8$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'We have $n=8k+3$. Then $2n=16k+6$. The term $16k$ is a multiple of $8$, and $6<8$. So the remainder is 6.'
+        constraints: 'the form d*k+r for d between 2 and 12; remainders of simple expressions; k is a non-negative integer'
+      - id: kp2
+        name: 'List the members of the set in an interval'
+        key_prerequisites: [division-algorithm, set-notation]
+        exemplars:
+          - problem: 'List all natural numbers from $1$ to $30$ that leave remainder $2$ when divided by $7$. Give the set.'
+            answer_contract: {"kind":"set"}
+            answer: '{2, 9, 16, 23, 30}'
+            solution_sketch: 'The numbers have the form $7k+2$. For $k=0,1,2,3,4$ they are $2$, $9$, $16$, $23$ and $30$. The next one is $37$, which is larger than $30$.'
+          - problem: 'List all natural numbers from $10$ to $40$ that leave remainder $1$ when divided by $10$. Give the set.'
+            answer_contract: {"kind":"set"}
+            answer: '{11, 21, 31}'
+            solution_sketch: 'The numbers have the form $10k+1$. In $[10,40]$ they are $11$, $21$ and $31$. The next one is $41$.'
+          - problem: 'List all natural numbers from $20$ to $50$ that leave remainder $4$ when divided by $6$. Give the set.'
+            answer_contract: {"kind":"set"}
+            answer: '{22, 28, 34, 40, 46}'
+            solution_sketch: 'The numbers have the form $6k+4$. The first one in the range is $22$. Add $6$ each time until $46$. The next one is $52$, which is out of range.'
+          - problem: 'How many natural numbers from $1$ to $100$ leave remainder $3$ when divided by $8$?'
+            answer_contract: {"kind":"exact"}
+            answer: '13'
+            solution_sketch: 'The numbers have the form $8k+3$. The inequality $8k+3\le 100$ gives $k\le 12$. The values $k=0,1,\dots,12$ give 13 numbers.'
+          - problem: 'How many natural numbers $n$ with $100\le n\le 200$ have the form $9k+4$?'
+            answer_contract: {"kind":"exact"}
+            answer: '11'
+            solution_sketch: 'The inequality $9k+4\ge 100$ gives $k\ge 11$. The inequality $9k+4\le 200$ gives $k\le 21$. The values $k=11,\dots,21$ give 11 numbers.'
+          - problem: 'Find the sum of all natural numbers less than $60$ that leave remainder $5$ when divided by $11$.'
+            answer_contract: {"kind":"exact"}
+            answer: '135'
+            solution_sketch: 'The numbers are $5$, $16$, $27$, $38$ and $49$. The next one is $60$, which is not less than $60$. The sum is $135$.'
+        constraints: 'numbers d*k+r inside a given interval; lists as sets, counts and sums; d between 6 and 11'
+      - id: kp3
+        name: 'Join and cut two remainder sets'
+        key_prerequisites: [division-algorithm, set-notation]
+        exemplars:
+          - problem: 'Find the smallest natural number that leaves remainder $2$ when divided by $3$ and remainder $1$ when divided by $4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The numbers with remainder $2$ after division by $3$ are $2$, $5$, $8$, and so on. Divide each by $4$. The first one with remainder $1$ is $5$.'
+          - problem: 'Find the smallest natural number that leaves remainder $3$ when divided by $5$ and remainder $2$ when divided by $4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '18'
+            solution_sketch: 'The numbers with remainder $3$ after division by $5$ are $3$, $8$, $13$, $18$. Their remainders after division by $4$ are $3$, $0$, $1$, $2$. So the number is $18$.'
+          - problem: 'How many natural numbers from $1$ to $50$ leave remainder $1$ when divided by $3$ and remainder $1$ when divided by $5$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'A number with remainder $1$ for $3$ and $5$ has remainder $1$ for $15$. These numbers are $1$, $16$, $31$ and $46$. The answer is 4.'
+          - problem: 'How many natural numbers from $1$ to $20$ leave remainder $1$ when divided by $4$ or remainder $2$ when divided by $5$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The first set is $\{1,5,9,13,17\}$ with 5 members. The second set is $\{2,7,12,17\}$ with 4 members. The number $17$ is in both sets. So the union has $5+4-1=8$ members.'
+          - problem: 'The natural numbers $n$ leave remainder $2$ when divided by $3$ and remainder $3$ when divided by $4$. Write $n$ as an expression in the integer $k\ge 0$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '12*k+11'
+            solution_sketch: 'The smallest such number is $11$, because $11=3\cdot 3+2$ and $11=4\cdot 2+3$. The conditions repeat after $3\cdot 4=12$. So $n=12k+11$.'
+          - problem: 'Find the sum of all natural numbers from $1$ to $100$ that leave remainder $2$ when divided by $4$ and remainder $3$ when divided by $5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '290'
+            solution_sketch: 'The smallest such number is $18$. The conditions repeat after $20$. The numbers are $18$, $38$, $58$, $78$ and $98$. Their sum is $290$.'
+        constraints: 'two remainder conditions with divisors 3 to 5; smallest member, count, union count, common form and sum'
+    diagnostic_exemplar:
+      problem: 'A natural number has the form $9k+5$. Find its remainder when divided by $3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The term $9k$ is a multiple of $3$. The term $5$ gives $5=3+2$. So the remainder is 2.'
+    anki_seeds:
+      - front: "The natural numbers with remainder $r$ after division by $d$ have the form ... ."
+        back: "$dk+r$"
+        type: basic
+      - front: "The remainder $r$ is always smaller than ... ."
+        back: "$d$"
+        type: basic

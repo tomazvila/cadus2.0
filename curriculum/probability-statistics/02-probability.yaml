@@ -877,6 +877,47 @@ topics:
             answer_contract: {"kind": "exact"}
             solution_sketch: 'No six appears with probability $(5/6)^3 = 125/216$, because each roll shows a non-six with chance $5/6$. The complement gives $1 - 125/216 = 91/216$.'
         constraints: 'the complement event must be much easier to count than the event itself; at most one error-analysis item'
+      - id: kp4
+        name: 'Justify the properties of probability (certain, impossible, opposite events)'
+        key_prerequisites: [basic-probability, adding-subtracting-fractions]
+        exemplars:
+          - problem: 'A fair die is rolled once. Find the probability that the result is a whole number from $1$ to $6$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Every roll gives a number from $1$ to $6$. So the event always happens. Its probability is $1$.'
+          - problem: 'A fair die is rolled once. Find the probability that the result is $7$.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'No face of the die shows $7$. So the event never happens. Its probability is $0$.'
+          - problem: 'An experiment has four outcomes. Three of them have the probabilities $0.15$, $0.25$ and $0.1$. Find the probability $p$ of the fourth outcome.'
+            answer_contract: {"kind":"exact"}
+            answer: '0.5'
+            solution_sketch: 'The four probabilities add to $1$. So $p=1-(0.15+0.25+0.1)=1-0.5=0.5$.'
+          - problem: 'The event $A$ has the probability $0.35$. Find the probability that $A$ does not happen.'
+            answer_contract: {"kind":"exact"}
+            answer: '0.65'
+            solution_sketch: 'The events $A$ and not $A$ have probabilities that add to $1$. So $1-0.35=0.65$.'
+          - problem: 'A fair die is rolled once. Find the probability that the result is not $5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/6'
+            solution_sketch: 'The probability of the result $5$ is $\frac16$. The probability of the opposite event is $1-\frac16=\frac56$.'
+          - problem: 'For the event $A$, the probability that $A$ does not happen is $3$ times the probability that $A$ happens. Find the probability that $A$ happens.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/4'
+            solution_sketch: 'Let $p=P(A)$. Then $p+3p=1$ because the two probabilities add to $1$. So $4p=1$ and $p=\frac14$.'
+          - problem: 'Write a proof that $P(\text{not } A)=1-P(A)$. Use the fact that $A$ and not $A$ never happen together and that one of them always happens.'
+            answer_contract: {"kind":"written"}
+            answer: 'The events A and not A never happen together. One of them always happens, so together they are the certain event. The probability of the certain event is 1. The probabilities of events that never happen together add. So the two probabilities add to 1. The probability of not A is 1 minus the probability of A.'
+            solution_sketch: 'The two events cover all outcomes and do not overlap. So their probabilities add to $1$.'
+          - problem: 'Write a proof that the probability of the impossible event is $0$. Use the certain event and its complement.'
+            answer_contract: {"kind":"written"}
+            answer: 'The impossible event is the complement of the certain event. The probability of the certain event is 1. By the complement rule the probability of the impossible event is 1 - 1 = 0.'
+            solution_sketch: 'The complement of the certain event has no outcome. This is the impossible event. Its probability is $1-1=0$.'
+          - problem: 'Write the reason why the probabilities of the six elementary events of a fair die add to $1$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The six elementary events never happen together. One of them always happens. So together they form the certain event, and its probability is 1. Each elementary event has the probability 1/6, and six times 1/6 is 1.'
+            solution_sketch: 'The six outcomes do not overlap and they cover all cases. So the sum is the probability of the certain event, which is $1$.'
+        constraints: 'three decidable items give the probability of the certain event, of the impossible event and a missing elementary probability from a sum of $1$; three written items give the reason for the property'
     diagnostic_exemplar:
       problem: 'Two fair dice are rolled. Find $P(\text{sum} \neq 10)$.'
       answer: '11/12'
@@ -1999,4 +2040,129 @@ topics:
         type: basic
       - front: 'Why can a positive result from an accurate test still mean the condition is unlikely?'
         back: 'A low base rate: the many false positives from the large healthy group can outnumber the true positives.'
+        type: basic
+
+  - id: classical-nonclassical-trials
+    lt_term: 'klasikiniai ir neklasikiniai bandymai'
+    name: Classical and Non-Classical Trials
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 150
+    prerequisites:
+      - id: probability-tree-diagrams
+        weight: 0.6
+        key: true
+      - id: basic-probability
+        weight: 0.5
+        key: false
+      - id: independent-events
+        weight: 0.4
+        key: false
+      - id: conditional-probability
+        weight: 0.5
+        key: false
+      - id: complement-rule
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Tell a classical trial from a non-classical trial'
+        key_prerequisites: [basic-probability]
+        exemplars:
+          - problem: 'Two fair coins are tossed. The outcomes are the numbers of heads: $0$, $1$ and $2$. How many of these three outcomes have probability $\frac{1}{4}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The coins give four equally likely results: HH, HT, TH and TT. Zero heads and two heads each have one result, so each has probability $\frac{1}{4}$. One head has two results and probability $\frac{1}{2}$. The answer is 2.'
+          - problem: 'Two fair coins are tossed. Find the probability that the number of heads is $1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/2'
+            solution_sketch: 'The four results HH, HT, TH and TT are equally likely. Two of them have one head. So the probability is $\frac{2}{4}=\frac{1}{2}$.'
+          - problem: 'A bag holds $1$ red ball and $3$ blue balls. One ball is drawn. The outcomes are the colors red and blue. Find the probability of blue.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/4'
+            solution_sketch: 'The two color outcomes are not equally likely. Each ball has probability $\frac{1}{4}$. Three balls are blue, so the probability is $\frac{3}{4}$.'
+          - problem: 'Two fair dice are rolled. Find the probability that the sum is $7$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/6'
+            solution_sketch: 'The 36 ordered pairs are equally likely. The sum $7$ has six pairs: $(1,6)$, $(2,5)$, $(3,4)$, $(4,3)$, $(5,2)$ and $(6,1)$. The probability is $\frac{6}{36}=\frac{1}{6}$.'
+          - problem: 'Two fair dice are rolled. Find the probability that the sum is $11$ or $12$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/12'
+            solution_sketch: 'The sum $11$ has two pairs and the sum $12$ has one pair. The probability is $\frac{3}{36}=\frac{1}{12}$.'
+          - problem: 'Two fair dice are rolled and the outcome is the sum, from $2$ to $12$. How many sums have a probability less than $\frac{1}{12}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The number of pairs for the sums $2,3,\dots,12$ is $1,2,3,4,5,6,5,4,3,2,1$. A probability less than $\frac{1}{12}=\frac{3}{36}$ needs fewer than 3 pairs. The sums $2$, $3$, $11$ and $12$ do this, so the answer is 4.'
+        constraints: 'outcomes listed as counts or colors are not equally likely; the equally likely pairs or balls give the probability; answers are fractions or counts'
+      - id: kp2
+        name: 'Event probability with unequal outcome probabilities'
+        key_prerequisites: [basic-probability, complement-rule]
+        exemplars:
+          - problem: 'A spinner stops on red with probability $\frac{1}{2}$, on blue with probability $\frac{3}{10}$ and otherwise on green. Find the probability of green.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/5'
+            solution_sketch: 'The three probabilities add up to $1$. So $P(\text{green})=1-\frac{1}{2}-\frac{3}{10}=\frac{1}{5}$.'
+          - problem: 'A loaded die shows $6$ with probability $\frac{1}{2}$. The other five faces are equally likely. Find the probability of $1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/10'
+            solution_sketch: 'The five other faces share the probability $1-\frac{1}{2}=\frac{1}{2}$. Each face gets $\frac{1}{10}$.'
+          - problem: 'A loaded die shows $6$ with probability $\frac{1}{2}$. The other five faces are equally likely. Find the probability of an even number.'
+            answer_contract: {"kind":"exact"}
+            answer: '7/10'
+            solution_sketch: 'Each of the faces $2$ and $4$ has probability $\frac{1}{10}$. The face $6$ has probability $\frac{1}{2}$. The sum is $\frac{1}{10}+\frac{1}{10}+\frac{1}{2}=\frac{7}{10}$.'
+          - problem: 'The outcomes $1$, $2$, $3$ and $4$ have probabilities in the ratio $1:2:3:4$. Find the probability that the outcome is at most $2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/10'
+            solution_sketch: 'The ratio parts add up to $10$. The outcomes $1$ and $2$ have $\frac{1}{10}$ and $\frac{2}{10}$. The sum is $\frac{3}{10}$.'
+          - problem: 'A biased coin lands heads with probability $\frac{2}{3}$. The coin is tossed twice. Find the probability of two heads.'
+            answer_contract: {"kind":"exact"}
+            answer: '4/9'
+            solution_sketch: 'The tosses are independent. So $P=\frac{2}{3}\cdot\frac{2}{3}=\frac{4}{9}$.'
+          - problem: 'A biased coin lands heads with probability $\frac{1}{4}$. The coin is tossed twice. Find the probability of exactly one head.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/8'
+            solution_sketch: 'There are two ways: heads then tails, or tails then heads. Each way has probability $\frac{1}{4}\cdot\frac{3}{4}=\frac{3}{16}$. The sum is $\frac{3}{8}$.'
+        constraints: 'outcome probabilities given as fractions or ratios; the sum is 1; events are sums of outcome probabilities; answers are fractions'
+      - id: kp3
+        name: 'Draws with and without return, at least one'
+        key_prerequisites: [independent-events, conditional-probability, probability-tree-diagrams, complement-rule]
+        exemplars:
+          - problem: 'An urn holds $3$ red balls and $2$ blue balls. Two balls are drawn one after the other, with return. Find the probability that both are red.'
+            answer_contract: {"kind":"exact"}
+            answer: '9/25'
+            solution_sketch: 'The draws are independent and each red draw has probability $\frac{3}{5}$. So $P=\frac{3}{5}\cdot\frac{3}{5}=\frac{9}{25}$.'
+          - problem: 'An urn holds $3$ red balls and $2$ blue balls. Two balls are drawn one after the other, without return. Find the probability that both are red.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/10'
+            solution_sketch: 'The first ball is red with probability $\frac{3}{5}$. Then $2$ red balls stay among $4$. So $P=\frac{3}{5}\cdot\frac{2}{4}=\frac{3}{10}$.'
+          - problem: 'A box holds $4$ white balls and $6$ black balls. Two balls are drawn one after the other, with return. Find the probability that at least one ball is white.'
+            answer_contract: {"kind":"exact"}
+            answer: '16/25'
+            solution_sketch: 'Use the complement. No white ball has probability $\frac{6}{10}\cdot\frac{6}{10}=\frac{9}{25}$. So $P=1-\frac{9}{25}=\frac{16}{25}$.'
+          - problem: 'A box holds $4$ white balls and $6$ black balls. Two balls are drawn one after the other, without return. Find the probability that at least one ball is white.'
+            answer_contract: {"kind":"exact"}
+            answer: '2/3'
+            solution_sketch: 'Use the complement. No white ball has probability $\frac{6}{10}\cdot\frac{5}{9}=\frac{1}{3}$. So $P=1-\frac{1}{3}=\frac{2}{3}$.'
+          - problem: 'A shelf holds $10$ books and $4$ of them are mathematics books. Three books are taken without return. Find the probability that at least one is a mathematics book.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/6'
+            solution_sketch: 'Use the complement. No mathematics book means all three come from the $6$ other books. That has probability $\frac{C_6^3}{C_{10}^3}=\frac{20}{120}=\frac{1}{6}$. So $P=1-\frac{1}{6}=\frac{5}{6}$.'
+          - problem: 'A fair die is rolled $4$ times. Find the probability of at least one six.'
+            answer_contract: {"kind":"exact"}
+            answer: '671/1296'
+            solution_sketch: 'Use the complement. No six in one roll has probability $\frac{5}{6}$. For $4$ rolls it is $\left(\frac{5}{6}\right)^4=\frac{625}{1296}$. So $P=1-\frac{625}{1296}=\frac{671}{1296}$.'
+        constraints: 'urns, boxes and shelves; with and without return; at least one by the complement; answers are fractions'
+    diagnostic_exemplar:
+      problem: 'A biased coin lands heads with probability $\frac{3}{4}$. Find the probability of tails.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/4'
+      solution_sketch: 'The probabilities of heads and tails add up to $1$. So $P(\text{tails})=1-\frac{3}{4}=\frac{1}{4}$.'
+    anki_seeds:
+      - front: "In a classical trial, all outcomes have ... probabilities."
+        back: "equal"
+        type: basic
+      - front: "P(at least one) = 1 - P(... )."
+        back: "none"
         type: basic

@@ -559,6 +559,47 @@ topics:
             answer_contract: {"kind": "required_form", "form": "reduced_fraction"}
             solution_sketch: 'The first term is $\frac{7}{100}$ and the ratio is $\frac{1}{100}$. The sum is $\frac{7/100}{1 - 1/100} = \frac{7/100}{99/100} = \frac{7}{99}$.'
         constraints: 'one- or two-digit repeating blocks, and one decimal with a non-repeating digit before the block; first term block/10 or block/100 with r = 1/10 or 1/100; fractions in lowest terms'
+      - id: kp4
+        name: 'Picture of halving areas that shows 1/2+1/4+1/8+...=1'
+        key_prerequisites: [geometric-sequences, adding-subtracting-fractions]
+        exemplars:
+          - problem: 'A square has area $1$. Shade half of it. Then shade half of the unshaded part, and so on, for $4$ shaded pieces in all. The pieces have the areas $\frac12$, $\frac14$, $\frac18$ and $\frac1{16}$. Find the total shaded area.'
+            answer_contract: {"kind":"exact"}
+            answer: '15/16'
+            solution_sketch: 'The unshaded part is the last piece cut away. It has area $\frac1{16}$. So the shaded area is $1-\frac1{16}=\frac{15}{16}$.'
+          - problem: 'A square has area $1$. Shade half of it, then half of the rest, and so on, for $5$ shaded pieces in all. Find the area of the part that is still unshaded.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/32'
+            solution_sketch: 'Each step halves the unshaded part. After $5$ steps the unshaded part has area $\left(\frac12\right)^5=\frac1{32}$.'
+          - problem: 'A rectangle has area $6$ cm$^2$. Shade half of it, then half of the rest, then half of the rest again, and so on without end. Find the total shaded area.'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '6'
+            solution_sketch: 'The shaded pieces have the areas $3$, $\frac32$, $\frac34$ and so on. They fill the whole rectangle, with no part left. So the total shaded area is $6$ cm$^2$.'
+          - problem: 'A rectangle has area $10$ cm$^2$. Shade half of it, then half of the rest, then half of the rest again, for $3$ shaded pieces in all. Find the total shaded area.'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '35/4'
+            solution_sketch: 'The unshaded part is halved $3$ times. It has area $10\cdot\frac18=\frac54$ cm$^2$. The shaded area is $10-\frac54=\frac{35}{4}$ cm$^2$.'
+          - problem: 'A square has area $1$. Shade half of it, then half of the rest, and so on. The last shaded piece has area $\frac1{64}$. Find the number of shaded pieces.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The pieces have the areas $\frac12,\frac14,\frac18,\dots$, so piece $n$ has area $\frac1{2^n}$. Solve $2^n=64$. This gives $n=6$.'
+          - problem: 'A square has area $8$ cm$^2$. Shade half of it, then half of the rest, and so on without end. Find the total area of all shaded pieces except the first one.'
+            answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
+            answer: '4'
+            solution_sketch: 'The first piece has area $4$ cm$^2$. All the pieces together fill the square, with area $8$ cm$^2$. So the other pieces have area $8-4=4$ cm$^2$.'
+          - problem: 'Write a proof, with a picture in words, that $\frac12+\frac14+\frac18+\dots=1$. Use a square of area $1$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take a square of area 1. Shade half of it. Shade half of the unshaded part, then half of the new unshaded part, and so on. The shaded pieces have the areas 1/2, 1/4, 1/8, and so on. After each step the unshaded part is half as large and gets as small as you wish. So the shaded pieces fill the square, and the sum is 1.'
+            solution_sketch: 'Each new piece takes half of the unshaded part. The unshaded part gets smaller without end. So the pieces fill the whole square of area $1$.'
+          - problem: 'Write a proof that $\frac12+\frac14+\dots+\frac1{2^n}=1-\frac1{2^n}$. Use a square of area $1$ cut in halves.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take a square of area 1. At each step shade half of the unshaded part. After step n the shaded pieces have the areas 1/2, 1/4, up to 1/2^n. The unshaded part is the last piece cut away, so its area is 1/2^n. The shaded area is the whole square minus this piece, so the sum is 1 - 1/2^n.'
+            solution_sketch: 'Each step cuts the unshaded part in two equal halves and shades one half. After $n$ steps the unshaded part has area $\frac1{2^n}$. The shaded area is $1-\frac1{2^n}$.'
+          - problem: 'Write the reason. How does the picture of a square of area $1$, cut in halves again and again, show that the sum $\frac12+\frac14+\frac18+\dots$ cannot be more than $1$.'
+            answer_contract: {"kind":"written"}
+            answer: 'All shaded pieces lie inside the square. The pieces do not overlap. So their total area is at most the area of the square, which is 1. The sum never goes above 1. The unshaded part gets as small as you wish, so the sum is equal to 1.'
+            solution_sketch: 'The pieces do not overlap and they lie inside the square. So their total area is at most $1$. This is why the sum never goes above $1$.'
+        constraints: 'a unit square or a rectangle cut in halves again and again; three items find a shaded or unshaded area, three written items give a picture proof'
     diagnostic_exemplar:
       problem: 'Use a geometric series to write $0.\overline{45}$ as a fraction.'
       answer: "5/11"
@@ -713,6 +754,35 @@ topics:
             answer_contract: {"kind": "label", "options": [["yes", "yes they do", "they do", "same", "the same", "correct", "right"], ["no", "no they do not", "they do not", "not the same", "different", "incorrect", "wrong"]]}
             solution_sketch: 'The recursion gives $2, 5, 8, \ldots$ with difference $3$. The formula gives $3 \cdot 1 - 1 = 2$, $3 \cdot 2 - 1 = 5$ and $3 \cdot 3 - 1 = 8$, so the two rules define the same sequence.'
         constraints: 'arithmetic or geometric sequences only; a rule is chosen from three given definitions or an explicit formula in n is written; items also ask for a far term (so the explicit form is needed), the number added or the ratio; the item must test THIS KP: Translate between recursive and explicit forms'
+      - id: kp4
+        name: 'Sequence terms, first term, finite and infinite sequences'
+        key_prerequisites: [function-notation, evaluating-expressions]
+        exemplars:
+          - problem: 'A sequence has the $n$-th term $a_n=3n-1$. Find the first term.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The first term is $a_1$. Put $n=1$: $a_1=3\cdot 1-1=2$.'
+          - problem: 'A sequence has the $n$-th term $a_n=n^2-2n$. Find $a_5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '15'
+            solution_sketch: 'Put $n=5$: $a_5=25-10=15$.'
+          - problem: 'A sequence has the $n$-th term $a_n=(-1)^n n$. Find the sum of the first three terms.'
+            answer_contract: {"kind":"exact"}
+            answer: '-2'
+            solution_sketch: 'The terms are $a_1=-1$, $a_2=2$ and $a_3=-3$. The sum is $-1+2-3=-2$.'
+          - problem: 'A finite sequence has the $n$-th term $a_n=2n+3$ and its last term is $27$. How many terms does the sequence have?'
+            answer_contract: {"kind":"exact"}
+            answer: '12'
+            solution_sketch: 'The last term has the number $k$ with $2k+3=27$. So $k=12$. The sequence has 12 terms.'
+          - problem: 'A sequence has the $n$-th term $a_n=n^2+n$. Find the term number $n$ for which $a_n=56$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'Solve $n^2+n-56=0$. The factors are $(n+8)(n-7)=0$. A term number is positive, so $n=7$.'
+          - problem: 'An infinite sequence has the $n$-th term $a_n=100-7n$. How many terms of this sequence are positive?'
+            answer_contract: {"kind":"exact"}
+            answer: '14'
+            solution_sketch: 'A term is positive when $100-7n>0$, so $n<\frac{100}{7}\approx 14.3$. The term numbers are $1$ to $14$. So 14 terms are positive.'
+        constraints: 'a sequence given by a formula for its n-th term; find a term, the first term, a term number, a sum of terms or a count of terms; finite and infinite sequences'
     diagnostic_exemplar:
       problem: 'Let $a_1 = 2$, $a_2 = 3$, and $a_n = a_{n-1} + a_{n-2}$. Find $a_6$.'
       answer: "21"
@@ -720,4 +790,271 @@ topics:
     anki_seeds:
       - front: "A recursive definition of a sequence needs which two ingredients?"
         back: "Initial term(s) and a rule giving a_n from earlier terms."
+        type: basic
+
+  - id: progression-middle-term
+    lt_term: 'viduriniojo nario savybė'
+    name: 'Progressions: Middle Term Property'
+    core: true
+    difficulty: 0.45
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: arithmetic-sequences
+        weight: 0.6
+        key: true
+      - id: geometric-sequences
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Middle term of an arithmetic progression'
+        key_prerequisites: [arithmetic-sequences]
+        exemplars:
+          - problem: 'Three consecutive terms of an arithmetic progression are $4$, $x$ and $12$. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'In an arithmetic progression each term is the average of its two neighbors. So $x=\frac{4+12}{2}=8$.'
+          - problem: 'In an arithmetic progression, $a_5=11$ and $a_7=19$. Find $a_6$.'
+            answer_contract: {"kind":"exact"}
+            answer: '15'
+            solution_sketch: 'The term $a_6$ is the average of $a_5$ and $a_7$. So $a_6=\frac{11+19}{2}=15$.'
+          - problem: 'In an arithmetic progression, $a_7=-2$ and $a_9=10$. Find $a_8$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The term $a_8$ is the average of $a_7$ and $a_9$. So $a_8=\frac{-2+10}{2}=4$.'
+          - problem: 'In an arithmetic progression, $a_3=5$ and $a_7=21$. Find $a_5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '13'
+            solution_sketch: 'The term $a_5$ lies in the middle between $a_3$ and $a_7$, because $3+7=2\cdot 5$. So $a_5=\frac{5+21}{2}=13$.'
+          - problem: 'In an arithmetic progression, $a_{n-1}=17$ and $a_n=23$. Find $a_{n+1}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '29'
+            solution_sketch: 'The middle term property gives $2a_n=a_{n-1}+a_{n+1}$. So $46=17+a_{n+1}$. Then $a_{n+1}=29$.'
+          - problem: 'In an arithmetic progression, $a_5+a_9=36$. Find $a_7$.'
+            answer_contract: {"kind":"exact"}
+            answer: '18'
+            solution_sketch: 'The term $a_7$ lies in the middle between $a_5$ and $a_9$. So $2a_7=a_5+a_9=36$. Then $a_7=18$.'
+        constraints: 'the property 2a_n = a_(n-1) + a_(n+1) with small integer terms; neighbors at distance 1 or 2; no figure'
+      - id: kp2
+        name: 'Middle term of a geometric progression'
+        key_prerequisites: [geometric-sequences]
+        exemplars:
+          - problem: 'Three consecutive terms of a geometric progression are $2$, $x$ and $18$. All terms are positive. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The middle term property gives $x^2=2\cdot 18=36$. The terms are positive. So $x=6$.'
+          - problem: 'A geometric progression has positive terms. Also $b_3=4$ and $b_5=25$. Find $b_4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The middle term property gives $b_4^2=b_3b_5=100$. The terms are positive. So $b_4=10$.'
+          - problem: 'A geometric progression has positive terms. Also $b_6=3$ and $b_8=27$. Find $b_7$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'We have $b_7^2=b_6b_8=81$. The terms are positive. So $b_7=9$.'
+          - problem: 'A geometric progression has positive terms. Also $b_2=3$ and $b_8=12$. Find $b_5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'We have $2+8=2\cdot 5$. So $b_5^2=b_2b_8=36$. The terms are positive, so $b_5=6$.'
+          - problem: 'All terms of a geometric progression are negative. Also $b_4b_6=16$. Find $b_5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-4'
+            solution_sketch: 'The middle term property gives $b_5^2=b_4b_6=16$. So $b_5=4$ or $b_5=-4$. The terms are negative, so $b_5=-4$.'
+          - problem: 'A geometric progression has positive terms. Also $b_{n-1}=4$ and $b_{n+1}=25$. Find the ratio $q$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/2'
+            solution_sketch: 'The middle term property gives $b_n^2=4\cdot 25=100$. The terms are positive, so $b_n=10$. Then $q=\frac{b_n}{b_{n-1}}=\frac{10}{4}=\frac{5}{2}$.'
+        constraints: 'the property b_n^2 = b_(n-1) b_(n+1); the sign is fixed by the words positive or negative; neighbors at distance 1 or 3 apart; answers are single numbers'
+      - id: kp3
+        name: 'Three numbers in progression with a parameter'
+        key_prerequisites: [arithmetic-sequences, geometric-sequences]
+        exemplars:
+          - problem: 'The numbers $3$, $x+1$ and $11$ are consecutive terms of an arithmetic progression. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The middle term is the average of its neighbors. So $x+1=\frac{3+11}{2}=7$. Then $x=6$.'
+          - problem: 'The numbers $x$, $6$ and $9$ are consecutive terms of a geometric progression. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The middle term property gives $6^2=9x$. So $36=9x$. Then $x=4$.'
+          - problem: 'The numbers $2x-1$, $x+4$ and $3x$ are consecutive terms of an arithmetic progression. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The middle term property gives $2(x+4)=(2x-1)+3x$. So $2x+8=5x-1$. Then $3x=9$ and $x=3$.'
+          - problem: 'The numbers $x$, $6$ and $x+5$ are consecutive terms of a geometric progression. Find all possible values of $x$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-9, 4'
+            solution_sketch: 'The middle term property gives $36=x(x+5)$. So $x^2+5x-36=0$, which is $(x+9)(x-4)=0$. The values are $-9$ and $4$. Both give a geometric progression.'
+          - problem: 'The numbers $x$, $6$ and $x^2$ are consecutive terms of an arithmetic progression. Find all possible values of $x$.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-4, 3'
+            solution_sketch: 'The middle term property gives $12=x+x^2$. So $x^2+x-12=0$, which is $(x+4)(x-3)=0$. The values are $-4$ and $3$.'
+          - problem: 'The numbers $2$, $x$ and $y$ are consecutive terms of an arithmetic progression. The numbers $x$, $y$ and $9$ are consecutive terms of a geometric progression. All four numbers are positive. Find $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The first property gives $y=2x-2$. The second gives $y^2=9x$. So $(2x-2)^2=9x$, which is $(4x-1)(x-4)=0$. If $x=\frac14$, then $y<0$. So $x=4$.'
+        constraints: 'unknown x inside two or three given terms; one progression type per item except the last; linear or quadratic equation after the property; answers are numbers or a list of numbers'
+    diagnostic_exemplar:
+      problem: 'Three consecutive terms of an arithmetic progression are $5$, $x$ and $13$. Find $x$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The middle term is the average of its neighbors. So $x=\frac{5+13}{2}=9$.'
+    anki_seeds:
+      - front: "In an arithmetic progression, $a_n$ equals the ... of $a_{n-1}$ and $a_{n+1}$."
+        back: "average"
+        type: basic
+      - front: "In a geometric progression with positive terms, $b_n^2=$ ... ."
+        back: "$b_{n-1}b_{n+1}$"
+        type: basic
+
+  - id: progression-word-problems
+    lt_term: 'progresijų taikymas realaus turinio uždaviniams'
+    name: 'Progressions: Real-Life Problems'
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: arithmetic-series
+        weight: 0.6
+        key: true
+      - id: geometric-series-finite-infinite
+        weight: 0.5
+        key: false
+      - id: percent-growth-decay-factors
+        weight: 0.4
+        key: false
+      - id: equation-word-problems
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Arithmetic progression model'
+        key_prerequisites: [arithmetic-series]
+        exemplars:
+          - problem: 'A theater has $12$ seats in row $1$. Each next row has $2$ more seats than the row before. How many seats are in row $15$?'
+            answer_contract: {"kind":"exact"}
+            answer: '40'
+            solution_sketch: 'The numbers of seats form an arithmetic progression with $a_1=12$ and $d=2$. So $a_{15}=12+14\cdot 2=40$.'
+          - problem: 'A runner runs $4$ km on day $1$. Each next day the runner runs $2$ km more than on the day before. How many kilometers does the runner run in $7$ days in total?'
+            answer_contract: {"kind":"exact"}
+            answer: '70'
+            solution_sketch: 'The daily distances form an arithmetic progression with $a_1=4$ and $d=2$. Then $a_7=4+6\cdot 2=16$. So $S_7=\frac{4+16}{2}\cdot 7=70$.'
+          - problem: 'A student saves $5$ dollars in week $1$. In each next week the student saves $3$ dollars more than in the week before. How many dollars does the student save in $10$ weeks in total?'
+            answer_contract: {"kind":"exact"}
+            answer: '185'
+            solution_sketch: 'The weekly savings form an arithmetic progression with $a_1=5$ and $d=3$. So $S_{10}=\frac{2\cdot 5+9\cdot 3}{2}\cdot 10=185$.'
+          - problem: 'A hall has $10$ rows. Row $1$ has $14$ seats and row $10$ has $41$ seats. Each row has the same number of seats more than the row before. How many seats does the hall have in total?'
+            answer_contract: {"kind":"exact"}
+            answer: '275'
+            solution_sketch: 'The numbers of seats form an arithmetic progression. So $S_{10}=\frac{14+41}{2}\cdot 10=275$.'
+          - problem: 'A stack of logs has $20$ logs in the bottom row. Each higher row has $1$ log less than the row below. The top row has $1$ log. How many logs are in the stack in total?'
+            answer_contract: {"kind":"exact"}
+            answer: '210'
+            solution_sketch: 'The rows hold $20,19,\dots,1$ logs. This is an arithmetic progression with $20$ terms. So $S_{20}=\frac{20+1}{2}\cdot 20=210$.'
+          - problem: 'A salary rises by the same amount each year. In year $3$ the salary is $1800$ dollars. In year $8$ the salary is $2300$ dollars. How many dollars is the salary in year $12$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2700'
+            solution_sketch: 'Five years add $500$ dollars, so $d=100$. Year $12$ is four years after year $8$. So the salary is $2300+4\cdot 100=2700$ dollars.'
+        constraints: 'arithmetic progressions in seats, savings, distances and salaries; find a term or a sum; integer data; no rounding'
+      - id: kp2
+        name: 'Geometric growth and decay model'
+        key_prerequisites: [geometric-series-finite-infinite, percent-growth-decay-factors]
+        exemplars:
+          - problem: 'A culture has $5$ bacteria. The number doubles every hour. How many bacteria are there after $6$ hours?'
+            answer_contract: {"kind":"exact"}
+            answer: '320'
+            solution_sketch: 'After $6$ hours the number is multiplied by $2^6=64$. So there are $5\cdot 64=320$ bacteria.'
+          - problem: 'A population is $9$ animals on day $0$. The population doubles every day. How many animals are there after $10$ days?'
+            answer_contract: {"kind":"exact"}
+            answer: '9216'
+            solution_sketch: 'The population on day $10$ is $9\cdot 2^{10}$. We have $2^{10}=1024$. So the population is $9\cdot 1024=9216$.'
+          - problem: 'A price is $2000$ dollars. The price rises by $10\%$ each year. How many dollars is the price after $2$ years?'
+            answer_contract: {"kind":"exact"}
+            answer: '2420'
+            solution_sketch: 'Each year multiplies the price by $1.1$. So the price is $2000\cdot 1.1^2=2000\cdot 1.21=2420$ dollars.'
+          - problem: 'A new car costs $25000$ dollars. The value of the car falls by $20\%$ each year. How many dollars is the value after $3$ years?'
+            answer_contract: {"kind":"exact"}
+            answer: '12800'
+            solution_sketch: 'Each year multiplies the value by $0.8$. So the value is $25000\cdot 0.8^3=25000\cdot 0.512=12800$ dollars.'
+          - problem: 'The area of a pond is $3$ m$^2$ in year $1$. Each year the area is $2$ times the area of the year before. How many square meters is the area in year $7$?'
+            answer_contract: {"kind":"exact"}
+            answer: '192'
+            solution_sketch: 'The areas form a geometric progression with $b_1=3$ and $q=2$. So $b_7=3\cdot 2^6=192$.'
+          - problem: 'A sample has a mass of $640$ g. The mass halves every day. After how many days is the mass $5$ g?'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The mass after $n$ days is $640\cdot\left(\frac12\right)^n$. We need $\left(\frac12\right)^n=\frac{5}{640}=\frac{1}{128}$. Since $128=2^7$, $n=7$.'
+        constraints: 'constant ratio per step: doubling, percent growth, percent decay, halving; find a term or the number of steps; results are exact integers'
+      - id: kp3
+        name: 'Infinite geometric progression model'
+        key_prerequisites: [geometric-series-finite-infinite]
+        exemplars:
+          - problem: 'The first bounce of a ball reaches $6$ m. Each next bounce reaches $\frac12$ of the height of the bounce before. Find the sum of the heights of all bounces in meters.'
+            answer_contract: {"kind":"exact"}
+            answer: '12'
+            solution_sketch: 'The heights form an infinite geometric progression with $b_1=6$ and $q=\frac12$. So $S=\frac{6}{1-\frac12}=12$.'
+          - problem: 'A tank loses $60$ liters in the first hour. Each next hour it loses $\frac13$ of the amount lost in the hour before. Find the total loss in liters over all hours.'
+            answer_contract: {"kind":"exact"}
+            answer: '90'
+            solution_sketch: 'The losses form an infinite geometric progression with $b_1=60$ and $q=\frac13$. So $S=\frac{60}{1-\frac13}=90$.'
+          - problem: 'Write the repeating decimal $0.272727\dots$ as a fraction in lowest terms.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/11'
+            solution_sketch: 'We have $0.27+0.0027+\dots$. This is an infinite geometric progression with $b_1=0.27$ and $q=0.01$. So $S=\frac{0.27}{0.99}=\frac{3}{11}$.'
+          - problem: 'A pendulum swings $30$ cm in its first swing. Each next swing is $\frac45$ of the swing before. Find the total length of all swings in centimeters.'
+            answer_contract: {"kind":"exact"}
+            answer: '150'
+            solution_sketch: 'The lengths form an infinite geometric progression with $b_1=30$ and $q=\frac45$. So $S=\frac{30}{1-\frac45}=150$.'
+          - problem: 'An infinite geometric progression has the first term $12$ and the sum $18$. Find the ratio $q$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/3'
+            solution_sketch: 'The sum formula gives $\frac{12}{1-q}=18$. So $1-q=\frac{12}{18}=\frac23$. Then $q=\frac13$.'
+          - problem: 'A ball falls from $9$ m. After each fall it rises to $\frac23$ of the height of the fall before. Find the total distance the ball travels, in meters, until it stops.'
+            answer_contract: {"kind":"exact"}
+            answer: '45'
+            solution_sketch: 'The heights of the rises are $6,4,\dots$ with $b_1=6$ and $q=\frac23$. Their sum is $\frac{6}{1-\frac23}=18$. The ball travels each rise up and down. So the distance is $9+2\cdot 18=45$.'
+        constraints: 'infinite sum with a ratio below 1 in absolute value: bounces, losses, repeating decimals; find the sum, the first term or the ratio; exact answers'
+      - id: kp4
+        name: 'Find n from a total'
+        key_prerequisites: [arithmetic-series, geometric-series-finite-infinite, equation-word-problems]
+        exemplars:
+          - problem: 'An arithmetic progression has $a_1=3$ and $d=2$. The sum of the first $n$ terms is $120$. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The sum formula gives $\frac{2\cdot 3+2(n-1)}{2}\cdot n=n(n+2)=120$. So $n^2+2n-120=0$, which is $(n+12)(n-10)=0$. The number $n$ is positive, so $n=10$.'
+          - problem: 'A person saves $1$ dollar on day $1$, $2$ dollars on day $2$, $3$ dollars on day $3$, and so on. After how many days is the total $105$ dollars?'
+            answer_contract: {"kind":"exact"}
+            answer: '14'
+            solution_sketch: 'The total after $n$ days is $\frac{n(n+1)}{2}=105$. So $n^2+n-210=0$, which is $(n+15)(n-14)=0$. The number $n$ is positive, so $n=14$.'
+          - problem: 'The first row of a hall has $10$ seats. Each next row has $4$ seats more. The hall has $234$ seats in total. How many rows does the hall have?'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'The sum formula gives $\frac{20+4(n-1)}{2}\cdot n=n(2n+8)=234$. So $n^2+4n-117=0$, which is $(n+13)(n-9)=0$. The number $n$ is positive, so $n=9$.'
+          - problem: 'A person pays $6$ dollars in month $1$, $9$ dollars in month $2$, $12$ dollars in month $3$, and so on. Each month the payment is $3$ dollars more. The total is $132$ dollars. In how many months is this total paid?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The sum formula gives $\frac{12+3(n-1)}{2}\cdot n=\frac{n(3n+9)}{2}=132$. So $n^2+3n-88=0$, which is $(n+11)(n-8)=0$. The number $n$ is positive, so $n=8$.'
+          - problem: 'The sum of the first $n$ terms of the geometric progression $5,10,20,\dots$ is $635$. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The sum formula gives $5\cdot\frac{2^n-1}{2-1}=635$. So $2^n-1=127$ and $2^n=128$. Then $n=7$.'
+          - problem: 'The sum of the first $n$ terms of the geometric progression $81,27,9,\dots$ is $121$. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The sum formula gives $\frac{81\left(1-3^{-n}\right)}{1-\frac13}=121.5\left(1-3^{-n}\right)=121$. So $3^{-n}=\frac{0.5}{121.5}=\frac{1}{243}$. Since $243=3^5$, $n=5$.'
+        constraints: 'unknown number of terms from a given sum; quadratic with one positive root, or a power of 2 or 3; integer data'
+    diagnostic_exemplar:
+      problem: 'A row of seats has $20$ seats in row $1$. Each next row has $3$ seats more than the row before. How many seats are in row $5$?'
+      answer_contract: {"kind":"exact"}
+      answer: '32'
+      solution_sketch: 'The numbers of seats form an arithmetic progression with $a_1=20$ and $d=3$. So $a_5=20+4\cdot 3=32$.'
+    anki_seeds:
+      - front: "A quantity grows by $p\\%$ each year. The yearly ratio $q$ of the progression is ... ."
+        back: "$1+\\frac{p}{100}$"
+        type: basic
+      - front: "The sum of an infinite geometric progression is $S=$ ... ."
+        back: "$\\frac{b_1}{1-q}$"
         type: basic

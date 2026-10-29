@@ -152,6 +152,35 @@ topics:
             answer: '4/5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Let $\theta=\arctan\frac{3}{4}$, so the opposite side is $3$ and the adjacent side is $4$. The hypotenuse is $5$, so $\cos\theta=\frac{4}{5}$; the ratio $\frac{3}{4}$ is the tangent.'
+      - id: kp4
+        name: 'Existence: a in [-1;1] for arcsin and arccos, any a for arctan'
+        key_prerequisites: [unit-circle, inverse-functions, domain-range]
+        exemplars:
+          - problem: 'Find the smallest number $a$ for which $\arcsin a$ exists.'
+            answer_contract: {"kind":"exact"}
+            answer: '-1'
+            solution_sketch: 'The sine takes values from $-1$ to $1$ only. So $\arcsin a$ exists for $-1\le a\le 1$. The smallest such $a$ is $-1$.'
+          - problem: 'For how many real numbers $a$ does $\arctan a$ not exist?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'Tangent takes every real value on the interval from $-\frac{\pi}{2}$ to $\frac{\pi}{2}$. So $\arctan a$ exists for every real $a$. The answer is 0.'
+          - problem: 'The values of $\arctan a$ for all real $a$ fill the interval $\left(-b,\,b\right)$. Find $b$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi/2'
+            solution_sketch: 'The arctangent returns angles strictly between $-\frac{\pi}{2}$ and $\frac{\pi}{2}$. So $b=\frac{\pi}{2}$.'
+          - problem: 'For how many integers $a$ does $\arccos\frac{a}{2}$ exist?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The number $\frac{a}{2}$ must lie from $-1$ to $1$. So $-2\le a\le 2$. The integers are $-2,-1,0,1,2$, which makes 5.'
+          - problem: 'Find the sum of all integers $x$ for which $\arcsin(x-2)$ exists.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The number $x-2$ must lie from $-1$ to $1$. So $1\le x\le 3$. The integers $1, 2, 3$ have the sum $6$.'
+          - problem: 'For how many integers $x$ do $\arcsin\frac{x}{4}$ and $\arccos\frac{x}{3}$ both exist?'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The first number needs $-4\le x\le 4$. The second needs $-3\le x\le 3$. Both hold for $-3\le x\le 3$. This range has 7 integers.'
+        constraints: 'arcsin and arccos exist for numbers from -1 to 1; arctan exists for all real numbers; items count or add the numbers that make an expression exist'
     diagnostic_exemplar:
       problem: 'Evaluate $\tan\left(\arcsin\frac{5}{13}\right)$.'
       answer: "5/12"
@@ -932,6 +961,47 @@ topics:
             answer: '4'
             answer_contract: {"kind": "unit", "quantity": "time", "unit": "s", "allow_omitted": true}
             solution_sketch: 'The reading is undefined where the argument is a multiple of $\pi$. The argument grows by $\pi$ when $t$ grows by $\frac{\pi}{\pi/4} = 4$ seconds.'
+      - id: kp4
+        name: 'Why tangent takes every real value and has period pi'
+        key_prerequisites: [unit-circle-special-angles, reciprocal-trig-functions]
+        exemplars:
+          - problem: 'Find $\tan\frac{13\pi}{4}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Write $\frac{13\pi}{4}=3\pi+\frac{\pi}{4}$. Tangent has the period $\pi$, so $\tan\frac{13\pi}{4}=\tan\frac{\pi}{4}=1$.'
+          - problem: 'Find the angle $x$ with $-\frac{\pi}{2}<x<\frac{\pi}{2}$ for which $\tan x=-\sqrt{3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-pi/3'
+            solution_sketch: 'The tangent of $\frac{\pi}{3}$ is $\sqrt{3}$. Tangent is odd, so $\tan\left(-\frac{\pi}{3}\right)=-\sqrt{3}$. The angle lies in the allowed interval, so $x=-\frac{\pi}{3}$.'
+          - problem: 'How many solutions does the equation $\tan x=5$ have with $0\le x<3\pi$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Tangent takes the value $5$ exactly once in each interval of length $\pi$ between two asymptotes. The interval from $0$ to $3\pi$ holds three such intervals. So there are 3 solutions.'
+          - problem: 'Find $\tan\frac{7\pi}{6}$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'sqrt(3)/3'
+            solution_sketch: 'Write $\frac{7\pi}{6}=\pi+\frac{\pi}{6}$. Tangent has the period $\pi$, so the value is $\tan\frac{\pi}{6}=\frac{\sqrt{3}}{3}$.'
+          - problem: 'How many solutions does the equation $\tan x=0$ have with $0\le x\le 4\pi$?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'Tangent is $0$ where sine is $0$. These points are $0,\pi,2\pi,3\pi,4\pi$. So there are 5 solutions.'
+          - problem: 'Find the smallest positive period of the function $y=\tan 4x$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi/4'
+            solution_sketch: 'Tangent repeats after $\pi$. So $\tan 4x$ repeats when $4x$ grows by $\pi$. The period is $\frac{\pi}{4}$.'
+          - problem: 'Explain why $\tan x$ takes every real value. Write the explanation.'
+            answer_contract: {"kind":"written"}
+            answer: 'On the interval from $-\frac{\pi}{2}$ to $\frac{\pi}{2}$ the function $\tan x=\frac{\sin x}{\cos x}$ is continuous. When $x$ comes close to $\frac{\pi}{2}$, $\sin x$ comes close to $1$ and $\cos x$ comes close to $0$ from above, so $\tan x$ grows without limit. Near $-\frac{\pi}{2}$ it falls without limit. A continuous function with no upper and no lower bound takes every real value.'
+            solution_sketch: 'Tangent is continuous between its asymptotes. It grows without limit near $\frac{\pi}{2}$ and falls without limit near $-\frac{\pi}{2}$. So it takes every real value.'
+          - problem: 'Prove that $\tan(x+\pi)=\tan x$ for every $x$ where $\tan x$ is defined. Use the sum formulas of sine and cosine. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'The sum formulas give $\sin(x+\pi)=\sin x\cos\pi+\cos x\sin\pi=-\sin x$ and $\cos(x+\pi)=\cos x\cos\pi-\sin x\sin\pi=-\cos x$. So $\tan(x+\pi)=\frac{-\sin x}{-\cos x}=\tan x$.'
+            solution_sketch: 'Use the sum formulas with $\pi$. Sine and cosine both change sign. The signs cancel in the quotient.'
+          - problem: 'Prove that no number $T$ with $0<T<\pi$ is a period of $\tan x$. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Assume $\tan(x+T)=\tan x$ for all $x$ in the domain. Put $x=0$. Then $\tan T=\tan 0=0$, so $\sin T=0$. On the interval from $0$ to $\pi$ the sine is $0$ only at the ends. So $T$ is not between $0$ and $\pi$. This contradicts the assumption.'
+            solution_sketch: 'Assume a period $T$ below $\pi$. Put $x=0$ to get $\tan T=0$. Then $\sin T=0$, which is not true for $T$ between $0$ and $\pi$.'
+        constraints: 'tan x = sin x / cos x; solutions of tan x = a in one period and in several periods; written items use the sum formulas and the unit circle'
     diagnostic_exemplar:
       problem: 'Find the smallest positive $x$ at which $y = \cot x$ has a vertical asymptote.'
       answer_contract: {"kind":"exact"}
@@ -1242,4 +1312,527 @@ topics:
     anki_seeds:
       - front: "Why must you factor sin x out of sin x cos x = sin x instead of dividing by sin x?"
         back: "Dividing discards the solutions where sin x = 0."
+        type: basic
+
+  - id: trig-function-properties-graphical
+    lt_term: 'trigonometrinių funkcijų savybės; periodinė funkcija; grafinis sprendimas'
+    name: Properties of Trigonometric Functions and Graphical Solving
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: tangent-reciprocal-graphs
+        weight: 0.6
+        key: true
+      - id: sine-cosine-parent-graphs
+        weight: 0.5
+        key: false
+      - id: trig-graphs-basic
+        weight: 0.4
+        key: false
+      - id: even-odd-functions
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Zeros, extrema, monotone intervals and sign of sine, cosine, tangent'
+        key_prerequisites: [sine-cosine-parent-graphs, tangent-reciprocal-graphs]
+        exemplars:
+          - problem: 'How many zeros does $y=\sin x$ have on the closed interval $[0,4\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The zeros of sine are the multiples of $\pi$. The multiples of $\pi$ in $[0,4\pi]$ are $0$, $\pi$, $2\pi$, $3\pi$ and $4\pi$. The answer is 5.'
+          - problem: 'Find the largest value of $y=3\cos x-1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The largest value of $\cos x$ is $1$. So the largest value of $y$ is $3\cdot 1-1=2$.'
+          - problem: 'Find all $x$ in $[0,2\pi]$ for which $\sin x<0$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi < x < 2*pi'
+            solution_sketch: 'The sine graph lies below the $x$-axis between $\pi$ and $2\pi$. At $\pi$ and at $2\pi$ the value is $0$. So $\pi<x<2\pi$.'
+          - problem: 'Find the largest closed interval inside $[0,2\pi]$ on which $y=\cos x$ increases.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi <= x <= 2*pi'
+            solution_sketch: 'The cosine falls from $1$ at $0$ to $-1$ at $\pi$. Then it rises from $-1$ at $\pi$ to $1$ at $2\pi$. So the interval is $\pi\le x\le 2\pi$.'
+          - problem: 'Find all $x$ in $[0,2\pi]$ for which $\tan x>0$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x < pi/2 or pi < x < 3*pi/2'
+            solution_sketch: 'The tangent is positive in the first and third quadrants. These quadrants hold $0<x<\frac{\pi}{2}$ and $\pi<x<\frac{3\pi}{2}$. The tangent is not defined at $\frac{\pi}{2}$ and $\frac{3\pi}{2}$.'
+          - problem: 'Find the smallest positive $x$ at which $y=2\sin x+1$ has its smallest value.'
+            answer_contract: {"kind":"exact"}
+            answer: '3*pi/2'
+            solution_sketch: 'The smallest value of $\sin x$ is $-1$. The sine equals $-1$ first at $x=\frac{3\pi}{2}$. So the answer is $\frac{3\pi}{2}$.'
+        constraints: 'zeros, extreme values, increase and sign of sine, cosine and tangent on a fixed interval; answers are counts, values or intervals with pi; no figure'
+      - id: kp2
+        name: 'Periodic and parity from a graph'
+        key_prerequisites: [trig-graphs-basic, even-odd-functions]
+        exemplars:
+          - problem: 'Find the least positive period of $y=\sin 3x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2*pi/3'
+            solution_sketch: 'The sine has the period $2\pi$. The factor $3$ shrinks the graph three times. So the least positive period is $\frac{2\pi}{3}$.'
+          - problem: 'Find the least positive period of $y=\tan 2x$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi/2'
+            solution_sketch: 'The tangent has the period $\pi$. The factor $2$ halves the period. So the least positive period is $\frac{\pi}{2}$.'
+          - problem: 'A function $f$ has the least positive period $5$ and $f(2)=7$. Find $f(17)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'We have $17=2+3\cdot 5$. A shift by a whole number of periods does not change the value. So $f(17)=f(2)=7$.'
+          - problem: 'An even function $g$ has the period $6$ and $g(4)=3$. Find $g(-8)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The function is even, so $g(-8)=g(8)$. A shift by one period gives $g(8)=g(2)$. Also $g(2)=g(-2)=g(4)$ by evenness and one period. So $g(-8)=3$.'
+          - problem: 'Find the least positive period of $y=\sin x\cos x$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi'
+            solution_sketch: 'We have $\sin x\cos x=\frac{1}{2}\sin 2x$. The function $\sin 2x$ has the period $\pi$. So the least positive period is $\pi$.'
+          - problem: 'An odd function $f$ has the period $4$ and $f(1)=3$. Find $f(-5)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-3'
+            solution_sketch: 'A shift by one period gives $f(-5)=f(-1)$. The function is odd, so $f(-1)=-f(1)$. So $f(-5)=-3$.'
+        constraints: 'least positive periods of sine, cosine and tangent with a factor in the argument; values of even, odd and periodic functions at shifted points; answers are numbers or multiples of pi'
+      - id: kp3
+        name: 'Trigonometric equation and inequality from a graph'
+        key_prerequisites: [sine-cosine-parent-graphs, tangent-reciprocal-graphs]
+        exemplars:
+          - problem: 'How many solutions does $\sin x=\frac{1}{2}$ have on $[0,2\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The line $y=\frac{1}{2}$ meets one period of the sine graph two times. The solutions are $\frac{\pi}{6}$ and $\frac{5\pi}{6}$. The answer is 2.'
+          - problem: 'How many solutions does $2\cos x=3$ have on $[0,2\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'The equation means $\cos x=1.5$. The cosine never goes above $1$. So there is no solution.'
+          - problem: 'How many solutions does $\sin 2x=\frac{1}{2}$ have on $[0,2\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'When $x$ runs over $[0,2\pi]$, the angle $2x$ runs over $[0,4\pi]$. That range holds two periods of sine. Each period gives two solutions, so the answer is 4.'
+          - problem: 'Use the graph of sine to solve $\sin x>\frac{1}{2}$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/6 < x < 5*pi/6'
+            solution_sketch: 'The sine graph lies above the line $y=\frac{1}{2}$ between the two crossing points $\frac{\pi}{6}$ and $\frac{5\pi}{6}$. So $\frac{\pi}{6}<x<\frac{5\pi}{6}$.'
+          - problem: 'Solve $2\cos x+1\le 0$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '2*pi/3 <= x <= 4*pi/3'
+            solution_sketch: 'The inequality means $\cos x\le -\frac{1}{2}$. The cosine graph lies on or below this line between $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$. So $\frac{2\pi}{3}\le x\le\frac{4\pi}{3}$.'
+          - problem: 'Solve $\tan x\ge\sqrt{3}$ on $\left(-\frac{\pi}{2},\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/3 <= x < pi/2'
+            solution_sketch: 'We have $\tan\frac{\pi}{3}=\sqrt{3}$. The tangent rises on the interval. So the tangent is at least $\sqrt{3}$ for $\frac{\pi}{3}\le x<\frac{\pi}{2}$.'
+        constraints: 'number of solutions and solution intervals of a*f(kx)+c compared with a number, read from the graph of sine, cosine or tangent on a fixed interval'
+    diagnostic_exemplar:
+      problem: 'Find the least positive period of $y=\sin 4x$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'pi/2'
+      solution_sketch: 'The sine has the period $2\pi$. The factor $4$ divides it by $4$. So the least positive period is $\frac{\pi}{2}$.'
+    anki_seeds:
+      - front: "The least positive period of $y=\\tan x$ is ... ."
+        back: "$\\pi$"
+        type: basic
+      - front: "The least positive period of $y=\\sin kx$ is ... ."
+        back: "$\\frac{2\\pi}{k}$"
+        type: basic
+
+  - id: tangent-formulas-proofs
+    lt_term: 'tangento formulės; 1+tg^2 a'
+    name: Tangent Formulas and Trigonometric Identities
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 150
+    prerequisites:
+      - id: sum-difference-identities
+        weight: 0.6
+        key: true
+      - id: double-half-angle-identities
+        weight: 0.5
+        key: false
+      - id: trig-identities-basic
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Formulas for tan(a+b), tan(a-b), tan 2a'
+        key_prerequisites: [sum-difference-identities, double-half-angle-identities]
+        exemplars:
+          - problem: 'Find $\tan(\alpha+\beta)$ when $\tan\alpha=\frac{1}{2}$ and $\tan\beta=\frac{1}{3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Use $\tan(\alpha+\beta)=\frac{\tan\alpha+\tan\beta}{1-\tan\alpha\tan\beta}$. The numerator is $\frac{5}{6}$. The denominator is $1-\frac{1}{6}=\frac{5}{6}$. The answer is 1.'
+          - problem: 'Find $\tan(\alpha-\beta)$ when $\tan\alpha=4$ and $\tan\beta=\frac{1}{2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7/6'
+            solution_sketch: 'Use $\tan(\alpha-\beta)=\frac{\tan\alpha-\tan\beta}{1+\tan\alpha\tan\beta}$. The numerator is $4-\frac{1}{2}=\frac{7}{2}$. The denominator is $1+2=3$. The answer is $\frac{7}{6}$.'
+          - problem: 'Find $\tan 2\alpha$ when $\tan\alpha=\frac{1}{3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/4'
+            solution_sketch: 'Use $\tan 2\alpha=\frac{2\tan\alpha}{1-\tan^2\alpha}$. The numerator is $\frac{2}{3}$. The denominator is $1-\frac{1}{9}=\frac{8}{9}$. The answer is $\frac{3}{4}$.'
+          - problem: 'The angles $\alpha$ and $\beta$ have $\tan(\alpha+\beta)=3$ and $\tan\beta=\frac{1}{2}$. Find $\tan\alpha$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Let $t=\tan\alpha$. The sum formula gives $\frac{t+\frac{1}{2}}{1-\frac{t}{2}}=3$. So $t+\frac{1}{2}=3-\frac{3t}{2}$ and $\frac{5t}{2}=\frac{5}{2}$. The answer is $t=1$.'
+          - problem: 'Find the exact value of $\tan 75^\circ$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2+sqrt(3)'
+            solution_sketch: 'Write $75^\circ=45^\circ+30^\circ$. Then $\tan 75^\circ=\frac{1+\frac{\sqrt{3}}{3}}{1-\frac{\sqrt{3}}{3}}=\frac{3+\sqrt{3}}{3-\sqrt{3}}$. Multiply top and bottom by $3+\sqrt{3}$. The result is $\frac{12+6\sqrt{3}}{6}=2+\sqrt{3}$.'
+          - problem: 'The angle $\alpha$ is acute and $\sin\alpha=\frac{3}{5}$. Find $\tan 2\alpha$.'
+            answer_contract: {"kind":"exact"}
+            answer: '24/7'
+            solution_sketch: 'Here $\cos\alpha=\frac{4}{5}$, so $\tan\alpha=\frac{3}{4}$. Then $\tan 2\alpha=\frac{2\cdot\frac{3}{4}}{1-\frac{9}{16}}=\frac{3}{2}\cdot\frac{16}{7}$. The answer is $\frac{24}{7}$.'
+        constraints: 'tangent sum, difference and double angle formulas from the sheet; given tangents, sine of an acute angle, a standard angle split into two; answers are fractions or radicals'
+      - id: kp2
+        name: 'Identity 1+tan^2 a = 1/cos^2 a'
+        key_prerequisites: [trig-identities-basic, double-half-angle-identities]
+        exemplars:
+          - problem: 'Find $\frac{1}{\cos^2\alpha}$ when $\tan\alpha=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'Use $1+\tan^2\alpha=\frac{1}{\cos^2\alpha}$. Then $\frac{1}{\cos^2\alpha}=1+9=10$.'
+          - problem: 'Find $1+\tan^2\alpha$ when $\cos\alpha=\frac{1}{2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Use $1+\tan^2\alpha=\frac{1}{\cos^2\alpha}$. Here $\cos^2\alpha=\frac{1}{4}$. So $1+\tan^2\alpha=4$.'
+          - problem: 'The angle $\alpha$ is acute and $\tan\alpha=\frac{3}{4}$. Find $\cos\alpha$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4/5'
+            solution_sketch: 'We have $\frac{1}{\cos^2\alpha}=1+\frac{9}{16}=\frac{25}{16}$. So $\cos^2\alpha=\frac{16}{25}$. The angle is acute, so $\cos\alpha=\frac{4}{5}$.'
+          - problem: 'Find $\frac{1}{\cos^2\alpha}$ when $\sin\alpha=\frac{3}{5}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '25/16'
+            solution_sketch: 'We have $\cos^2\alpha=1-\frac{9}{25}=\frac{16}{25}$. So $\frac{1}{\cos^2\alpha}=\frac{25}{16}$.'
+          - problem: 'Simplify $(1+\tan^2\alpha)\cos^2\alpha$. Give a number.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Use $1+\tan^2\alpha=\frac{1}{\cos^2\alpha}$. Then the product is $\frac{1}{\cos^2\alpha}\cdot\cos^2\alpha=1$.'
+          - problem: 'The angle $\alpha$ is in the second quadrant and $\tan\alpha=-2$. Find $\cos\alpha$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-sqrt(5)/5'
+            solution_sketch: 'We have $\frac{1}{\cos^2\alpha}=1+4=5$. So $\cos^2\alpha=\frac{1}{5}$. The cosine is negative in the second quadrant, so $\cos\alpha=-\frac{1}{\sqrt{5}}=-\frac{\sqrt{5}}{5}$.'
+        constraints: 'values of tan, cos and 1/cos^2 linked by 1+tan^2=1/cos^2; the quadrant fixes the sign; answers are fractions or radicals'
+      - id: kp3
+        name: 'Prove an identity'
+        key_prerequisites: [trig-identities-basic, sum-difference-identities, double-half-angle-identities]
+        exemplars:
+          - problem: 'Simplify $\frac{\sin 2x}{\cos x}$ for $\cos x\ne 0$. Write the result as an expression in $x$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '2*sin(x)'
+            solution_sketch: 'Use $\sin 2x=2\sin x\cos x$. Cancel $\cos x$ in the fraction. The result is $2\sin x$.'
+          - problem: 'Simplify $(1-\cos x)(1+\cos x)$. Write the result with sine only.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'sin(x)^2'
+            solution_sketch: 'The product is a difference of squares and equals $1-\cos^2 x$. By the basic identity, $1-\cos^2 x=\sin^2 x$.'
+          - problem: 'Simplify $\frac{1}{\cos^2 x}-1$ for $\cos x\ne 0$. Write the result with tangent only.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'tan(x)^2'
+            solution_sketch: 'Use $\frac{1}{\cos^2 x}=1+\tan^2 x$. Then $\frac{1}{\cos^2 x}-1=\tan^2 x$.'
+          - problem: 'Simplify $\frac{\sin 2x}{2\sin x}$ for $\sin x\ne 0$. Write the result as an expression in $x$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'cos(x)'
+            solution_sketch: 'Use $\sin 2x=2\sin x\cos x$. Cancel $2\sin x$ in the fraction. The result is $\cos x$.'
+          - problem: 'Simplify $\sin x\cos x\left(\tan x+\frac{1}{\tan x}\right)$ for $\sin x\cos x\ne 0$. Write the result as a number.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Write $\tan x=\frac{\sin x}{\cos x}$. The bracket becomes $\frac{\sin^2 x+\cos^2 x}{\sin x\cos x}=\frac{1}{\sin x\cos x}$. Multiply by $\sin x\cos x$. The result is 1.'
+          - problem: 'Simplify $\cos^2 x\,(1+\tan^2 x)-\sin^2 x$ for $\cos x\ne 0$. Write the result with cosine only.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'cos(x)^2'
+            solution_sketch: 'Use $1+\tan^2 x=\frac{1}{\cos^2 x}$. Then $\cos^2 x\,(1+\tan^2 x)=1$. The expression is $1-\sin^2 x$, and this equals $\cos^2 x$.'
+          - problem: 'Prove that $\tan 2\alpha=\frac{2\tan\alpha}{1-\tan^2\alpha}$ for every angle where both sides are defined. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Write $\tan 2\alpha=\frac{\sin 2\alpha}{\cos 2\alpha}=\frac{2\sin\alpha\cos\alpha}{\cos^2\alpha-\sin^2\alpha}$. Divide the numerator and the denominator by $\cos^2\alpha$. The numerator becomes $2\tan\alpha$. The denominator becomes $1-\tan^2\alpha$.'
+            solution_sketch: 'Write the tangent as sine over cosine. Use the double angle formulas of sine and cosine. Divide top and bottom by $\cos^2\alpha$.'
+          - problem: 'Prove that $\frac{\sin 2x}{1+\cos 2x}=\tan x$ for every $x$ with $\cos x\ne 0$. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use $\sin 2x=2\sin x\cos x$ and $1+\cos 2x=1+2\cos^2 x-1=2\cos^2 x$. The fraction becomes $\frac{2\sin x\cos x}{2\cos^2 x}$. Cancel $2\cos x$. The result is $\frac{\sin x}{\cos x}=\tan x$.'
+            solution_sketch: 'Write $\cos 2x=2\cos^2 x-1$. The denominator becomes $2\cos^2 x$. Cancel the common factor.'
+          - problem: 'Prove that $\frac{\tan a+\tan b}{\tan a-\tan b}=\frac{\sin(a+b)}{\sin(a-b)}$ for all angles $a$ and $b$ where both sides are defined. Write the proof.'
+            answer_contract: {"kind":"written"}
+            answer: 'Write $\tan a+\tan b=\frac{\sin a\cos b+\cos a\sin b}{\cos a\cos b}=\frac{\sin(a+b)}{\cos a\cos b}$. In the same way, $\tan a-\tan b=\frac{\sin(a-b)}{\cos a\cos b}$. Divide the first fraction by the second. The factor $\cos a\cos b$ cancels. The result is $\frac{\sin(a+b)}{\sin(a-b)}$.'
+            solution_sketch: 'Write each tangent as sine over cosine. Combine the fractions with the sum and difference formulas of sine. Divide and cancel the common denominator.'
+        constraints: 'simplifying trigonometric expressions to one function (decidable) and proving tan and double angle identities from the sheet formulas (written)'
+    diagnostic_exemplar:
+      problem: 'Find $\tan 2\alpha$ when $\tan\alpha=\frac{1}{2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4/3'
+      solution_sketch: 'Use $\tan 2\alpha=\frac{2\tan\alpha}{1-\tan^2\alpha}$. The numerator is $1$. The denominator is $1-\frac{1}{4}=\frac{3}{4}$. The answer is $\frac{4}{3}$.'
+    anki_seeds:
+      - front: "$1+\\tan^2\\alpha=$ ... ."
+        back: "$\\frac{1}{\\cos^2\\alpha}$"
+        type: basic
+      - front: "$\\tan 2\\alpha=\\frac{2\\tan\\alpha}{...}$"
+        back: "$1-\\tan^2\\alpha$"
+        type: basic
+
+  - id: trig-equations-general-solutions
+    lt_term: 'trigonometrinės lygtys; sprendinių formulės su k; sandauga lygi nuliui'
+    name: 'Trigonometric Equations: General Solutions and Products'
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 200
+    prerequisites:
+      - id: inverse-trig-functions
+        weight: 0.6
+        key: true
+      - id: basic-trig-equations
+        weight: 0.5
+        key: false
+      - id: trig-equations-identities
+        weight: 0.5
+        key: false
+      - id: zero-product-property
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'General solution of sin x=a and cos x=a'
+        key_prerequisites: [inverse-trig-functions, basic-trig-equations]
+        exemplars:
+          - problem: 'Find all solutions of $\sin x=1$. Write them as $x=a+2\pi k$, where $k$ is an integer and $-\pi<a\le\pi$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi/2+2*pi*k'
+            solution_sketch: 'The sine equals $1$ at $\frac{\pi}{2}$. Every full turn adds $2\pi$. So $x=\frac{\pi}{2}+2\pi k$.'
+          - problem: 'Find all solutions of $\cos x=1$. Write them as $x=a+2\pi k$, where $k$ is an integer and $-\pi<a\le\pi$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '2*pi*k'
+            solution_sketch: 'The cosine equals $1$ at $0$. Every full turn adds $2\pi$. So $x=2\pi k$.'
+          - problem: 'Find all solutions of $\sin x=0$. Write them as $x=a+\pi k$, where $k$ is an integer and $0\le a<\pi$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi*k'
+            solution_sketch: 'The sine equals $0$ at $0$ and at $\pi$. These angles differ by $\pi$. So $x=\pi k$.'
+          - problem: 'Solve $\cos x=-1$ for all real $x$. Write them as $x=a+2\pi k$, where $k$ is an integer and $-\pi<a\le\pi$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi+2*pi*k'
+            solution_sketch: 'The cosine equals $-1$ at $\pi$. Every full turn adds $2\pi$. So $x=\pi+2\pi k$.'
+          - problem: 'The solutions of $\sin x=\frac{1}{2}$ are $x=(-1)^k\arcsin\frac{1}{2}+\pi k$ with $k$ an integer. Find the solution for $k=1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5*pi/6'
+            solution_sketch: 'We have $\arcsin\frac{1}{2}=\frac{\pi}{6}$. For $k=1$ the formula gives $-\frac{\pi}{6}+\pi$. The answer is $\frac{5\pi}{6}$.'
+          - problem: 'Find the sum of all solutions of $\cos x=\frac{1}{2}$ on $[0,4\pi]$.'
+            answer_contract: {"kind":"exact"}
+            answer: '8*pi'
+            solution_sketch: 'The solutions in $[0,2\pi]$ are $\frac{\pi}{3}$ and $\frac{5\pi}{3}$. Adding $2\pi$ gives $\frac{7\pi}{3}$ and $\frac{11\pi}{3}$. The sum of the four values is $8\pi$.'
+        constraints: 'special values of sine and cosine with a fixed form of the family; one formula item; sums on a fixed interval; answers are expressions in k or multiples of pi'
+      - id: kp2
+        name: 'General solution of tan x=a'
+        key_prerequisites: [inverse-trig-functions, basic-trig-equations]
+        exemplars:
+          - problem: 'Find all solutions of $\tan x=1$. Write them as $x=a+\pi k$, where $k$ is an integer and $-\frac{\pi}{2}<a<\frac{\pi}{2}$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi/4+pi*k'
+            solution_sketch: 'We have $\arctan 1=\frac{\pi}{4}$. The tangent repeats after $\pi$. So $x=\frac{\pi}{4}+\pi k$.'
+          - problem: 'Solve $\tan x=-1$ for all real $x$. Write them as $x=a+\pi k$, where $k$ is an integer and $-\frac{\pi}{2}<a<\frac{\pi}{2}$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: '-pi/4+pi*k'
+            solution_sketch: 'We have $\arctan(-1)=-\frac{\pi}{4}$. The tangent repeats after $\pi$. So $x=-\frac{\pi}{4}+\pi k$.'
+          - problem: 'Find all solutions of $\tan x=\sqrt{3}$. Write them as $x=a+\pi k$, where $k$ is an integer and $-\frac{\pi}{2}<a<\frac{\pi}{2}$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi/3+pi*k'
+            solution_sketch: 'We have $\arctan\sqrt{3}=\frac{\pi}{3}$. The tangent repeats after $\pi$. So $x=\frac{\pi}{3}+\pi k$.'
+          - problem: 'Find all solutions of $\tan 2x=1$. Write them as $x=a+\frac{\pi}{2}k$, where $k$ is an integer and $0\le a<\frac{\pi}{2}$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi/8+pi*k/2'
+            solution_sketch: 'The tangent equals $1$ when $2x=\frac{\pi}{4}+\pi k$. Divide by $2$. Then $x=\frac{\pi}{8}+\frac{\pi}{2}k$.'
+          - problem: 'How many solutions does $\tan x=2$ have on $[0,3\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The tangent takes each value one time in every interval of length $\pi$ that excludes its asymptotes. The interval $[0,3\pi]$ holds three such intervals. The answer is 3.'
+          - problem: 'Find the sum of all solutions of $\tan x=1$ on $[0,3\pi]$.'
+            answer_contract: {"kind":"exact"}
+            answer: '15*pi/4'
+            solution_sketch: 'The solutions are $\frac{\pi}{4}$, $\frac{5\pi}{4}$ and $\frac{9\pi}{4}$. The next one, $\frac{13\pi}{4}$, is larger than $3\pi$. The sum is $\frac{15\pi}{4}$.'
+        constraints: 'tan x=a for a standard angle with a fixed form of the family; a double argument; counts and sums on a fixed interval'
+      - id: kp3
+        name: 'Product of two factors equals zero'
+        key_prerequisites: [zero-product-property, basic-trig-equations]
+        exemplars:
+          - problem: 'Solve $\sin x\,(2\cos x-1)=0$ on $[0,\pi]$. Give the set of solutions.'
+            answer_contract: {"kind":"set"}
+            answer: '{0, pi/3, pi}'
+            solution_sketch: 'A product is zero when one factor is zero. The factor $\sin x$ is zero at $0$ and $\pi$. The factor $2\cos x-1$ is zero at $\frac{\pi}{3}$.'
+          - problem: 'How many solutions does $(2\cos x-1)(2\cos x+1)=0$ have on $[0,2\pi]$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The first factor gives $\cos x=\frac{1}{2}$ at $\frac{\pi}{3}$ and $\frac{5\pi}{3}$. The second factor gives $\cos x=-\frac{1}{2}$ at $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$. The answer is 4.'
+          - problem: 'Solve $(2\sin x-1)(\sin x+1)=0$ on $[0,2\pi]$. Give the set of solutions.'
+            answer_contract: {"kind":"set"}
+            answer: '{pi/6, 5*pi/6, 3*pi/2}'
+            solution_sketch: 'The first factor gives $\sin x=\frac{1}{2}$ at $\frac{\pi}{6}$ and $\frac{5\pi}{6}$. The second factor gives $\sin x=-1$ at $\frac{3\pi}{2}$.'
+          - problem: 'Solve $(2\cos x+\sqrt{3})(\sin x-1)=0$ on $[0,2\pi]$. Give the set of solutions.'
+            answer_contract: {"kind":"set"}
+            answer: '{pi/2, 5*pi/6, 7*pi/6}'
+            solution_sketch: 'The first factor gives $\cos x=-\frac{\sqrt{3}}{2}$ at $\frac{5\pi}{6}$ and $\frac{7\pi}{6}$. The second factor gives $\sin x=1$ at $\frac{\pi}{2}$.'
+          - problem: 'Solve $\sin 2x-\cos x=0$ on $[0,2\pi]$. Give the set of solutions.'
+            answer_contract: {"kind":"set"}
+            answer: '{pi/6, pi/2, 5*pi/6, 3*pi/2}'
+            solution_sketch: 'Use $\sin 2x=2\sin x\cos x$. The equation becomes $\cos x\,(2\sin x-1)=0$. The factor $\cos x$ gives $\frac{\pi}{2}$ and $\frac{3\pi}{2}$. The factor $2\sin x-1$ gives $\frac{\pi}{6}$ and $\frac{5\pi}{6}$.'
+          - problem: 'Solve $(\sin x-1)(\sin x+1)=0$. Write the solutions as $x=a+\pi k$, where $k$ is an integer and $0\le a<\pi$. Give the expression for $x$.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            answer: 'pi/2+pi*k'
+            solution_sketch: 'The factor $\sin x-1$ gives $x=\frac{\pi}{2}+2\pi k$. The factor $\sin x+1$ gives $x=\frac{3\pi}{2}+2\pi k$. Together these are all odd multiples of $\frac{\pi}{2}$, so $x=\frac{\pi}{2}+\pi k$.'
+        constraints: 'products of two linear factors in sine, cosine; one double angle equation that factors; sets on a fixed interval and one general family'
+      - id: kp4
+        name: 'Model a situation'
+        key_prerequisites: [inverse-trig-functions, basic-trig-equations]
+        exemplars:
+          - problem: 'The tide height is $h(t)=3+2\sin\frac{\pi t}{6}$ meters, where $t$ is the time in hours. Find the smallest $t>0$ with $h(t)=5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The equation means $\sin\frac{\pi t}{6}=1$. The first positive solution has $\frac{\pi t}{6}=\frac{\pi}{2}$. So $t=3$.'
+          - problem: 'The tide height is $h(t)=3+2\sin\frac{\pi t}{6}$ meters, where $t$ is the time in hours. Find the smallest $t>0$ with $h(t)=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The equation means $\sin\frac{\pi t}{6}=0$. The angle $0$ gives $t=0$, which is not positive. The next angle $\pi$ gives $\frac{\pi t}{6}=\pi$, so $t=6$.'
+          - problem: 'The water depth is $d(t)=10+3\cos\frac{\pi t}{12}$ meters, where $t$ is the time in hours. Find the smallest $t>0$ with $d(t)=11.5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The equation means $\cos\frac{\pi t}{12}=\frac{1}{2}$. The first positive solution has $\frac{\pi t}{12}=\frac{\pi}{3}$. So $t=4$.'
+          - problem: 'The tide height is $h(t)=3+2\sin\frac{\pi t}{6}$ meters, where $t$ is the time in hours. How many times in $0\le t\le 24$ does $h(t)=4$?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The equation means $\sin\frac{\pi t}{6}=\frac{1}{2}$. The angle $\frac{\pi t}{6}$ runs from $0$ to $4\pi$. That range holds two periods, and each period gives two solutions. The answer is 4.'
+          - problem: 'A wheel seat has the height $y(t)=8-6\cos\frac{\pi t}{15}$ meters, where $t$ is the time in seconds. Find the smallest $t>0$ with $y(t)=11$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The equation means $\cos\frac{\pi t}{15}=-\frac{1}{2}$. The first positive solution has $\frac{\pi t}{15}=\frac{2\pi}{3}$. So $t=10$.'
+          - problem: 'A buoy has the height $y(t)=\sin\frac{\pi t}{3}$ meters, where $t$ is the time in seconds. Find the sum of all $t$ in $[0,6]$ with $y(t)=\frac{1}{2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The angle $\frac{\pi t}{3}$ runs from $0$ to $2\pi$. The sine equals $\frac{1}{2}$ at $\frac{\pi}{6}$ and $\frac{5\pi}{6}$. These give $t=\frac{1}{2}$ and $t=\frac{5}{2}$. The sum is 3.'
+        constraints: 'heights of tides, depths and wheel seats of the form a+b*sin or cos of a linear angle; first positive time, count in a day, sum of times; answers are numbers'
+    diagnostic_exemplar:
+      problem: 'Find the smallest positive solution of $\tan x=\sqrt{3}$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'pi/3'
+      solution_sketch: 'We have $\arctan\sqrt{3}=\frac{\pi}{3}$. This angle is positive and it is the smallest one. The answer is $\frac{\pi}{3}$.'
+    anki_seeds:
+      - front: "If $\\tan x=a$, then $x=\\arctan a+...$ with $k$ an integer."
+        back: "$\\pi k$"
+        type: basic
+      - front: "If $\\cos x=a$, then $x=\\pm\\arccos a+...$ with $k$ an integer."
+        back: "$2\\pi k$"
+        type: basic
+
+  - id: trig-inequalities
+    lt_term: 'trigonometrinės nelygybės'
+    name: Trigonometric Inequalities
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 200
+    prerequisites:
+      - id: trig-equations-general-solutions
+        weight: 0.6
+        key: true
+      - id: trig-function-properties-graphical
+        weight: 0.5
+        key: false
+      - id: graphing-inequalities-number-line
+        weight: 0.3
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Inequality a*f(x)+b compared with 0 for sine and cosine'
+        key_prerequisites: [trig-function-properties-graphical, trig-equations-general-solutions]
+        exemplars:
+          - problem: 'Solve $2\sin x-1>0$ for $x$ in $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/6 < x < 5*pi/6'
+            solution_sketch: 'The inequality means $\sin x>\frac{1}{2}$. The sine equals $\frac{1}{2}$ at $\frac{\pi}{6}$ and $\frac{5\pi}{6}$. Between these points the sine is larger, so $\frac{\pi}{6}<x<\frac{5\pi}{6}$.'
+          - problem: 'Solve $2\cos x+1\ge 0$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x <= 2*pi/3 or 4*pi/3 <= x <= 2*pi'
+            solution_sketch: 'The inequality means $\cos x\ge -\frac{1}{2}$. The cosine equals $-\frac{1}{2}$ at $\frac{2\pi}{3}$ and $\frac{4\pi}{3}$. The cosine is larger outside the open interval between them.'
+          - problem: 'Solve $\sin x\le -\frac{\sqrt{2}}{2}$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '5*pi/4 <= x <= 7*pi/4'
+            solution_sketch: 'The sine equals $-\frac{\sqrt{2}}{2}$ at $\frac{5\pi}{4}$ and $\frac{7\pi}{4}$. Between these points the sine is smaller. So $\frac{5\pi}{4}\le x\le\frac{7\pi}{4}$.'
+          - problem: 'Solve $\cos x<\frac{\sqrt{3}}{2}$ on $[-\pi,\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-pi <= x < -pi/6 or pi/6 < x <= pi'
+            solution_sketch: 'The cosine equals $\frac{\sqrt{3}}{2}$ at $-\frac{\pi}{6}$ and $\frac{\pi}{6}$. Between them the cosine is larger. So the cosine is smaller on the two outer parts of the interval.'
+          - problem: 'Solve $2\sin x+\sqrt{3}<0$ on $[-\pi,\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2*pi/3 < x < -pi/3'
+            solution_sketch: 'The inequality means $\sin x<-\frac{\sqrt{3}}{2}$. The sine equals $-\frac{\sqrt{3}}{2}$ at $-\frac{2\pi}{3}$ and $-\frac{\pi}{3}$. Between them the sine is smaller.'
+          - problem: 'Solve $3-6\cos x\ge 0$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/3 <= x <= 5*pi/3'
+            solution_sketch: 'The inequality means $\cos x\le\frac{1}{2}$. The cosine equals $\frac{1}{2}$ at $\frac{\pi}{3}$ and $\frac{5\pi}{3}$. Between them the cosine is smaller, so $\frac{\pi}{3}\le x\le\frac{5\pi}{3}$.'
+        constraints: 'a*sin x+b or a*cos x+b compared with 0 on a fixed interval of length 2pi; standard values; answers are intervals with pi'
+      - id: kp2
+        name: 'Tangent inequality'
+        key_prerequisites: [trig-function-properties-graphical, trig-equations-general-solutions]
+        exemplars:
+          - problem: 'Solve $\tan x>1$ on $\left(-\frac{\pi}{2},\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/4 < x < pi/2'
+            solution_sketch: 'The tangent rises on the interval. It equals $1$ at $\frac{\pi}{4}$. So $\tan x>1$ for $\frac{\pi}{4}<x<\frac{\pi}{2}$.'
+          - problem: 'Solve $\tan x<0$ on $\left(-\frac{\pi}{2},\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-pi/2 < x < 0'
+            solution_sketch: 'The tangent rises and equals $0$ at $0$. So it is negative for $-\frac{\pi}{2}<x<0$.'
+          - problem: 'Solve $\tan x\le\sqrt{3}$ on $\left(-\frac{\pi}{2},\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-pi/2 < x <= pi/3'
+            solution_sketch: 'The tangent rises and equals $\sqrt{3}$ at $\frac{\pi}{3}$. So $\tan x\le\sqrt{3}$ for $-\frac{\pi}{2}<x\le\frac{\pi}{3}$.'
+          - problem: 'Solve $\sqrt{3}\tan x+3\ge 0$ on $\left(-\frac{\pi}{2},\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-pi/3 <= x < pi/2'
+            solution_sketch: 'The inequality means $\tan x\ge -\sqrt{3}$. The tangent equals $-\sqrt{3}$ at $-\frac{\pi}{3}$ and rises. So $-\frac{\pi}{3}\le x<\frac{\pi}{2}$.'
+          - problem: 'Solve $\tan x>-1$ on $(0,\pi)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x < pi/2 or 3*pi/4 < x < pi'
+            solution_sketch: 'The tangent is positive on $\left(0,\frac{\pi}{2}\right)$. On $\left(\frac{\pi}{2},\pi\right)$ it rises from very negative values and equals $-1$ at $\frac{3\pi}{4}$. So it is larger than $-1$ for $x>\frac{3\pi}{4}$. The tangent is not defined at $\frac{\pi}{2}$.'
+          - problem: 'Solve $\tan x<\frac{\sqrt{3}}{3}$ on $[0,\pi)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x < pi/6 or pi/2 < x < pi'
+            solution_sketch: 'The tangent equals $\frac{\sqrt{3}}{3}$ at $\frac{\pi}{6}$. It is smaller on $\left[0,\frac{\pi}{6}\right)$. On $\left(\frac{\pi}{2},\pi\right)$ the tangent is negative, so it is smaller there too.'
+        constraints: 'tan x compared with a standard value on (-pi/2, pi/2), (0, pi) or [0, pi); the asymptote is always left out; answers are intervals with pi'
+      - id: kp3
+        name: 'Inequality with f(kx+b) and the shift 2*pi*n/k'
+        key_prerequisites: [trig-function-properties-graphical, trig-equations-general-solutions]
+        exemplars:
+          - problem: 'Solve $\sin 2x>\frac{1}{2}$ on $[0,\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'pi/12 < x < 5*pi/12'
+            solution_sketch: 'When $x$ runs over $[0,\pi]$, the angle $2x$ runs over $[0,2\pi]$. There $\sin 2x>\frac{1}{2}$ for $\frac{\pi}{6}<2x<\frac{5\pi}{6}$. Divide by $2$.'
+          - problem: 'Solve $\cos 2x\ge 0$ on $[0,\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x <= pi/4 or 3*pi/4 <= x <= pi'
+            solution_sketch: 'The angle $2x$ runs over $[0,2\pi]$. There $\cos 2x\ge 0$ for $0\le 2x\le\frac{\pi}{2}$ and $\frac{3\pi}{2}\le 2x\le 2\pi$. Divide by $2$.'
+          - problem: 'The solutions of $\sin 3x>0$ are the intervals $\left(\frac{2\pi n}{3},\,b+\frac{2\pi n}{3}\right)$ for every integer $n$. Find $b$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi/3'
+            solution_sketch: 'The sine is positive when $2\pi n<3x<\pi+2\pi n$. Divide by $3$. The interval is $\frac{2\pi n}{3}<x<\frac{\pi}{3}+\frac{2\pi n}{3}$, so $b=\frac{\pi}{3}$.'
+          - problem: 'Solve $\sin\left(x+\frac{\pi}{3}\right)>0$ on $[0,2\pi]$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x < 2*pi/3 or 5*pi/3 < x <= 2*pi'
+            solution_sketch: 'The angle $x+\frac{\pi}{3}$ runs over $\left[\frac{\pi}{3},\frac{7\pi}{3}\right]$. The sine is positive for angles in $\left[\frac{\pi}{3},\pi\right)$ and in $\left(2\pi,\frac{7\pi}{3}\right]$. Subtract $\frac{\pi}{3}$.'
+          - problem: 'Solve $\tan 2x<1$ on $\left[0,\frac{\pi}{2}\right)$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x < pi/8 or pi/4 < x < pi/2'
+            solution_sketch: 'The angle $2x$ runs over $[0,\pi)$. There $\tan 2x<1$ for $0\le 2x<\frac{\pi}{4}$ and for $\frac{\pi}{2}<2x<\pi$. Divide by $2$.'
+          - problem: 'The solutions of $\cos 4x>\frac{1}{2}$ are the intervals $\left(-a+\frac{\pi n}{2},\,a+\frac{\pi n}{2}\right)$ for every integer $n$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: 'pi/12'
+            solution_sketch: 'The cosine is larger than $\frac{1}{2}$ when $-\frac{\pi}{3}+2\pi n<4x<\frac{\pi}{3}+2\pi n$. Divide by $4$. The bounds are $\pm\frac{\pi}{12}+\frac{\pi n}{2}$, so $a=\frac{\pi}{12}$.'
+        constraints: 'sin, cos or tan of kx or x+b compared with a standard value; a fixed interval or the period form with n; answers are intervals with pi or the number b'
+    diagnostic_exemplar:
+      problem: 'Solve $\cos x>0$ on $[0,\pi]$.'
+      answer_contract: {"kind":"inequality_union"}
+      answer: '0 <= x < pi/2'
+      solution_sketch: 'The cosine is positive from $0$ up to $\frac{\pi}{2}$. It equals $0$ at $\frac{\pi}{2}$. So $0\le x<\frac{\pi}{2}$.'
+    anki_seeds:
+      - front: "To solve $\\sin x>a$, find the points where $\\sin x=$ ... ."
+        back: "$a$"
+        type: basic
+      - front: "The inequality $\\sin kx>0$ has the period $\\frac{...}{k}$."
+        back: "$2\\pi$"
         type: basic

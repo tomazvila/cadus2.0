@@ -114,7 +114,7 @@ fn every_foundations_diagnostic_is_grammar_decidable() {
     let coverage = PrereqCoverage::build(&curriculum, &index);
     let counts = coverage.counts("foundations");
 
-    assert_eq!(counts.topics, 259);
+    assert_eq!(counts.topics, 272);
     // Before 2026-10-27, 39 diagnostic items were on `multi-step` or `proof`
     // topics with no answer contract. `Exemplar::verdict_policy` gives no verdict for them. Re-pinned
     // 2026-10-07 after the courses rewrite: one more diagnostic item is
@@ -123,7 +123,8 @@ fn every_foundations_diagnostic_is_grammar_decidable() {
     // 220 decidable (was 241) and 39 undecidable (was 44).
     // Re-pinned 2026-10-27 after the placement probes wave: every Foundations
     // probe has a contract, so 259 are decidable and none is undecidable.
-    assert_eq!(counts.diagnostic_decidable, 259);
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 272 topics (was 259), all decidable.
+    assert_eq!(counts.diagnostic_decidable, 272);
     assert_eq!(counts.diagnostic_undecidable, 0);
     assert_eq!(counts.diagnostic_missing, 0);
 }

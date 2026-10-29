@@ -22,7 +22,8 @@ use common::events::{oracle_stamp, tree};
 const MODEL_1: &str = include_str!("fixtures/events/model_1.json");
 
 /// The digest the M3 plan pins for the fold of `stream_1.jsonl`.
-const MODEL_1_DIGEST: &str = "a97242182f4555a9f7d4201ce1a5517f0f2b1679b8d8d7e634dd6c324ad3fc3e";
+// Re-based 2026-10-28 after VBE skill wave 1: e03fd6df... (was a9724218...).
+const MODEL_1_DIGEST: &str = "e03fd6df01158e1d0402b1e85f2775be24a07184cc47420da5b45ebc8282bd15";
 
 /// The build instant the 1.0 oracle pins with `--now`.
 const NOW: &str = "2000-01-01T00:00:00Z";
@@ -131,7 +132,9 @@ fn a_padded_topic_id_parses_to_the_real_topic() {
 fn the_padded_stream_folds_to_the_1_0_digest_of_the_clean_stream() {
     // Re-based 2026-10-12 after the Foundations merge (D-C1): the values pin the 2.0
     // fold on the merged graph, not 1.0.
-    const DIGEST: &str = "540e6825a90d1fa4ce207b524d332710c1a7b707f8cc734552889af82d73ed2c";
+    // Re-based 2026-10-28 after VBE skill wave 1: ef13964f... (was 540e6825...).
+    // The graph gained 37 topics, so the propagation reaches more topics.
+    const DIGEST: &str = "ef13964fca66f02d9b0585b1ee1eed9c87f896a11e1e716b941dc19edc3a6cf6";
     assert_eq!(fold_digest(&two_event_stream("absolute-value")), DIGEST);
     assert_eq!(fold_digest(&two_event_stream(" absolute-value ")), DIGEST);
 }

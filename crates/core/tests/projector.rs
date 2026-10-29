@@ -29,7 +29,8 @@ use common::events::{
 
 /// The 1.0 fold of `stream_1.jsonl`, as the SHA-256 of the canonical blob with
 /// `built_from_ts` removed (spec section 9).
-const STREAM_1_DIGEST: &str = "a97242182f4555a9f7d4201ce1a5517f0f2b1679b8d8d7e634dd6c324ad3fc3e";
+// Re-based 2026-10-28 after VBE skill wave 1: e03fd6df... (was a9724218...). The graph gained 37 topics.
+const STREAM_1_DIGEST: &str = "e03fd6df01158e1d0402b1e85f2775be24a07184cc47420da5b45ebc8282bd15";
 
 /// The `config_hash` of the default config (spec section 9).
 const CONFIG_HASH: &str = "797575e985c12149";
@@ -111,6 +112,7 @@ fn the_fold_reaches_forty_one_topics_through_propagation() {
     // (spec section 9, "Stream #1 coverage").
     let model = fold(&stream("stream_1.jsonl"));
     // Re-based 2026-10-12 after the Foundations merge (D-C1): 41 topics (was 47).
+    // Checked 2026-10-28 after VBE skill wave 1: the count stays 41. The 37 new topics sit in new units and no event reaches them.
     assert_eq!(model.topics.len(), 41);
     // A `review_result` on an untouched topic writes FIRe state and leaves the status
     // untouched (spec section 4.4).
@@ -155,11 +157,13 @@ fn the_live_oracle_agrees_with_the_fold() {
 // --------------------------------------------------------------------------- //
 
 /// The 1.0 fold of `stream_u3_coverage.jsonl` in UTC, from `dump_projector_1_0.py`.
-const COVERAGE_DIGEST: &str = "58e82f8e4b82427bb6c0a5b3429eff570e956f297172a0410f05314a42ca7b95";
+// Re-based 2026-10-28 after VBE skill wave 1: 605bb087... (was 58e82f8e...).
+const COVERAGE_DIGEST: &str = "605bb0872383ed43287130c54da47c34b6f26a1ccfcf86e1e9ed3305beb3229b";
 
 /// The same stream folded with `--tz America/New_York`.
+// Re-based 2026-10-28 after VBE skill wave 1: 1444efc7... (was 9b774e62...).
 const COVERAGE_DIGEST_NEW_YORK: &str =
-    "9b774e62eed516e973a84e72bb3629b080aa9b25dc5ef4cefb42c1be7ad0b461";
+    "1444efc72c21c81c44c4b345d05f3e11bfcf39bf065d51640a7cbcc70c3c470b";
 
 /// The number of events in `stream_u3_coverage.jsonl`.
 const COVERAGE_EVENTS: usize = 33;

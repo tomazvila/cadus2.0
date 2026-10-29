@@ -11,6 +11,7 @@ curriculum/
   courses.yaml                    # required; absence = CurriculumNotFound
   <course-id>/                    # one directory per course id in courses.yaml
     NN-<unit-slug>.yaml           # unit files, glob "*.yaml", non-recursive
+    program.yaml                  # optional program registry (D-VBE1); not a unit file
 ```
 
 - `courses.yaml` is mandatory (`cadus/graph.py:570-572`). The directory name comes

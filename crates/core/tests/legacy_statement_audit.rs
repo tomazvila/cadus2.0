@@ -32,21 +32,22 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     // 78 more multi-step items, all with a contract (1103).
     // 2026-10-07, courses rewrite: 1718 (was 1103).
     // 2026-10-12, Foundations merge (D-C1): 1669 (was 1718).
-    assert_eq!(current.len(), 1669);
+    // 2026-10-28, VBE skill wave 1: 1751 (was 1669).
+    assert_eq!(current.len(), 1751);
     assert_eq!(
         current
             .iter()
             .map(|r| r["topic_id"].as_str().unwrap())
             .collect::<BTreeSet<_>>()
             .len(),
-        72 // 2026-10-12, Foundations merge (D-C1): was 78
+        76 // 2026-10-28, VBE skill wave 1: was 72; 2026-10-12, Foundations merge (D-C1): was 78
     );
     assert_eq!(
         current
             .iter()
             .filter(|r| r["kp_id"] == "diagnostic")
             .count(),
-        72 // 2026-10-12, Foundations merge (D-C1): was 78
+        76 // 2026-10-28, VBE skill wave 1: was 72; 2026-10-12, Foundations merge (D-C1): was 78
     );
     assert_eq!(
         sha256_hex(serde_json::to_string(&current).unwrap().as_bytes()),
@@ -54,7 +55,8 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
         // 2026-10-08, story framing removed: hash re-pinned (was 0fa8bc22...ad7b).
         // 2026-10-12, Foundations merge (D-C1): hash re-pinned (was c1ea8818...013c).
         // 2026-10-27, placement probes: the 39 Foundations multi-step probes gained a contract; hash re-pinned (was 91526de1...c71f).
-        "7af156655f1c9cfa30802bf5adae467755a81133a0697dd30ef1c8216d75ef1d"
+        // 2026-10-28, VBE skill wave 1: 82 new statements (1751 live); hash re-pinned (was 7af15665...ef1d).
+        "effdc5dad9170e8576f450224fab98de4427066706c9a8df7333f4532973214e"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -81,13 +83,14 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             // tree (1,669 live statements). The `ascending_chain` kind (5) left with
             // the dropped twin steps.
             // 2026-10-27, placement probes: the 39 uncontracted rows gained a contract (4 coordinates, 28 exact, 1 inequality_union, 6 unit); no row is uncontracted.
+            // 2026-10-28, VBE skill wave 1: 82 new rows (1,751 live): coordinates 128 (was 123), exact 743 (was 676), function 13 (was 12), list 47 (was 38).
             ("approx".to_owned(), 26),
-            ("coordinates".to_owned(), 123),
-            ("exact".to_owned(), 676),
-            ("function".to_owned(), 12),
+            ("coordinates".to_owned(), 128),
+            ("exact".to_owned(), 743),
+            ("function".to_owned(), 13),
             ("inequality_union".to_owned(), 98),
             ("label".to_owned(), 91),
-            ("list".to_owned(), 38),
+            ("list".to_owned(), 47),
             ("multipart".to_owned(), 30),
             ("polynomial_relation".to_owned(), 97),
             ("property".to_owned(), 3),
@@ -140,7 +143,7 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
     let reviewed_keys: BTreeSet<_> = reviewed.iter().map(key).collect();
     assert_eq!(reviewed_keys.len(), reviewed.len());
     assert!(reviewed_keys.is_subset(&current_keys));
-    assert_eq!(current_keys.difference(&reviewed_keys).count(), 1149); // 2026-10-12, Foundations merge (D-C1): was 1176; 2026-10-07, courses rewrite (was 561)
+    assert_eq!(current_keys.difference(&reviewed_keys).count(), 1231); // 2026-10-28, VBE skill wave 1: was 1149 (82 new statements, all with a contract, none in the reviewed manifest); 2026-10-12, Foundations merge (D-C1): was 1176; 2026-10-07, courses rewrite (was 561)
     assert!(
         current
             .iter()

@@ -22,7 +22,8 @@ fn foundations_selection_is_exact_and_cross_course_keys_are_refused() {
     };
     let specs = select_for(&curriculum, &args).unwrap();
     // 809 knowledge points before the Foundations merge (2026-10-12); 784 after it.
-    assert_eq!(specs.len(), 784);
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 826 (was 784).
+    assert_eq!(specs.len(), 826);
     assert_eq!(args.template_passes, 3);
     let mut units = std::collections::BTreeMap::<String, usize>::new();
     for spec in &specs {
@@ -35,7 +36,7 @@ fn foundations_selection_is_exact_and_cross_course_keys_are_refused() {
             .or_default() += 1;
     }
     assert_eq!(units["arithmetic-core"], 79);
-    assert_eq!(units.values().sum::<usize>(), 784);
+    assert_eq!(units.values().sum::<usize>(), 826);
     assert!(specs.iter().all(
         |spec| curriculum.course_of(curriculum.idx_of(&spec.topic_id).unwrap()) == "foundations"
     ));
@@ -59,7 +60,7 @@ fn foundations_selection_is_exact_and_cross_course_keys_are_refused() {
 
 #[test]
 fn three_template_rounds_plus_instruction_fill_six_slots_per_knowledge_point() {
-    let rows: Vec<_> = (0..784)
+    let rows: Vec<_> = (0..826)
         .flat_map(|index| {
             [
                 Kind::Template,
@@ -75,8 +76,9 @@ fn three_template_rounds_plus_instruction_fill_six_slots_per_knowledge_point() {
             })
         })
         .collect();
-    assert_eq!(staged_documents(&rows, 1), 3136);
-    assert_eq!(staged_documents(&rows, 3), 4704);
+    assert_eq!(staged_documents(&rows, 1), 3304);
+    assert_eq!(staged_documents(&rows, 3), 4956);
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 826 points give 3304 and 4956 (were 3136 and 4704 for 784).
 }
 
 mod common;

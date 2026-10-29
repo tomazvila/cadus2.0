@@ -37,6 +37,10 @@ const COURSES_FILE: &str = "courses.yaml";
 /// The extension of a unit file. 1.0 globs `*.yaml`, so `.yml` is invisible.
 const UNIT_EXTENSION: &str = ".yaml";
 
+/// The program registry of a course (D-VBE1). It sits next to the unit files
+/// and is not a unit file, so the walk skips this exact name.
+const PROGRAM_FILE: &str = "program.yaml";
+
 /// The YAML merge key. PyYAML flattens it into the mapping; 2.0 rejects it.
 const MERGE_KEY: &str = "<<";
 
@@ -341,7 +345,9 @@ enum UnitEntry {
 /// The glob of 1.0 is `*.yaml` and it is not recursive, so a subdirectory and a
 /// `.yml` file stay invisible (parity traps 2 and 3). The name test is the only
 /// test: Python `pathlib.Path.glob` reads a dot-prefixed name and follows a
-/// symlink, so a filter on either one drops content that 1.0 loads.
+/// symlink, so a filter on either one drops content that 1.0 loads. The one
+/// 2.0 exception is the exact name `program.yaml` (D-VBE1): 1.0 had no such
+/// file, and the program lint reads it.
 ///
 /// A name that is not valid UTF-8 is an entry too. 1.0 reads such a file and 2.0
 /// holds every file name as a `String`, so the caller reports the drop instead
@@ -359,7 +365,7 @@ fn unit_entries_of(
     for name in names {
         let name = name?;
         let bytes = name.as_encoded_bytes().to_vec();
-        if !bytes.ends_with(UNIT_EXTENSION.as_bytes()) {
+        if !bytes.ends_with(UNIT_EXTENSION.as_bytes()) || bytes == PROGRAM_FILE.as_bytes() {
             continue;
         }
         let item = match name.to_str() {
@@ -417,8 +423,9 @@ fn is_falsy(value: &Value) -> bool {
 mod tests {
     use super::*;
 
-    /// The walk keeps the `*.yaml` names in byte order, reports a name that is
-    /// not UTF-8, and fails on a directory entry the file system cannot read.
+    /// The walk keeps the `*.yaml` names in byte order, skips the program
+    /// registry `program.yaml`, reports a name that is not UTF-8, and fails on
+    /// a directory entry the file system cannot read.
     #[test]
     fn the_directory_walk_sorts_filters_and_fails_on_an_entry_error() {
         use std::os::unix::ffi::OsStringExt;
@@ -426,6 +433,7 @@ mod tests {
         let names = vec![
             Ok(OsString::from("b.yaml")),
             Ok(OsString::from("notes.txt")),
+            Ok(OsString::from("program.yaml")),
             Ok(OsString::from_vec(b"a\xff.yaml".to_vec())),
             Ok(OsString::from("a.yaml")),
         ];

@@ -597,6 +597,35 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At $x = 4$ the left piece gives $|4 - 2| = 2$ and the right piece gives $7 - 4 = 3$. The right piece is higher by $3 - 2 = 1$.'
+      - id: kp4
+        name: 'Sketch y=|x| from the definition'
+        key_prerequisites: [absolute-value, graphing-linear-equations]
+        exemplars:
+          - problem: 'The graph of $y=|x|$ passes through the point $\left(-\frac{3}{2}, k\right)$. Find $k$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/2'
+            solution_sketch: 'For $x<0$ the rule is $|x|=-x$. So $k=-\left(-\frac{3}{2}\right)=\frac{3}{2}$.'
+          - problem: 'How many points of the graph of $y=|x|$ have the $y$-coordinate $6$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The equation $|x|=6$ has the solutions $x=6$ and $x=-6$. These give the points $(6,6)$ and $(-6,6)$. So the answer is 2.'
+          - problem: 'The graph of $y=|x|$ has a part to the left of the $y$-axis. This part is a ray. Find the slope of this ray.'
+            answer_contract: {"kind":"exact"}
+            answer: '-1'
+            solution_sketch: 'For $x<0$ the rule is $y=-x$. This is a line with slope $-1$. So the slope is $-1$.'
+          - problem: 'The graph of $y=|x|$ consists of two rays from the origin. Find the angle between the two rays, in degrees.'
+            answer_contract: {"kind":"unit","quantity":"angle","unit":"°","allow_omitted":true}
+            answer: '90'
+            solution_sketch: 'The right ray has the direction $(1,1)$ and the left ray has the direction $(-1,1)$. The scalar product is $-1+1=0$. So the rays meet at $90^\circ$.'
+          - problem: 'Find the area of the region bounded by the graph of $y=|x|$ and the line $y=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'The line meets the graph at $(-3,3)$ and $(3,3)$. The region is a triangle with base $6$ and height $3$. Its area is $\frac{1}{2}\cdot 6\cdot 3=9$.'
+          - problem: 'Find the $x$-coordinate of the common point of the graph of $y=|x|$ and the line $y=6-x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'For $x\ge 0$ solve $x=6-x$, which gives $x=3$. For $x<0$ solve $-x=6-x$, which has no solution. So the only common point has $x=3$.'
+        constraints: 'points, rays and regions of the graph of y=|x|; the rule is x for x at least 0 and -x for x below 0; answers are numbers; no figure'
     diagnostic_exemplar:
       problem: 'Let $f(x) = |x - 1|$ for $x < 3$ and $f(x) = 6 - x$ for $x \ge 3$. Find the gap between the two pieces at $x = 3$.'
       answer: '1'
@@ -723,4 +752,495 @@ topics:
     anki_seeds:
       - front: "Average rate of change of f on [a, b] = ?"
         back: "(f(b) - f(a)) / (b - a) — the slope of the secant line."
+        type: basic
+
+  - id: power-functions
+    lt_term: 'laipsninės funkcijos y=x^n, y=x^(-n)'
+    name: Power Functions with Integer Exponent
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: even-odd-functions
+        weight: 0.6
+        key: true
+      - id: function-notation
+        weight: 0.4
+        key: false
+      - id: domain-range
+        weight: 0.4
+        key: false
+      - id: reading-function-graphs
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Shape and parity of y=x^n for natural n'
+        key_prerequisites: [even-odd-functions, function-notation]
+        exemplars:
+          - problem: 'Let $f(x)=x^3$. Find $f(-2)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-8'
+            solution_sketch: 'An odd power keeps the sign. So $f(-2)=(-2)^3=-8$.'
+          - problem: 'Let $f(x)=x^4$. Find $f(-3)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '81'
+            solution_sketch: 'An even power gives a positive value. So $f(-3)=(-3)^4=81$.'
+          - problem: 'Find the natural number $n$ between $8$ and $10$ for which the function $y=x^n$ is odd.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'The function $y=x^n$ is odd when $n$ is odd. The only natural number between $8$ and $10$ is $9$, and it is odd. So $n=9$.'
+          - problem: 'How many real solutions does $x^6=64$ have?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'An even power takes the same value at $x$ and at $-x$. We have $x^6=64$ when $x=2$ or $x=-2$. So there are 2 solutions.'
+          - problem: 'Solve $x^5=-32$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-2'
+            solution_sketch: 'An odd power is negative for a negative $x$. We have $(-2)^5=-32$. The function $y=x^5$ is increasing, so there is one solution, $x=-2$.'
+          - problem: 'How many real numbers $x$ satisfy $x^4=x^2$?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Write $x^2(x^2-1)=0$. Then $x=0$, $x=1$ or $x=-1$. So there are 3 numbers.'
+        constraints: 'values and solutions of x^n for natural n with a fixed small base; the parity of n decides the sign and the number of solutions; no figure'
+      - id: kp2
+        name: 'y=x^(-n) for n=1 to 4 and its asymptotes'
+        key_prerequisites: [function-notation, domain-range, reading-function-graphs]
+        exemplars:
+          - problem: 'Let $f(x)=x^{-2}$. Find $f(-2)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/4'
+            solution_sketch: 'We have $x^{-2}=\frac{1}{x^2}$. So $f(-2)=\frac{1}{4}$.'
+          - problem: 'Let $f(x)=x^{-3}$. Find $f(3)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1/27'
+            solution_sketch: 'We have $x^{-3}=\frac{1}{x^3}$. So $f(3)=\frac{1}{27}$.'
+          - problem: 'Let $f(x)=x^{-1}$. Find $f\left(-\frac15\right)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-5'
+            solution_sketch: 'We have $x^{-1}=\frac1x$. So $f\left(-\frac15\right)=-5$.'
+          - problem: 'The graph of $y=x^{-4}$ has a vertical asymptote. Find the $x$-value of this asymptote.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'The function is not defined at $x=0$. The values grow without bound near $0$. So the asymptote is $x=0$, and the answer is 0.'
+          - problem: 'Solve $x^{-4}=\frac{1}{81}$. Give the set of solutions.'
+            answer_contract: {"kind":"set"}
+            answer: '{-3, 3}'
+            solution_sketch: 'We have $x^4=81$. The power is even, so $x=3$ or $x=-3$.'
+          - problem: 'At how many points do the graphs of $y=x^{-1}$ and $y=x^{-3}$ meet?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Solve $\frac1x=\frac{1}{x^3}$. Then $x^3=x$ and $x\ne 0$, so $x^2=1$. The solutions are $x=1$ and $x=-1$. So there are 2 points.'
+        constraints: 'values, solutions and asymptotes of x^(-n) for n from 1 to 4; x is never 0; answers are numbers or a set'
+      - id: kp3
+        name: 'Formula of a power function from a point'
+        key_prerequisites: [even-odd-functions, function-notation]
+        exemplars:
+          - problem: 'The graph of $y=x^n$ passes through the point $(2,8)$. Find the natural number $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'We need $2^n=8$. Since $8=2^3$, $n=3$.'
+          - problem: 'The graph of $y=x^n$ passes through the point $(-2,16)$. Here $n$ is a natural number. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'We need $(-2)^n=16$. The value is positive, so $n$ is even. We have $(-2)^4=16$. So $n=4$.'
+          - problem: 'The graph of $y=ax^2$ passes through the point $(3,18)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Substitute the point: $18=a\cdot 9$. So $a=2$.'
+          - problem: 'The graph of $y=x^n$ passes through the point $\left(2,\frac18\right)$. Here $n$ is a negative integer. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-3'
+            solution_sketch: 'We need $2^n=\frac18=2^{-3}$. So $n=-3$.'
+          - problem: 'The graph of $y=ax^3$ passes through the point $(2,40)$. Find the value of $y$ at $x=-1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-5'
+            solution_sketch: 'Substitute the point: $40=a\cdot 8$, so $a=5$. The function is odd. So $y(-1)=5\cdot(-1)^3=-5$.'
+          - problem: 'The graph of $y=ax^{-2}$ passes through the point $(-3,2)$. Find the value of $y$ at $x=1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '18'
+            solution_sketch: 'Substitute the point: $2=\frac{a}{9}$, so $a=18$. Then $y(1)=\frac{18}{1}=18$.'
+        constraints: 'one point of the graph fixes the exponent n or the factor a; the exponent is a natural number or a negative integer; answers are integers'
+    diagnostic_exemplar:
+      problem: 'Let $f(x)=x^5$. Find $f(-2)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-32'
+      solution_sketch: 'An odd power keeps the sign. So $f(-2)=(-2)^5=-32$.'
+    anki_seeds:
+      - front: "The function $y=x^n$ is odd when $n$ is ... ."
+        back: "odd"
+        type: basic
+      - front: "The graph of $y=x^{-2}$ has the vertical asymptote ... ."
+        back: "$x=0$"
+        type: basic
+
+  - id: root-functions
+    lt_term: 'šaknies funkcijos'
+    name: Root Functions and Their Models
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 100
+    prerequisites:
+      - id: nth-roots
+        weight: 0.6
+        key: true
+      - id: square-roots
+        weight: 0.4
+        key: false
+      - id: cube-roots
+        weight: 0.4
+        key: false
+      - id: inverse-functions
+        weight: 0.5
+        key: false
+      - id: domain-range
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Domain, range and graph of y = n-th root of x'
+        key_prerequisites: [nth-roots, domain-range]
+        exemplars:
+          - problem: 'Find the smallest $x$ in the domain of $y=\sqrt[4]{x}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'An even root needs a number that is not negative. So the smallest $x$ is $0$.'
+          - problem: 'Let $f(x)=\sqrt[3]{x}$. Find $f(-8)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-2'
+            solution_sketch: 'An odd root is defined for a negative number. We have $(-2)^3=-8$. So $f(-8)=-2$.'
+          - problem: 'Find all $x$ in the domain of $y=\sqrt[4]{x-3}$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x >= 3'
+            solution_sketch: 'An even root needs $x-3\ge 0$. So $x\ge 3$.'
+          - problem: 'Find the smallest value of $y=\sqrt[6]{x}+2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The root $\sqrt[6]{x}$ is at least $0$, and it equals $0$ at $x=0$. So the smallest value of $y$ is $2$.'
+          - problem: 'How many integers from $-5$ to $5$ lie in the domain of $y=\sqrt[4]{x+2}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The domain is $x\ge -2$. The integers from $-2$ to $5$ are $-2,-1,0,1,2,3,4,5$. So there are 8.'
+          - problem: 'Solve $\sqrt[4]{x}\le 2$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 <= x <= 16'
+            solution_sketch: 'The domain is $x\ge 0$. Raise both sides to the fourth power: $x\le 16$. So $0\le x\le 16$.'
+        constraints: 'domain, smallest value and values of even and odd roots as functions; small integer data; answers are numbers or inequalities'
+      - id: kp2
+        name: 'Formula of a root function from a point'
+        key_prerequisites: [nth-roots, inverse-functions]
+        exemplars:
+          - problem: 'The graph of $y=\sqrt[n]{x}$ passes through the point $(8,2)$. Find the natural number $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'We need $2^n=8$. So $n=3$.'
+          - problem: 'The graph of $y=\sqrt[n]{x}$ passes through the point $(81,3)$. Find the natural number $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'We need $3^n=81$. Since $81=3^4$, $n=4$.'
+          - problem: 'The graph of $y=a\sqrt{x}$ passes through the point $(9,12)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Substitute the point: $12=a\cdot 3$. So $a=4$.'
+          - problem: 'The graph of $y=a\sqrt[3]{x}$ passes through the point $(-8,-6)$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Substitute the point: $-6=a\cdot(-2)$. So $a=3$.'
+          - problem: 'The graph of $y=a\sqrt{x}$ passes through the point $(4,10)$. Find the value of $y$ at $x=25$.'
+            answer_contract: {"kind":"exact"}
+            answer: '25'
+            solution_sketch: 'Substitute the point: $10=2a$, so $a=5$. Then $y(25)=5\cdot 5=25$.'
+          - problem: 'The graph of $y=a\sqrt[4]{x}$ passes through the point $(81,12)$. Find the value of $y$ at $x=16$.'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'Substitute the point: $12=3a$, so $a=4$. Then $y(16)=4\cdot 2=8$.'
+        constraints: 'one graph point fixes the root degree n or the factor a; perfect powers only; answers are integers'
+      - id: kp3
+        name: 'Model with a power or root function'
+        key_prerequisites: [nth-roots, square-roots, cube-roots]
+        exemplars:
+          - problem: 'The side of a square is $s=\sqrt{A}$, where $A$ is the area in cm$^2$. Find the side in centimeters when $A=144$.'
+            answer_contract: {"kind":"exact"}
+            answer: '12'
+            solution_sketch: 'We have $s=\sqrt{144}=12$.'
+          - problem: 'The edge of a cube is $e=\sqrt[3]{V}$, where $V$ is the volume in cm$^3$. Find the edge in centimeters when $V=343$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'We have $e=\sqrt[3]{343}=7$.'
+          - problem: 'A model gives the distance $d$ in kilometers to the horizon as $d=4\sqrt{h}$, where $h$ is the height in meters. Find $d$ when $h=49$.'
+            answer_contract: {"kind":"exact"}
+            answer: '28'
+            solution_sketch: 'We have $d=4\sqrt{49}=4\cdot 7=28$.'
+          - problem: 'The brightness of a lamp at the distance $d$ meters is $B=90d^{-2}$. Find $B$ when $d=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'We have $B=\frac{90}{3^2}=\frac{90}{9}=10$.'
+          - problem: 'A stone falls for $t=\sqrt{\frac h5}$ seconds over $h$ meters. Find $h$ when $t=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '45'
+            solution_sketch: 'We have $\frac h5=9$. So $h=45$.'
+          - problem: 'The distance to the horizon is $d=4\sqrt{h}$. By what factor must $h$ grow so that $d$ becomes twice as large?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'We need $4\sqrt{h_2}=2\cdot 4\sqrt{h_1}$. So $\sqrt{h_2}=2\sqrt{h_1}$. Squaring gives $h_2=4h_1$.'
+        constraints: 'a given formula with a square root, a cube root or a negative power; evaluate, solve for the input or compare two inputs; exact integers'
+    diagnostic_exemplar:
+      problem: 'Let $f(x)=\sqrt[3]{x}$. Find $f(64)$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'We have $4^3=64$. So $f(64)=4$.'
+    anki_seeds:
+      - front: "The domain of $y=\\sqrt[n]{x}$ for even $n$ is ... ."
+        back: "$x\\ge 0$"
+        type: basic
+      - front: "The domain of $y=\\sqrt[n]{x}$ for odd $n$ is ... ."
+        back: "all real numbers"
+        type: basic
+
+  - id: graph-transformations-horizontal-modulus
+    lt_term: 'grafikų transformacijos; f(ax); |f(x)|'
+    name: 'Graph Transformations: f(ax), |f(x)|, Compositions'
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 120
+    prerequisites:
+      - id: function-stretches-reflections
+        weight: 0.6
+        key: true
+      - id: function-transformations-shifts
+        weight: 0.5
+        key: false
+      - id: piecewise-absolute-value-graphs
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Horizontal stretch f(ax)'
+        key_prerequisites: [function-stretches-reflections]
+        exemplars:
+          - problem: 'The graph of $y=f(x)$ passes through the point $(6,4)$. A point of the graph of $y=f(2x)$ has the $y$-coordinate $4$. Find its $x$-coordinate.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'We need $f(2x)=4$. This holds when $2x=6$. So $x=3$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(4,-3)$. Find the point of the graph of $y=f\left(\frac x2\right)$ that has the $y$-coordinate $-3$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(8,-3)'
+            solution_sketch: 'We need $\frac x2=4$. So $x=8$. The point is $(8,-3)$.'
+          - problem: 'Let $f(x)=x^2-1$ and $g(x)=f(2x)$. Find $g(3)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '35'
+            solution_sketch: 'We have $g(3)=f(6)=36-1=35$.'
+          - problem: 'The graph of $y=f(x)$ meets the $x$-axis at $x=-2$ and at $x=6$. Find the sum of the $x$-values where the graph of $y=f(3x)$ meets the $x$-axis.'
+            answer_contract: {"kind":"exact"}
+            answer: '4/3'
+            solution_sketch: 'We need $3x=-2$ or $3x=6$. So $x=-\frac23$ or $x=2$. The sum is $\frac43$.'
+          - problem: 'The graph of $y=f\left(\frac x3\right)$ comes from the graph of $y=f(x)$ by a horizontal stretch. Find the stretch factor.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Each point $(x,y)$ moves to $(3x,y)$. So the graph stretches horizontally by the factor $3$.'
+          - problem: 'Let $f(x)=x^2-4x$ and $g(x)=f(2x)$. Find all zeros of $g$. Give the set of zeros.'
+            answer_contract: {"kind":"set"}
+            answer: '{0, 2}'
+            solution_sketch: 'We have $g(x)=4x^2-8x=4x(x-2)$. The zeros are $0$ and $2$.'
+        constraints: 'f(ax) and f(x/a): x-coordinates divide or multiply by a; values, zeros and stretch factors; integer data'
+      - id: kp2
+        name: 'Graphs of |f(x)| and f(|x|)'
+        key_prerequisites: [piecewise-absolute-value-graphs, function-stretches-reflections]
+        exemplars:
+          - problem: 'Let $f(x)=x-4$. Find the value of $y=|f(x)|$ at $x=1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'We have $f(1)=-3$. So $|f(1)|=3$.'
+          - problem: 'Let $f(x)=x^2-9$. Find the value of $y=f(|x|)$ at $x=-2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-5'
+            solution_sketch: 'We have $|-2|=2$. So the value is $f(2)=4-9=-5$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(3,-7)$. Find the $y$-coordinate of the point of $y=|f(x)|$ with $x=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The modulus turns a negative value into a positive value. So the $y$-coordinate is $|-7|=7$.'
+          - problem: 'Let $f(x)=2x-6$. Solve $|f(x)|=4$. List all solutions.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '1, 5'
+            solution_sketch: 'We have $2x-6=4$ or $2x-6=-4$. So $x=5$ or $x=1$.'
+          - problem: 'Let $f(x)=x^2-4x$. How many solutions does $f(|x|)=-3$ have?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Put $t=|x|$. Then $t^2-4t+3=0$, so $t=1$ or $t=3$. Each positive $t$ gives two values of $x$. So there are 4 solutions.'
+          - problem: 'Let $f(x)=x^2-4x$. Find the largest value of $y=|f(x)|$ on the interval $[0,3]$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'On $[0,3]$ the value of $f$ goes from $0$ down to $-4$ at $x=2$ and up to $-3$ at $x=3$. The smallest value of $f$ is $-4$. So the largest value of $|f|$ is $4$.'
+        constraints: '|f(x)| reflects negative values up; f(|x|) copies the right half to the left; values, solutions and extremes; integer data'
+      - id: kp3
+        name: 'Composition of two transformations'
+        key_prerequisites: [function-stretches-reflections, function-transformations-shifts]
+        exemplars:
+          - problem: 'The graph of $y=f(x)$ passes through the point $(2,5)$. Find the point of the graph of $y=f(x-3)+1$ that comes from it.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(5,6)'
+            solution_sketch: 'The shift $x-3$ moves the point $3$ units to the right. The term $+1$ moves it $1$ unit up. So the point is $(5,6)$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(4,6)$. Find the point of the graph of $y=2f\left(\frac x2\right)$ that comes from it.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(8,12)'
+            solution_sketch: 'The factor $\frac12$ in the argument doubles the $x$-coordinate. The factor $2$ doubles the $y$-coordinate. So the point is $(8,12)$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(-3,2)$. Find the point of the graph of $y=f(-x)+3$ that comes from it.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(3,5)'
+            solution_sketch: 'The reflection in the $y$-axis changes $-3$ into $3$. The term $+3$ moves the point $3$ units up. So the point is $(3,5)$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(6,-2)$. Find the point of the graph of $y=|f(2x)|$ that comes from it.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(3,2)'
+            solution_sketch: 'The factor $2$ in the argument halves the $x$-coordinate. The modulus changes $-2$ into $2$. So the point is $(3,2)$.'
+          - problem: 'Let $f(x)=|x|$ and $g(x)=f\left(\frac x2\right)-1$. Find all zeros of $g$. Give the set of zeros.'
+            answer_contract: {"kind":"set"}
+            answer: '{-2, 2}'
+            solution_sketch: 'We need $\left|\frac x2\right|=1$. So $x=2$ or $x=-2$.'
+          - problem: 'The graph of $y=f(x)$ passes through the point $(6,4)$. Find the point of the graph of $y=3f(2x-4)-1$ that comes from it.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(5,11)'
+            solution_sketch: 'We need $2x-4=6$. So $x=5$. Then $y=3\cdot 4-1=11$. The point is $(5,11)$.'
+        constraints: 'two transformations at once: shift, stretch, reflection or modulus; track one point or find zeros; integer data'
+    diagnostic_exemplar:
+      problem: 'The graph of $y=f(x)$ passes through the point $(8,5)$. A point of the graph of $y=f(2x)$ has the $y$-coordinate $5$. Find its $x$-coordinate.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'We need $2x=8$. So $x=4$.'
+    anki_seeds:
+      - front: "The graph of $y=f(ax)$ compresses the graph of $y=f(x)$ horizontally by the factor ... (for $a>1$)."
+        back: "$a$"
+        type: basic
+      - front: "The graph of $y=|f(x)|$ reflects the parts of $y=f(x)$ below the $x$-axis ... ."
+        back: "above the $x$-axis"
+        type: basic
+
+  - id: graphical-solving-equations-inequalities
+    lt_term: 'lygčių, nelygybių ir sistemų sprendimas grafiškai'
+    name: Graphical Solving of Equations, Inequalities and Systems
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: power-functions
+        weight: 0.6
+        key: true
+      - id: graphing-systems
+        weight: 0.5
+        key: false
+      - id: reading-function-graphs
+        weight: 0.4
+        key: false
+      - id: root-functions
+        weight: 0.4
+        key: false
+      - id: graph-transformations-horizontal-modulus
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Equation f(x)=g(x) from sketches'
+        key_prerequisites: [power-functions, root-functions, graphing-systems]
+        exemplars:
+          - problem: 'At how many points do the graphs of $y=x^3$ and $y=x$ meet?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Solve $x^3=x$. Then $x(x-1)(x+1)=0$, so $x=0$, $x=1$ or $x=-1$. The graphs meet at 3 points.'
+          - problem: 'Solve $\sqrt{x}=x$. List all solutions.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '0, 1'
+            solution_sketch: 'The graphs of $y=\sqrt{x}$ and $y=x$ meet where $x=x^2$. So $x=0$ or $x=1$.'
+          - problem: 'Solve $\frac1x=x$. List all solutions.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: '-1, 1'
+            solution_sketch: 'The graphs of $y=\frac1x$ and $y=x$ meet where $x^2=1$. So $x=-1$ or $x=1$.'
+          - problem: 'Solve $2(x-1)^3=16$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Divide by $2$: $(x-1)^3=8$. So $x-1=2$ and $x=3$.'
+          - problem: 'Solve $\sqrt{x}=12-x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'Square both sides: $x=144-24x+x^2$, so $x^2-25x+144=0$. The roots are $9$ and $16$. At $x=16$ we have $\sqrt{16}=4\ne-4$. So $x=9$.'
+          - problem: 'Find all $x$-coordinates of the points where the graphs of $y=x^4$ and $y=x^2$ meet. Give the set.'
+            answer_contract: {"kind":"set"}
+            answer: '{-1, 0, 1}'
+            solution_sketch: 'Solve $x^4=x^2$. Then $x^2(x^2-1)=0$. So $x=0$, $x=1$ or $x=-1$.'
+        constraints: 'meeting points of power, root and reciprocal graphs with a line or another power; exact integer answers'
+      - id: kp2
+        name: 'Inequality f(x)>g(x) from sketches'
+        key_prerequisites: [power-functions, root-functions, graphing-systems]
+        exemplars:
+          - problem: 'Solve $x^2\le 8-x^2$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-2 <= x <= 2'
+            solution_sketch: 'Move terms: $2x^2\le 8$, so $x^2\le 4$. Then $-2\le x\le 2$.'
+          - problem: 'Solve $x^2>x+2$. Write the answer as inequalities.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x < -1 or x > 2'
+            solution_sketch: 'The graphs meet where $x^2=x+2$, at $x=-1$ and $x=2$. The parabola lies above the line outside these points. So $x<-1$ or $x>2$.'
+          - problem: 'Solve $\sqrt{x}<x$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x > 1'
+            solution_sketch: 'The graphs meet at $x=0$ and $x=1$. For $x>1$ the line lies above the root curve. For $0<x<1$ it lies below. So $x>1$.'
+          - problem: 'Solve $\frac1x>x$ for $x>0$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '0 < x < 1'
+            solution_sketch: 'The graphs meet at $x=1$ for $x>0$. For $0<x<1$ the curve $y=\frac1x$ lies above the line. So $0<x<1$.'
+          - problem: 'Solve $2\sqrt{x-1}<4$. Write the answer as an inequality.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '1 <= x < 5'
+            solution_sketch: 'The domain is $x\ge 1$. Divide by $2$: $\sqrt{x-1}<2$. Then $x-1<4$, so $x<5$. The answer is $1\le x<5$.'
+          - problem: 'Solve $x^3\ge x$. Write the answer as inequalities.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: '-1 <= x <= 0 or x >= 1'
+            solution_sketch: 'Write $x(x-1)(x+1)\ge 0$. The signs are negative for $x<-1$, positive on $(-1,0)$, negative on $(0,1)$ and positive for $x>1$. So $-1\le x\le 0$ or $x\ge 1$.'
+        constraints: 'compare two power or root graphs; the meeting points are integers; answers are intervals; the domain limits some items'
+      - id: kp3
+        name: 'System of two equations with a non-linear graph'
+        key_prerequisites: [power-functions, root-functions, graphing-systems]
+        exemplars:
+          - problem: 'Find the point with $x>0$ that satisfies both $y=x^2$ and $y=2x+3$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(3,9)'
+            solution_sketch: 'Solve $x^2=2x+3$. Then $x^2-2x-3=0$, so $x=3$ or $x=-1$. For $x=3$ we get $y=9$.'
+          - problem: 'Find the point with $x>0$ that satisfies both $y=\frac1x$ and $y=x$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(1,1)'
+            solution_sketch: 'Solve $\frac1x=x$. Then $x^2=1$. For $x>0$ we get $x=1$ and $y=1$.'
+          - problem: 'Find the point that satisfies both $y=\sqrt{x}$ and $y=6-x$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(4,2)'
+            solution_sketch: 'Put $y=\sqrt{x}$ in the second equation: $\sqrt{x}=6-x$. Then $x=4$, because $x=9$ gives $\sqrt9\ne-3$. So $y=2$.'
+          - problem: 'Find the point with $x>0$ that satisfies both $y=x^2$ and $y=18-x^2$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(3,9)'
+            solution_sketch: 'Solve $x^2=18-x^2$. Then $x^2=9$. For $x>0$ we get $x=3$ and $y=9$.'
+          - problem: 'Find the point with $x<0$ that satisfies both $y=x^3$ and $y=3x-2$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(-2,-8)'
+            solution_sketch: 'Solve $x^3-3x+2=0$. This is $(x-1)^2(x+2)=0$. The root with $x<0$ is $x=-2$. Then $y=-8$.'
+          - problem: 'Find the point with $x<0$ and $y\ne 0$ that satisfies both $y=x^2$ and $y=2|x|$.'
+            answer_contract: {"kind":"coordinates","arity":2}
+            answer: '(-2,4)'
+            solution_sketch: 'For $x<0$ we have $|x|=-x$. Solve $x^2=-2x$. Then $x(x+2)=0$. The root with $x<0$ is $x=-2$. Then $y=4$.'
+        constraints: 'one non-linear equation (power, root, reciprocal or modulus) with a line or a parabola; the answer is a point chosen by a sign condition; integer coordinates'
+    diagnostic_exemplar:
+      problem: 'Solve $x^2=x$. List all solutions.'
+      answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+      answer: '0, 1'
+      solution_sketch: 'Write $x(x-1)=0$. So $x=0$ or $x=1$.'
+    anki_seeds:
+      - front: "The solutions of $f(x)=g(x)$ are the ... of the points where the graphs meet."
+        back: "$x$-coordinates"
+        type: basic
+      - front: "The solutions of $f(x)>g(x)$ are the $x$-values where the graph of $f$ lies ... the graph of $g$."
+        back: "above"
         type: basic

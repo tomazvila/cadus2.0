@@ -3024,6 +3024,35 @@ topics:
           form: rational_exponent
         solution_sketch: A power of a power multiplies the exponents. Since $\frac{3}{4} \cdot 4 = 3$, the result is $x^3$.
       constraints: same product/quotient/power rules, fractional arithmetic
+    - id: kp6
+      name: 'Why a^(m/n) is the n-th root of a^m and why the power rules hold'
+      key_prerequisites: [power-rule-exponents, square-roots, negative-zero-exponents]
+      exemplars:
+        - problem: 'Let $a>0$. Find $k$ if $\left(a^{3/4}\right)^4=a^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '3'
+          solution_sketch: 'Multiply the exponents: $\frac{3}{4}\cdot 4=3$. So $k=3$.'
+        - problem: 'Let $a>0$. Find $k$ if $\dfrac{a^{7/4}}{a^{1/2}}=a^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '5/4'
+          solution_sketch: 'Subtract the exponents: $\frac{7}{4}-\frac{2}{4}=\frac{5}{4}$. So $k=\frac{5}{4}$.'
+        - problem: 'Let $a>0$. Find $k$ if $\left(a^{3/2}\right)^{4/3}=a^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '2'
+          solution_sketch: 'Multiply the exponents: $\frac{3}{2}\cdot\frac{4}{3}=2$. So $k=2$.'
+        - problem: 'Let $a>0$. Find $k$ if $a^{2/3}\cdot a^{5/6}=a^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '3/2'
+          solution_sketch: 'Add the exponents: $\frac{2}{3}+\frac{5}{6}=\frac{4}{6}+\frac{5}{6}=\frac{3}{2}$. So $k=\frac{3}{2}$.'
+        - problem: 'Let $a>0$. Find $k$ if $\sqrt[5]{a^2}=a^k$.'
+          answer_contract: {"kind":"exact"}
+          answer: '2/5'
+          solution_sketch: 'The $5$-th root of $a^2$ is $a^{2/5}$. So $k=\frac{2}{5}$.'
+        - problem: 'Compute $27^{4/3}$.'
+          answer_contract: {"kind":"exact"}
+          answer: '81'
+          solution_sketch: 'The cube root of $27$ is $3$. Raise $3$ to the power $4$: $3^4=81$. So the answer is $81$.'
+      constraints: 'base a above 0; rational exponents with small denominators; decidable items find an exponent k; written items raise both sides to a power and use the integer rules'
     diagnostic_exemplar:
       problem: Compute $27^{2/3} \cdot 27^{-1/3}$.
       answer: '3'
@@ -3437,4 +3466,518 @@ topics:
     anki_seeds:
       - front: "sqrt(x) = k has a solution only when ..."
         back: "k >= 0 (then x = k^2); always check for extraneous roots after squaring"
+        type: basic
+
+  - id: nth-roots
+    lt_term: 'n-tojo laipsnio šaknis; šaknų savybės'
+    name: 'n-th Roots: Definition, Domain, Rules'
+    core: true
+    difficulty: 0.4
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: square-roots
+        weight: 0.6
+        key: true
+      - id: cube-roots
+        weight: 0.5
+        key: false
+      - id: rational-exponents
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Definition of the n-th root for even and odd n'
+        key_prerequisites: [square-roots, cube-roots]
+        exemplars:
+          - problem: 'Find $\sqrt[4]{256}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The number 4 is not negative, and $4^4=256$. So $\sqrt[4]{256}=4$.'
+          - problem: 'Find $\sqrt[3]{-64}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-4'
+            solution_sketch: 'An odd root of a negative number is negative. Since $(-4)^3=-64$, the root is $-4$.'
+          - problem: 'How many real numbers $x$ satisfy $x^4=81$?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Both 3 and $-3$ give $3^4=(-3)^4=81$. No other real number does. The count is 2.'
+          - problem: 'Compute $\sqrt[3]{\frac{27}{125}}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/5'
+            solution_sketch: 'The cube of $\frac{3}{5}$ is $\frac{27}{125}$. So the root is $\frac{3}{5}$.'
+          - problem: 'Find the real number $x$ with $x^5=-243$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-3'
+            solution_sketch: 'Since $(-3)^5=-243$, the number is $x=-3$. An odd power has only one real root.'
+          - problem: 'Compute $\sqrt[4]{625}-\sqrt[3]{-125}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The root $\sqrt[4]{625}$ is 5 because $5^4=625$. The root $\sqrt[3]{-125}$ is $-5$. So the difference is $5-(-5)=10$.'
+        constraints: 'values of roots of index 3 to 6 of exact powers, with negative radicands for odd index; answers are whole numbers or simple fractions'
+      - id: kp2
+        name: 'Domain of an n-th root of an expression'
+        key_prerequisites: [square-roots, simplifying-radicals]
+        exemplars:
+          - problem: 'Compute $\sqrt[3]{x-5}$ for $x=-3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-2'
+            solution_sketch: 'Put $x=-3$. Then $x-5=-8$. An odd root of a negative number exists, so $\sqrt[3]{-8}=-2$.'
+          - problem: 'Find the smallest integer $x$ for which $\sqrt[4]{x-3}$ is defined.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'An even root needs a radicand that is not negative. So $x-3\ge 0$ and $x\ge 3$. The smallest integer is 3.'
+          - problem: 'Find the domain of $\sqrt[4]{2x-6}$. Write it as an inequality in $x$.'
+            answer_contract: {"kind":"inequality_union"}
+            answer: 'x >= 3'
+            solution_sketch: 'An even root needs a radicand that is not negative. So $2x-6\ge 0$. Then $x\ge 3$.'
+          - problem: 'Find the smallest integer $x$ for which $\sqrt[6]{2x-7}$ is defined.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The index 6 is even, so $2x-7\ge 0$. Then $x\ge 3.5$. The smallest integer is 4.'
+          - problem: 'How many integers $x$ make $\sqrt[6]{9-x^2}$ defined?'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The index is even, so $9-x^2\ge 0$. Then $x^2\le 9$ and $-3\le x\le 3$. The integers are $-3, -2, \dots, 3$. The count is 7.'
+          - problem: 'How many integers belong to the domain of $\sqrt[4]{x+2}+\sqrt{5-x}+\sqrt[3]{x-20}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The fourth root needs $x+2\ge 0$, so $x\ge -2$. The square root needs $5-x\ge 0$, so $x\le 5$. The cube root has no limit. The integers from $-2$ to 5 give 8 numbers.'
+        constraints: 'evaluate an odd root at a negative radicand; state or count the x that make an even root defined; radicands are linear or 9-x^2'
+      - id: kp3
+        name: 'Rules for the root of a root and the 2n-th root'
+        key_prerequisites: [square-roots, rational-exponents]
+        exemplars:
+          - problem: 'Compute $\sqrt[3]{\sqrt{64}}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The root $\sqrt{64}$ is 8. Then $\sqrt[3]{8}=2$. The answer is 2.'
+          - problem: 'The root $\sqrt[4]{49}$ equals $\sqrt{a}$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'Write $49=7^2$. For $b\ge 0$ the rule is $\sqrt[2n]{b^2}=\sqrt[n]{b}$. So $\sqrt[4]{49}=\sqrt[4]{7^2}=\sqrt{7}$ and $a=7$.'
+          - problem: 'For $x>0$, the expression $\sqrt[3]{\sqrt[4]{x}}$ equals $\sqrt[n]{x}$. Find $n$.'
+            answer_contract: {"kind":"exact"}
+            answer: '12'
+            solution_sketch: 'The rule is $\sqrt[m]{\sqrt[k]{x}}=\sqrt[mk]{x}$. Here $m=3$ and $k=4$. So $n=12$.'
+          - problem: 'Compute $\sqrt[3]{\sqrt{729}}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The root $\sqrt{729}$ is 27 because $27^2=729$. Then $\sqrt[3]{27}=3$. The answer is 3.'
+          - problem: 'Compute $\sqrt[3]{\sqrt{15625}}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The root $\sqrt{15625}$ is 125 because $125^2=15625$. Then $\sqrt[3]{125}=5$. The answer is 5.'
+          - problem: 'For $a>0$, the expression $\sqrt[3]{a\sqrt[4]{a}}$ equals $a^p$. Find $p$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/12'
+            solution_sketch: 'Write $\sqrt[4]{a}=a^{1/4}$. Then $a\cdot a^{1/4}=a^{5/4}$. The cube root gives $a^{5/12}$. So $p=\frac{5}{12}$.'
+        constraints: 'root of a root and 2n-th root of a square, with numbers that are perfect powers or with a letter and an exponent to find; answers are whole numbers or a fraction'
+    diagnostic_exemplar:
+      problem: 'Find $\sqrt[5]{-32}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '-2'
+      solution_sketch: 'Since $(-2)^5=-32$, the root is $-2$.'
+    anki_seeds:
+      - front: "An even root of a negative number has ... real value."
+        back: "no"
+        type: basic
+      - front: "$\\sqrt[m]{\\sqrt[k]{x}}=\\sqrt[?]{x}$. The index is ... ."
+        back: "mk"
+        type: basic
+
+  - id: roots-letter-expressions
+    lt_term: 'šaknys raidiniuose reiškiniuose; vardiklio iracionalumo naikinimas'
+    name: Roots in Letter Expressions and Denominators
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: expression
+    expected_time_secs: 150
+    prerequisites:
+      - id: nth-roots
+        weight: 0.6
+        key: true
+      - id: simplifying-radicals-variables
+        weight: 0.5
+        key: false
+      - id: rationalizing-denominators
+        weight: 0.5
+        key: false
+      - id: modulus-real-numbers
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'sqrt(a^2)=|a| and the 2n-th root of a^(2n)'
+        key_prerequisites: [modulus-real-numbers, nth-roots]
+        exemplars:
+          - problem: 'Compute $\sqrt{(-7)^2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The square $(-7)^2$ is 49, and $\sqrt{49}=7$. The rule is $\sqrt{a^2}=|a|$. So the result is $|-7|=7$.'
+          - problem: 'Compute $\sqrt[4]{(-3)^4}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The power $(-3)^4$ is 81, and $\sqrt[4]{81}=3$. The rule is $\sqrt[4]{a^4}=|a|$. So the result is $|-3|=3$.'
+          - problem: 'Find the value of $\sqrt{(x-4)^2}$ for $x=1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Put $x=1$. Then $\sqrt{(-3)^2}=|-3|=3$.'
+          - problem: 'Simplify $\sqrt{(x-9)^2}$ for $x<9$. Write the answer without a modulus.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '9-x'
+            solution_sketch: 'The rule is $\sqrt{a^2}=|a|$, so the root is $|x-9|$. For $x<9$ the number $x-9$ is negative. So $|x-9|=9-x$.'
+          - problem: 'Simplify $\sqrt{x^2-14x+49}+x$ for $x>7$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '2*x-7'
+            solution_sketch: 'The radicand is $(x-7)^2$. So the root is $|x-7|$. For $x>7$ it equals $x-7$. The sum is $x-7+x=2x-7$.'
+          - problem: 'Simplify $\sqrt[4]{(x-3)^4}-\sqrt[3]{(x-3)^3}$ for $x<3$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '6-2*x'
+            solution_sketch: 'The first root is $|x-3|$, and it equals $3-x$ for $x<3$. The second root is $x-3$, because an odd root keeps the sign. The difference is $(3-x)-(x-3)=6-2x$.'
+        constraints: 'even root of an even power gives the modulus; the learner removes the modulus with a condition on x; one item mixes an even and an odd root'
+      - id: kp2
+        name: 'Denominators with a cube root'
+        key_prerequisites: [rationalizing-denominators, nth-roots]
+        exemplars:
+          - problem: 'Multiply $\sqrt[3]{2}$ by $\sqrt[3]{m}$ to get 2. Find $m$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The product is $\sqrt[3]{2m}$. For the result 2 we need $2m=8$. So $m=4$.'
+          - problem: 'Write $\frac{6}{\sqrt[3]{4}}$ in the form $a\sqrt[3]{2}$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Multiply the top and the bottom by $\sqrt[3]{2}$. The bottom becomes $\sqrt[3]{8}=2$. The fraction is $\frac{6\sqrt[3]{2}}{2}=3\sqrt[3]{2}$. So $a=3$.'
+          - problem: 'Write $\frac{10}{\sqrt[3]{25}}$ in the form $a\sqrt[3]{5}$. Find $a$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Multiply the top and the bottom by $\sqrt[3]{5}$. The bottom becomes $\sqrt[3]{125}=5$. The fraction is $\frac{10\sqrt[3]{5}}{5}=2\sqrt[3]{5}$. So $a=2$.'
+          - problem: 'Write $\frac{3}{\sqrt[3]{9}}$ in the form $\sqrt[3]{m}$. Find $m$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Multiply the top and the bottom by $\sqrt[3]{3}$. The bottom becomes $\sqrt[3]{27}=3$. The fraction is $\frac{3\sqrt[3]{3}}{3}=\sqrt[3]{3}$. So $m=3$.'
+          - problem: 'Multiply the top and the bottom of $\frac{3}{\sqrt[3]{5}+\sqrt[3]{2}}$ by $\sqrt[3]{25}-\sqrt[3]{10}+\sqrt[3]{4}$. Find the new bottom as a whole number.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'Use $(a+b)(a^2-ab+b^2)=a^3+b^3$ with $a=\sqrt[3]{5}$ and $b=\sqrt[3]{2}$. Then $a^2=\sqrt[3]{25}$, $ab=\sqrt[3]{10}$ and $b^2=\sqrt[3]{4}$. The new bottom is $5+2=7$.'
+          - problem: 'Find the value of $\frac{2}{\sqrt[3]{3}-1}-\sqrt[3]{9}-\sqrt[3]{3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'Use $(a-b)(a^2+ab+b^2)=a^3-b^3$ with $a=\sqrt[3]{3}$ and $b=1$. Multiply the top and the bottom by $\sqrt[3]{9}+\sqrt[3]{3}+1$. The bottom becomes $3-1=2$, so the fraction equals $\sqrt[3]{9}+\sqrt[3]{3}+1$. The value is 1.'
+        constraints: 'the learner finds the multiplier or the new number after the cube root leaves the denominator; the sum and difference of cubes are on the formula sheet; answers are whole numbers'
+      - id: kp3
+        name: 'Transform a letter expression with roots'
+        key_prerequisites: [simplifying-radicals-variables, rationalizing-denominators]
+        exemplars:
+          - problem: 'Simplify $\sqrt{x}\cdot\sqrt{x^3}$ for $x>0$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'x^2'
+            solution_sketch: 'For $x>0$ the product rule gives $\sqrt{x\cdot x^3}=\sqrt{x^4}$. The root of $x^4$ is $x^2$.'
+          - problem: 'Simplify $\left(\sqrt{a}+\sqrt{b}\right)^2-2\sqrt{ab}$ for $a>0$ and $b>0$.'
+            answer_contract: {"kind":"function","vars":["a","b"]}
+            answer: 'a+b'
+            solution_sketch: 'Expand the square: $\left(\sqrt{a}+\sqrt{b}\right)^2=a+2\sqrt{ab}+b$. Subtract $2\sqrt{ab}$. The result is $a+b$.'
+          - problem: 'Simplify $\frac{x-4}{\sqrt{x}-2}$ for $x>0$ and $x\ne 4$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'sqrt(x)+2'
+            solution_sketch: 'Write $x-4=\left(\sqrt{x}-2\right)\left(\sqrt{x}+2\right)$. Cancel the factor $\sqrt{x}-2$. The result is $\sqrt{x}+2$.'
+          - problem: 'Simplify $\frac{x^{3/2}+x}{\sqrt{x}+1}$ for $x>0$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: 'x'
+            solution_sketch: 'Write $x^{3/2}+x=x\left(\sqrt{x}+1\right)$. Cancel the factor $\sqrt{x}+1$. The result is $x$.'
+          - problem: 'Simplify $\frac{1}{\sqrt{x}-1}-\frac{1}{\sqrt{x}+1}$ for $x>1$.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '2/(x-1)'
+            solution_sketch: 'The common bottom is $\left(\sqrt{x}-1\right)\left(\sqrt{x}+1\right)=x-1$. The top is $\left(\sqrt{x}+1\right)-\left(\sqrt{x}-1\right)=2$. The result is $\frac{2}{x-1}$.'
+          - problem: 'Simplify $\frac{\sqrt{a}-\sqrt{b}}{\sqrt{a}+\sqrt{b}}+\frac{\sqrt{a}+\sqrt{b}}{\sqrt{a}-\sqrt{b}}$ for $a>b>0$.'
+            answer_contract: {"kind":"function","vars":["a","b"]}
+            answer: '2*(a+b)/(a-b)'
+            solution_sketch: 'The common bottom is $\left(\sqrt{a}\right)^2-\left(\sqrt{b}\right)^2=a-b$. The top is $\left(\sqrt{a}-\sqrt{b}\right)^2+\left(\sqrt{a}+\sqrt{b}\right)^2=2a+2b$. The result is $\frac{2(a+b)}{a-b}$.'
+        constraints: 'letter expressions with square roots and rational exponents; the learner factors, cancels or finds a common bottom; the answer is a short expression'
+    diagnostic_exemplar:
+      problem: 'Compute $\sqrt{(-9)^2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '9'
+      solution_sketch: 'The square $(-9)^2$ is 81, and $\sqrt{81}=9$.'
+    anki_seeds:
+      - front: "$\\sqrt{a^2}=$ ... for every real number $a$."
+        back: "|a|"
+        type: basic
+      - front: "$(a+b)(a^2-ab+b^2)=$ ... ."
+        back: "a^3+b^3"
+        type: basic
+
+  - id: rational-power-meaning-bracketing
+    lt_term: 'laipsnis su racionaliuoju rodikliu; kada neturi prasmės'
+    name: 'Rational Powers: Meaning, Bracketing, Comparison'
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 120
+    prerequisites:
+      - id: rational-exponents
+        weight: 0.6
+        key: true
+      - id: estimating-square-roots
+        weight: 0.4
+        key: false
+      - id: nth-roots
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'When a power with a rational exponent has no meaning'
+        key_prerequisites: [rational-exponents, nth-roots]
+        exemplars:
+          - problem: 'How many of the numbers $(-8)^{1/3}$, $(-8)^{1/2}$, $(-16)^{1/4}$ and $(-1)^{1/5}$ have a value among the real numbers? Count the real odd root of a negative number as a value.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'A root of a negative number exists only for an odd index. The first and the fourth number have the indexes 3 and 5, so they have values. The second and the third number have the even indexes 2 and 4, so they have no value. The count is 2.'
+          - problem: 'For how many integers $n$ with $2 \le n \le 9$ has $(-5)^{1/n}$ a value among the real numbers? Count the real odd root of a negative number as a value.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The index $n$ must be odd. The odd values are 3, 5, 7 and 9. The count is 4.'
+          - problem: 'Find the value of $(-8)^{1/3}+(-32)^{1/5}$. Use the real odd root of a negative number.'
+            answer_contract: {"kind":"exact"}
+            answer: '-4'
+            solution_sketch: 'The first term is $\sqrt[3]{-8}=-2$. The second term is $\sqrt[5]{-32}=-2$. The sum is $-4$.'
+          - problem: 'Find the smallest integer $x$ for which $(x-2.5)^{1/4}$ has a value among the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The index 4 is even, so the base must not be negative. Then $x-2.5\ge 0$ and $x\ge 2.5$. The smallest integer is 3.'
+          - problem: 'Find the largest integer $x$ for which $(10-4x)^{1/2}$ has a value among the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The index 2 is even, so $10-4x\ge 0$. Then $x\le 2.5$. The largest integer is 2.'
+          - problem: 'For how many integers $x$ with $-3 \le x \le 3$ has $x^{-1/2}$ a value among the real numbers?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The power $x^{-1/2}$ equals $\frac{1}{\sqrt{x}}$. The root needs $x\ge 0$, and the bottom must not be 0. So $x>0$. The integers 1, 2 and 3 fit, so the count is 3.'
+        constraints: 'negative bases with odd or even root index, and bases with a letter; the learner decides which values exist and counts or finds the smallest or largest integer; the items state that an odd root of a negative number counts as a value'
+      - id: kp2
+        name: 'Bracket a rational power between two integers'
+        key_prerequisites: [estimating-square-roots, rational-exponents]
+        exemplars:
+          - problem: 'Find the integer $n$ with $n < 2^{3/2} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The power $2^{3/2}$ equals $\sqrt{8}$. Since $4<8<9$, we get $2<\sqrt{8}<3$. So $n=2$.'
+          - problem: 'Find the integer $n$ with $n < 50^{1/3} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The cubes near 50 are $3^3=27$ and $4^3=64$. Since $27<50<64$, we get $3<\sqrt[3]{50}<4$. So $n=3$.'
+          - problem: 'Find the integer $n$ with $n < 100^{1/3} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The cubes near 100 are $4^3=64$ and $5^3=125$. Since $64<100<125$, we get $4<\sqrt[3]{100}<5$. So $n=4$.'
+          - problem: 'Find the integer $n$ with $n < 5^{3/2} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '11'
+            solution_sketch: 'The power $5^{3/2}$ equals $\sqrt{125}$. Since $11^2=121$ and $12^2=144$, we get $11<\sqrt{125}<12$. So $n=11$.'
+          - problem: 'Find the integer $n$ with $n < 20^{3/4} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'The fourth power of $20^{3/4}$ is $20^3=8000$. We know that $9^4=6561$ and $10^4=10000$. Since $6561<8000<10000$, the power lies between 9 and 10. So $n=9$.'
+          - problem: 'Find the integer $n$ with $n < 4^{5/3} < n+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '10'
+            solution_sketch: 'The cube of $4^{5/3}$ is $4^5=1024$. We know that $10^3=1000$ and $11^3=1331$. Since $1000<1024<1331$, the power lies between 10 and 11. So $n=10$.'
+        constraints: 'bracket a power a^(p/q) between consecutive integers by raising to the power q; every item has a clear integer answer, with no value near an integer'
+      - id: kp3
+        name: 'Compare two rational powers'
+        key_prerequisites: [rational-exponents, estimating-square-roots]
+        exemplars:
+          - problem: 'Find the larger of the numbers $4^{1/2}$ and $4^{1/3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4^(1/2)'
+            solution_sketch: 'The base 4 is more than 1. For a base more than 1, a larger exponent gives a larger power. Since $\frac{1}{2}>\frac{1}{3}$, the larger number is $4^{1/2}$.'
+          - problem: 'Find the smaller of the numbers $\left(\frac{1}{2}\right)^{1/2}$ and $\left(\frac{1}{2}\right)^{1/3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '(1/2)^(1/2)'
+            solution_sketch: 'The base $\frac{1}{2}$ is less than 1. For such a base, a larger exponent gives a smaller power. Since $\frac{1}{2}>\frac{1}{3}$, the smaller number is $\left(\frac{1}{2}\right)^{1/2}$.'
+          - problem: 'Find the larger of the numbers $2^{1/2}$ and $3^{1/3}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3^(1/3)'
+            solution_sketch: 'Raise both numbers to the power 6. Then $\left(2^{1/2}\right)^6=2^3=8$ and $\left(3^{1/3}\right)^6=3^2=9$. Since $9>8$, the larger number is $3^{1/3}$.'
+          - problem: 'Find the smaller of the numbers $5^{1/5}$ and $2^{1/2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5^(1/5)'
+            solution_sketch: 'Raise both numbers to the power 10. Then $\left(5^{1/5}\right)^{10}=5^2=25$ and $\left(2^{1/2}\right)^{10}=2^5=32$. Since $25<32$, the smaller number is $5^{1/5}$.'
+          - problem: 'How many integers lie strictly between $3^{3/2}$ and $2^{7/2}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The power $3^{3/2}$ equals $\sqrt{27}$, and $25<27<36$, so it lies between 5 and 6. The power $2^{7/2}$ equals $\sqrt{128}$, and $121<128<144$, so it lies between 11 and 12. The integers between them are 6, 7, 8, 9, 10 and 11. The count is 6.'
+          - problem: 'Find the number in the middle when $2^{1/2}$, $3^{1/3}$ and $5^{1/5}$ are put in order from least to greatest.'
+            answer_contract: {"kind":"exact"}
+            answer: '2^(1/2)'
+            solution_sketch: 'Raise the three numbers to the power 30. The results are $2^{15}=32768$, $3^{10}=59049$ and $5^{6}=15625$. The order is $5^{1/5}<2^{1/2}<3^{1/3}$. The number in the middle is $2^{1/2}$.'
+        constraints: 'compare two numbers a^(p/q) by a common power or by the size of the base; the answer is one of the given numbers, written as a power, or a count'
+    diagnostic_exemplar:
+      problem: 'Find the smallest integer $x$ for which $(x-1.5)^{1/2}$ has a value among the real numbers.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The index is even, so $x-1.5\ge 0$. Then $x\ge 1.5$. The smallest integer is 2.'
+    anki_seeds:
+      - front: "$(-4)^{1/2}$ has no real value because the root index 2 is ... ."
+        back: "even"
+        type: basic
+      - front: "To compare $2^{1/2}$ and $3^{1/3}$, raise both to the power ... ."
+        back: "6"
+        type: basic
+
+  - id: irrational-equations-extended
+    lt_term: 'iracionaliosios lygtys'
+    name: 'Irrational Equations: Expression on One Side, Two Radicals, n-th Roots'
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 180
+    prerequisites:
+      - id: radical-equations-basic
+        weight: 0.6
+        key: true
+      - id: checking-a-solution
+        weight: 0.4
+        key: false
+      - id: nth-roots
+        weight: 0.5
+        key: false
+      - id: quadratic-formula
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'sqrt(f)=g with the condition g>=0'
+        key_prerequisites: [radical-equations-basic, quadratic-formula]
+        exemplars:
+          - problem: 'Solve $\sqrt{x+6}=x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Square both sides: $x+6=x^2$. Then $x^2-x-6=0$, and the roots are 3 and $-2$. The right side must not be negative, so $x=-2$ is out. The solution is 3.'
+          - problem: 'Solve $\sqrt{3x+4}=x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Square both sides: $3x+4=x^2$. Then $x^2-3x-4=0$, and the roots are 4 and $-1$. The right side must not be negative, so $x=-1$ is out. The solution is 4.'
+          - problem: 'Solve $\sqrt{x+2}=x-4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'Square both sides: $x+2=x^2-8x+16$. Then $x^2-9x+14=0$, and the roots are 2 and 7. The right side $x-4$ must not be negative, so $x\ge 4$. The solution is 7.'
+          - problem: 'Solve $\sqrt{x^2-5x+9}=x-1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '8/3'
+            solution_sketch: 'Square both sides: $x^2-5x+9=x^2-2x+1$. Then $8=3x$ and $x=\frac{8}{3}$. The right side is $\frac{5}{3}$, which is not negative. The solution is $\frac{8}{3}$.'
+          - problem: 'Find the sum of all solutions of $\sqrt{5x-1}=x+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Square both sides: $5x-1=x^2+2x+1$. Then $x^2-3x+2=0$, and the roots are 1 and 2. Both make $x+1$ positive, so both are solutions. The sum is $1+2=3$.'
+          - problem: 'Solve $\sqrt{4x+1}=2x-1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Square both sides: $4x+1=4x^2-4x+1$. Then $4x^2-8x=0$, and the roots are 0 and 2. For $x=0$ the right side is $-1$, so $x=0$ is out. The solution is 2.'
+        constraints: 'one radical equals a linear or quadratic expression g; the learner squares and keeps only the roots with g not negative; answers are numbers'
+      - id: kp2
+        name: 'Two radicals, square twice'
+        key_prerequisites: [radical-equations-basic, quadratic-formula]
+        exemplars:
+          - problem: 'Solve $\sqrt{x+5}=\sqrt{x}+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Square both sides: $x+5=x+2\sqrt{x}+1$. Then $4=2\sqrt{x}$ and $\sqrt{x}=2$. So $x=4$. Check: $\sqrt{9}=3=2+1$.'
+          - problem: 'Solve $\sqrt{x+7}-\sqrt{x}=1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'Write $\sqrt{x+7}=\sqrt{x}+1$ and square: $x+7=x+2\sqrt{x}+1$. Then $6=2\sqrt{x}$ and $\sqrt{x}=3$. So $x=9$. Check: $4-3=1$.'
+          - problem: 'Find the sum of all solutions of $\sqrt{2x+3}=\sqrt{x+1}+1$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'Square both sides: $2x+3=x+2+2\sqrt{x+1}$. Then $x+1=2\sqrt{x+1}$. Put $t=\sqrt{x+1}$, so $t^2=2t$ and $t=0$ or $t=2$. The roots are $x=-1$ and $x=3$, and both pass the check. The sum is 2.'
+          - problem: 'Solve $\sqrt{x+9}+\sqrt{x}=9$.'
+            answer_contract: {"kind":"exact"}
+            answer: '16'
+            solution_sketch: 'Write $\sqrt{x+9}=9-\sqrt{x}$ and square: $x+9=81-18\sqrt{x}+x$. Then $18\sqrt{x}=72$ and $\sqrt{x}=4$. So $x=16$. Check: $5+4=9$.'
+          - problem: 'Solve $\sqrt{x+3}+\sqrt{x-2}=5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'Write $\sqrt{x+3}=5-\sqrt{x-2}$ and square: $x+3=25-10\sqrt{x-2}+x-2$. Then $10\sqrt{x-2}=20$ and $\sqrt{x-2}=2$. So $x=6$. Check: $3+2=5$.'
+          - problem: 'Solve $\sqrt{x+4}-\sqrt{x-4}=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'Write $\sqrt{x+4}=2+\sqrt{x-4}$ and square: $x+4=4+4\sqrt{x-4}+x-4$. Then $4=4\sqrt{x-4}$ and $x-4=1$. So $x=5$. Check: $3-1=2$.'
+        constraints: 'an equation with two square roots; the learner isolates one root, squares, isolates the second root and squares again; answers are numbers'
+      - id: kp3
+        name: 'Equations with a cube root or a fourth root'
+        key_prerequisites: [nth-roots, radical-equations-basic]
+        exemplars:
+          - problem: 'Solve $\sqrt[3]{x+5}=3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '22'
+            solution_sketch: 'Raise both sides to the power 3: $x+5=27$. So $x=22$.'
+          - problem: 'Solve $\sqrt[3]{2x-1}=-3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-13'
+            solution_sketch: 'Raise both sides to the power 3: $2x-1=-27$. Then $2x=-26$ and $x=-13$. An odd root has a negative value, so this value is a solution.'
+          - problem: 'Solve $\sqrt[4]{x-1}=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '17'
+            solution_sketch: 'Raise both sides to the power 4: $x-1=16$. So $x=17$. The right side 2 is not negative.'
+          - problem: 'Solve $\sqrt[3]{x+2}=\sqrt[3]{3x-6}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Raise both sides to the power 3: $x+2=3x-6$. Then $8=2x$ and $x=4$.'
+          - problem: 'Find the larger solution of $\sqrt[3]{x^2-1}=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Raise both sides to the power 3: $x^2-1=8$. Then $x^2=9$ and $x=\pm 3$. The larger solution is 3.'
+          - problem: 'Find the smaller solution of $\sqrt[4]{x^2-9}=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-5'
+            solution_sketch: 'Raise both sides to the power 4: $x^2-9=16$. Then $x^2=25$ and $x=\pm 5$. Both values give a positive radicand. The smaller solution is $-5$.'
+        constraints: 'equations with a cube root or a fourth root of a linear or quadratic expression; the learner raises both sides to the power n; answers are whole numbers'
+      - id: kp4
+        name: 'Reject extraneous roots'
+        key_prerequisites: [checking-a-solution, radical-equations-basic]
+        exemplars:
+          - problem: 'Solve $\sqrt{12-x}=x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Square both sides: $12-x=x^2$. Then $x^2+x-12=0$, and the roots are 3 and $-4$. The root $-4$ makes the right side negative, so it is out. The solution is 3.'
+          - problem: 'Solve $x-1=\sqrt{x+5}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Square both sides: $x^2-2x+1=x+5$. Then $x^2-3x-4=0$, and the roots are 4 and $-1$. For $x=-1$ the left side is $-2$, so $x=-1$ is out. The solution is 4.'
+          - problem: 'How many real solutions has $\sqrt{2x+1}+3=0$?'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
+            solution_sketch: 'A square root is never negative. So $\sqrt{2x+1}=-3$ has no solution. The count is 0.'
+          - problem: 'Solve $x+\sqrt{x+4}=8$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'Write $\sqrt{x+4}=8-x$ and square: $x+4=64-16x+x^2$. Then $x^2-17x+60=0$, and the roots are 5 and 12. For $x=12$ the right side is $-4$, so it is out. Check $x=5$: $5+3=8$.'
+          - problem: 'Solve $x+\sqrt{2x+3}=6$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Write $\sqrt{2x+3}=6-x$ and square: $2x+3=36-12x+x^2$. Then $x^2-14x+33=0$, and the roots are 3 and 11. For $x=11$ the right side is $-5$, so it is out. Check $x=3$: $3+3=6$.'
+          - problem: 'Solve $\sqrt{x-4}+\sqrt{2x-4}=2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Write $\sqrt{x-4}=2-\sqrt{2x-4}$ and square: $x-4=4-4\sqrt{2x-4}+2x-4$. Then $4\sqrt{2x-4}=x+4$. Square again: $x^2-24x+80=0$, so $x=4$ or $x=20$. Check $x=20$: $4+6=10$, not 2, so it is out. Check $x=4$: $0+2=2$.'
+        constraints: 'equations where one root fails the check; the answer is the one root that passes, or a count of 0; one item has a sum with no solution'
+    diagnostic_exemplar:
+      problem: 'Solve $\sqrt{x+1}=3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'Square both sides: $x+1=9$. So $x=8$.'
+    anki_seeds:
+      - front: "After you square both sides of an irrational equation, do a ... of every root."
+        back: "check"
+        type: basic
+      - front: "In $\\sqrt{f}=g$ the right side $g$ must be ... ."
+        back: "not negative"
         type: basic

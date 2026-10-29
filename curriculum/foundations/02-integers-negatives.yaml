@@ -2386,3 +2386,250 @@ topics:
       - front: "In a signed word problem, gains/deposits/rises translate to ___ and losses/withdrawals/drops to ___"
         back: "adding a positive number; adding a negative number (subtracting)"
         type: basic
+
+  - id: number-sets-structure
+    lt_term: 'skaičių aibės; realiųjų skaičių aibės struktūra; baigtinės, begalinės, diskrečiosios, tolydžiosios aibės'
+    name: 'Number Sets: Nesting, Finite, Infinite, Discrete, Continuous'
+    core: true
+    difficulty: 0.3
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: number-line-integers
+        weight: 0.6
+        key: true
+      - id: interval-notation
+        weight: 0.4
+        key: false
+      - id: square-roots
+        weight: 0.4
+        key: false
+      - id: logarithm-basics
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Nesting of natural, integer, rational, irrational and real sets'
+        key_prerequisites: [number-line-integers, square-roots]
+        exemplars:
+          - problem: 'How many of the numbers $-3$, $0$, $\frac{1}{2}$, $\sqrt{9}$ and $5$ are integers?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'The root $\sqrt{9}$ equals 3, so it is an integer. The numbers $-3$, $0$, $3$ and $5$ are integers. The number $\frac{1}{2}$ is not an integer. The count is 4.'
+          - problem: 'Let $\mathbb{N}$, $\mathbb{Z}$, $\mathbb{Q}$, $\mathbb{I}$ and $\mathbb{R}$ be the sets of natural, integer, rational, irrational and real numbers. In how many of these five sets does the number $-4$ lie?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The number $-4$ is negative, so it is not natural. It is an integer, so it lies in $\mathbb{Z}$. Every integer is rational, and every rational number is real. So $-4$ lies in $\mathbb{Z}$, $\mathbb{Q}$ and $\mathbb{R}$. The count is 3.'
+          - problem: 'The set $A$ holds the numbers $-2$, $4$, $\frac{3}{4}$, $\sqrt{2}$ and $\sqrt{25}$. How many elements of $A$ are natural numbers?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The root $\sqrt{25}$ equals 5. The natural numbers in $A$ are 4 and 5. The number $-2$ is negative, $\frac{3}{4}$ is a fraction, and $\sqrt{2}$ is irrational. The count is 2.'
+          - problem: 'The set $B$ holds the numbers $-5$, $-\frac{1}{2}$, $0.75$, $\sqrt{3}$, $2\pi$ and $7$. How many elements of $B$ are rational?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'A rational number is a quotient of two integers. The numbers $-5$, $-\frac{1}{2}$, $0.75=\frac{3}{4}$ and $7$ are rational. The numbers $\sqrt{3}$ and $2\pi$ are irrational. The count is 4.'
+          - problem: 'Find the intersection of the set $\{-3, \sqrt{2}, 0.5, \pi, \sqrt{9}, \sqrt{5}\}$ with the set of irrational numbers.'
+            answer_contract: {"kind":"list","ordered":false,"member":{"kind":"exact"}}
+            answer: 'sqrt(2), pi, sqrt(5)'
+            solution_sketch: 'The intersection holds the elements that are irrational. The numbers $-3$, $0.5$ and $\sqrt{9}=3$ are rational. The numbers $\sqrt{2}$, $\pi$ and $\sqrt{5}$ are irrational. The intersection is $\{\sqrt{2}, \pi, \sqrt{5}\}$.'
+          - problem: 'Take the numbers $\sqrt{n}$ for $n=1, 2, 3, \dots, 30$. How many of them are irrational?'
+            answer_contract: {"kind":"exact"}
+            answer: '25'
+            solution_sketch: 'The root $\sqrt{n}$ is rational only if $n$ is a perfect square. The perfect squares up to 30 are 1, 4, 9, 16 and 25. So 5 of the 30 roots are rational. The other $30-5=25$ roots are irrational.'
+        constraints: 'count or list the elements of a small set that fit one of the sets N, Z, Q, I, R; natural numbers start at 1 and no item uses 0 for N; roots are either perfect powers or irrational'
+      - id: kp2
+        name: 'Finite, infinite, discrete and continuous sets'
+        key_prerequisites: [interval-notation, number-line-integers]
+        exemplars:
+          - problem: 'How many positive integers $x$ satisfy $x \le 12$?'
+            answer_contract: {"kind":"exact"}
+            answer: '12'
+            solution_sketch: 'The natural numbers start at 1. The set is $\{1, 2, \dots, 12\}$. It has 12 elements.'
+          - problem: 'How many elements has the set of integers $x$ with $-3 < x \le 5$?'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The smallest integer in the set is $-2$. The largest is 5. The integers are $-2, -1, 0, 1, 2, 3, 4, 5$. The set has 8 elements.'
+          - problem: 'Count the finite sets among these five sets: the integers from 1 to 100; the interval $[0, 1]$; the natural numbers; the primes below 50; the real solutions of $x^2=4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The integers from 1 to 100 are finite. The primes below 50 are finite. The solutions of $x^2=4$ are $-2$ and $2$, so that set is finite. The interval $[0, 1]$ and the natural numbers are infinite. The count is 3.'
+          - problem: 'A set of real numbers is continuous if it is an interval. Count the continuous sets among $[1, 3]$, $\{1, 2, 3\}$, $\{1.5, 2.5\}$ and $(-\infty, 3]$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The sets $[1, 3]$ and $(-\infty, 3]$ are intervals. They hold every real number between their ends. The sets $\{1, 2, 3\}$ and $\{1.5, 2.5\}$ hold single numbers with gaps. The count is 2.'
+          - problem: 'Let $A$ be the set of natural numbers $n$ with $n^2 < 50$. Find the largest element of $A$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The square $7^2$ is 49, and 49 is less than 50. The square $8^2$ is 64, and 64 is more than 50. So the largest element is 7.'
+          - problem: 'Find the sum of all integers $x$ with $-2.5 < x < 4.5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '7'
+            solution_sketch: 'The integers in the set are $-2, -1, 0, 1, 2, 3, 4$. The numbers $-2$ and 2 add to 0. The numbers $-1$ and 1 add to 0. The sum is $0+3+4=7$.'
+        constraints: 'finite sets of integers or natural numbers that the learner counts or adds, and a count of finite or continuous sets in a short list; answers are whole numbers'
+      - id: kp3
+        name: 'Set that holds a root or a logarithm value'
+        key_prerequisites: [square-roots, logarithm-basics]
+        exemplars:
+          - problem: 'How many of the numbers $\sqrt{49}$, $\sqrt{50}$, $\sqrt{0.25}$, $\sqrt{2}$ and $\sqrt[3]{27}$ are rational?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The roots $\sqrt{49}$, $\sqrt{0.25}$ and $\sqrt[3]{27}$ equal 7, 0.5 and 3. These numbers are rational. The roots $\sqrt{50}$ and $\sqrt{2}$ are irrational. The count is 3.'
+          - problem: 'How many of the numbers $\log_2 8$, $\log_3 9$, $\log_2 3$, $\log_5 1$ and $\log_2 \frac{1}{4}$ are integers?'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'Four of the logarithms have the values 3, 2, 0 and $-2$. These values are integers. The number $\log_2 3$ lies between 1 and 2, so it is not an integer. The count is 4.'
+          - problem: 'How many of the numbers $\log_2 5$, $\log_3 27$, $\log_{10} 0.01$, $\log_4 2$ and $\log_2 6$ are rational?'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'The values $\log_3 27=3$, $\log_{10} 0.01=-2$ and $\log_4 2=\frac{1}{2}$ are rational. No rational power of 2 equals 5 or 6. So $\log_2 5$ and $\log_2 6$ are irrational. The count is 3.'
+          - problem: 'For how many integers $n$ with $1 \le n \le 20$ is $\log_2 n$ an integer?'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The logarithm $\log_2 n$ is an integer when $n$ is a power of 2. The powers of 2 up to 20 are 1, 2, 4, 8 and 16. The count is 5.'
+          - problem: 'Find the sum of all rational numbers in the set $\{\log_3 9, \log_2 3, \sqrt{5}, \sqrt{16}, \log_2 \frac{1}{2}\}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The values are $\log_3 9=2$, $\sqrt{16}=4$ and $\log_2 \frac{1}{2}=-1$. These three numbers are rational. The numbers $\log_2 3$ and $\sqrt{5}$ are irrational. The sum is $2+4-1=5$.'
+          - problem: 'How many of the six numbers $\sqrt{2}\cdot\sqrt{8}$, $\sqrt{3}+\sqrt{3}$, $(\sqrt{5})^2$, $\frac{\sqrt{12}}{\sqrt{3}}$, $\sqrt{2}\cdot\sqrt{3}$ and $(\sqrt{3}-1)(\sqrt{3}+1)$ are irrational?'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The value of $\sqrt{2}\cdot\sqrt{8}$ is $\sqrt{16}=4$. The value of $(\sqrt{5})^2$ is 5, of $\frac{\sqrt{12}}{\sqrt{3}}$ is 2, and of $(\sqrt{3}-1)(\sqrt{3}+1)$ is $3-1=2$. These four are rational. The numbers $2\sqrt{3}$ and $\sqrt{6}$ are irrational. The count is 2.'
+        constraints: 'count rational or integer values among roots and logarithms, or add the rational ones; every root and every logarithm has a value the learner can find by hand'
+    diagnostic_exemplar:
+      problem: 'How many of the numbers $-2$, $\frac{1}{3}$, $\sqrt{7}$ and $\sqrt{25}$ are integers?'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The root $\sqrt{25}$ equals 5. The integers are $-2$ and 5. The count is 2.'
+    anki_seeds:
+      - front: "Every integer is a ... number, and every rational number is a real number."
+        back: "rational"
+        type: basic
+      - front: "The root $\\sqrt{n}$ of a natural number $n$ is rational only if $n$ is a ... ."
+        back: "perfect square"
+        type: basic
+
+  - id: modulus-real-numbers
+    lt_term: 'realiojo skaičiaus modulis; modulio savybės'
+    name: Modulus of a Real Number
+    core: false
+    difficulty: 0.35
+    drill: false
+    answer_kind: numeric
+    expected_time_secs: 90
+    prerequisites:
+      - id: absolute-value
+        weight: 0.6
+        key: true
+      - id: number-line-integers
+        weight: 0.4
+        key: false
+      - id: ordering-rational-numbers
+        weight: 0.4
+        key: false
+      - id: basic-absolute-value-equations
+        weight: 0.5
+        key: false
+      - id: basic-absolute-value-inequalities
+        weight: 0.5
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Modulus as a distance on the number line'
+        key_prerequisites: [absolute-value, number-line-integers]
+        exemplars:
+          - problem: 'Find the distance between the points $-3$ and $5$ on the number line.'
+            answer_contract: {"kind":"exact"}
+            answer: '8'
+            solution_sketch: 'The distance between two points is the modulus of the difference of their numbers. Here $|5-(-3)|=|8|=8$. The distance is 8.'
+          - problem: 'Compute $\left|\frac{1}{2}-\frac{5}{4}\right|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/4'
+            solution_sketch: 'First, $\frac{1}{2}-\frac{5}{4}=\frac{2}{4}-\frac{5}{4}=-\frac{3}{4}$. The modulus of $-\frac{3}{4}$ is $\frac{3}{4}$. The answer is $\frac{3}{4}$.'
+          - problem: 'A number $x$ is at distance 5 from $-2$ on the number line. Find the smaller of the two possible values of $x$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-7'
+            solution_sketch: 'The numbers at distance 5 from $-2$ are $-2-5=-7$ and $-2+5=3$. The smaller one is $-7$.'
+          - problem: 'Compute $|\sqrt{2}-2|+|\sqrt{2}-1|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '1'
+            solution_sketch: 'The value of $\sqrt{2}$ is about 1.41. So $\sqrt{2}-2<0$ and $\sqrt{2}-1>0$. Then $|\sqrt{2}-2|=2-\sqrt{2}$ and $|\sqrt{2}-1|=\sqrt{2}-1$. The sum is $2-\sqrt{2}+\sqrt{2}-1=1$.'
+          - problem: 'How many integers $x$ are at distance at most 3 from the number $\frac{1}{2}$?'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The numbers at distance at most 3 from $\frac{1}{2}$ fill the interval $[-2.5, 3.5]$. The integers in it are $-2, -1, 0, 1, 2, 3$. The count is 6.'
+          - problem: 'Find the number $x$ that is equally far from $-5$ and from $9$ on the number line.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The number $x$ is the midpoint of the two points. So $x=\frac{-5+9}{2}=2$. The distance from 2 to $-5$ is 7. The distance from 2 to 9 is 7.'
+        constraints: 'distances between real numbers on the number line, with fractions and roots; answers are numbers; no figure'
+      - id: kp2
+        name: 'Rules |-a|=|a|, |ab|=|a||b|, |a/b|=|a|/|b|'
+        key_prerequisites: [absolute-value, ordering-rational-numbers]
+        exemplars:
+          - problem: 'Compute $|-4|^2 + (-4)^2$.'
+            answer_contract: {"kind":"exact"}
+            answer: '32'
+            solution_sketch: 'The modulus $|-4|$ is 4, so $|-4|^2=16$. Also $(-4)^2=16$. The sum is $16+16=32$.'
+          - problem: 'Compute $|-6|\cdot\left|-\frac{1}{3}\right|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The product rule is $|ab|=|a||b|$. Here $|-6|=6$ and $\left|-\frac{1}{3}\right|=\frac{1}{3}$. The product is $6\cdot\frac{1}{3}=2$.'
+          - problem: 'The numbers $a$ and $b$ have $|a|=4$ and $|b|=7$. Find $|ab|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '28'
+            solution_sketch: 'The rule is $|ab|=|a||b|$. So $|ab|=4\cdot 7=28$.'
+          - problem: 'The numbers $a$ and $b$ have $|a|=12$ and $|b|=8$. Find $\left|\frac{a}{b}\right|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3/2'
+            solution_sketch: 'The rule is $\left|\frac{a}{b}\right|=\frac{|a|}{|b|}$. So the value is $\frac{12}{8}=\frac{3}{2}$.'
+          - problem: 'The numbers $a$ and $b$ have $|a|=9$ and $|ab|=45$. Find $|b|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
+            solution_sketch: 'The rule is $|ab|=|a||b|$. So $45=9|b|$. Then $|b|=5$.'
+          - problem: 'The numbers $a$ and $b$ have $\left|\frac{a}{b}\right|=\frac{3}{4}$ and $|b|=8$. Find $|a|$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'The rule is $\left|\frac{a}{b}\right|=\frac{|a|}{|b|}$. So $\frac{|a|}{8}=\frac{3}{4}$. Then $|a|=6$.'
+        constraints: 'use of the product and quotient rules and of |-a|=|a| with given moduli; no sign of a or b is needed; answers are numbers'
+      - id: kp3
+        name: 'Value of an expression with letters and moduli'
+        key_prerequisites: [absolute-value, basic-absolute-value-equations]
+        exemplars:
+          - problem: 'Find the value of $|a-b|+|b-a|$ for $a=2$ and $b=-5$.'
+            answer_contract: {"kind":"exact"}
+            answer: '14'
+            solution_sketch: 'The difference $a-b$ is $2-(-5)=7$. The difference $b-a$ is $-7$. So the sum is $|7|+|-7|=14$.'
+          - problem: 'Find $|x|+|y|$ for $x=-\frac{3}{2}$ and $y=\frac{1}{2}$.'
+            answer_contract: {"kind":"exact"}
+            answer: '2'
+            solution_sketch: 'The modulus $|x|$ is $\frac{3}{2}$. The modulus $|y|$ is $\frac{1}{2}$. The sum is $\frac{3}{2}+\frac{1}{2}=2$.'
+          - problem: 'Find the value of $\left|\frac{x-1}{x+2}\right|$ for $x=-4$.'
+            answer_contract: {"kind":"exact"}
+            answer: '5/2'
+            solution_sketch: 'For $x=-4$ the fraction is $\frac{-5}{-2}=\frac{5}{2}$. Its modulus is $\frac{5}{2}$.'
+          - problem: 'Find the value of $|x-5|-|x+5|$ for $x=-3$.'
+            answer_contract: {"kind":"exact"}
+            answer: '6'
+            solution_sketch: 'Put $x=-3$. Then $|x-5|=|-8|=8$ and $|x+5|=|2|=2$. The difference is $8-2=6$.'
+          - problem: 'Find $\frac{|a|}{a}+\frac{|b|}{b}+\frac{|c|}{c}$ for $a=-2$, $b=3$ and $c=-7$.'
+            answer_contract: {"kind":"exact"}
+            answer: '-1'
+            solution_sketch: 'For a negative number $t$, the fraction $\frac{|t|}{t}$ is $-1$. For a positive number it is $1$. So the sum is $-1+1-1=-1$.'
+          - problem: 'Simplify $|x-2|-|x-5|$ for $2<x<5$. Write the answer without a modulus.'
+            answer_contract: {"kind":"function","vars":["x"]}
+            answer: '2*x-7'
+            solution_sketch: 'If $x>2$, then $|x-2|=x-2$. If $x<5$, then $|x-5|=5-x$. The difference is $x-2-(5-x)=2x-7$.'
+        constraints: 'value of an expression with letters and moduli for given numbers; the last item uses an interval for x; answers are numbers or a short expression'
+    diagnostic_exemplar:
+      problem: 'Compute $|-2.5|+|1.5|$.'
+      answer_contract: {"kind":"exact"}
+      answer: '4'
+      solution_sketch: 'The modulus $|-2.5|$ is 2.5. The modulus $|1.5|$ is 1.5. The sum is 4.'
+    anki_seeds:
+      - front: "The modulus $|a-b|$ is the ... between the numbers $a$ and $b$ on the number line."
+        back: "distance"
+        type: basic
+      - front: "$|ab|=|a|\\cdot$ ... for all real numbers $a$ and $b$."
+        back: "|b|"
+        type: basic

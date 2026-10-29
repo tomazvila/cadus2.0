@@ -37,16 +37,19 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
 
     let catalog = parsed.catalog.clone().expect("courses.yaml loads");
     assert_eq!(catalog.courses.len(), 13, "courses");
-    assert_eq!(parsed.units.len(), 88, "unit files");
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 91 unit files (was 88).
+    assert_eq!(parsed.units.len(), 91, "unit files");
 
     let raw = RawCurriculum::from_parsed(parsed).expect("the catalog is present");
     let topics: Vec<_> = raw.topics().collect();
-    assert_eq!(topics.len(), 1064, "topics");
-    assert_eq!(raw.topic_count(), 1064, "topics");
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064).
+    assert_eq!(topics.len(), 1101, "topics");
+    assert_eq!(raw.topic_count(), 1101, "topics");
 
     let knowledge_points: usize = topics.iter().map(|t| t.topic.knowledge_points.len()).sum();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 3113 (was 3138).
-    assert_eq!(knowledge_points, 3113, "knowledge points");
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 3238 (was 3113).
+    assert_eq!(knowledge_points, 3238, "knowledge points");
 
     let exemplars: usize = topics
         .iter()
@@ -58,10 +61,13 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-07, written items (courses rewrite): 25165 exemplars (was 25125).
     // 2026-10-07, courses rewrite (item-level figures, whole-number and mixed-number items): 25183 exemplars (was 25165).
     // 2026-10-12, Foundations merge (D-C1): 25018 exemplars (was 25183).
-    assert_eq!(exemplars, 25018, "exemplars");
+    // 2026-10-28, VBE skill wave 1: 25795 exemplars (was 25018).
+    // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: 25789 (was 25795).
+    assert_eq!(exemplars, 25789, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
-    assert_eq!(anki_seeds, 2144, "anki seeds");
+    // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).
+    assert_eq!(anki_seeds, 2218, "anki seeds");
 
     let extra_edges: usize = topics
         .iter()
@@ -115,7 +121,7 @@ fn the_load_index_counts_topics_in_load_order() {
     let topics: Vec<_> = raw.topics().collect();
 
     let indices: Vec<usize> = topics.iter().map(|t| t.load_index).collect();
-    assert_eq!(indices, (0..1064).collect::<Vec<usize>>());
+    assert_eq!(indices, (0..1101).collect::<Vec<usize>>());
 
     let named: Vec<&str> = topics.iter().take(3).map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
@@ -126,7 +132,7 @@ fn the_load_index_counts_topics_in_load_order() {
             "multiplication-tables"
         ]
     );
-    let last: Vec<&str> = topics[1061..].iter().map(|t| t.topic.id.as_str()).collect();
+    let last: Vec<&str> = topics[1098..].iter().map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
         last,
         vec![
@@ -328,6 +334,7 @@ fn the_checked_in_tree_writes_no_yaml_1_1_boolean() {
     }
     // Spec section 3: `core: True 725, False 365` and `drill: True 22`.
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 703 core topics, 16 drill topics.
-    assert_eq!(cores, 703, "core topics");
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 720 core topics (was 703).
+    assert_eq!(cores, 720, "core topics");
     assert_eq!(drills, 16, "drill topics");
 }

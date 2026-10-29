@@ -170,6 +170,34 @@ fn retired_sources(
     keys
 }
 
+/// Points authored after the archive (VBE skill wave 1, 2026-10-28). The
+/// archive has no template and no retired row for them. Their Teach pages come
+/// from the worker authoring path. The report lists each one with its date.
+fn later_points(
+    specs: &BTreeMap<String, AuthoringSpec>,
+    templates: &BTreeMap<String, Value>,
+    retired: &BTreeSet<String>,
+) -> BTreeSet<String> {
+    let report = read(root().join("docs/reports/whole-course-teach-later-points.json"));
+    let report = report.as_array().expect("later point rows");
+    assert_eq!(report.len(), 42);
+    let mut keys = BTreeSet::new();
+    for row in report {
+        let kp = row["kp_key"].as_str().expect("later kp");
+        assert!(keys.insert(kp.to_owned()), "duplicate later point {kp}");
+        assert!(
+            !templates.contains_key(kp),
+            "{kp}: a later point has a template"
+        );
+        assert!(!retired.contains(kp), "{kp}: a later point is retired");
+        assert!(specs.contains_key(kp), "{kp}: a later point left the tree");
+        assert_eq!(row["authored"], "2026-10-28", "{kp}");
+        assert_eq!(row["source"], "VBE skill wave 1", "{kp}");
+        assert!(!row["note"].as_str().unwrap().is_empty(), "{kp}");
+    }
+    keys
+}
+
 fn manifests(directory: &Path) -> (Value, Value) {
     let manifest = read(directory.join("manifest.json"));
     let import = read(directory.join("import-manifest.json"));
@@ -309,11 +337,17 @@ fn source_evidence(
     // Foundations merge (2026-10-12): 784 KPs, 585 selected and 199 retired.
     assert_eq!(templates.len(), 585);
     let retired = retired_sources(specs, &templates);
+    // 2026-10-28, VBE skill wave 1: 42 points were authored after the archive.
+    // The archive counts stay as they are: the current points are the 784
+    // canonical points of the manifest plus those 42.
+    let later = later_points(specs, &templates, &retired);
+    assert_eq!(specs.len(), 784 + later.len());
+    assert_eq!(templates.len() + retired.len() + later.len(), specs.len());
     let mut sources = BTreeMap::new();
     let mut occupied = BTreeSet::new();
     for (kp, spec) in specs {
         occupied.extend(spec.exemplars.iter().map(|row| normalized(&row.problem)));
-        if retired.contains(kp) {
+        if retired.contains(kp) || later.contains(kp) {
             sources.insert(kp.clone(), (None, Vec::new()));
             continue;
         }
@@ -550,7 +584,8 @@ fn all_713_pending_teach_pages_are_source_bound_and_production_gated() {
         missing_ids(&directory)
     );
     let specs = specs();
-    assert_eq!(specs.len(), 784);
+    // Re-pinned 2026-10-28 after VBE skill wave 1: 826 points (was 784).
+    assert_eq!(specs.len(), 826);
     let (sources, occupied) = source_evidence(&directory, &specs);
     verify_pages(&drafts, &reviews, &specs, &sources, &occupied);
 }

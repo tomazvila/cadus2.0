@@ -47,12 +47,14 @@ const BOUNDARY_PLACED_BALANCE_ZERO: &str =
 
 /// The fold of `boundary/xp_window_cancelling_sum.jsonl` (finding #8). The 1.0 digest was
 /// 5d0ef916...6de80; it moved when the velocity divisor became the days covered.
+/// Re-based 2026-10-28 after VBE skill wave 1: 711344ac... (was 24bc46ef...).
 const BOUNDARY_XP_CANCELLING_SUM: &str =
-    "24bc46ef53830e073a21f7fa22c19749677e41430857a414d8366955fd577bfe";
+    "711344aca95c1c87e0c2f47817654e361f57714f6acdca8f7a480f9060f72b8d";
 
 /// The 1.0 fold of `boundary/velocity_window_start_day.jsonl` (finding #14).
+/// Re-based 2026-10-28 after VBE skill wave 1: 244515af... (was f620e48d...).
 const BOUNDARY_VELOCITY_WINDOW_START: &str =
-    "f620e48dca18a34fa67128416035cca2aef8f3ad329375ea9eb8f58e3322ff60";
+    "244515afbdf24e3143cfa274a578e1fb0f3ae6edcda9a146b223b85bbe5afc46";
 
 /// The 1.0 fold of `boundary/streak_reference_day_at_goal.jsonl` (finding #15).
 const BOUNDARY_STREAK_AT_GOAL: &str =
@@ -154,7 +156,9 @@ fn an_xp_entry_on_the_first_day_of_the_window_is_inside_it() {
     assert!((model.velocity.xp_per_day_28d - 3.0).abs() < f64::EPSILON);
     assert_eq!(
         model.velocity.eta.map(|day| day.to_string()).as_deref(),
-        Some("2032-11-18") // re-based 2026-10-12 after the Foundations merge (D-C1): the merged tree has fewer topics left
+        // Re-based 2026-10-28 after VBE skill wave 1: 2033-03-19 (was 2032-11-18). The ETA
+        // follows the count of topics still open. The graph gained 37 topics, so the ETA moved.
+        Some("2033-03-19")
     );
     assert_eq!(blob_digest(&model).unwrap(), BOUNDARY_VELOCITY_WINDOW_START);
 }

@@ -12,7 +12,7 @@ use cadus_core::curriculum::{
 use common::dump::tree;
 
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
-const TREE_HASH: &str = "a216bf58f4c1abebbdda856fd703713c91c51dc7d39579d776fedc3937c1a81e";
+const TREE_HASH: &str = "2d27cee6d60991a81fcceaba217ed8b26c6583361a1b89a7dff3e1ba099e0d33";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -27,11 +27,15 @@ const TREE_HASH: &str = "a216bf58f4c1abebbdda856fd703713c91c51dc7d39579d776fedc3
 // 2026-10-12, Foundations merge (D-C1): dump length 12,927,302 (was 13,002,620), measured with `dump_curriculum curriculum`; hash re-pinned (was b34ac9ee...1548).
 // 2026-10-27, placement probes (490 topics) and reference figures (307 knowledge points): dump length 12,915,255 (was 12,927,302), measured with `dump_curriculum curriculum`; hash re-pinned (was ed934ce6...8a89).
 // 2026-10-27, slider figure on graphing-proportional-relationships/kp1: dump length 12,915,740 (was 12,915,255), measured with `dump_curriculum curriculum`; hash re-pinned (was 7c5e0bec...200b).
-const DUMP_LEN: usize = 12_915_740;
+// 2026-10-28, VBE skill wave 1: dump length 13,271,404 (was 12,915,740), measured with `dump_curriculum curriculum`; hash re-pinned (was a216bf58...a81e).
+// 2026-10-29, VBE skill wave 1: six written items left two Foundations points: dump length 13,267,884 (was 13,271,404); hash 2d27cee6... (was 7be6a775...).
+const DUMP_LEN: usize = 13_267_884;
 
 /// The `counts` object of the dump, as the oracle writes it.
 // 2026-10-12, Foundations merge (D-C1): counts re-pinned to the merged tree.
-const COUNTS: &str = "\"counts\":{\"anki_seeds\":2144,\"courses\":13,\"encompassing_edges\":3155,\"exemplars\":25018,\"knowledge_points\":3113,\"prereq_edges\":3236,\"topics\":1064,\"units\":88}";
+// 2026-10-28, VBE skill wave 1: topics 1101 (was 1064), knowledge points 3238 (was 3113), exemplars 25795 (was 25018), units 91 (was 88), prereq edges 3378 (was 3236), encompassing edges 3297 (was 3155), anki seeds 2218 (was 2144).
+// 2026-10-29, VBE skill wave 1: six written items left two Foundations points: exemplars 25789 (was 25795).
+const COUNTS: &str = "\"counts\":{\"anki_seeds\":2218,\"courses\":13,\"encompassing_edges\":3297,\"exemplars\":25789,\"knowledge_points\":3238,\"prereq_edges\":3378,\"topics\":1101,\"units\":91}";
 
 // --------------------------------------------------------------------------- //
 // The hash and the shape of the dump
