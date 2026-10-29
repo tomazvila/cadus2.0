@@ -31,22 +31,24 @@ fn the_arena_holds_the_literal_edge_counts() {
     // 3236 prerequisite edges, 3237 declared encompassing edges.
     // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064),
     // 3378 prerequisite edges (was 3236).
-    assert_eq!(curriculum.topic_count(), 1101, "topics");
-    assert_eq!(curriculum.prereq_edge_count(), 3378, "prerequisite edges");
-    assert_eq!(curriculum.dependent_edge_count(), 3378, "dependent edges");
+    // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math):
+    // 1127 topics (was 1101), 3638 prerequisite edges (was 3378).
+    assert_eq!(curriculum.topic_count(), 1127, "topics");
+    assert_eq!(curriculum.prereq_edge_count(), 3638, "prerequisite edges");
+    assert_eq!(curriculum.dependent_edge_count(), 3638, "dependent edges");
     assert_eq!(
         curriculum.enc_forward_count(),
-        3297, // 2026-10-28, VBE skill wave 1: was 3155.
-        "forward encompassing entries: 3379 declared edges less the 82 that stay at weight 0"
+        3557, // 2026-10-29, VBE course wave 2a (the course vbe-math): was 3297.
+        "forward encompassing entries: 3639 declared edges less the 82 that stay at weight 0"
     );
     assert_eq!(
         curriculum.enc_reverse_count(),
-        3379, // 2026-10-28, VBE skill wave 1: was 3237; the 82 weight-0 edges are unchanged.
+        3639, // 2026-10-29, VBE course wave 2a (the course vbe-math): was 3379; the 82 weight-0 edges are unchanged.
         "reverse encompassing entries: every declared edge, weight 0 included"
     );
     assert_eq!(
         curriculum.enc_node_count(),
-        1101,
+        1127, // 2026-10-29, VBE course wave 2a (the course vbe-math): was 1101.
         "the tree has no dangling encompassing target, so no phantom node"
     );
 }
@@ -54,17 +56,17 @@ fn the_arena_holds_the_literal_edge_counts() {
 #[test]
 fn the_prerequisite_and_dependent_directions_hold_the_same_edges() {
     let curriculum = tree();
-    let forward: usize = (0..1101)
+    let forward: usize = (0..1127)
         .map(|raw| curriculum.prerequisites(TopicIdx::from_u32(raw)).len())
         .sum();
-    let backward: usize = (0..1101)
+    let backward: usize = (0..1127)
         .map(|raw| curriculum.dependents(TopicIdx::from_u32(raw)).len())
         .sum();
     assert_eq!(
-        forward, 3378,
+        forward, 3638,
         "prerequisite edges walked one topic at a time"
     );
-    assert_eq!(backward, 3378, "dependent edges walked one topic at a time");
+    assert_eq!(backward, 3638, "dependent edges walked one topic at a time");
 }
 
 // --------------------------------------------------------------------------- //
@@ -77,7 +79,8 @@ fn topo_order_matches_the_spec_literals() {
     let order = curriculum.topo_order();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 1064 topics and
     // a new first five.
-    assert_eq!(order.len(), 1101, "every topic is ordered");
+    // Re-pinned 2026-10-29, VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
+    assert_eq!(order.len(), 1127, "every topic is ordered");
 
     let names = ids(&curriculum, order);
     assert_eq!(
@@ -92,13 +95,13 @@ fn topo_order_matches_the_spec_literals() {
         "the first five after the Foundations merge (2026-10-12)"
     );
     assert_eq!(
-        &names[1098..],
+        &names[1124..],
         [
-            "cartesian-closed-categories",
-            "presheaves-intro",
-            "toposes-glimpse",
+            "vbe-cp24-combinatorics",
+            "vbe-cp25-probability-models",
+            "vbe-cp26-random-variables",
         ],
-        "the last three of spec section 3, unchanged by the Foundations merge"
+        "the last three of the topological order; re-pinned 2026-10-29, VBE course wave 2a (the course vbe-math), was cartesian-closed-categories, presheaves-intro, toposes-glimpse"
     );
 }
 
@@ -154,6 +157,7 @@ fn topics_in_course_holds_the_authored_counts() {
         ("differential-equations", 59),
         ("abstract-algebra", 54),
         ("category-theory", 70),
+        ("vbe-math", 26), // 2026-10-29, VBE course wave 2a: the new course.
     ];
     for (course, size) in expected {
         assert_eq!(
@@ -226,7 +230,7 @@ fn ancestors_and_descendants_have_the_oracle_sizes() {
     let first = idx(&curriculum, "single-digit-addition");
     assert_eq!(
         curriculum.descendants(first).len(),
-        1094, // 2026-10-28, VBE skill wave 1: was 1057.
+        1120, // 2026-10-29, VBE course wave 2a (the course vbe-math): was 1094.
         "descendants of single-digit-addition"
     );
     assert!(

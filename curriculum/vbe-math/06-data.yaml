@@ -1,0 +1,380 @@
+unit: data
+course: vbe-math
+module: "Checkpoints: Data and Probability"
+topics:
+  - id: vbe-cp24-combinatorics
+    name: Permutations, arrangements, combinations
+    lt_term: 'Rinkiniai: kėliniai, gretiniai, deriniai'
+    area: data
+    program_items: [176, 177, 178, 179, 180]
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: permutations
+        weight: 0.6
+        key: true
+      - id: combinations
+        weight: 0.4
+        key: false
+      - id: combinations-vs-permutations
+        weight: 0.4
+        key: false
+      - id: multiplication-principle
+        weight: 0.4
+        key: false
+      - id: addition-principle
+        weight: 0.4
+        key: false
+      - id: factorial-notation
+        weight: 0.4
+        key: false
+      - id: binomial-probability
+        weight: 0.4
+        key: false
+      - id: binomial-distribution
+        weight: 0.4
+        key: false
+      - id: binomial-expansion
+        weight: 0.4
+        key: false
+      - id: tree-diagrams
+        weight: 0.4
+        key: false
+      - id: listing-sample-spaces
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Count codes and numbers with restrictions'
+        key_prerequisites: [multiplication-principle, permutations]
+        exemplars:
+          - problem: 'Use the digits $0,1,2,\dots,9$. (a) How many three-digit codes have three different digits? A code may start with $0$. (b) How many three-digit numbers have three different digits? A number does not start with $0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"codes","contract":{"kind":"exact"}},{"name":"nums","contract":{"kind":"exact"}}]}
+            answer: 'codes = 720; nums = 648'
+            solution_sketch: 'For codes we have $10\cdot9\cdot8=720$. For numbers the first digit has $9$ choices, then $9$ and $8$ choices. So $9\cdot9\cdot8=648$.'
+          - problem: 'Use the digits $1,2,3,4,5,6$, each at most once in a number. (a) How many four-digit numbers are there? (b) How many of them are even? (c) How many of them are greater than $5000$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"exact"}},{"name":"even","contract":{"kind":"exact"}},{"name":"big","contract":{"kind":"exact"}}]}
+            answer: 'all = 360; even = 180; big = 120'
+            solution_sketch: 'We have $6\cdot5\cdot4\cdot3=360$. For even numbers the last digit has $3$ choices, then $5\cdot4\cdot3$ choices for the rest, so $180$. A number above $5000$ starts with $5$ or $6$, so $2\cdot5\cdot4\cdot3=120$.'
+          - problem: 'A code has five digits from $0,1,\dots,9$. (a) How many codes have an odd first digit and an even last digit? Digits may repeat. (b) How many codes have five different digits and an odd first digit?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"rep","contract":{"kind":"exact"}},{"name":"diff","contract":{"kind":"exact"}}]}
+            answer: 'rep = 25000; diff = 15120'
+            solution_sketch: 'With repeats: $5\cdot10\cdot10\cdot10\cdot5=25000$. With different digits: $5$ choices for the first digit, then $9$, $8$, $7$, $6$ choices. So $5\cdot9\cdot8\cdot7\cdot6=15120$.'
+          - problem: 'Use the digits $0,1,2,3,4,5$, each at most once in a number. (a) How many four-digit numbers are there? (b) How many of them are divisible by $5$? (c) How many of them are greater than $3000$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"exact"}},{"name":"div5","contract":{"kind":"exact"}},{"name":"big","contract":{"kind":"exact"}}]}
+            answer: 'all = 300; div5 = 108; big = 180'
+            solution_sketch: 'The first digit is not $0$, so $5\cdot5\cdot4\cdot3=300$. If the last digit is $0$, we have $5\cdot4\cdot3=60$ numbers. If the last digit is $5$, we have $4\cdot4\cdot3=48$ numbers, so $108$ in all. A number above $3000$ starts with $3$, $4$ or $5$, so $3\cdot5\cdot4\cdot3=180$.'
+          - problem: 'Arrange all five letters of the word MATHS, each used once. (a) How many arrangements are there? (b) How many start with the vowel A? (c) How many have the letters M and A next to each other?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"exact"}},{"name":"vowel","contract":{"kind":"exact"}},{"name":"next","contract":{"kind":"exact"}}]}
+            answer: 'all = 120; vowel = 24; next = 48'
+            solution_sketch: 'There are $5!=120$ arrangements. If A is first, the other four letters give $4!=24$. Treat M and A as one block: $4!$ orders of the block with three letters, and $2$ orders inside the block. So $48$.'
+          - problem: 'A code has four digits from $0,1,\dots,9$. (a) How many codes do not contain the digit $7$? (b) How many codes contain the digit $7$ at least once? (c) How many codes have four different digits and contain the digit $7$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"no7","contract":{"kind":"exact"}},{"name":"with7","contract":{"kind":"exact"}},{"name":"diff7","contract":{"kind":"exact"}}]}
+            answer: 'no7 = 6561; with7 = 3439; diff7 = 2016'
+            solution_sketch: 'Without $7$ we have $9^4=6561$ codes. All codes number $10^4=10000$, so $10000-6561=3439$ contain a $7$. Codes with different digits number $10\cdot9\cdot8\cdot7=5040$, and without $7$ they number $9\cdot8\cdot7\cdot6=3024$. So $5040-3024=2016$.'
+        constraints: 'codes, numbers and words with a restriction on a digit or a position; digits from a small set or from 0 to 9'
+      - id: kp2
+        name: 'Pick from two groups and the binomial term'
+        key_prerequisites: [combinations, binomial-expansion]
+        exemplars:
+          - problem: 'A class has $7$ boys and $5$ girls. A team of $4$ students is chosen. (a) In how many ways is the team chosen? (b) In how many ways is the team chosen with exactly $2$ boys and $2$ girls?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"exact"}},{"name":"mixed","contract":{"kind":"exact"}}]}
+            answer: 'all = 495; mixed = 210'
+            solution_sketch: 'The count of all teams is $C_{12}^4=495$. Two boys give $C_7^2=21$ ways and two girls give $C_5^2=10$ ways. So $21\cdot10=210$.'
+          - problem: 'A committee of $3$ people is chosen from $6$ men and $4$ women. (a) How many committees are there? (b) How many committees have at least one woman?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"exact"}},{"name":"woman","contract":{"kind":"exact"}}]}
+            answer: 'all = 120; woman = 100'
+            solution_sketch: 'All committees: $C_{10}^3=120$. Committees with no woman: $C_6^3=20$. So $120-20=100$ have a woman.'
+          - problem: 'Find the coefficient of $x^3$ in the expansion of $(x+2)^5$. First (a) find $C_5^3$, then (b) find the coefficient.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"c","contract":{"kind":"exact"}},{"name":"coef","contract":{"kind":"exact"}}]}
+            answer: 'c = 10; coef = 40'
+            solution_sketch: 'The term with $x^3$ is $C_5^3x^3\cdot2^2$. The number $C_5^3$ is $10$. The coefficient is $10\cdot4=40$.'
+          - problem: 'Expand $(2x-1)^6$. Find (a) the coefficient of $x^2$, (b) the constant term, (c) the coefficient of $x^5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"c2","contract":{"kind":"exact"}},{"name":"c0","contract":{"kind":"exact"}},{"name":"c5","contract":{"kind":"exact"}}]}
+            answer: 'c2 = 60; c0 = 1; c5 = -192'
+            solution_sketch: 'The general term is $C_6^k(2x)^k(-1)^{6-k}$. For $k=2$: $15\cdot4\cdot1=60$. For $k=0$: $(-1)^6=1$. For $k=5$: $6\cdot32\cdot(-1)=-192$.'
+          - problem: 'Expand $(\sqrt3+1)^6$ in descending powers of $\sqrt3$. (a) Find the third term as a natural number. (b) Find the fourth term.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t3","contract":{"kind":"exact"}},{"name":"t4","contract":{"kind":"exact"}}]}
+            answer: 't3 = 135; t4 = 60*sqrt(3)'
+            solution_sketch: 'The third term is $C_6^2(\sqrt3)^4=15\cdot9=135$. The fourth term is $C_6^3(\sqrt3)^3=20\cdot3\sqrt3=60\sqrt3$.'
+          - problem: 'A team of $5$ is chosen from $5$ boys and $4$ girls. (a) In how many ways is the team chosen with exactly $3$ girls? (b) In how many ways is the team chosen with more girls than boys?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"three","contract":{"kind":"exact"}},{"name":"more","contract":{"kind":"exact"}}]}
+            answer: 'three = 40; more = 45'
+            solution_sketch: 'Three girls and two boys: $C_4^3\cdot C_5^2=4\cdot10=40$. Four girls and one boy: $C_4^4\cdot C_5^1=5$. More girls than boys means $40+5=45$.'
+        constraints: 'teams from two groups, and terms of a binomial expansion with small exponents'
+    diagnostic_exemplar:
+      problem: 'In how many ways are $2$ pupils chosen from $6$ pupils?'
+      answer_contract: {"kind":"exact"}
+      answer: '15'
+      solution_sketch: 'The count is $C_6^2=15$.'
+  - id: vbe-cp25-probability-models
+    name: Classical and non-classical probability models
+    lt_term: 'Klasikiniai ir neklasikiniai tikimybiniai modeliai'
+    area: data
+    program_items: [181, 182, 183, 184, 185, 186, 187, 188, 189]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: classical-nonclassical-trials
+        weight: 0.6
+        key: true
+      - id: experimental-theoretical-probability
+        weight: 0.4
+        key: false
+      - id: expected-value-applications
+        weight: 0.4
+        key: false
+      - id: law-of-large-numbers
+        weight: 0.4
+        key: false
+      - id: basic-probability
+        weight: 0.4
+        key: false
+      - id: listing-sample-spaces
+        weight: 0.4
+        key: false
+      - id: mutually-exclusive-events
+        weight: 0.4
+        key: false
+      - id: independent-events
+        weight: 0.4
+        key: false
+      - id: conditional-probability
+        weight: 0.4
+        key: false
+      - id: binomial-probability
+        weight: 0.4
+        key: false
+      - id: complement-rule
+        weight: 0.4
+        key: false
+      - id: discrete-probability-distributions
+        weight: 0.4
+        key: false
+      - id: addition-rule-complements
+        weight: 0.4
+        key: false
+      - id: binomial-distribution
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Draws with and without return, at least one, two stages'
+        key_prerequisites: [classical-nonclassical-trials, conditional-probability]
+        exemplars:
+          - problem: 'A bag holds $4$ red and $6$ blue balls. Two balls are drawn in turn, and each ball goes back into the bag before the next draw. (a) Find the probability that both balls are red. (b) Find the probability that one ball is red and the other is blue.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"rr","contract":{"kind":"exact"}},{"name":"mix","contract":{"kind":"exact"}}]}
+            answer: 'rr = 4/25; mix = 12/25'
+            solution_sketch: 'Each draw gives red with probability $2/5$. So $(2/5)^2=4/25$. One red and one blue in either order: $2\cdot\tfrac25\cdot\tfrac35=12/25$.'
+          - problem: 'A bag holds $4$ red and $6$ blue balls. Two balls are drawn in turn, and the first ball does not go back. (a) Find the probability that both balls are red. (b) Find the probability that both balls are blue.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"rr","contract":{"kind":"exact"}},{"name":"bb","contract":{"kind":"exact"}}]}
+            answer: 'rr = 2/15; bb = 1/3'
+            solution_sketch: 'Both red: $\tfrac4{10}\cdot\tfrac39=\tfrac2{15}$. Both blue: $\tfrac6{10}\cdot\tfrac59=\tfrac13$.'
+          - problem: 'A box holds $5$ white and $3$ black balls. Three balls are taken at the same time. (a) In how many ways are three balls taken? (b) Find the probability that no ball is black. (c) Find the probability that at least one ball is black.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ways","contract":{"kind":"exact"}},{"name":"none","contract":{"kind":"exact"}},{"name":"some","contract":{"kind":"exact"}}]}
+            answer: 'ways = 56; none = 5/28; some = 23/28'
+            solution_sketch: 'All triples: $C_8^3=56$. Triples with no black ball: $C_5^3=10$, so $10/56=5/28$. At least one black ball is the opposite event, $1-5/28=23/28$.'
+          - problem: 'A bag holds $2$ green and $3$ yellow balls. A ball is drawn and put back, $3$ times. (a) Find the probability that no ball is green. (b) Find the probability that at least one ball is green.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"none","contract":{"kind":"exact"}},{"name":"some","contract":{"kind":"exact"}}]}
+            answer: 'none = 27/125; some = 98/125'
+            solution_sketch: 'No green ball: $(3/5)^3=27/125$. At least one green ball: $1-27/125=98/125$.'
+          - problem: 'Box A holds $3$ red and $2$ blue balls. Box B holds $1$ red and $4$ blue balls. One ball is drawn from each box. Find the probability that (a) both balls are red, (b) the two balls have the same color, (c) the two balls have different colors.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"both","contract":{"kind":"exact"}},{"name":"same","contract":{"kind":"exact"}},{"name":"diff","contract":{"kind":"exact"}}]}
+            answer: 'both = 3/25; same = 11/25; diff = 14/25'
+            solution_sketch: 'Both red: $\tfrac35\cdot\tfrac15=\tfrac3{25}$. Both blue: $\tfrac25\cdot\tfrac45=\tfrac8{25}$. The same color is $11/25$ and the opposite event gives $14/25$.'
+          - problem: 'A box holds $4$ yellow balls and $n$ blue balls. Two balls are drawn in turn without return. The probability that both are yellow is $\frac16$. (a) Find $n$. (b) Find the probability that exactly one of the two balls is yellow.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"one","contract":{"kind":"exact"}}]}
+            answer: 'n = 5; one = 5/9'
+            solution_sketch: 'The probability is $\tfrac{4}{n+4}\cdot\tfrac{3}{n+3}=\tfrac16$, so $(n+4)(n+3)=72$. This gives $n^2+7n-60=0$ and $n=5$. Then $P=2\cdot\tfrac49\cdot\tfrac58=\tfrac5{9}$.'
+        constraints: 'bags and boxes with at most 10 balls; draws with and without return; the hardest item solves for an unknown count'
+      - id: kp2
+        name: 'Independent, incompatible and compatible events'
+        key_prerequisites: [independent-events, mutually-exclusive-events]
+        exemplars:
+          - problem: 'The events $A$ and $B$ are independent, with $P(A)=\frac14$ and $P(B)=\frac13$. (a) Find $P(A\text{ and }B)$. (b) Find $P(A\text{ or }B)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"and","contract":{"kind":"exact"}},{"name":"or","contract":{"kind":"exact"}}]}
+            answer: 'and = 1/12; or = 1/2'
+            solution_sketch: 'For independent events $P(AB)=\tfrac14\cdot\tfrac13=\tfrac1{12}$. Then $P(A\cup B)=\tfrac14+\tfrac13-\tfrac1{12}=\tfrac12$.'
+          - problem: 'The events $A$ and $B$ are incompatible, with $P(A)=\frac15$ and $P(B)=\frac7{20}$. (a) Find $P(A\text{ or }B)$. (b) Find the probability that neither event happens.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"or","contract":{"kind":"exact"}},{"name":"none","contract":{"kind":"exact"}}]}
+            answer: 'or = 11/20; none = 9/20'
+            solution_sketch: 'For incompatible events the probabilities add: $\tfrac4{20}+\tfrac7{20}=\tfrac{11}{20}$. The opposite event has probability $1-\tfrac{11}{20}=\tfrac9{20}$.'
+          - problem: 'For the events $A$ and $B$ we have $P(A)=\frac35$, $P(B)=\frac12$ and $P(A\text{ or }B)=\frac7{10}$. (a) Find $P(A\text{ and }B)$. (b) Find the probability that exactly one of the events happens.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"both","contract":{"kind":"exact"}},{"name":"one","contract":{"kind":"exact"}}]}
+            answer: 'both = 2/5; one = 3/10'
+            solution_sketch: 'From $P(A\cup B)=P(A)+P(B)-P(AB)$ we get $P(AB)=\tfrac35+\tfrac12-\tfrac7{10}=\tfrac25$. Only $A$: $\tfrac35-\tfrac25=\tfrac15$. Only $B$: $\tfrac12-\tfrac25=\tfrac1{10}$. The sum is $\tfrac3{10}$.'
+          - problem: 'Two archers shoot once each, independently. The first hits with probability $\frac45$ and the second with probability $\frac7{10}$. Find the probability that (a) both hit, (b) at least one hits, (c) exactly one hits.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"both","contract":{"kind":"exact"}},{"name":"atleast","contract":{"kind":"exact"}},{"name":"one","contract":{"kind":"exact"}}]}
+            answer: 'both = 14/25; atleast = 47/50; one = 19/50'
+            solution_sketch: 'Both: $\tfrac45\cdot\tfrac7{10}=\tfrac{14}{25}$. Neither: $\tfrac15\cdot\tfrac3{10}=\tfrac3{50}$, so at least one is $\tfrac{47}{50}$. Exactly one: $\tfrac45\cdot\tfrac3{10}+\tfrac15\cdot\tfrac7{10}=\tfrac{19}{50}$.'
+          - problem: 'The events $A$ and $B$ are independent, with $P(A)=\frac25$ and $P(A\text{ or }B)=\frac7{10}$. (a) Find $P(B)$. (b) Find $P(A\text{ and }B)$. (c) Find the probability that neither event happens.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pb","contract":{"kind":"exact"}},{"name":"both","contract":{"kind":"exact"}},{"name":"none","contract":{"kind":"exact"}}]}
+            answer: 'pb = 1/2; both = 1/5; none = 3/10'
+            solution_sketch: 'Independence gives $\tfrac25+p-\tfrac25p=\tfrac7{10}$, so $\tfrac35p=\tfrac3{10}$ and $p=\tfrac12$. Then $P(AB)=\tfrac25\cdot\tfrac12=\tfrac15$. The opposite of the union has probability $1-\tfrac7{10}=\tfrac3{10}$.'
+          - problem: 'A fair die is rolled once. The event $A$ is an even number. The event $B$ is a number of at least $4$. The event $C$ is a number less than $3$. Find (a) $P(A\text{ and }B)$, (b) $P(A\text{ or }B)$, (c) $P(B\text{ or }C)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ab","contract":{"kind":"exact"}},{"name":"aorb","contract":{"kind":"exact"}},{"name":"borc","contract":{"kind":"exact"}}]}
+            answer: 'ab = 1/3; aorb = 2/3; borc = 5/6'
+            solution_sketch: 'The event $A$ is $\{2,4,6\}$, $B$ is $\{4,5,6\}$, $C$ is $\{1,2\}$. Both $A$ and $B$: $\{4,6\}$, so $\tfrac13$. $A$ or $B$: $\{2,4,5,6\}$, so $\tfrac23$. $B$ or $C$ are incompatible, so $\tfrac36+\tfrac26=\tfrac56$.'
+        constraints: 'two or three events with given probabilities; and, or and exactly one'
+      - id: kp3
+        name: 'Bernoulli series: exactly k in n'
+        key_prerequisites: [binomial-probability]
+        exemplars:
+          - problem: 'A fair coin is tossed $5$ times. (a) Find $C_5^2$. (b) Find the probability of exactly $2$ heads.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"c","contract":{"kind":"exact"}},{"name":"p","contract":{"kind":"exact"}}]}
+            answer: 'c = 10; p = 5/16'
+            solution_sketch: 'We have $C_5^2=10$. Each sequence has probability $(1/2)^5=1/32$. So $P=10/32=5/16$.'
+          - problem: 'An archer hits a target with probability $\frac13$ in each of $4$ independent shots. (a) Find the probability of no hit. (b) Find the probability of exactly one hit.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"none","contract":{"kind":"exact"}},{"name":"one","contract":{"kind":"exact"}}]}
+            answer: 'none = 16/81; one = 32/81'
+            solution_sketch: 'No hit: $(2/3)^4=16/81$. Exactly one hit: $C_4^1\cdot\tfrac13\cdot(\tfrac23)^3=4\cdot\tfrac8{81}=\tfrac{32}{81}$.'
+          - problem: 'A fair die is rolled $3$ times. Find the probability that a six appears (a) exactly once, (b) exactly twice.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"one","contract":{"kind":"exact"}},{"name":"two","contract":{"kind":"exact"}}]}
+            answer: 'one = 25/72; two = 5/72'
+            solution_sketch: 'Exactly once: $C_3^1\cdot\tfrac16\cdot(\tfrac56)^2=\tfrac{75}{216}=\tfrac{25}{72}$. Exactly twice: $C_3^2\cdot(\tfrac16)^2\cdot\tfrac56=\tfrac{15}{216}=\tfrac5{72}$.'
+          - problem: 'A ball is drawn $3$ times from a bag, and it goes back after each draw. A red ball has probability $\frac25$ each time. Find the probability of (a) exactly $2$ red balls, (b) at least $2$ red balls.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"two","contract":{"kind":"exact"}},{"name":"atleast","contract":{"kind":"exact"}}]}
+            answer: 'two = 36/125; atleast = 44/125'
+            solution_sketch: 'Exactly two: $C_3^2(\tfrac25)^2\cdot\tfrac35=\tfrac{36}{125}$. Three red: $(\tfrac25)^3=\tfrac8{125}$. At least two: $\tfrac{36+8}{125}=\tfrac{44}{125}$.'
+          - problem: 'A fair coin is tossed $5$ times. Find the probability of (a) exactly $3$ heads, (b) at least $4$ heads, (c) at most $1$ head.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"three","contract":{"kind":"exact"}},{"name":"ge4","contract":{"kind":"exact"}},{"name":"le1","contract":{"kind":"exact"}}]}
+            answer: 'three = 5/16; ge4 = 3/16; le1 = 3/16'
+            solution_sketch: 'Exactly $3$: $C_5^3/32=10/32=5/16$. At least $4$: $(C_5^4+C_5^5)/32=6/32=3/16$. At most $1$: $(C_5^0+C_5^1)/32=6/32=3/16$.'
+          - problem: 'A trial succeeds with probability $\frac13$. It is repeated $4$ times, independently. (a) Find the probability of exactly $3$ successes. (b) Find the probability of at least $3$ successes. (c) A fair coin is tossed $n$ times. The probability of exactly one head is $\frac5{32}$. Find $n$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"three","contract":{"kind":"exact"}},{"name":"atleast","contract":{"kind":"exact"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 'three = 8/81; atleast = 1/9; n = 5'
+            solution_sketch: 'Exactly three: $C_4^3(\tfrac13)^3\tfrac23=\tfrac8{81}$. Four successes: $\tfrac1{81}$. At least three: $\tfrac9{81}=\tfrac19$. For the coin, $n/2^n=5/32$. The value $n/2^n$ falls for $n\ge2$, and $n=5$ gives $5/32$.'
+        constraints: 'Bernoulli series with n from 3 to 5; exactly k, at least k'
+    diagnostic_exemplar:
+      problem: 'A fair die is rolled once. Find the probability of an even number.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/2'
+      solution_sketch: 'Three of the six numbers are even, so $3/6=1/2$.'
+  - id: vbe-cp26-random-variables
+    name: Random variables
+    lt_term: 'Atsitiktiniai dydžiai'
+    area: data
+    program_items: [190, 191, 192, 193]
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: discrete-probability-distributions
+        weight: 0.6
+        key: true
+      - id: discrete-random-variables
+        weight: 0.4
+        key: false
+      - id: variance-random-variables
+        weight: 0.4
+        key: false
+      - id: normal-distribution
+        weight: 0.4
+        key: false
+      - id: empirical-rule
+        weight: 0.4
+        key: false
+      - id: z-scores
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Distribution table, unknown probability and expected value'
+        key_prerequisites: [discrete-probability-distributions, discrete-random-variables]
+        exemplars:
+          - problem: 'A random variable $X$ takes the values $0,1,2,3$ with the probabilities $\frac1{10}$, $\frac25$, $p$, $\frac15$. (a) Find $p$. (b) Find the expected value $\mathbf EX$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"ex","contract":{"kind":"exact"}}]}
+            answer: 'p = 3/10; ex = 8/5'
+            solution_sketch: 'The probabilities add to $1$: $\tfrac1{10}+\tfrac4{10}+p+\tfrac2{10}=1$, so $p=\tfrac3{10}$. Then $\mathbf EX=0+\tfrac4{10}+\tfrac6{10}+\tfrac6{10}=\tfrac85$.'
+          - problem: 'A random variable $X$ takes the values $-1,0,2,5$ with the probabilities $\frac15$, $\frac15$, $\frac25$, $p$. (a) Find $p$. (b) Find $\mathbf EX$. (c) Find $P(X>0)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"ex","contract":{"kind":"exact"}},{"name":"pos","contract":{"kind":"exact"}}]}
+            answer: 'p = 1/5; ex = 8/5; pos = 3/5'
+            solution_sketch: 'The sum of the probabilities is $1$, so $p=1-\tfrac45=\tfrac15$. Then $\mathbf EX=-\tfrac15+0+\tfrac45+1=\tfrac85$. The values $2$ and $5$ give $\tfrac25+\tfrac15=\tfrac35$.'
+          - problem: 'A random variable $X$ takes the values $1,2,3$ with the probabilities $a$, $2a$, $3a$. (a) Find $a$. (b) Find $\mathbf EX$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"ex","contract":{"kind":"exact"}}]}
+            answer: 'a = 1/6; ex = 7/3'
+            solution_sketch: 'We have $6a=1$, so $a=\tfrac16$. Then $\mathbf EX=\tfrac16+\tfrac46+\tfrac96=\tfrac{14}6=\tfrac73$.'
+          - problem: 'A random variable $X$ takes the values $1,2,4$ with the probabilities $\frac12$, $p$, $q$. Its expected value is $\frac94$. Find (a) $p$ and (b) $q$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"q","contract":{"kind":"exact"}}]}
+            answer: 'p = 1/8; q = 3/8'
+            solution_sketch: 'The probabilities give $p+q=\tfrac12$. The expected value gives $\tfrac12+2p+4q=\tfrac94$, so $p+2q=\tfrac78$. Subtract: $q=\tfrac38$, and then $p=\tfrac18$.'
+          - problem: 'A fair die is rolled once. The payoff $X$ is $0$ for the numbers $1,2,3$, it is $3$ for the numbers $4,5$, and it is $9$ for the number $6$. (a) Find $P(X=3)$. (b) Find $\mathbf EX$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p3","contract":{"kind":"exact"}},{"name":"ex","contract":{"kind":"exact"}}]}
+            answer: 'p3 = 1/3; ex = 5/2'
+            solution_sketch: 'The numbers $4$ and $5$ give $P(X=3)=\tfrac26=\tfrac13$. Then $\mathbf EX=0\cdot\tfrac12+3\cdot\tfrac13+9\cdot\tfrac16=1+\tfrac32=\tfrac52$.'
+          - problem: 'A random variable $X$ takes the values $1,2,3$ with the probabilities $p$, $\frac12$, $\frac12-p$. Its expected value is $2$. (a) Find $p$. (b) Find $P(X\ge2)$. (c) Find $\mathbf E(2X+1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"ge2","contract":{"kind":"exact"}},{"name":"e2x1","contract":{"kind":"exact"}}]}
+            answer: 'p = 1/4; ge2 = 3/4; e2x1 = 5'
+            solution_sketch: 'We have $\mathbf EX=p+1+3(\tfrac12-p)=\tfrac52-2p=2$, so $p=\tfrac14$. Then $P(X\ge2)=1-p=\tfrac34$. Also $\mathbf E(2X+1)=2\cdot2+1=5$.'
+        constraints: '3 or 4 values with fractional probabilities; one unknown probability, then the expected value'
+      - id: kp2
+        name: 'Variance, standard deviation and the normal curve'
+        key_prerequisites: [variance-random-variables, normal-distribution, empirical-rule]
+        exemplars:
+          - problem: 'A random variable $X$ takes the values $0,1,2$ with the probabilities $\frac14$, $\frac12$, $\frac14$. Find (a) $\mathbf EX$, (b) the variance $\mathbf DX$, (c) the standard deviation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ex","contract":{"kind":"exact"}},{"name":"var","contract":{"kind":"exact"}},{"name":"sd","contract":{"kind":"exact"}}]}
+            answer: 'ex = 1; var = 1/2; sd = sqrt(2)/2'
+            solution_sketch: 'We have $\mathbf EX=\tfrac12+\tfrac12=1$. Then $\mathbf DX=1\cdot\tfrac14+0+1\cdot\tfrac14=\tfrac12$. The standard deviation is $\sqrt{1/2}=\sqrt2/2$.'
+          - problem: 'A random variable $X$ takes the values $1,3,5,7$, each with probability $\frac14$. Find (a) $\mathbf EX$, (b) $\mathbf DX$, (c) the standard deviation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ex","contract":{"kind":"exact"}},{"name":"var","contract":{"kind":"exact"}},{"name":"sd","contract":{"kind":"exact"}}]}
+            answer: 'ex = 4; var = 5; sd = sqrt(5)'
+            solution_sketch: 'We have $\mathbf EX=\tfrac{16}{4}=4$. The squared distances are $9,1,1,9$, with mean $\tfrac{20}4=5$. The standard deviation is $\sqrt5$.'
+          - problem: 'A random variable $X$ takes the values $0,3,6$ with the probabilities $\frac12$, $\frac13$, $\frac16$. Find (a) $\mathbf EX$ and (b) $\mathbf DX$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ex","contract":{"kind":"exact"}},{"name":"var","contract":{"kind":"exact"}}]}
+            answer: 'ex = 2; var = 5'
+            solution_sketch: 'We have $\mathbf EX=0+1+1=2$. Then $\mathbf DX=4\cdot\tfrac12+1\cdot\tfrac13+16\cdot\tfrac16=2+\tfrac13+\tfrac83=5$.'
+          - problem: 'The heights of a group of adults follow a normal distribution with mean $170$ cm and standard deviation $8$ cm. (a) The curve is symmetric about the line $x=m$. Find $m$. (b) Find the percent of the heights between $154$ and $186$. (c) Find the percent of the heights above $178$. Use the 68-95-99.7 rule.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"m","contract":{"kind":"exact"}},{"name":"mid","contract":{"kind":"exact"}},{"name":"above","contract":{"kind":"exact"}}]}
+            answer: 'm = 170; mid = 95; above = 16'
+            solution_sketch: 'The axis of symmetry passes through the mean, so $m=170$. The interval $154$ to $186$ is the mean plus or minus two standard deviations, which holds $95\%$. The interval $162$ to $178$ holds $68\%$, so the rest is $32\%$ and half of it, $16\%$, is above $178$.'
+          - problem: 'A quantity follows a normal distribution with mean $50$ and standard deviation $5$. (a) Find the value that is two standard deviations above the mean. (b) Find the percent of the values between $40$ and $60$. (c) Find the percent of the values below $55$. Use the 68-95-99.7 rule.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"val","contract":{"kind":"exact"}},{"name":"mid","contract":{"kind":"exact"}},{"name":"below","contract":{"kind":"exact"}}]}
+            answer: 'val = 60; mid = 95; below = 84'
+            solution_sketch: 'The value is $50+2\cdot5=60$. The interval $40$ to $60$ holds $95\%$. The interval $45$ to $55$ holds $68\%$, and half of the remaining $32\%$ is below $45$. So below $55$ is $68\%+16\%=84\%$.'
+          - problem: 'A quantity follows a normal distribution. $95\%$ of its values are between $28$ and $52$. (a) Find the mean. (b) Find the standard deviation. (c) Find the percent of the values above $46$. Use the 68-95-99.7 rule.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mean","contract":{"kind":"exact"}},{"name":"sd","contract":{"kind":"exact"}},{"name":"above","contract":{"kind":"exact"}}]}
+            answer: 'mean = 40; sd = 6; above = 16'
+            solution_sketch: 'The interval is symmetric about the mean, so the mean is $40$. Its half-width $12$ is two standard deviations, so the standard deviation is $6$. The value $46$ is one standard deviation above the mean, so $16\%$ of the values are above it.'
+        constraints: 'variance and standard deviation of a small distribution; normal curves with the 68, 95 rule'
+      - id: kp3
+        name: 'Table of a derived variable (product, sum) with a parameter'
+        key_prerequisites: [discrete-random-variables, discrete-probability-distributions]
+        exemplars:
+          - problem: 'A random variable $X$ takes the values $1,2,3$ with the probabilities $\frac12$, $\frac13$, $\frac16$. Let $Y=2X+1$. (a) Find $P(Y=5)$. (b) Find $\mathbf EY$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p5","contract":{"kind":"exact"}},{"name":"ey","contract":{"kind":"exact"}}]}
+            answer: 'p5 = 1/3; ey = 13/3'
+            solution_sketch: 'The value $Y=5$ comes from $X=2$, so the probability is $\tfrac13$. We have $\mathbf EX=\tfrac12+\tfrac23+\tfrac12=\tfrac53$. So $\mathbf EY=2\cdot\tfrac53+1=\tfrac{13}3$.'
+          - problem: 'A random variable $X$ takes the values $-1,0,1,2$, each with probability $\frac14$. Let $Y=X^2$. (a) Find $P(Y=1)$. (b) Find $\mathbf EY$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"ey","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 1/2; ey = 3/2'
+            solution_sketch: 'The values $X=-1$ and $X=1$ both give $Y=1$, so $P(Y=1)=\tfrac12$. The values of $Y$ are $1,0,1,4$ and $\mathbf EY=\tfrac64=\tfrac32$.'
+          - problem: 'Two fair four-sided dice with faces $1,2,3,4$ are rolled. Let $S$ be the sum of the two numbers. (a) Find $P(S=5)$. (b) Find $\mathbf ES$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p5","contract":{"kind":"exact"}},{"name":"es","contract":{"kind":"exact"}}]}
+            answer: 'p5 = 1/4; es = 5'
+            solution_sketch: 'There are $16$ equal outcomes. The sum $5$ comes from $4$ of them, so $P=\tfrac4{16}=\tfrac14$. Each die has mean $\tfrac52$, so $\mathbf ES=5$.'
+          - problem: 'Three cards carry the numbers $1$, $2$ and $a$, with $a>2$. Two cards are drawn at the same time. Let $S$ be the sum of the two numbers. The expected value of $S$ is $6$. (a) Find $a$. (b) Find $P(S>5)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"p","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; p = 2/3'
+            solution_sketch: 'The sums are $3$, $1+a$, $2+a$, each with probability $\tfrac13$. So $\mathbf ES=\tfrac{6+2a}3=6$ and $a=6$. The sums are $3,7,8$, so $P(S>5)=\tfrac23$.'
+          - problem: 'A random variable $X$ takes the values $0,1,2$ with the probabilities $\frac12$, $\frac13$, $\frac16$. Let $Y=(X-1)^2$. Find (a) $P(Y=1)$, (b) $\mathbf EY$, (c) $\mathbf DY$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"ey","contract":{"kind":"exact"}},{"name":"dy","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2/3; ey = 2/3; dy = 2/9'
+            solution_sketch: 'The values $X=0$ and $X=2$ give $Y=1$, so $P(Y=1)=\tfrac12+\tfrac16=\tfrac23$. Then $Y$ takes $1$ with $\tfrac23$ and $0$ with $\tfrac13$, so $\mathbf EY=\tfrac23$. Here $Y^2=Y$, so $\mathbf DY=\tfrac23-\tfrac49=\tfrac29$.'
+          - problem: 'The random variable $X$ takes the values $1,2$ with probability $\frac12$ each. The independent variable $Y$ takes the values $0,1,3$ with the probabilities $\frac14$, $\frac12$, $\frac14$. Let $Z=XY$. Find (a) $P(Z=0)$, (b) $\mathbf EZ$, (c) $P(Z\ge2)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p0","contract":{"kind":"exact"}},{"name":"ez","contract":{"kind":"exact"}},{"name":"pge2","contract":{"kind":"exact"}}]}
+            answer: 'p0 = 1/4; ez = 15/8; pge2 = 1/2'
+            solution_sketch: 'We have $Z=0$ only when $Y=0$, so $P=\tfrac14$. The values of $Z$ are $0,1,2,3,6$ with the probabilities $\tfrac14,\tfrac14,\tfrac14,\tfrac18,\tfrac18$. So $\mathbf EZ=\tfrac14+\tfrac12+\tfrac38+\tfrac34=\tfrac{15}8$. The values $2,3,6$ give $\tfrac14+\tfrac18+\tfrac18=\tfrac12$.'
+        constraints: 'a derived variable such as 2X+1, X squared, a sum or a product; one item has a parameter'
+    diagnostic_exemplar:
+      problem: 'A random variable takes the values $0$ and $1$ with the probabilities $p$ and $\frac23$. Find $p$.'
+      answer_contract: {"kind":"exact"}
+      answer: '1/3'
+      solution_sketch: 'The probabilities add to $1$, so $p=1-\tfrac23=\tfrac13$.'

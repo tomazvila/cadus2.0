@@ -1,0 +1,500 @@
+unit: calculus
+course: vbe-math
+module: "Checkpoints: Calculus"
+topics:
+  - id: vbe-cp17-limits-derivative-concept
+    name: Limits, continuity, derivative and tangent
+    lt_term: 'Ribos, tolydumas, išvestinės samprata'
+    area: models
+    program_items: [129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: limits-graphical-numerical
+        weight: 0.6
+        key: true
+      - id: one-sided-infinite-limits
+        weight: 0.4
+        key: false
+      - id: limits-at-infinity-rational
+        weight: 0.4
+        key: false
+      - id: continuity-at-a-point
+        weight: 0.4
+        key: false
+      - id: continuity
+        weight: 0.4
+        key: false
+      - id: limit-laws
+        weight: 0.4
+        key: false
+      - id: factoring-limits
+        weight: 0.4
+        key: false
+      - id: limits-algebraic
+        weight: 0.4
+        key: false
+      - id: average-instantaneous-rate
+        weight: 0.4
+        key: false
+      - id: difference-quotients
+        weight: 0.4
+        key: false
+      - id: derivative-at-a-point
+        weight: 0.4
+        key: false
+      - id: tangent-line-equation
+        weight: 0.4
+        key: false
+      - id: derivative-definition
+        weight: 0.4
+        key: false
+      - id: motion-along-a-line
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Limits and continuity at a point'
+        key_prerequisites: [limits-graphical-numerical, limit-laws, factoring-limits, continuity-at-a-point, limits-at-infinity-rational, limits-algebraic]
+        exemplars:
+          - problem: 'Find (a) $\lim_{x\to2}(x^2+3x-1)$ and (b) $\lim_{x\to2}\dfrac{x+1}{x-1}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 9; b = 3'
+            solution_sketch: 'Both functions are continuous at $x=2$, so substitute $x=2$. The first limit is $4+6-1=9$. The second limit is $\tfrac{3}{1}=3$.'
+          - problem: 'Find (a) $\lim_{x\to3}\dfrac{x^2-9}{x-3}$ and (b) $\lim_{x\to-2}\dfrac{x^2+x-2}{x+2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 6; b = -3'
+            solution_sketch: 'Factor: $\tfrac{x^2-9}{x-3}=x+3$ for $x\ne3$, so the limit is $6$. Also $x^2+x-2=(x+2)(x-1)$, so the quotient is $x-1$ and the limit is $-3$.'
+          - problem: 'Find (a) $\lim_{x\to\infty}\dfrac{3x^2+x}{x^2-5}$, (b) $\lim_{x\to\infty}\dfrac{4x+1}{x^2+2}$, (c) $\lim_{x\to-\infty}\dfrac{2-5x}{x+1}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 0; c = -5'
+            solution_sketch: 'Divide the numerator and the denominator by the highest power of $x$. In (a) the ratio of the leading coefficients is $3$. In (b) the degree of the denominator is larger, so the limit is $0$. In (c) the ratio of the leading coefficients is $\tfrac{-5}{1}=-5$.'
+          - problem: 'Let $f(x)=2x+k$ for $x<1$ and $f(x)=x^2+3$ for $x\ge1$. (a) Find $f(1)$. (b) Find the value of $k$ for which $f$ is continuous at $x=1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"f1","contract":{"kind":"exact"}},{"name":"k","contract":{"kind":"exact"}}]}
+            answer: 'f1 = 4; k = 2'
+            solution_sketch: 'For $x=1$ the second formula applies, so $f(1)=4$. The left limit is $2+k$. Continuity needs $2+k=4$, so $k=2$.'
+          - problem: 'Find (a) $\lim_{x\to0}\dfrac{\sqrt{x+4}-2}{x}$ and (b) $\lim_{x\to9}\dfrac{x-9}{\sqrt x-3}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1/4; b = 6'
+            solution_sketch: 'For (a), multiply by $\sqrt{x+4}+2$. The numerator becomes $x$, so the quotient is $\tfrac{1}{\sqrt{x+4}+2}$ and the limit is $\tfrac14$. For (b), write $x-9=(\sqrt x-3)(\sqrt x+3)$. The quotient is $\sqrt x+3$ and the limit is $6$.'
+          - problem: 'The limit $\lim_{x\to1}\dfrac{x^2-ax+2}{x-1}$ is a finite number. (a) Find $a$. (b) Find the limit.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"L","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; L = -1'
+            solution_sketch: 'The denominator tends to $0$, so the numerator must tend to $0$. This gives $1-a+2=0$ and $a=3$. Then $x^2-3x+2=(x-1)(x-2)$, so the quotient is $x-2$ and the limit is $-1$.'
+        constraints: 'The items vary the function and the point. The limit rules stay fixed.'
+      - id: kp2
+        name: 'Tangent equation, parameter of a tangent and physical meaning'
+        key_prerequisites: [tangent-line-equation, derivative-at-a-point, motion-along-a-line, difference-quotients]
+        exemplars:
+          - problem: 'Let $f(x)=x^2-3x$. (a) Simplify $\dfrac{f(2+h)-f(2)}{h}$ for $h\ne0$. (b) Find $f''(2)$. (c) Write the equation of the tangent at $x=2$ as $y=\dots$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"q","contract":{"kind":"function","vars":["h"]}},{"name":"d","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'q = 1+h; d = 1; tan = x-4'
+            solution_sketch: 'We have $f(2)=-2$ and $f(2+h)=-2+h+h^2$. The quotient is $1+h$. As $h\to0$ it tends to $1$, so $f''(2)=1$. The tangent is $y=1\cdot(x-2)-2=x-4$.'
+          - problem: 'Let $f(x)=x^3+x$. (a) Find the slope of the tangent at $x=1$. (b) Write the equation of this tangent as $y=\dots$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"k","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'k = 4; tan = 4*x-2'
+            solution_sketch: 'We have $f''(x)=3x^2+1$, so the slope is $f''(1)=4$. Also $f(1)=2$. The tangent is $y=4(x-1)+2=4x-2$.'
+          - problem: 'A body moves on a line with the distance $s(t)=t^2+4t$ meters after $t$ seconds. Find (a) the speed at $t=3$, (b) the acceleration, (c) the time at which the speed is $16$ meters per second.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"v","contract":{"kind":"exact"}},{"name":"a","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 'v = 10; a = 2; t = 6'
+            solution_sketch: 'The speed is $s''(t)=2t+4$, so $s''(3)=10$. The acceleration is the derivative of the speed, $2$. Solve $2t+4=16$ to get $t=6$.'
+          - problem: 'The tangent to the graph of $f(x)=x^2+px$ at the point with abscissa $1$ has slope $4$. (a) Find $p$. (b) Write the equation of this tangent as $y=\dots$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'p = 2; tan = 4*x-1'
+            solution_sketch: 'We have $f''(x)=2x+p$, so $f''(1)=2+p=4$ and $p=2$. Then $f(1)=3$. The tangent is $y=4(x-1)+3=4x-1$.'
+          - problem: 'Let $f(x)=\sqrt x$. Find (a) $f''(4)$, (b) the equation of the tangent at $x=4$ as $y=\dots$, (c) the abscissa of the point where this tangent meets the $Ox$ axis.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"function","vars":["x"]}},{"name":"zero","contract":{"kind":"exact"}}]}
+            answer: 'd = 1/4; tan = x/4+1; zero = -4'
+            solution_sketch: 'We have $f''(x)=\tfrac1{2\sqrt x}$, so $f''(4)=\tfrac14$. Also $f(4)=2$, so the tangent is $y=\tfrac14(x-4)+2=\tfrac x4+1$. Put $y=0$ to get $x=-4$.'
+          - problem: 'Let $f(x)=x^2+1$. Tangents to the graph of $f$ pass through the origin. (a) Find the abscissas of the points of tangency. (b) Find the slope of the tangent at the point with positive abscissa. (c) Write the equation of this tangent as $y=\dots$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pts","contract":{"kind":"set"}},{"name":"k","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'pts = {-1, 1}; k = 2; tan = 2*x'
+            solution_sketch: 'The tangent at $x=a$ is $y=2a(x-a)+a^2+1$. It passes through $(0,0)$, so $-2a^2+a^2+1=0$ and $a=\pm1$. For $a=1$ the slope is $2$ and the line is $y=2x$.'
+        constraints: 'The items vary the function and the point. The meaning of the derivative as a slope and as a speed stays fixed.'
+    diagnostic_exemplar:
+      problem: 'Find (a) $\lim_{x\to4}\dfrac{x^2-16}{x-4}$ and (b) the slope of the tangent to $y=x^2$ at $x=3$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"L","contract":{"kind":"exact"}},{"name":"k","contract":{"kind":"exact"}}]}
+      answer: 'L = 8; k = 6'
+      solution_sketch: 'Factor: the quotient is $x+4$, so the limit is $8$. The slope is $2\cdot3=6$.'
+  - id: vbe-cp18-derivative-rules
+    name: Derivative rules
+    lt_term: 'Išvestinių skaičiavimas'
+    area: models
+    program_items: [141, 142, 143, 144, 145, 146, 147]
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: derivatives-of-polynomials
+        weight: 0.6
+        key: true
+      - id: derivative-power-rule
+        weight: 0.4
+        key: false
+      - id: combining-differentiation-rules
+        weight: 0.4
+        key: false
+      - id: product-rule
+        weight: 0.4
+        key: false
+      - id: product-quotient-rules
+        weight: 0.4
+        key: false
+      - id: quotient-rule
+        weight: 0.4
+        key: false
+      - id: chain-rule
+        weight: 0.4
+        key: false
+      - id: derivatives-natural-exp
+        weight: 0.4
+        key: false
+      - id: derivatives-natural-log
+        weight: 0.4
+        key: false
+      - id: derivatives-exp-log
+        weight: 0.4
+        key: false
+      - id: derivatives-sin-cos
+        weight: 0.4
+        key: false
+      - id: derivatives-trig
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Derivative of a product, quotient and composite function'
+        key_prerequisites: [product-rule, quotient-rule, chain-rule]
+        exemplars:
+          - problem: 'Let $f(x)=x^2(3x-1)$. (a) Find $f''(x)$. (b) Find $f''(1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}}]}
+            answer: 'd = 9*x^2-2*x; v = 7'
+            solution_sketch: 'By the product rule, $f''(x)=2x(3x-1)+3x^2=9x^2-2x$. Then $f''(1)=9-2=7$.'
+          - problem: 'Let $f(x)=\dfrac{x^2+1}{x-1}$. (a) Find $f''(x)$. (b) Find $f''(3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}}]}
+            answer: 'd = (x^2-2*x-1)/(x-1)^2; v = 1/2'
+            solution_sketch: 'By the quotient rule, $f''(x)=\tfrac{2x(x-1)-(x^2+1)}{(x-1)^2}=\tfrac{x^2-2x-1}{(x-1)^2}$. Then $f''(3)=\tfrac{9-6-1}{4}=\tfrac12$.'
+          - problem: 'Find (a) the derivative of $f(x)=(2x+1)^5$, (b) $f''(0)$, (c) $g''(4)$ for $g(x)=\sqrt{x^2+9}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}},{"name":"g","contract":{"kind":"exact"}}]}
+            answer: 'd = 10*(2*x+1)^4; v = 10; g = 4/5'
+            solution_sketch: 'By the chain rule, $f''(x)=5(2x+1)^4\cdot2=10(2x+1)^4$, so $f''(0)=10$. Also $g''(x)=\tfrac{2x}{2\sqrt{x^2+9}}=\tfrac{x}{\sqrt{x^2+9}}$. Then $g''(4)=\tfrac45$.'
+          - problem: 'Let $f(x)=x^2\ln x$ for $x>0$. (a) Find $f''(x)$. (b) Find $f''(1)$. (c) Find the number $x_0>0$ with $f''(x_0)=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}},{"name":"x0","contract":{"kind":"exact"}}]}
+            answer: 'd = 2*x*ln(x)+x; v = 1; x0 = exp(-1/2)'
+            solution_sketch: 'By the product rule, $f''(x)=2x\ln x+x^2\cdot\tfrac1x=2x\ln x+x$. Then $f''(1)=0+1=1$. Solve $x(2\ln x+1)=0$ with $x>0$: $\ln x=-\tfrac12$, so $x_0=e^{-1/2}$.'
+          - problem: 'Let $f(x)=\sin^2x\cos x$. Find (a) $f''\!\left(\tfrac\pi2\right)$, (b) $f''\!\left(\tfrac\pi4\right)$, (c) $f''\!\left(\tfrac\pi6\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = -1; b = sqrt(2)/4; c = 5/8'
+            solution_sketch: 'By the product rule and the chain rule, $f''(x)=2\sin x\cos^2x-\sin^3x$. At $\tfrac\pi2$ this is $0-1=-1$. At $\tfrac\pi4$ it is $2\cdot\tfrac{\sqrt2}{2}\cdot\tfrac12-\tfrac{\sqrt2}{4}=\tfrac{\sqrt2}{4}$. At $\tfrac\pi6$ it is $2\cdot\tfrac12\cdot\tfrac34-\tfrac18=\tfrac58$.'
+          - problem: 'Find (a) $f''(1)$ for $f(x)=\dfrac{\ln(x^2+1)}{x}$. Let $g(x)=x^2e^{-x}$. Find (b) all $x$ with $g''(x)=0$ and (c) the value of $e\cdot g''(1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"zeros","contract":{"kind":"set"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1-ln(2); zeros = {0, 2}; c = 1'
+            solution_sketch: 'By the quotient rule and the chain rule, $f''(x)=\tfrac{\frac{2x}{x^2+1}\cdot x-\ln(x^2+1)}{x^2}$, so $f''(1)=1-\ln2$. For $g$, $g''(x)=(2x-x^2)e^{-x}$, which is zero at $x=0$ and $x=2$. Also $g''(1)=e^{-1}$, so $e\cdot g''(1)=1$.'
+        constraints: 'The items vary the function and the rule. The rules of differentiation stay fixed.'
+      - id: kp2
+        name: 'Derivative value in a multi-step item'
+        key_prerequisites: [derivatives-of-polynomials, combining-differentiation-rules]
+        exemplars:
+          - problem: 'Let $f(x)=x^3-6x^2+9x+1$. Find (a) $f''(x)$, (b) $f''(2)$, (c) all $x$ with $f''(x)=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}},{"name":"zeros","contract":{"kind":"set"}}]}
+            answer: 'd = 3*x^2-12*x+9; v = -3; zeros = {1, 3}'
+            solution_sketch: 'We have $f''(x)=3x^2-12x+9$. Then $f''(2)=12-24+9=-3$. Also $3(x-1)(x-3)=0$ gives $x=1$ or $x=3$.'
+          - problem: 'A cylinder has radius $r$ and height $9-2r$ with $0<r<4.5$. Its volume is $V(r)=\pi r^2(9-2r)$. Find (a) $V''(r)$, (b) $V''(2)$, (c) the value $r>0$ with $V''(r)=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["r"]}},{"name":"v","contract":{"kind":"exact"}},{"name":"r0","contract":{"kind":"exact"}}]}
+            answer: 'd = 18*pi*r-6*pi*r^2; v = 12*pi; r0 = 3'
+            solution_sketch: 'We have $V(r)=9\pi r^2-2\pi r^3$, so $V''(r)=18\pi r-6\pi r^2$. Then $V''(2)=36\pi-24\pi=12\pi$. Solve $6\pi r(3-r)=0$ to get $r=3$.'
+          - problem: 'A pyramid has a square base with side $x$ and height $12-x$ with $0<x<12$. Its volume is $V(x)=\tfrac13x^2(12-x)$. Find (a) $V''(x)$, (b) $V''(3)$, (c) the value $x>0$ with $V''(x)=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"function","vars":["x"]}},{"name":"v","contract":{"kind":"exact"}},{"name":"x0","contract":{"kind":"exact"}}]}
+            answer: 'd = 8*x-x^2; v = 15; x0 = 8'
+            solution_sketch: 'We have $V(x)=4x^2-\tfrac13x^3$, so $V''(x)=8x-x^2$. Then $V''(3)=24-9=15$. Solve $x(8-x)=0$ with $x>0$ to get $x=8$.'
+          - problem: 'Let $f(x)=(2x+1)^3$. Find (a) $f''(1)$ and (b) all $x$ with $f''(x)=6$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"v","contract":{"kind":"exact"}},{"name":"xs","contract":{"kind":"set"}}]}
+            answer: 'v = 54; xs = {-1, 0}'
+            solution_sketch: 'We have $f''(x)=6(2x+1)^2$, so $f''(1)=54$. Solve $6(2x+1)^2=6$: $(2x+1)^2=1$, so $2x+1=\pm1$ and $x=0$ or $x=-1$.'
+          - problem: 'Let $f(x)=\dfrac{x}{x^2+1}$. Find (a) $f''(2)$, (b) all $x$ with $f''(x)=0$, (c) $f''(0)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"zeros","contract":{"kind":"set"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = -3/25; zeros = {-1, 1}; c = 1'
+            solution_sketch: 'By the quotient rule, $f''(x)=\tfrac{(x^2+1)-2x^2}{(x^2+1)^2}=\tfrac{1-x^2}{(x^2+1)^2}$. Then $f''(2)=\tfrac{-3}{25}$ and $f''(0)=1$. The numerator is zero at $x=\pm1$.'
+          - problem: 'Let $f(x)=ax^3+bx$ with $f(1)=-2$ and $f''(1)=0$. Find (a) $a$, (b) $b$, (c) $f''(2)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = -3; d = 9'
+            solution_sketch: 'We have $f''(x)=3ax^2+b$. The conditions give $3a+b=0$ and $a+b=-2$. Subtract to get $2a=2$, so $a=1$ and $b=-3$. Then $f''(2)=12-3=9$.'
+        constraints: 'The items vary the model function and the unknown. The derivative value is the base of every part.'
+    diagnostic_exemplar:
+      problem: 'Find (a) $f''(0)$ for $f(x)=(x+1)^4$ and (b) $g''(1)$ for $g(x)=x^2(x+1)$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"q","contract":{"kind":"exact"}}]}
+      answer: 'p = 4; q = 5'
+      solution_sketch: 'By the chain rule, $f''(x)=4(x+1)^3$ and $f''(0)=4$. By the product rule, $g''(x)=2x(x+1)+x^2$ and $g''(1)=5$.'
+  - id: vbe-cp19-function-study
+    name: Function study and optimization
+    lt_term: 'Funkcijos tyrimas ir optimizavimas'
+    area: models
+    program_items: [148, 149, 150, 151]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: critical-points-extrema
+        weight: 0.6
+        key: true
+      - id: closed-interval-method
+        weight: 0.4
+        key: false
+      - id: curve-analysis-derivatives
+        weight: 0.4
+        key: false
+      - id: optimization
+        weight: 0.4
+        key: false
+      - id: basic-optimization
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Critical points, intervals and sign of the derivative from a graph'
+        key_prerequisites: [critical-points-extrema, curve-analysis-derivatives]
+        exemplars:
+          - problem: 'Let $f(x)=x^3-3x$. Find (a) the critical points of $f$, (b) the local maximum value of $f$, (c) the set where $f''(x)>0$, written as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"max","contract":{"kind":"exact"}},{"name":"inc","contract":{"kind":"inequality_union"}}]}
+            answer: 'crit = {-1, 1}; max = 2; inc = x < -1 or x > 1'
+            solution_sketch: 'We have $f''(x)=3x^2-3=3(x-1)(x+1)$, so the critical points are $-1$ and $1$. The derivative is positive for $x<-1$ and $x>1$, so $f$ increases there. The local maximum is at $x=-1$, with value $f(-1)=2$.'
+          - problem: 'Let $f''(x)=(x-1)(x+3)$. Find (a) the critical points of $f$, (b) the set where $f''(x)<0$, written as an inequality in $x$, (c) the $x$ of the local minimum.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"dec","contract":{"kind":"inequality_union"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'crit = {-3, 1}; dec = -3 < x < 1; min = 1'
+            solution_sketch: 'The derivative is zero at $x=1$ and $x=-3$. It is negative between them, so $f$ decreases for $-3<x<1$. The derivative changes from negative to positive at $x=1$, so the local minimum is at $x=1$.'
+          - problem: 'Let $f''(x)=x(x-2)^2$. Find (a) the critical points of $f$, (b) the number of local extrema of $f$, (c) the set where $f''(x)>0$, written as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"n","contract":{"kind":"exact"}},{"name":"inc","contract":{"kind":"inequality_union"}}]}
+            answer: 'crit = {0, 2}; n = 1; inc = 0 < x < 2 or x > 2'
+            solution_sketch: 'The derivative is zero at $x=0$ and $x=2$. It is negative for $x<0$ and positive on both sides of $2$. So the sign changes only at $x=0$, which gives one extremum. The derivative is positive for $0<x<2$ and for $x>2$.'
+          - problem: 'Let $f(x)=x^4-8x^2$. Find (a) the critical points of $f$, (b) the set where $f''(x)<0$, written as an inequality in $x$, (c) the least value of $f$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"dec","contract":{"kind":"inequality_union"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'crit = {-2, 0, 2}; dec = x < -2 or 0 < x < 2; min = -16'
+            solution_sketch: 'We have $f''(x)=4x^3-16x=4x(x-2)(x+2)$. The derivative is negative for $x<-2$ and for $0<x<2$. The least value is at $x=\pm2$, with $f(\pm2)=16-32=-16$.'
+          - problem: 'Let $f(x)=x^2-8\ln x$. Find (a) the domain of $f$, written as an inequality in $x$, (b) the critical point of $f$, (c) the set where $f''(x)<0$, written as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"dom","contract":{"kind":"inequality_union"}},{"name":"crit","contract":{"kind":"exact"}},{"name":"dec","contract":{"kind":"inequality_union"}}]}
+            answer: 'dom = x > 0; crit = 2; dec = 0 < x < 2'
+            solution_sketch: 'The logarithm needs $x>0$. We have $f''(x)=2x-\tfrac8x=\tfrac{2(x^2-4)}{x}$, which is zero at $x=2$ in the domain. The derivative is negative for $0<x<2$.'
+          - problem: 'Let $f(x)=x^3+3x^2+ax$. The derivative $f''$ is a quadratic. Find (a) the discriminant of $f''$ in terms of $a$, (b) the value of $a$ for which $f$ has exactly one critical point, (c) this critical point.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"disc","contract":{"kind":"function","vars":["a"]}},{"name":"a","contract":{"kind":"exact"}},{"name":"crit","contract":{"kind":"exact"}}]}
+            answer: 'disc = 36-12*a; a = 3; crit = -1'
+            solution_sketch: 'We have $f''(x)=3x^2+6x+a$ with discriminant $36-12a$. One critical point needs discriminant $0$, so $a=3$. Then $3(x+1)^2=0$ gives $x=-1$.'
+        constraints: 'The items vary the function and the data of the derivative. The sign test of the derivative stays fixed.'
+      - id: kp2
+        name: 'Greatest and least value on an interval'
+        key_prerequisites: [closed-interval-method]
+        exemplars:
+          - problem: 'Find (a) the greatest value and (b) the least value of $f(x)=x^2-4x+1$ on $[0,3]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'max = 1; min = -3'
+            solution_sketch: 'The vertex is at $x=2$, with $f(2)=-3$. The endpoint values are $f(0)=1$ and $f(3)=-2$. The greatest is $1$ and the least is $-3$.'
+          - problem: 'Find (a) the greatest value and (b) the least value of $f(x)=x^3-3x$ on $[0,2]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'max = 2; min = -2'
+            solution_sketch: 'We have $f''(x)=3x^2-3$, which is zero at $x=1$ in the interval. The values are $f(0)=0$, $f(1)=-2$ and $f(2)=2$. The greatest is $2$ and the least is $-2$.'
+          - problem: 'Let $f(x)=x^3-3x^2-9x+5$ on $[-2,4]$. Find (a) the critical points in $[-2,4]$, (b) the greatest value, (c) the least value.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'crit = {-1, 3}; max = 10; min = -22'
+            solution_sketch: 'We have $f''(x)=3(x-3)(x+1)$. The values are $f(-2)=3$, $f(-1)=10$, $f(3)=-22$ and $f(4)=-15$. The greatest is $10$ and the least is $-22$.'
+          - problem: 'Let $f(x)=x+\dfrac4x$ on $[1,4]$. Find (a) the point where $f''(x)=0$, (b) the least value, (c) the greatest value.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x0","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'x0 = 2; min = 4; max = 5'
+            solution_sketch: 'We have $f''(x)=1-\tfrac4{x^2}$, which is zero at $x=2$. The values are $f(1)=5$, $f(2)=4$ and $f(4)=5$. The least is $4$ and the greatest is $5$.'
+          - problem: 'Let $f(x)=x^4-2x^2$ on $[-2,2]$. Find (a) the number of critical points in $[-2,2]$, (b) the greatest value, (c) the least value.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'n = 3; max = 8; min = -1'
+            solution_sketch: 'We have $f''(x)=4x(x-1)(x+1)$, so the critical points are $-1$, $0$ and $1$. The values are $f(\pm2)=8$, $f(\pm1)=-1$ and $f(0)=0$. The greatest is $8$ and the least is $-1$.'
+          - problem: 'Let $f(x)=2x^3-9x^2+12x$ on $[0,3]$. Find (a) the critical points, (b) the greatest value, (c) the least value.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"crit","contract":{"kind":"set"}},{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'crit = {1, 2}; max = 9; min = 0'
+            solution_sketch: 'We have $f''(x)=6(x-1)(x-2)$. The values are $f(0)=0$, $f(1)=5$, $f(2)=4$ and $f(3)=9$. The greatest is $9$ and the least is $0$.'
+        constraints: 'The items vary the function and the interval. The method of critical points and endpoints stays fixed.'
+      - id: kp3
+        name: 'Optimization with a set-up of the function (volume, area)'
+        key_prerequisites: [optimization, basic-optimization]
+        exemplars:
+          - problem: 'A rectangle has perimeter $40$ cm. One side has length $x$ cm. Find (a) the area $A(x)$ as a function of $x$, (b) the value of $x$ with the greatest area, (c) the greatest area in $\mathrm{cm}^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"A","contract":{"kind":"function","vars":["x"]}},{"name":"x0","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'A = 20*x-x^2; x0 = 10; max = 100'
+            solution_sketch: 'The other side is $20-x$, so $A(x)=20x-x^2$. We have $A''(x)=20-2x=0$ at $x=10$. Then $A(10)=100$.'
+          - problem: 'An open box is made from a square sheet with side $12$ cm. A square with side $x$ cm is cut from each corner and the sides are folded up. Find (a) the volume $V(x)$ as a function of $x$, (b) the value of $x$ with the greatest volume, (c) the greatest volume in $\mathrm{cm}^3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"x0","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'V = x*(12-2*x)^2; x0 = 2; max = 128'
+            solution_sketch: 'The base has side $12-2x$ and the height is $x$, so $V(x)=x(12-2x)^2=4x^3-48x^2+144x$. Then $V''(x)=12(x-2)(x-6)$. In $0<x<6$ the zero is $x=2$, and $V(2)=2\cdot64=128$.'
+          - problem: 'A cylinder has radius $r$ and height $h$ with $r+h=12$. Find (a) $h$ in terms of $r$, (b) the value of $r$ with the greatest volume, (c) the greatest volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h","contract":{"kind":"function","vars":["r"]}},{"name":"r0","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'h = 12-r; r0 = 8; max = 256*pi'
+            solution_sketch: 'We have $h=12-r$ and $V(r)=\pi r^2(12-r)$. Then $V''(r)=24\pi r-3\pi r^2=3\pi r(8-r)$, which is zero at $r=8$. The volume is $\pi\cdot64\cdot4=256\pi$.'
+          - problem: 'A farmer has $60$ m of fence. The fence covers three sides of a rectangular field, and a wall is the fourth side. The two sides at right angles to the wall have length $x$ m. Find (a) the area $A(x)$ as a function of $x$, (b) the value of $x$ with the greatest area, (c) the greatest area in $\mathrm{m}^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"A","contract":{"kind":"function","vars":["x"]}},{"name":"x0","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'A = x*(60-2*x); x0 = 15; max = 450'
+            solution_sketch: 'The side along the wall is $60-2x$, so $A(x)=x(60-2x)$. We have $A''(x)=60-4x=0$ at $x=15$. Then $A(15)=15\cdot30=450$.'
+          - problem: 'An open box has a square base with side $x$ m and volume $32\ \mathrm{m}^3$. Find (a) the height in terms of $x$, (b) the value of $x$ with the least surface area, (c) the least surface area in $\mathrm{m}^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h","contract":{"kind":"function","vars":["x"]}},{"name":"x0","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'h = 32/x^2; x0 = 4; min = 48'
+            solution_sketch: 'The height is $\tfrac{32}{x^2}$. The surface area is $S(x)=x^2+4x\cdot\tfrac{32}{x^2}=x^2+\tfrac{128}{x}$. Then $S''(x)=2x-\tfrac{128}{x^2}=0$ gives $x^3=64$, so $x=4$. Then $S(4)=16+32=48$.'
+          - problem: 'A rectangle has two vertices on the $Ox$ axis at $(-x,0)$ and $(x,0)$ with $x>0$. The other two vertices lie on the parabola $y=12-x^2$ and $y\ge0$. Find (a) the area $A(x)$ as a function of $x$, (b) the value of $x$ with the greatest area, (c) the greatest area.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"A","contract":{"kind":"function","vars":["x"]}},{"name":"x0","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'A = 24*x-2*x^3; x0 = 2; max = 32'
+            solution_sketch: 'The width is $2x$ and the height is $12-x^2$, so $A(x)=24x-2x^3$. Then $A''(x)=24-6x^2=0$ gives $x=2$. The area is $A(2)=48-16=32$.'
+        constraints: 'The items vary the solid or the figure. The steps of set-up, derivative and check of the domain stay fixed.'
+    diagnostic_exemplar:
+      problem: 'Let $f(x)=x^2-6x+5$. Find (a) the critical point of $f$ and (b) the least value of $f$ on $[0,5]$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}}]}
+      answer: 'x = 3; m = -4'
+      solution_sketch: 'We have $f''(x)=2x-6=0$ at $x=3$. Then $f(3)=-4$, and the endpoint values are $5$ and $0$.'
+  - id: vbe-cp20-integral
+    name: Antiderivative and integral
+    lt_term: 'Pirmykštė funkcija ir integralas'
+    area: models
+    program_items: [152, 153, 154, 155, 156, 157, 158, 159]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: antiderivatives
+        weight: 0.6
+        key: true
+      - id: reverse-power-rule
+        weight: 0.4
+        key: false
+      - id: u-substitution-basics
+        weight: 0.4
+        key: false
+      - id: area-under-a-curve
+        weight: 0.4
+        key: false
+      - id: definite-integrals-as-area
+        weight: 0.4
+        key: false
+      - id: riemann-sums-definite-integral
+        weight: 0.4
+        key: false
+      - id: left-right-riemann-sums
+        weight: 0.4
+        key: false
+      - id: definite-integrals-ftc
+        weight: 0.4
+        key: false
+      - id: area-between-curves
+        weight: 0.4
+        key: false
+      - id: volumes-disks
+        weight: 0.4
+        key: false
+      - id: volumes-disks-washers
+        weight: 0.4
+        key: false
+      - id: net-change-total-distance
+        weight: 0.4
+        key: false
+      - id: average-value-function
+        weight: 0.4
+        key: false
+      - id: work-springs
+        weight: 0.4
+        key: false
+      - id: average-value-work
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Antiderivative through a point and properties'
+        key_prerequisites: [antiderivatives, reverse-power-rule]
+        exemplars:
+          - problem: 'Let $F$ be an antiderivative of $f(x)=6x^2-2x$ with $F(1)=3$. Find (a) the constant term $C$ in $F(x)=2x^3-x^2+C$ and (b) $F(2)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"C","contract":{"kind":"exact"}},{"name":"F2","contract":{"kind":"exact"}}]}
+            answer: 'C = 2; F2 = 14'
+            solution_sketch: 'From $F(1)=2-1+C=3$ we get $C=2$. Then $F(2)=16-4+2=14$.'
+          - problem: 'Let $F$ be the antiderivative of $f(x)=(3x-2)^2$ with $F(1)=0$. Find (a) $F(2)$ and (b) $F(0)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"F2","contract":{"kind":"exact"}},{"name":"F0","contract":{"kind":"exact"}}]}
+            answer: 'F2 = 7; F0 = -1'
+            solution_sketch: 'An antiderivative of $(3x-2)^2$ is $\tfrac{(3x-2)^3}{9}$. So $F(x)=\tfrac{(3x-2)^3}{9}+C$ and $F(1)=\tfrac19+C=0$, which gives $C=-\tfrac19$. Then $F(2)=\tfrac{64}9-\tfrac19=7$ and $F(0)=-\tfrac89-\tfrac19=-1$.'
+          - problem: 'The graph of an antiderivative $F$ of $f(x)=2\cos x$ passes through the point $\left(\tfrac\pi2,5\right)$. Find (a) the constant $C$ in $F(x)=2\sin x+C$ and (b) $F\!\left(\tfrac\pi6\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"C","contract":{"kind":"exact"}},{"name":"F","contract":{"kind":"exact"}}]}
+            answer: 'C = 3; F = 4'
+            solution_sketch: 'From $F(\tfrac\pi2)=2+C=5$ we get $C=3$. Then $F(\tfrac\pi6)=2\cdot\tfrac12+3=4$.'
+          - problem: 'The graph of an antiderivative $F$ of $f(x)=3\sqrt x$ passes through $(1,2)$. Find (a) the constant $C$ in $F(x)=2x\sqrt x+C$, (b) $F(4)$, (c) $F(9)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"C","contract":{"kind":"exact"}},{"name":"F4","contract":{"kind":"exact"}},{"name":"F9","contract":{"kind":"exact"}}]}
+            answer: 'C = 0; F4 = 16; F9 = 54'
+            solution_sketch: 'The formula $\int x^{1/2}dx=\tfrac23x^{3/2}$ gives $F(x)=2x^{3/2}+C$. From $F(1)=2+C=2$ we get $C=0$. Then $F(4)=2\cdot8=16$ and $F(9)=2\cdot27=54$.'
+          - problem: 'Let $F$ be the antiderivative of $f(x)=\dfrac1{\cos^2x}$ with $F\!\left(\tfrac\pi4\right)=3$. Find (a) the constant $C$ in $F(x)=\tan x+C$ and (b) $F\!\left(\tfrac\pi3\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"C","contract":{"kind":"exact"}},{"name":"F","contract":{"kind":"exact"}}]}
+            answer: 'C = 2; F = 2+sqrt(3)'
+            solution_sketch: 'From $F(\tfrac\pi4)=1+C=3$ we get $C=2$. Then $F(\tfrac\pi3)=\sqrt3+2$.'
+          - problem: 'Let $F$ be an antiderivative of $f(x)=ax+2$ with $F(0)=1$ and $F(2)=9$. Find (a) the constant term $C$ of $F$, (b) $a$, (c) $F(3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"C","contract":{"kind":"exact"}},{"name":"a","contract":{"kind":"exact"}},{"name":"F3","contract":{"kind":"exact"}}]}
+            answer: 'C = 1; a = 2; F3 = 16'
+            solution_sketch: 'We have $F(x)=\tfrac a2x^2+2x+C$. From $F(0)=C=1$. Then $F(2)=2a+4+1=9$, so $a=2$. Then $F(3)=9+6+1=16$.'
+        constraints: 'The items vary the function and the given point. The rules of antiderivatives stay fixed.'
+      - id: kp2
+        name: 'Area under a graph and between graphs'
+        key_prerequisites: [definite-integrals-ftc, area-between-curves]
+        exemplars:
+          - problem: 'Compute (a) $\int_0^2(3x^2+1)\,dx$, (b) $\int_2^0(3x^2+1)\,dx$, (c) $\int_0^3(3x^2+1)\,dx$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 10; b = -10; c = 30'
+            solution_sketch: 'An antiderivative is $x^3+x$. At $2$ it is $10$ and at $0$ it is $0$, so (a) is $10$. Swapped limits change the sign, so (b) is $-10$. At $3$ the antiderivative is $30$, so (c) is $30$.'
+          - problem: 'Find the area of the region between the $Ox$ axis and the graph of $y=4-x^2$ on $[-2,2]$, and the area of the region between the $Ox$ axis and the same graph on $[0,1]$. Give (a) the first area and (b) the second area.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 32/3; b = 11/3'
+            solution_sketch: 'An antiderivative is $4x-\tfrac{x^3}3$. On $[-2,2]$ it gives $\tfrac{16}3-(-\tfrac{16}3)=\tfrac{32}3$. On $[0,1]$ it gives $4-\tfrac13=\tfrac{11}3$.'
+          - problem: 'The graphs of $y=x^2$ and $y=2x$ bound a region. Find (a) the abscissas of the common points and (b) the area of the region.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pts","contract":{"kind":"set"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'pts = {0, 2}; area = 4/3'
+            solution_sketch: 'Solve $x^2=2x$ to get $x=0$ and $x=2$. On $[0,2]$ the line is above the parabola. The area is $\int_0^2(2x-x^2)dx=4-\tfrac83=\tfrac43$.'
+          - problem: 'The graphs of $y=x^2+1$ and $y=3-x$ bound a region. Find (a) the abscissas of the common points and (b) the area of the region.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pts","contract":{"kind":"set"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'pts = {-2, 1}; area = 9/2'
+            solution_sketch: 'Solve $x^2+1=3-x$ to get $x^2+x-2=0$, so $x=-2$ or $x=1$. The line is above the parabola between them. The area is $\int_{-2}^{1}(2-x-x^2)dx=\tfrac76+\tfrac{10}3=\tfrac92$.'
+          - problem: 'Compute (a) $\int_1^4\dfrac{dx}{x}$, (b) $\int_0^{\pi}\sin x\,dx$, (c) $\int_0^{\pi/6}\cos x\,dx$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = ln(4); b = 2; c = 1/2'
+            solution_sketch: 'An antiderivative of $\tfrac1x$ is $\ln x$, so (a) is $\ln4-\ln1=\ln4$. An antiderivative of $\sin x$ is $-\cos x$, so (b) is $1+1=2$. An antiderivative of $\cos x$ is $\sin x$, so (c) is $\sin\tfrac\pi6=\tfrac12$.'
+          - problem: 'A region is bounded by the parabola $y=x^2$, the line $y=2-x$ and the $Ox$ axis in the first quadrant. Find (a) the abscissa of the common point of the parabola and the line, (b) the area under the parabola on $[0,1]$, (c) the area of the region.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x0","contract":{"kind":"exact"}},{"name":"a1","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'x0 = 1; a1 = 1/3; area = 5/6'
+            solution_sketch: 'Solve $x^2=2-x$ for $x>0$ to get $x=1$. The area under the parabola on $[0,1]$ is $\tfrac13$. The line $y=2-x$ with the $Ox$ axis on $[1,2]$ is a triangle with area $\tfrac12$. The total is $\tfrac13+\tfrac12=\tfrac56$.'
+        constraints: 'The items vary the curves and the limits. The Newton-Leibniz formula stays fixed.'
+      - id: kp3
+        name: 'Volume of a solid of revolution and a distance from a speed'
+        key_prerequisites: [volumes-disks, net-change-total-distance]
+        exemplars:
+          - problem: 'The region under $y=x$ on $[0,3]$ turns about the $Ox$ axis. The region under $y=\sqrt x$ on $[0,4]$ turns about the $Ox$ axis. Find (a) the first volume and (b) the second volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 9*pi; b = 8*pi'
+            solution_sketch: 'Use $V=\pi\int f^2dx$. The first volume is $\pi\int_0^3x^2dx=9\pi$. The second volume is $\pi\int_0^4x\,dx=8\pi$.'
+          - problem: 'The region under $y=x^2$ on $[0,1]$ turns about the $Ox$ axis. The region under $y=x+1$ on $[0,2]$ turns about the $Ox$ axis. Find (a) the first volume and (b) the second volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = pi/5; b = 26*pi/3'
+            solution_sketch: 'The first volume is $\pi\int_0^1x^4dx=\tfrac\pi5$. The second volume is $\pi\int_0^2(x+1)^2dx=\pi\cdot\tfrac{27-1}3=\tfrac{26\pi}3$.'
+          - problem: 'The region under $y=\dfrac1x$ on $[1,3]$ turns about the $Ox$ axis. The region under $y=\dfrac1{\sqrt x}$ on $[1,3]$ turns about the $Ox$ axis. Find (a) the first volume and (b) the second volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 2*pi/3; b = pi*ln(3)'
+            solution_sketch: 'The first volume is $\pi\int_1^3x^{-2}dx=\pi(1-\tfrac13)=\tfrac{2\pi}3$. The second volume is $\pi\int_1^3\tfrac1x\,dx=\pi\ln3$.'
+          - problem: 'A body moves on a line with the speed $v(t)=6t+2$ meters per second. Find (a) the distance in the first $4$ seconds, (b) the time $t$ at which the speed is $14$ meters per second, (c) the distance from $t=2$ to $t=4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}},{"name":"s2","contract":{"kind":"exact"}}]}
+            answer: 's = 56; t = 2; s2 = 40'
+            solution_sketch: 'The distance is $\int_0^4(6t+2)dt=3t^2+2t$ from $0$ to $4$, which is $56$. Solve $6t+2=14$ to get $t=2$. At $t=2$ the antiderivative is $16$, so the distance from $2$ to $4$ is $56-16=40$.'
+          - problem: 'A body moves on a line with the speed $v(t)=12-2t$ meters per second for $0\le t\le6$. Find (a) the distance in the first $6$ seconds, (b) the time at which the body stops, (c) the distance from $t=4$ to $t=6$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}},{"name":"s2","contract":{"kind":"exact"}}]}
+            answer: 's = 36; t = 6; s2 = 4'
+            solution_sketch: 'An antiderivative of $v$ is $12t-t^2$. At $6$ it is $36$ and at $0$ it is $0$, so the distance is $36$. The speed is zero at $t=6$. At $4$ the antiderivative is $32$, so the distance from $4$ to $6$ is $36-32=4$.'
+          - problem: 'The region under $y=\sqrt{x^2+1}$ on $[0,3]$ turns about the $Ox$ axis. Find (a) the volume. Next, the region under $y=\sqrt x$ on $[0,b]$ with $b>0$ turns about the $Ox$ axis and the volume is $18\pi$. Find (b) $b$. The region under $y=2\sqrt x$ on $[0,3]$ turns about the $Ox$ axis. Find (c) the volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 12*pi; b = 6; c = 18*pi'
+            solution_sketch: 'For (a), $V=\pi\int_0^3(x^2+1)dx=\pi(9+3)=12\pi$. For (b), $V=\pi\int_0^bx\,dx=\tfrac{\pi b^2}2=18\pi$, so $b=6$. For (c), $V=\pi\int_0^34x\,dx=18\pi$.'
+        constraints: 'The items vary the curve or the speed and the interval. The formula of the volume and the formula of the distance stay fixed.'
+    diagnostic_exemplar:
+      problem: 'Find (a) $\int_0^3 2x\,dx$ and (b) $F(3)$ for the antiderivative $F$ of $2x$ with $F(1)=4$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"I","contract":{"kind":"exact"}},{"name":"F","contract":{"kind":"exact"}}]}
+      answer: 'I = 9; F = 12'
+      solution_sketch: 'The antiderivative is $x^2$, so the integral is $9$. Also $F(x)=x^2+3$ and $F(3)=12$.'

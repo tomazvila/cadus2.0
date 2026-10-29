@@ -1,0 +1,365 @@
+unit: space-geometry
+course: vbe-math
+module: "Checkpoints: Space Geometry"
+topics:
+  - id: vbe-cp21-space-lines-planes
+    name: Lines and planes in space
+    lt_term: 'Tiesės ir plokštumos erdvėje'
+    area: geometry
+    program_items: [160, 161, 162, 168]
+    core: true
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: space-lines-planes
+        weight: 0.6
+        key: true
+      - id: points-lines-planes
+        weight: 0.4
+        key: false
+      - id: lines-in-space
+        weight: 0.4
+        key: false
+      - id: planes-in-space
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Positions of lines and planes and the plane through given elements'
+        key_prerequisites: [space-lines-planes]
+        exemplars:
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. (a) How many edges of the cube are skew to the edge $AB$? (b) How many edges of the cube, other than $AB$, are parallel to $AB$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"skew","contract":{"kind":"exact"}},{"name":"par","contract":{"kind":"exact"}}]}
+            answer: 'skew = 4; par = 3'
+            solution_sketch: 'Three edges are parallel to $AB$: $CD$, $A_1B_1$, $C_1D_1$. Four edges meet $AB$: $AD$, $AA_1$, $BC$, $BB_1$. The other $12-1-3-4=4$ edges are skew to $AB$.'
+          - problem: 'Four points in space have the property that no three lie on one line and the four do not lie in one plane. (a) How many planes pass through three of the four points? (b) Five points have the property that no three lie on one line and no four lie in one plane. How many planes pass through three of the five points?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"four","contract":{"kind":"exact"}},{"name":"five","contract":{"kind":"exact"}}]}
+            answer: 'four = 4; five = 10'
+            solution_sketch: 'Three points that are not on one line fix one plane. For four points we count $C_4^3=4$ triples. For five points we count $C_5^3=10$ triples.'
+          - problem: 'Three lines pass through one point $O$, and no plane holds all three lines. (a) How many planes do the pairs of these lines determine? (b) Four lines pass through $O$, and no plane holds three of them. How many planes do the pairs of these four lines determine?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"three","contract":{"kind":"exact"}},{"name":"four","contract":{"kind":"exact"}}]}
+            answer: 'three = 3; four = 6'
+            solution_sketch: 'Two lines through $O$ determine one plane. Three lines give $C_3^2=3$ pairs. Four lines give $C_4^2=6$ pairs, and the planes are all different.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $4$. (a) Find the length of $AC$. (b) Find the area of the section of the cube by the plane through $A$, $C$ and $C_1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ac","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'ac = 4*sqrt(2); area = 16*sqrt(2)'
+            solution_sketch: 'The face diagonal is $AC=4\sqrt2$. The plane through $A$, $C$ and $C_1$ cuts the cube in the rectangle $ACC_1A_1$. Its sides are $4\sqrt2$ and $4$, so its area is $16\sqrt2$.'
+          - problem: 'Take the $12$ edges of a cube. A pair of edges is intersecting, parallel, or skew. (a) How many pairs of edges are intersecting? (b) How many pairs are parallel? (c) How many pairs are skew?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"inter","contract":{"kind":"exact"}},{"name":"par","contract":{"kind":"exact"}},{"name":"skew","contract":{"kind":"exact"}}]}
+            answer: 'inter = 24; par = 18; skew = 24'
+            solution_sketch: 'There are $C_{12}^2=66$ pairs. Each vertex holds $C_3^2=3$ intersecting pairs, so $8\cdot3=24$. The edges form $3$ groups of $4$ parallel edges, so $3\cdot C_4^2=18$ parallel pairs. The skew pairs are $66-24-18=24$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base $ABCD$ with side $6$ and height $4$. The point $M$ is the midpoint of $AB$ and $N$ is the midpoint of $CD$. (a) Find the length of $MN$. (b) Find the length of $SM$. (c) Find the area of the section of the pyramid by the plane through $S$, $M$ and $N$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mn","contract":{"kind":"exact"}},{"name":"sm","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'mn = 6; sm = 5; area = 12'
+            solution_sketch: 'The segment $MN$ joins midpoints of opposite sides, so $MN=6$. The foot of the height is the midpoint of $MN$, so $SM=\sqrt{4^2+3^2}=5$. The section is the triangle $SMN$ with base $6$ and height $4$, so its area is $12$.'
+        constraints: 'cube and pyramid items; counts of planes, edges and pairs, plus one length or area; the hardest item counts pairs of edges'
+      - id: kp2
+        name: 'Criterion for a parallel line and plane in a pyramid or a cube'
+        key_prerequisites: [space-lines-planes]
+        exemplars:
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. (a) How many edges of the cube are parallel to the plane $ABCD$ and do not lie in it? (b) How many edges of the cube are parallel to the plane $ABC_1D_1$ and do not lie in it?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"abcd","contract":{"kind":"exact"}},{"name":"abc1d1","contract":{"kind":"exact"}}]}
+            answer: 'abcd = 4; abc1d1 = 2'
+            solution_sketch: 'The edges of the top face are parallel to the base, so the first count is $4$. The plane $ABC_1D_1$ holds $AB$ and $C_1D_1$. The edges $CD$ and $A_1B_1$ are parallel to $AB$, so they are parallel to this plane. No other edge has this property.'
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $8$ and height $10$. The point $M$ is the midpoint of $SA$ and $N$ is the midpoint of $SB$. (a) Find the length of $MN$. (b) Find the distance from the line $MN$ to the plane $ABCD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mn","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'mn = 4; dist = 5'
+            solution_sketch: 'The segment $MN$ is a midline of the triangle $SAB$, so $MN=4$ and $MN\parallel AB$. Hence $MN$ is parallel to the base plane. The line $MN$ is at half the height of the pyramid, so the distance is $5$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $4$. The point $E$ is the midpoint of $AA_1$ and $F$ is the midpoint of $CC_1$. (a) Find the length of $EF$. (b) Find the distance from the line $EF$ to the plane $ABCD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ef","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'ef = 4*sqrt(2); dist = 2'
+            solution_sketch: 'The segment $EF$ is parallel to $AC$ and has the same length, $4\sqrt2$. So $EF$ is parallel to the plane $ABCD$. Every point of $EF$ is at height $2$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $9$. The point $M$ lies on $SA$ with $SM:MA=2:1$. The point $N$ lies on $SB$ with $SN:NB=2:1$. (a) Find the length of $MN$. (b) How many edges of the pyramid are parallel to the line $MN$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mn","contract":{"kind":"exact"}},{"name":"cnt","contract":{"kind":"exact"}}]}
+            answer: 'mn = 6; cnt = 2'
+            solution_sketch: 'The triangles $SMN$ and $SAB$ are similar with ratio $2:3$, so $MN=6$ and $MN\parallel AB$. The edge $CD$ is also parallel to $AB$. So the edges $AB$ and $CD$ are parallel to $MN$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $12$. The point $M$ lies on $AA_1$ and $N$ lies on $BB_1$, with $AM=BN=5$. (a) Find the length of $MN$. (b) Find the distance from the line $MN$ to the plane $ABCD$. (c) Find the distance from the line $MN$ to the plane $CDD_1C_1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mn","contract":{"kind":"exact"}},{"name":"d1","contract":{"kind":"exact"}},{"name":"d2","contract":{"kind":"exact"}}]}
+            answer: 'mn = 12; d1 = 5; d2 = 12'
+            solution_sketch: 'The quadrilateral $ABNM$ is a rectangle, so $MN=AB=12$ and $MN\parallel AB$. Then $MN$ is parallel to the base plane, at distance $AM=5$. The line $AB$ is parallel to the plane $CDD_1C_1$ at distance $AD=12$. So the line $MN$ has the same distance.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $6$. The point $E$ is the midpoint of $AB$ and $F$ is the midpoint of $AD$. (a) Find the length of $EF$. (b) Find the distance from the line $EF$ to the plane $BDD_1B_1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ef","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'ef = 3*sqrt(2); dist = 3*sqrt(2)/2'
+            solution_sketch: 'The segment $EF$ is a midline of the triangle $ABD$, so $EF=\tfrac12BD=3\sqrt2$ and $EF\parallel BD$. Hence $EF$ is parallel to the plane $BDD_1B_1$. The distance is half of the height from $A$ to $BD$, which is $\tfrac12\cdot3\sqrt2$.'
+        constraints: 'cube and pyramid items; a line parallel to a line of a plane; part one is a length or a count, later parts are distances'
+    diagnostic_exemplar:
+      problem: 'A cube has $12$ edges. How many edges are parallel to one given edge? Do not count that edge.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'The edge is in a group of $4$ parallel edges. The other $3$ are parallel to it.'
+  - id: vbe-cp22-space-angles
+    name: Angles, distances and perpendicularity in space
+    lt_term: 'Kampai, atstumai ir statmenumas erdvėje'
+    area: geometry
+    program_items: [163, 164, 165, 166, 167, 169, 170]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: space-angles-distances
+        weight: 0.6
+        key: true
+      - id: space-perpendicularity
+        weight: 0.4
+        key: false
+      - id: lines-planes-space
+        weight: 0.4
+        key: false
+      - id: three-dimensional-coordinates
+        weight: 0.4
+        key: false
+      - id: vector-distance
+        weight: 0.4
+        key: false
+      - id: dot-product
+        weight: 0.4
+        key: false
+      - id: lines-in-space
+        weight: 0.4
+        key: false
+      - id: planes-in-space
+        weight: 0.4
+        key: false
+      - id: vector-projections
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Angle between lines, line and plane, two planes'
+        key_prerequisites: [space-angles-distances]
+        exemplars:
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. Find these angles in degrees. (a) The angle between the lines $AB$ and $A_1D_1$. (b) The angle between the lines $AC$ and $AB$. (c) The angle between the lines $AC$ and $B_1C$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 90; p2 = 45; p3 = 60'
+            solution_sketch: 'The line $A_1D_1$ is parallel to $AD$, which is perpendicular to $AB$. The diagonal $AC$ of a square makes $45^\circ$ with a side. The triangle $AB_1C$ has three equal sides $a\sqrt2$, so its angle at $C$ is $60^\circ$.'
+          - problem: 'A rectangle $ABCD$ has $AB=6$ and $BC=8$. The segment $SA$ is perpendicular to the plane $ABCD$ and $SA=10$. (a) Find the length of $AC$. (b) Find the angle in degrees between the line $SC$ and the plane $ABCD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ac","contract":{"kind":"exact"}},{"name":"ang","contract":{"kind":"exact"}}]}
+            answer: 'ac = 10; ang = 45'
+            solution_sketch: 'We have $AC=\sqrt{36+64}=10$. The projection of $SC$ on the plane is $AC$. In the right triangle $SAC$ the legs $SA$ and $AC$ are equal, so the angle is $45^\circ$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $4$. (a) Find the length of the diagonal $AC_1$. (b) Find the sine of the angle between $AC_1$ and the plane $ABCD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"sin","contract":{"kind":"exact"}}]}
+            answer: 'd = 4*sqrt(3); sin = sqrt(3)/3'
+            solution_sketch: 'The diagonal is $AC_1=4\sqrt3$. The projection of $AC_1$ on the base is $AC$. The angle $C_1AC$ has the opposite side $CC_1=4$, so the sine is $4/(4\sqrt3)=\sqrt3/3$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $6$ and height $3$. (a) Find the apothem of the pyramid. (b) Find the angle in degrees between a lateral face and the base.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ap","contract":{"kind":"exact"}},{"name":"ang","contract":{"kind":"exact"}}]}
+            answer: 'ap = 3*sqrt(2); ang = 45'
+            solution_sketch: 'The foot of the height is $3$ from the midpoint of a base side, and the height is $3$. So the apothem is $\sqrt{9+9}=3\sqrt2$. The dihedral angle has the tangent $3/3=1$, so it is $45^\circ$.'
+          - problem: 'Two squares $ABCD$ and $ABEF$ have the common side $AB=4$. The two squares lie in different planes. The angle $DAF$ is $60^\circ$. (a) Find the length of $DF$. (b) Find the length of $DE$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"df","contract":{"kind":"exact"}},{"name":"de","contract":{"kind":"exact"}}]}
+            answer: 'df = 4; de = 4*sqrt(2)'
+            solution_sketch: 'Both $AD$ and $AF$ are perpendicular to $AB$, so the angle $DAF$ is the angle between the planes, $60^\circ$. The triangle $DAF$ has $AD=AF=4$, so it is equilateral and $DF=4$. The vector $DE$ is the sum of $AB$ and $DF$, and these are perpendicular. So $DE=\sqrt{16+16}=4\sqrt2$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $6$. (a) Find the length of the diagonal $AC_1$. (b) Find the cosine of the angle between the diagonals $AC_1$ and $BD_1$. (c) Find the cosine of the angle between the diagonals $AC_1$ and $AB_1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"cos1","contract":{"kind":"exact"}},{"name":"cos2","contract":{"kind":"exact"}}]}
+            answer: 'd = 6*sqrt(3); cos1 = 1/3; cos2 = sqrt(6)/3'
+            solution_sketch: 'Put $A=(0,0,0)$, $B=(6,0,0)$, $D=(0,6,0)$, $A_1=(0,0,6)$. Then $AC_1=(6,6,6)$, $BD_1=(-6,6,6)$ and $AB_1=(6,0,6)$. The first dot product is $36$ and the lengths give $6\sqrt3\cdot6\sqrt3=108$, so the cosine is $1/3$. The second dot product is $72$ over $6\sqrt3\cdot6\sqrt2$, which is $\sqrt6/3$.'
+        constraints: 'cube, rectangle and pyramid items; angles in degrees or cosines; edges from 4 to 12'
+      - id: kp2
+        name: 'Distance between a point and a plane, and between skew lines'
+        key_prerequisites: [space-angles-distances]
+        exemplars:
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $6$. (a) Find the distance from $C_1$ to the plane $ABCD$. (b) Find the distance from $C_1$ to the line $AB$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"plane","contract":{"kind":"exact"}},{"name":"line","contract":{"kind":"exact"}}]}
+            answer: 'plane = 6; line = 6*sqrt(2)'
+            solution_sketch: 'The edge $CC_1$ is perpendicular to the base, so the distance is $6$. The segment $BC_1$ is perpendicular to $AB$, because $AB$ is perpendicular to the face $BCC_1B_1$. It is a face diagonal, $6\sqrt2$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $4$. (a) Find the length of $BD$. (b) Find the distance between the skew lines $AA_1$ and $BD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"bd","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'bd = 4*sqrt(2); dist = 2*sqrt(2)'
+            solution_sketch: 'We have $BD=4\sqrt2$. The line $AA_1$ is perpendicular to the base, so the common perpendicular goes from $A$ to $BD$. This is the height of the right isosceles triangle $ABD$ on its hypotenuse, which is $2\sqrt2$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $8$ and height $3$. Let $O$ be the center of the base and $M$ the midpoint of $AB$. (a) Find the length of $SM$. (b) Find the distance from $O$ to the plane $SAB$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sm","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'sm = 5; dist = 12/5'
+            solution_sketch: 'We have $OM=4$ and $SO=3$, so $SM=5$. The distance from $O$ to the plane $SAB$ is the height of the right triangle $SOM$ on $SM$. It equals $3\cdot4/5=12/5$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $6$. (a) Find the area of the triangle $A_1BD$. (b) Find the volume of the pyramid $AA_1BD$. (c) Find the distance from $A$ to the plane $A_1BD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"area","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'area = 18*sqrt(3); vol = 36; dist = 2*sqrt(3)'
+            solution_sketch: 'The triangle $A_1BD$ is equilateral with side $6\sqrt2$, so its area is $\tfrac{\sqrt3}{4}\cdot72=18\sqrt3$. The pyramid $AA_1BD$ has the right-angle base $AA_1B$ and height $AD=6$, so $V=\tfrac13\cdot18\cdot6=36$. Then the distance is $3V/S=108/(18\sqrt3)=2\sqrt3$.'
+          - problem: 'A regular tetrahedron $ABCD$ has edge $4$. The point $M$ is the midpoint of $AB$ and $N$ is the midpoint of $CD$. (a) Find the length of $CM$. (b) Find the distance between the skew lines $AB$ and $CD$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"cm","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'cm = 2*sqrt(3); dist = 2*sqrt(2)'
+            solution_sketch: 'The segment $CM$ is the height of an equilateral triangle with side $4$, so $CM=2\sqrt3$. The segment $MN$ is perpendicular to both $AB$ and $CD$. In the right triangle $CNM$ we have $CN=2$, so $MN=\sqrt{12-4}=2\sqrt2$.'
+          - problem: 'Let $ABCDA_1B_1C_1D_1$ be a cube, with $A_1$ above $A$, $B_1$ above $B$, and so on. The cube has edge $6$. The line $AC$ is a diagonal of the base. (a) Find the distance between the skew lines $AC$ and $B_1D_1$. (b) Find the distance between the skew lines $AC$ and $A_1B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d1","contract":{"kind":"exact"}},{"name":"d2","contract":{"kind":"exact"}}]}
+            answer: 'd1 = 6; d2 = 2*sqrt(3)'
+            solution_sketch: 'The planes $ABCD$ and $A_1B_1C_1D_1$ hold the first two lines and are $6$ apart. For the second pair, put $A=(0,0,0)$, $C=(6,6,0)$, $A_1=(0,0,6)$, $B=(6,0,0)$. The vector $n=(1,1,0)\times(1,0,-1)=(-1,1,-1)$ is perpendicular to both lines. The distance is $|(0,0,6)\cdot n|/|n|=6/\sqrt3=2\sqrt3$.'
+        constraints: 'cube, pyramid and tetrahedron items; point-plane and skew-line distances with exact roots'
+      - id: kp3
+        name: 'Prove a perpendicular edge or a midline in a pyramid'
+        key_prerequisites: [space-perpendicularity]
+        exemplars:
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $6$ and lateral edge $\sqrt{34}$. The points $M$ and $N$ are the midpoints of $SA$ and $SC$. (a) Find the height of the pyramid. (b) Find the angle in degrees between the lines $SA$ and $BD$. (c) Find the length of $MN$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h","contract":{"kind":"exact"}},{"name":"ang","contract":{"kind":"exact"}},{"name":"mn","contract":{"kind":"exact"}}]}
+            answer: 'h = 4; ang = 90; mn = 3*sqrt(2)'
+            solution_sketch: 'Half the diagonal is $3\sqrt2$, so $h=\sqrt{34-18}=4$. The line $BD$ is perpendicular to the plane $SAC$, so it is perpendicular to $SA$. The segment $MN$ is a midline of the triangle $SAC$, so $MN=\tfrac12AC=3\sqrt2$.'
+          - problem: 'A regular tetrahedron $SABC$ has edge $6$. The point $M$ is the midpoint of $BC$. (a) Find the length of $AM$. (b) Find the angle in degrees between the lines $SA$ and $BC$. (c) Find the height of the tetrahedron from $S$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"am","contract":{"kind":"exact"}},{"name":"ang","contract":{"kind":"exact"}},{"name":"h","contract":{"kind":"exact"}}]}
+            answer: 'am = 3*sqrt(3); ang = 90; h = 2*sqrt(6)'
+            solution_sketch: 'The segment $AM$ is the height of an equilateral triangle, $3\sqrt3$. The line $BC$ is perpendicular to $AM$ and $SM$, so it is perpendicular to the plane $SAM$ and to $SA$. The foot of the height is at $\tfrac23AM=2\sqrt3$ from $A$, so $h=\sqrt{36-12}=2\sqrt6$.'
+          - problem: 'A pyramid $SABCD$ has a rectangular base with $AB=6$ and $BC=8$. The points $M$, $N$, $K$, $L$ are the midpoints of $SB$, $SC$, $SD$, $SA$. Find (a) the length of $MN$ and (b) the perimeter of the quadrilateral $MNKL$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mn","contract":{"kind":"exact"}},{"name":"per","contract":{"kind":"exact"}}]}
+            answer: 'mn = 4; per = 14'
+            solution_sketch: 'Each side of $MNKL$ is a midline of a lateral face. So $MN=\tfrac12BC=4$, $NK=\tfrac12CD=3$, $KL=\tfrac12DA=4$ and $LM=\tfrac12AB=3$. The perimeter is $14$.'
+          - problem: 'A rectangle $ABCD$ has $AB=6$ and $BC=8$. The segment $SA$ is perpendicular to the plane $ABCD$ and $SA=8$. (a) Find the length of $SB$. (b) Find the area of the triangle $SBC$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sb","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'sb = 10; area = 40'
+            solution_sketch: 'We have $SB=\sqrt{64+36}=10$. The line $BC$ is perpendicular to $AB$ and to $SA$, so it is perpendicular to the plane $SAB$ and to $SB$. The triangle $SBC$ is right-angled at $B$, so its area is $\tfrac12\cdot10\cdot8=40$.'
+          - problem: 'A triangle $ABC$ has a right angle at $B$, with $AB=5$ and $BC=12$. The segment $SA$ is perpendicular to the plane $ABC$ and $SA=12$. (a) Find the length of $SB$. (b) Find the area of the triangle $SBC$. (c) Find the volume of the pyramid $SABC$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sb","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'sb = 13; area = 78; vol = 120'
+            solution_sketch: 'We have $SB=\sqrt{144+25}=13$. By the theorem of three perpendiculars, $BC\perp SB$, so the area is $\tfrac12\cdot13\cdot12=78$. The base area is $\tfrac12\cdot5\cdot12=30$, so $V=\tfrac13\cdot30\cdot12=120$.'
+          - problem: 'A regular tetrahedron $SABC$ has edge $12$. The points $M$, $N$, $P$ are the midpoints of $SA$, $SB$, $BC$. (a) Find the length of $MP$. (b) Find the area of the triangle $MNP$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mp","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'mp = 6*sqrt(2); area = 18'
+            solution_sketch: 'We have $MN=\tfrac12AB=6$ with $MN\parallel AB$, and $NP=\tfrac12SC=6$ with $NP\parallel SC$. In a regular tetrahedron $AB\perp SC$, so the angle $MNP$ is $90^\circ$. Hence $MP=6\sqrt2$ and the area is $\tfrac12\cdot6\cdot6=18$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base $ABCD$. Prove that the line $BD$ is perpendicular to the line $SC$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Let $O$ be the center of the base. The diagonals of a square are perpendicular, so $BD\perp AC$. The height $SO$ is perpendicular to the base plane, so $BD\perp SO$. The lines $AC$ and $SO$ intersect and lie in the plane $SAC$, so $BD\perp$ plane $SAC$. The line $SC$ lies in the plane $SAC$, so $BD\perp SC$.'
+            solution_sketch: 'Use the reference proof.'
+          - problem: 'A regular triangular pyramid $SABC$ has an equilateral base $ABC$ and equal lateral edges. Prove that the edge $SA$ is perpendicular to the edge $BC$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Let $M$ be the midpoint of $BC$. The triangle $ABC$ is equilateral, so the median $AM$ is a height and $AM\perp BC$. The triangle $SBC$ is isosceles, so the median $SM$ is a height and $SM\perp BC$. The lines $AM$ and $SM$ intersect and lie in the plane $SAM$, so $BC\perp$ plane $SAM$. The line $SA$ lies in this plane, so $BC\perp SA$.'
+            solution_sketch: 'Use the reference proof.'
+          - problem: 'A pyramid $SABCD$ has a parallelogram $ABCD$ as base. The points $M$, $N$, $K$, $L$ are the midpoints of $SA$, $SB$, $SC$, $SD$. Prove that $MNKL$ is a parallelogram.'
+            answer_contract: {"kind":"written"}
+            answer: 'The segment $MN$ is a midline of the triangle $SAB$, so $MN\parallel AB$ and $MN=\tfrac12AB$. The segment $KL$ is a midline of the triangle $SCD$, so $KL\parallel CD$ and $KL=\tfrac12CD$. In the parallelogram $ABCD$ we have $AB\parallel CD$ and $AB=CD$. So $MN\parallel KL$ and $MN=KL$. A quadrilateral with two opposite sides parallel and equal is a parallelogram.'
+            solution_sketch: 'Use the reference proof.'
+        constraints: '6 decidable items on pyramids and tetrahedra with a perpendicular edge or a midline, and 3 written proofs'
+    diagnostic_exemplar:
+      problem: 'A cube has edge $2$. Find the length of its space diagonal.'
+      answer_contract: {"kind":"exact"}
+      answer: '2*sqrt(3)'
+      solution_sketch: 'The space diagonal of a cube with edge $a$ is $a\sqrt3$. So it is $2\sqrt3$.'
+  - id: vbe-cp23-solids
+    name: Polyhedra and solids of revolution
+    lt_term: 'Briaunainiai ir sukiniai'
+    area: geometry
+    program_items: [171, 172, 173, 174, 175]
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: polyhedra-terms-sections
+        weight: 0.6
+        key: true
+      - id: solids-of-revolution-sections
+        weight: 0.4
+        key: false
+      - id: solid-measures-model
+        weight: 0.4
+        key: false
+      - id: volume-prisms
+        weight: 0.4
+        key: false
+      - id: volume-pyramids-cones-spheres
+        weight: 0.4
+        key: false
+      - id: surface-area-solids
+        weight: 0.4
+        key: false
+      - id: volume-cylinders
+        weight: 0.4
+        key: false
+      - id: volume-prisms-cylinders
+        weight: 0.4
+        key: false
+      - id: similar-solids-scaling
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Axial section, apothem, generatrix and net'
+        key_prerequisites: [polyhedra-terms-sections, solids-of-revolution-sections]
+        exemplars:
+          - problem: 'A cone has base radius $6$ and height $8$. (a) Find the generatrix of the cone. (b) Find the area of the axial section.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"gen","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'gen = 10; area = 48'
+            solution_sketch: 'The generatrix is $\sqrt{36+64}=10$. The axial section is a triangle with base $12$ and height $8$. Its area is $\tfrac12\cdot12\cdot8=48$.'
+          - problem: 'The axial section of a cylinder is a square with side $10$. (a) Find the base radius. (b) Find the lateral surface area. (c) Find the volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"r","contract":{"kind":"exact"}},{"name":"lat","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'r = 5; lat = 100*pi; vol = 250*pi'
+            solution_sketch: 'The diameter and the height are both $10$, so $r=5$. The lateral area is $2\pi\cdot5\cdot10=100\pi$. The volume is $\pi\cdot25\cdot10=250\pi$.'
+          - problem: 'A regular pyramid has a square base with side $10$ and height $12$. (a) Find the apothem. (b) Find the lateral surface area.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ap","contract":{"kind":"exact"}},{"name":"lat","contract":{"kind":"exact"}}]}
+            answer: 'ap = 13; lat = 260'
+            solution_sketch: 'The apothem is the hypotenuse of a right triangle with legs $12$ and $5$, so it is $13$. The four lateral faces have total area $4\cdot\tfrac12\cdot10\cdot13=260$.'
+          - problem: 'A cone has base radius $4$ and generatrix $12$. Its lateral surface is unrolled into a plane sector. (a) Find the lateral surface area of the cone. (b) Find the central angle of the sector in degrees.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"lat","contract":{"kind":"exact"}},{"name":"ang","contract":{"kind":"exact"}}]}
+            answer: 'lat = 48*pi; ang = 120'
+            solution_sketch: 'The lateral area is $\pi\cdot4\cdot12=48\pi$. The arc of the sector has length $2\pi\cdot4=8\pi$ and the radius of the sector is $12$. The angle is $8\pi/12=2\pi/3$, which is $120^\circ$.'
+          - problem: 'A regular triangular pyramid has a base side $6$ and height $3$. (a) Find the apothem. (b) Find the lateral surface area.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"ap","contract":{"kind":"exact"}},{"name":"lat","contract":{"kind":"exact"}}]}
+            answer: 'ap = 2*sqrt(3); lat = 18*sqrt(3)'
+            solution_sketch: 'The inscribed circle of the base has radius $6/(2\sqrt3)=\sqrt3$. The apothem is $\sqrt{9+3}=2\sqrt3$. The lateral area is $\tfrac12\cdot18\cdot2\sqrt3=18\sqrt3$.'
+          - problem: 'A frustum of a cone has base radii $3$ and $7$ and height $3$. (a) Find the generatrix. (b) Find the lateral surface area. (c) Find the volume.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"gen","contract":{"kind":"exact"}},{"name":"lat","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'gen = 5; lat = 50*pi; vol = 79*pi'
+            solution_sketch: 'The generatrix is $\sqrt{(7-3)^2+3^2}=5$. The lateral area is $\pi(3+7)\cdot5=50\pi$. The volume is $\tfrac13\pi\cdot3\cdot(9+21+49)=79\pi$.'
+        constraints: 'cones, cylinders and pyramids with integer data; axial section, apothem, generatrix, sector angle of a net'
+      - id: kp2
+        name: 'Volume or area from an angle, and a section'
+        key_prerequisites: [solid-measures-model]
+        exemplars:
+          - problem: 'The generatrix of a cone is $6\sqrt2$ and it makes an angle of $45^\circ$ with the base. (a) Find the base radius. (b) Find the volume of the cone.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"r","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'r = 6; vol = 72*pi'
+            solution_sketch: 'The radius is $6\sqrt2\cos45^\circ=6$ and the height is also $6$. The volume is $\tfrac13\pi\cdot36\cdot6=72\pi$.'
+          - problem: 'A regular pyramid has a square base with side $8$. Each lateral face makes an angle of $45^\circ$ with the base. (a) Find the height of the pyramid. (b) Find the volume of the pyramid.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'h = 4; vol = 256/3'
+            solution_sketch: 'The foot of the height is $4$ from each base side. The tangent of $45^\circ$ is $1$, so $h=4$. The volume is $\tfrac13\cdot64\cdot4=256/3$.'
+          - problem: 'A cylinder has radius $5$ and height $10$. A plane is parallel to the axis and at distance $3$ from it. (a) Find the width of the rectangular section. (b) Find the area of the section.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"w","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}}]}
+            answer: 'w = 8; area = 80'
+            solution_sketch: 'The section cuts a chord of the base circle. Half of the chord is $\sqrt{25-9}=4$, so the width is $8$. The area is $8\cdot10=80$.'
+          - problem: 'A cone has base radius $9$ and height $12$. A plane parallel to the base is at distance $4$ from the apex. (a) Find the radius of the section. (b) Find the area of the section. (c) Find the volume of the small cone between the apex and the plane.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"r","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'r = 3; area = 9*pi; vol = 12*pi'
+            solution_sketch: 'The small cone is similar to the big cone with ratio $4/12=1/3$, so the radius is $3$. The area is $\pi\cdot9=9\pi$. The volume is $\tfrac13\pi\cdot9\cdot4=12\pi$.'
+          - problem: 'A sphere has radius $5$. A plane is at distance $3$ from the center. (a) Find the radius of the circular section. (b) Find the area of the section. (c) Find the volume of the smaller spherical segment cut off by the plane.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"r","contract":{"kind":"exact"}},{"name":"area","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'r = 4; area = 16*pi; vol = 52*pi/3'
+            solution_sketch: 'The section radius is $\sqrt{25-9}=4$, so the area is $16\pi$. The smaller segment has height $H=5-3=2$. Its volume is $\tfrac13\pi\cdot4\cdot(15-2)=52\pi/3$.'
+          - problem: 'A regular pyramid $SABCD$ has a square base with side $8$ and lateral edge $9$. A plane passes through $S$, $A$ and $C$. (a) Find the height of the pyramid. (b) Find the area of the section. (c) Find the volume of the pyramid.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h","contract":{"kind":"exact"}},{"name":"sec","contract":{"kind":"exact"}},{"name":"vol","contract":{"kind":"exact"}}]}
+            answer: 'h = 7; sec = 28*sqrt(2); vol = 448/3'
+            solution_sketch: 'Half the diagonal is $4\sqrt2$, so $h=\sqrt{81-32}=7$. The section is the triangle $SAC$ with base $8\sqrt2$ and height $7$, so its area is $28\sqrt2$. The volume is $\tfrac13\cdot64\cdot7=448/3$.'
+        constraints: 'volume or area from an angle, a distance or a plane section; answers with pi or a root'
+      - id: kp3
+        name: 'Volume as a function of one variable'
+        key_prerequisites: [solid-measures-model]
+        exemplars:
+          - problem: 'A box has a square base with side $x$ and height $10$. (a) Write the volume $V$ as a function of $x$. (b) Find $V$ for $x=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"v3","contract":{"kind":"exact"}}]}
+            answer: 'V = 10*x^2; v3 = 90'
+            solution_sketch: 'The volume is base area times height, $x^2\cdot10$. For $x=3$ it is $10\cdot9=90$.'
+          - problem: 'A cylinder has height $8$ and base radius $x$. (a) Write the volume $V$ as a function of $x$. (b) Find the positive value of $x$ for which $V=72\pi$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 'V = 8*pi*x^2; x = 3'
+            solution_sketch: 'The volume is $\pi x^2\cdot8$. The equation $8\pi x^2=72\pi$ gives $x^2=9$, so $x=3$.'
+          - problem: 'A regular pyramid has a square base with side $x+2$ and height $x$. (a) Write the volume $V$ as a function of $x$. (b) Find $V$ for $x=4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"v4","contract":{"kind":"exact"}}]}
+            answer: 'V = x*(x+2)^2/3; v4 = 48'
+            solution_sketch: 'The volume is $\tfrac13(x+2)^2x$. For $x=4$ we get $\tfrac13\cdot36\cdot4=48$.'
+          - problem: 'A cone has generatrix $10$ and base radius $x$, with $0<x<10$. (a) Write the volume $V$ as a function of $x$. (b) Find $V$ for $x=6$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"v6","contract":{"kind":"exact"}}]}
+            answer: 'V = pi*x^2*sqrt(100-x^2)/3; v6 = 96*pi'
+            solution_sketch: 'The height is $\sqrt{100-x^2}$, so $V=\tfrac13\pi x^2\sqrt{100-x^2}$. For $x=6$ the height is $8$ and $V=\tfrac13\pi\cdot36\cdot8=96\pi$.'
+          - problem: 'A square sheet has side $12$. A square with side $x$ is cut from each corner. The sides are folded up to make an open box. (a) Write the volume $V$ of the box as a function of $x$. (b) Find $V$ for $x=2$. (c) Find $V$ for $x=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["x"]}},{"name":"v2","contract":{"kind":"exact"}},{"name":"v3","contract":{"kind":"exact"}}]}
+            answer: 'V = x*(12-2*x)^2; v2 = 128; v3 = 108'
+            solution_sketch: 'The base is a square with side $12-2x$ and the height is $x$. For $x=2$ we get $2\cdot64=128$. For $x=3$ we get $3\cdot36=108$.'
+          - problem: 'A cylinder has base radius $r$ and height $h$ with $r+h=9$. (a) Write the volume $V$ as a function of $r$. (b) Find the value of $r$ with $0<r<9$ for which $V$ is the greatest. (c) Find the greatest value of $V$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V","contract":{"kind":"function","vars":["r"]}},{"name":"r","contract":{"kind":"exact"}},{"name":"Vmax","contract":{"kind":"exact"}}]}
+            answer: 'V = pi*r^2*(9-r); r = 6; Vmax = 108*pi'
+            solution_sketch: 'Here $h=9-r$, so $V=\pi r^2(9-r)$. The derivative is $V''=\pi(18r-3r^2)=3\pi r(6-r)$. It is positive for $r<6$ and negative for $r>6$, so the greatest value is at $r=6$, and $V=\pi\cdot36\cdot3=108\pi$.'
+        constraints: 'volume written as a function of one variable; the last item finds the greatest volume'
+    diagnostic_exemplar:
+      problem: 'A cone has base radius $3$ and height $4$. Find its generatrix.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'The generatrix is $\sqrt{9+16}=5$.'

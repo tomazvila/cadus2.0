@@ -1,0 +1,853 @@
+unit: algebra
+course: vbe-math
+module: "Checkpoints: Algebra and Functions"
+topics:
+  - id: vbe-cp07-progressions
+    name: Sequences and progressions
+    lt_term: 'Skaičių sekos. Progresijos'
+    area: models
+    program_items: [54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: progression-middle-term
+        weight: 0.6
+        key: true
+      - id: progression-word-problems
+        weight: 0.4
+        key: false
+      - id: arithmetic-sequences
+        weight: 0.4
+        key: false
+      - id: recursive-sequences
+        weight: 0.4
+        key: false
+      - id: limits-of-sequences
+        weight: 0.4
+        key: false
+      - id: geometric-sequences
+        weight: 0.4
+        key: false
+      - id: arithmetic-series
+        weight: 0.4
+        key: false
+      - id: geometric-series-finite-infinite
+        weight: 0.4
+        key: false
+      - id: geometric-series-convergence
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Terms and sums of arithmetic and geometric progressions with the middle term'
+        key_prerequisites: [progression-middle-term, arithmetic-series]
+        exemplars:
+          - problem: 'An arithmetic progression has $a_1=5$ and $d=3$. (a) Find $a_{10}$. (b) Find $S_{10}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a10","contract":{"kind":"exact"}},{"name":"S10","contract":{"kind":"exact"}}]}
+            answer: 'a10 = 32; S10 = 185'
+            solution_sketch: 'We have $a_{10}=5+3\cdot9=32$. Then $S_{10}=\frac{5+32}{2}\cdot10=185$.'
+          - problem: 'A geometric progression has $b_1=2$ and $q=3$. (a) Find $b_5$. (b) Find $S_5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"b5","contract":{"kind":"exact"}},{"name":"S5","contract":{"kind":"exact"}}]}
+            answer: 'b5 = 162; S5 = 242'
+            solution_sketch: 'We have $b_5=2\cdot3^4=162$. Then $S_5=2\cdot\frac{3^5-1}{3-1}=242$.'
+          - problem: 'An arithmetic progression has $a_3=11$ and $a_7=23$. (a) Find $d$. (b) Find $a_1$. (c) Find $S_8$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"a1","contract":{"kind":"exact"}},{"name":"S8","contract":{"kind":"exact"}}]}
+            answer: 'd = 3; a1 = 5; S8 = 124'
+            solution_sketch: 'From $a_7-a_3=4d=12$ we get $d=3$. Then $a_1=11-6=5$. Also $a_8=26$, so $S_8=\frac{5+26}{2}\cdot8=124$.'
+          - problem: '(a) The numbers $3$, $x$, $13$ are consecutive terms of an arithmetic progression. Find $x$. (b) The positive numbers $4$, $y$, $36$ are consecutive terms of a geometric progression. Find $y$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'x = 8; y = 12'
+            solution_sketch: 'In (a), the middle term is the mean of its neighbors: $x=(3+13)/2=8$. In (b), $y^2=4\cdot36=144$ and $y>0$, so $y=12$.'
+          - problem: 'A geometric progression has $b_2=6$ and $b_5=162$. (a) Find $q$. (b) Find $b_1$. (c) Find $S_6$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"q","contract":{"kind":"exact"}},{"name":"b1","contract":{"kind":"exact"}},{"name":"S6","contract":{"kind":"exact"}}]}
+            answer: 'q = 3; b1 = 2; S6 = 728'
+            solution_sketch: 'We have $b_5/b_2=q^3=27$, so $q=3$. Then $b_1=6/3=2$. Last, $S_6=2\cdot\frac{3^6-1}{2}=728$.'
+          - problem: 'Three numbers form an arithmetic progression. Their sum is $18$ and their product is $120$. (a) Find the middle number. (b) Find $d$ when $d>0$. (c) Find the sum of the squares of the three numbers.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"mid","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"squares","contract":{"kind":"exact"}}]}
+            answer: 'mid = 6; d = 4; squares = 140'
+            solution_sketch: 'Write the numbers as $6-d$, $6$, $6+d$, because the sum is $18$. The product gives $6(36-d^2)=120$, so $d^2=16$. With $d=4$ the numbers are $2$, $6$, $10$. The sum of squares is $4+36+100=140$.'
+        constraints: 'arithmetic and geometric progressions with integer data; the parts ask for a term, a ratio or difference, and a sum'
+      - id: kp2
+        name: 'Infinite decreasing geometric progression and periodic decimals'
+        key_prerequisites: [geometric-series-convergence, geometric-series-finite-infinite]
+        exemplars:
+          - problem: 'A geometric progression has $b_1=6$ and $q=\tfrac13$. (a) Find the sum $S$ of all its terms. (b) Find $b_3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"S","contract":{"kind":"exact"}},{"name":"b3","contract":{"kind":"exact"}}]}
+            answer: 'S = 9; b3 = 2/3'
+            solution_sketch: 'Use $S=b_1/(1-q)=6/(2/3)=9$. Also $b_3=6\cdot\frac19=\frac23$.'
+          - problem: '(a) Find the sum $12+4+\tfrac43+\dots$ of the infinite progression. (b) An infinite decreasing geometric progression has $b_1=10$ and sum $25$. Find $q$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"S","contract":{"kind":"exact"}},{"name":"q","contract":{"kind":"exact"}}]}
+            answer: 'S = 18; q = 3/5'
+            solution_sketch: 'In (a), $q=\frac13$ and $S=12/(1-\frac13)=18$. In (b), $10/(1-q)=25$ gives $1-q=\frac25$. So $q=\frac35$.'
+          - problem: 'Write each repeating decimal as a fraction. (a) $0.(6)$. (b) $0.(27)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2/3; p2 = 3/11'
+            solution_sketch: 'In (a), the sum is $0.6/(1-0.1)=2/3$. In (b), the sum is $0.27/(1-0.01)=27/99=3/11$.'
+          - problem: 'Write each repeating decimal as a fraction. (a) $0.2(3)$. (b) $1.(45)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 7/30; p2 = 16/11'
+            solution_sketch: 'In (a), $0.2(3)=\frac15+0.0(3)=\frac15+\frac1{30}=\frac7{30}$. In (b), $1.(45)=1+\frac{45}{99}=1+\frac5{11}=\frac{16}{11}$.'
+          - problem: 'An infinite decreasing geometric progression has sum $8$ and $b_2=2$. (a) Find $q$. (b) Find $b_1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"q","contract":{"kind":"exact"}},{"name":"b1","contract":{"kind":"exact"}}]}
+            answer: 'q = 1/2; b1 = 4'
+            solution_sketch: 'We have $b_1q=2$ and $b_1=8(1-q)$. So $8q(1-q)=2$, which gives $(2q-1)^2=0$. Then $q=\frac12$ and $b_1=4$.'
+          - problem: '(a) Find $x$ when $1+x+x^2+\dots=\tfrac53$. (b) Find all $x$ for which the sum $1+x+x^2+\dots$ exists. (c) Find the sum $1-\tfrac12+\tfrac14-\tfrac18+\dots$'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"dom","contract":{"kind":"inequality_union"}},{"name":"S","contract":{"kind":"exact"}}]}
+            answer: 'x = 2/5; dom = -1 < x < 1; S = 2/3'
+            solution_sketch: 'In (a), $1/(1-x)=5/3$, so $x=2/5$. In (b), the ratio $x$ must have $|x|<1$. In (c), $q=-\frac12$ and $S=1/(1+\frac12)=\frac23$.'
+        constraints: 'infinite decreasing geometric progressions with |q|<1 and repeating decimals; keys are fractions'
+      - id: kp3
+        name: 'Multi-part word problem with a progression'
+        key_prerequisites: [progression-word-problems, arithmetic-sequences]
+        exemplars:
+          - problem: 'A machine makes $50$ parts on day $1$. Each day it makes $4$ parts more than on the day before. (a) How many parts does it make on day $12$? (b) How many parts does it make in the first $12$ days?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"day12","contract":{"kind":"exact"}},{"name":"total","contract":{"kind":"exact"}}]}
+            answer: 'day12 = 94; total = 864'
+            solution_sketch: 'The numbers form an arithmetic progression with $a_1=50$ and $d=4$. So $a_{12}=50+44=94$. Then $S_{12}=\frac{50+94}{2}\cdot12=864$.'
+          - problem: 'A culture has $500$ bacteria. The number doubles every hour. (a) How many bacteria are there after $6$ hours? (b) After how many whole hours is the number first more than $100000$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"count","contract":{"kind":"exact"}},{"name":"hours","contract":{"kind":"exact"}}]}
+            answer: 'count = 32000; hours = 8'
+            solution_sketch: 'The numbers form a geometric progression with $q=2$. After $6$ hours there are $500\cdot2^6=32000$. We need $2^n>200$. Since $2^7=128$ and $2^8=256$, the answer is $8$.'
+          - problem: 'A hall has $20$ seats in row $1$. Each next row has $2$ seats more than the row before. (a) How many seats are in row $15$? (b) How many seats are in the first $15$ rows together? (c) What is the number of the first row with more than $60$ seats?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"row15","contract":{"kind":"exact"}},{"name":"total","contract":{"kind":"exact"}},{"name":"row","contract":{"kind":"exact"}}]}
+            answer: 'row15 = 48; total = 510; row = 22'
+            solution_sketch: 'We have $a_{15}=20+2\cdot14=48$. Then $S_{15}=\frac{20+48}{2}\cdot15=510$. In (c), $20+2(n-1)>60$ gives $n>21$. So $n=22$.'
+          - problem: 'A ball falls from $16$ m. After each hit it rebounds to $\tfrac34$ of the last height. (a) Find the height of the third rebound in meters. (b) Find the total distance the ball moves until it stops, in meters.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"h3","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'h3 = 27/4; dist = 112'
+            solution_sketch: 'The rebound heights are $12$, $9$, $\frac{27}4$, and so on. The total distance is $16$ plus twice the sum of the rebound heights. That sum is $12/(1-\frac34)=48$. So the distance is $16+96=112$.'
+          - problem: 'A person saves $100$ in month $1$. Each month the saving is $20$ more than in the month before. (a) Find the saving in month $10$. (b) Find the total saving in the first $10$ months. (c) Find the number of the month in which the total first is more than $5000$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"m10","contract":{"kind":"exact"}},{"name":"total","contract":{"kind":"exact"}},{"name":"month","contract":{"kind":"exact"}}]}
+            answer: 'm10 = 280; total = 1900; month = 19'
+            solution_sketch: 'We have $a_{10}=100+20\cdot9=280$. Then $S_{10}=\frac{100+280}{2}\cdot10=1900$. In (c), $S_n=n(90+10n)>5000$ gives $n^2+9n>500$. Since $18^2+162=486$ and $19^2+171=532$, the answer is $19$.'
+          - problem: 'A rope of $255$ cm is cut into $8$ pieces. The lengths form a geometric progression with $q=2$. (a) Find the length of the shortest piece in cm. (b) Find the length of the longest piece in cm. (c) Find the total length of the three longest pieces in cm.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"short","contract":{"kind":"exact"}},{"name":"long","contract":{"kind":"exact"}},{"name":"three","contract":{"kind":"exact"}}]}
+            answer: 'short = 1; long = 128; three = 224'
+            solution_sketch: 'We have $b_1(2^8-1)=255$, so $b_1=1$. Then $b_8=2^7=128$. The three longest pieces are $32$, $64$ and $128$, with sum $224$.'
+        constraints: 'a short word problem with a progression; two or three parts; every value is a whole number or a simple fraction'
+    diagnostic_exemplar:
+      problem: 'Find the sum of the first four terms of the arithmetic progression $2,5,8,\dots$'
+      answer_contract: {"kind":"exact"}
+      answer: '26'
+      solution_sketch: 'The terms are $2$, $5$, $8$, $11$. Their sum is $26$.'
+  - id: vbe-cp08-function-concept
+    name: 'Functions: parity, composition, transformations'
+    lt_term: 'Funkcijos: samprata ir transformacijos'
+    area: models
+    program_items: [66, 67, 68, 69, 70]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: trig-function-properties-graphical
+        weight: 0.6
+        key: true
+      - id: graph-transformations-horizontal-modulus
+        weight: 0.4
+        key: false
+      - id: graphical-solving-equations-inequalities
+        weight: 0.4
+        key: false
+      - id: even-odd-functions
+        weight: 0.4
+        key: false
+      - id: function-composition
+        weight: 0.4
+        key: false
+      - id: function-transformations-shifts
+        weight: 0.4
+        key: false
+      - id: function-stretches-reflections
+        weight: 0.4
+        key: false
+      - id: graphing-systems
+        weight: 0.4
+        key: false
+      - id: graphing-linear-inequalities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Composite, even, odd and periodic functions'
+        key_prerequisites: [even-odd-functions, function-composition]
+        exemplars:
+          - problem: 'Let $f(x)=2x+1$ and $g(x)=x^2$. (a) Compute $f(g(3))$. (b) Write $g(f(x))$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"val","contract":{"kind":"exact"}},{"name":"comp","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'val = 19; comp = (2*x+1)^2'
+            solution_sketch: 'We have $g(3)=9$ and $f(9)=19$. In (b), put $f(x)$ into $g$: $(2x+1)^2$.'
+          - problem: 'Let $f(x)=x-3$ and $g(x)=3x$. (a) Write $f(g(x))$. (b) Solve $f(g(x))=12$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"comp","contract":{"kind":"function","vars":["x"]}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 'comp = 3*x-3; x = 5'
+            solution_sketch: 'Put $g(x)$ into $f$: $3x-3$. Then $3x-3=12$ gives $x=5$.'
+          - problem: 'Look at the functions $x^2$, $x^3$, $|x|$, $x+1$, $\cos x$, $x\sin x$. (a) How many are even? (b) How many are odd? (c) How many are neither even nor odd?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"even","contract":{"kind":"exact"}},{"name":"odd","contract":{"kind":"exact"}},{"name":"neither","contract":{"kind":"exact"}}]}
+            answer: 'even = 4; odd = 1; neither = 1'
+            solution_sketch: 'The even functions are $x^2$, $|x|$, $\cos x$ and $x\sin x$. The odd function is $x^3$. The function $x+1$ is neither.'
+          - problem: 'The function $f$ is odd with $f(2)=5$ and $f(-1)=-3$. The function $g$ is even with $g(3)=7$. (a) Find $f(-2)$. (b) Find $f(1)$. (c) Find $f(2)+f(-2)+g(-3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -5; p2 = 3; p3 = 7'
+            solution_sketch: 'For an odd function, $f(-x)=-f(x)$. So $f(-2)=-5$ and $f(1)=3$. For an even function, $g(-3)=g(3)=7$. The sum is $5-5+7=7$.'
+          - problem: 'The function $f$ has period $4$ with $f(1)=3$ and $f(2)=-1$. (a) Find $f(6)$. (b) Find $f(-3)$. (c) Find $f(1001)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -1; p2 = 3; p3 = 3'
+            solution_sketch: 'A period of $4$ means $f(x+4)=f(x)$. So $f(6)=f(2)=-1$ and $f(-3)=f(1)=3$. Also $1001=1+4\cdot250$, so $f(1001)=f(1)=3$.'
+          - problem: '(a) Let $f(x)=x^2+1$ and $g(x)=\sqrt x$. Solve $f(g(x))=g(f(x))$. (b) Find the smallest positive period of $\sin3x$. (c) Let $h(x)=ax^3+bx+2$ with $h(1)=5$. Find $h(-1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"period","contract":{"kind":"exact"}},{"name":"h","contract":{"kind":"exact"}}]}
+            answer: 'sol = {0}; period = 2*pi/3; h = -1'
+            solution_sketch: 'In (a), $f(g(x))=x+1$ for $x\ge0$ and $g(f(x))=\sqrt{x^2+1}$. Squaring $x+1=\sqrt{x^2+1}$ gives $2x=0$. In (b), the period is $2\pi/3$. In (c), $a+b=3$, and $h(-1)=-(a+b)+2=-1$.'
+        constraints: 'composition of simple functions, parity of named functions and periodic values; the last item joins two ideas'
+      - id: kp2
+        name: 'Graph transformations and graphical solving'
+        key_prerequisites: [graph-transformations-horizontal-modulus, graphical-solving-equations-inequalities]
+        exemplars:
+          - problem: 'The point $(2,3)$ is on the graph of $y=f(x)$. Find the matching point of the new graph. (a) For $y=f(x)+4$. (b) For $y=f(x-1)$. (c) For $y=-f(x)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"coordinates","arity":2}},{"name":"p2","contract":{"kind":"coordinates","arity":2}},{"name":"p3","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'p1 = (2,7); p2 = (3,3); p3 = (2,-3)'
+            solution_sketch: 'The graph of $f(x)+4$ moves up by $4$. The graph of $f(x-1)$ moves right by $1$. The graph of $-f(x)$ reflects in the $x$-axis.'
+          - problem: 'The point $(4,-2)$ is on the graph of $y=f(x)$. Find the matching point of the new graph. (a) For $y=2f(x)$. (b) For $y=f(2x)$. (c) For $y=f(-x)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"coordinates","arity":2}},{"name":"p2","contract":{"kind":"coordinates","arity":2}},{"name":"p3","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'p1 = (4,-4); p2 = (2,-2); p3 = (-4,-2)'
+            solution_sketch: 'In (a), the ordinate doubles. In (b), $2x=4$ gives $x=2$. In (c), $-x=4$ gives $x=-4$.'
+          - problem: 'The point $(4,-2)$ is on the graph of $y=f(x)$. (a) Find the matching point of the graph of $y=|f(x)|$. (b) Solve $|x-1|=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pt","contract":{"kind":"coordinates","arity":2}},{"name":"sol","contract":{"kind":"set"}}]}
+            answer: 'pt = (4,2); sol = {-2, 4}'
+            solution_sketch: 'The modulus reflects the negative ordinate up: $(4,2)$. In (b), $x-1=3$ or $x-1=-3$.'
+          - problem: 'The graph of $y=x^2$ moves $3$ units to the right and $2$ units down. (a) Write the equation of the new graph. (b) Find the vertex of the new graph.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"eq","contract":{"kind":"function","vars":["x"]}},{"name":"vertex","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'eq = (x-3)^2-2; vertex = (3,-2)'
+            solution_sketch: 'Moving right by $3$ gives $(x-3)^2$. Moving down by $2$ gives $(x-3)^2-2$. The vertex moves from $(0,0)$ to $(3,-2)$.'
+          - problem: '(a) Solve $|x|=x+2$. (b) Solve $|x-2|<3$. (c) The graphs of $y=x^2$ and $y=x+2$ meet at two points. Find the sum of their $x$-coordinates.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"set"}},{"name":"p2","contract":{"kind":"inequality_union"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = {-1}; p2 = -1 < x < 5; p3 = 1'
+            solution_sketch: 'In (a), $x\ge0$ gives $x=x+2$, which has no root. For $x<0$ we get $-x=x+2$, so $x=-1$. In (b), $-3<x-2<3$ gives $-1<x<5$. In (c), $x^2=x+2$ has roots $2$ and $-1$, with sum $1$.'
+          - problem: 'The point $(1,2)$ is on the graph of $y=f(x)$. (a) Find the matching point of the graph of $y=2f(x-3)+1$. (b) Find the matching point of the graph of $y=3-f(-x)$. (c) How many solutions does $|x^2-4|=3$ have?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"coordinates","arity":2}},{"name":"p2","contract":{"kind":"coordinates","arity":2}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'p1 = (4,5); p2 = (-1,1); count = 4'
+            solution_sketch: 'In (a), $x-3=1$ gives $x=4$, and $y=2\cdot2+1=5$. In (b), $-x=1$ gives $x=-1$, and $y=3-2=1$. In (c), $x^2-4=3$ gives $x^2=7$. Also $x^2-4=-3$ gives $x^2=1$. This is four roots.'
+        constraints: 'a point of a graph moves under f(x)+a, f(x+a), -f(x), a*f(x), f(-x), f(ax) and |f(x)|; equations with a modulus'
+    diagnostic_exemplar:
+      problem: 'Let $f(x)=x+5$ and $g(x)=3x$. Find $f(g(2))$.'
+      answer_contract: {"kind":"exact"}
+      answer: '11'
+      solution_sketch: 'We have $g(2)=6$ and $f(6)=11$.'
+  - id: vbe-cp09-elementary-functions
+    name: Power, root, exponential, logarithmic functions
+    lt_term: 'Laipsninė, šaknies, rodiklinė, logaritminė funkcijos'
+    area: models
+    program_items: [71, 72, 73, 74, 75, 76, 77, 78, 79]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: power-functions
+        weight: 0.6
+        key: true
+      - id: root-functions
+        weight: 0.4
+        key: false
+      - id: graphical-solving-equations-inequalities
+        weight: 0.4
+        key: false
+      - id: exp-log-graph-recognition-models
+        weight: 0.4
+        key: false
+      - id: polynomial-end-behavior-graphing
+        weight: 0.4
+        key: false
+      - id: vertical-horizontal-asymptotes
+        weight: 0.4
+        key: false
+      - id: cube-roots
+        weight: 0.4
+        key: false
+      - id: square-roots
+        weight: 0.4
+        key: false
+      - id: function-transformations-shifts
+        weight: 0.4
+        key: false
+      - id: exponential-functions
+        weight: 0.4
+        key: false
+      - id: graphs-of-exponential-functions
+        weight: 0.4
+        key: false
+      - id: graphs-of-logarithmic-functions
+        weight: 0.4
+        key: false
+      - id: logarithm-basics
+        weight: 0.4
+        key: false
+      - id: exponential-growth-decay
+        weight: 0.4
+        key: false
+      - id: continuous-growth-model
+        weight: 0.4
+        key: false
+      - id: compound-interest
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Properties and formulas from a graph point'
+        key_prerequisites: [power-functions, root-functions, exp-log-graph-recognition-models]
+        exemplars:
+          - problem: 'A power function $f(x)=x^n$ with natural $n$ has a graph through the point $(2,32)$. (a) Find $n$. (b) Find $f(-1)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"val","contract":{"kind":"exact"}}]}
+            answer: 'n = 5; val = -1'
+            solution_sketch: 'From $2^n=32$ we get $n=5$. The exponent is odd, so $f(-1)=(-1)^5=-1$.'
+          - problem: 'The graph of $y=a x^{-2}$ passes through the point $(3,2)$. (a) Find $a$. (b) Find the value of $y$ at $x=-1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'a = 18; y = 18'
+            solution_sketch: 'Put $x=3$: $a/9=2$, so $a=18$. At $x=-1$ we have $y=18/1=18$.'
+          - problem: 'The graph of $y=a\sqrt{x}$ passes through the point $(16,12)$. (a) Find $a$. (b) Find the value of $x$ where $y=15$. (c) Find the domain of the function. Write it as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"x","contract":{"kind":"exact"}},{"name":"dom","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 3; x = 25; dom = x >= 0'
+            solution_sketch: 'Put $x=16$: $4a=12$, so $a=3$. Then $3\sqrt{x}=15$ gives $\sqrt{x}=5$ and $x=25$. A square root needs $x\ge 0$.'
+          - problem: 'The graph of $y=a\cdot 2^x$ passes through the point $(3,40)$. (a) Find $a$. (b) Find the value of $y$ at $x=-1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; y = 5/2'
+            solution_sketch: 'Put $x=3$: $8a=40$, so $a=5$. At $x=-1$ we have $y=5\cdot\frac12=\frac52$.'
+          - problem: 'The graph of $y=\log_b x$ with $b>1$ passes through the point $(81,4)$. (a) Find $b$. (b) Find the value of $x$ where $y=-2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"b","contract":{"kind":"exact"}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 'b = 3; x = 1/9'
+            solution_sketch: 'From $b^4=81$ and $b>1$ we get $b=3$. Then $\log_3 x=-2$ gives $x=3^{-2}=\frac19$.'
+          - problem: 'The graph of $f(x)=a\cdot b^x$ with $b>0$ passes through the points $(1,6)$ and $(3,54)$. (a) Find $b$. (b) Find $a$. (c) Find the value of $x$ where $f(x)=162$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"b","contract":{"kind":"exact"}},{"name":"a","contract":{"kind":"exact"}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 'b = 3; a = 2; x = 4'
+            solution_sketch: 'Divide the two equations: $b^2=9$, so $b=3$. Then $3a=6$ gives $a=2$. Solve $2\cdot3^x=162$: $3^x=81$, so $x=4$.'
+        constraints: 'two- or three-part items; one formula type per item (power, root, exponential or logarithmic); one graph point gives the parameter; the last part reads a value or a domain'
+      - id: kp2
+        name: 'Model a situation and meet point of two graphs'
+        key_prerequisites: [exponential-growth-decay, graphical-solving-equations-inequalities]
+        exemplars:
+          - problem: 'The graphs of $y=x^2$ and $y=3x-2$ meet at two points. (a) Find the $x$-coordinates of the meet points. (b) Find the meet point with the greater $x$-coordinate.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"xs","contract":{"kind":"set"}},{"name":"pt","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'xs = {1, 2}; pt = (2,4)'
+            solution_sketch: 'Solve $x^2=3x-2$. This gives $x^2-3x+2=0$, so $x=1$ or $x=2$. For $x=2$ we have $y=4$.'
+          - problem: 'The graphs of $y=\sqrt{x}$ and $y=x-2$ meet at one point. (a) Find the $x$-coordinate of the point. (b) Find the $y$-coordinate of the point.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'x = 4; y = 2'
+            solution_sketch: 'Square $\sqrt{x}=x-2$ to get $x^2-5x+4=0$, so $x=1$ or $x=4$. For $x=1$ the right side is $-1$, so reject it. For $x=4$ both sides equal $2$.'
+          - problem: 'A culture of bacteria follows $N(t)=N_0\cdot 2^{t}$, where $t$ is in hours. At $t=0$ there are $500$ bacteria. (a) Find $N(3)$. (b) Find the time $t$ when there are $8000$ bacteria.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"N3","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 'N3 = 4000; t = 4'
+            solution_sketch: 'We have $N_0=500$. Then $N(3)=500\cdot 8=4000$. Solve $500\cdot2^t=8000$: $2^t=16$, so $t=4$.'
+          - problem: 'A tank holds $V(t)=200\cdot\left(\tfrac12\right)^{t/3}$ liters of water at time $t$ hours. (a) Find $V(6)$. (b) Find the time $t$ when $V(t)=25$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"V6","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 'V6 = 50; t = 9'
+            solution_sketch: 'At $t=6$ the power is $(1/2)^2=1/4$, so $V=50$. Solve $200\cdot(1/2)^{t/3}=25$: $(1/2)^{t/3}=1/8=(1/2)^3$. So $t/3=3$ and $t=9$.'
+          - problem: 'The graphs of $y=2^x$ and $y=\dfrac{8}{2^x}$ meet at one point. (a) Find the $x$-coordinate of the point. (b) Find the $y$-coordinate of the point.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'x = 3/2; y = 2*sqrt(2)'
+            solution_sketch: 'Solve $2^x=8\cdot2^{-x}$. This gives $2^{2x}=8=2^3$, so $x=3/2$. Then $y=2^{3/2}=2\sqrt{2}$.'
+          - problem: 'A population follows $P(t)=P_0\,b^t$ with $b>0$ and $t$ in years. We know $P(0)=400$ and $P(2)=900$. (a) Find $b$. (b) Find $P(3)$. (c) Find the time $t$ when $P(t)=2025$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"b","contract":{"kind":"exact"}},{"name":"P3","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 'b = 3/2; P3 = 1350; t = 4'
+            solution_sketch: 'We have $400b^2=900$, so $b^2=9/4$ and $b=3/2$. Then $P(3)=400\cdot\frac{27}{8}=1350$. Solve $(3/2)^t=2025/400=81/16=(3/2)^4$. So $t=4$.'
+        constraints: 'two- or three-part items; either two graphs meet, or a growth model has a given start value; the numbers give exact results'
+    diagnostic_exemplar:
+      problem: 'The power function $y=x^3$ passes through the point $(a,8)$. Find $a$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'We have $a^3=8$, so $a=2$.'
+  - id: vbe-cp10-trig-functions
+    name: Trigonometric functions
+    lt_term: 'Trigonometrinės funkcijos'
+    area: models
+    program_items: [80, 81, 82, 83, 84]
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 330
+    prerequisites:
+      - id: trig-function-properties-graphical
+        weight: 0.6
+        key: true
+      - id: sine-cosine-parent-graphs
+        weight: 0.4
+        key: false
+      - id: trig-graphs-basic
+        weight: 0.4
+        key: false
+      - id: tangent-reciprocal-graphs
+        weight: 0.4
+        key: false
+      - id: trig-graphs-midline
+        weight: 0.4
+        key: false
+      - id: sinusoid-phase-shift
+        weight: 0.4
+        key: false
+      - id: basic-trig-equations
+        weight: 0.4
+        key: false
+      - id: graphing-systems
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Properties and graph of y=a*f(kx+b)+c'
+        key_prerequisites: [trig-function-properties-graphical, trig-graphs-midline, sinusoid-phase-shift]
+        exemplars:
+          - problem: 'Consider $y=2\sin x+1$. (a) Find the greatest value of $y$. (b) Find the least value of $y$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'max = 3; min = -1'
+            solution_sketch: 'The sine takes values from $-1$ to $1$. So $y$ runs from $-2+1=-1$ to $2+1=3$.'
+          - problem: 'Consider $y=3\cos 2x$. (a) Find the least positive period of $y$. (b) Find the greatest value of $y$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"T","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'T = pi; max = 3'
+            solution_sketch: 'The period of $\cos kx$ is $2\pi/k$. Here $k=2$, so $T=\pi$. The greatest value is $3\cdot1=3$.'
+          - problem: 'Let $f(x)=\cos\left(x-\dfrac{\pi}{3}\right)$. (a) Find $f\left(\dfrac{\pi}{3}\right)$. (b) Find $f\left(\dfrac{5\pi}{6}\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 0'
+            solution_sketch: 'At $x=\pi/3$ the argument is $0$, and $\cos 0=1$. At $x=5\pi/6$ the argument is $\pi/2$, and $\cos(\pi/2)=0$.'
+          - problem: 'Consider $y=-2\cos\dfrac{x}{2}+1$. (a) Find the least positive period of $y$. (b) Find the greatest value of $y$. (c) Find the least value of $y$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"T","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}},{"name":"min","contract":{"kind":"exact"}}]}
+            answer: 'T = 4*pi; max = 3; min = -1'
+            solution_sketch: 'Here $k=1/2$, so $T=2\pi/(1/2)=4\pi$. The cosine runs from $-1$ to $1$. So $-2\cos(x/2)$ runs from $-2$ to $2$, and $y$ runs from $-1$ to $3$.'
+          - problem: 'Consider $y=\tan 2x$. (a) Find the least positive period of $y$. (b) Find the zeros of $y$ in the interval $[0,\pi)$. (c) Find the $x$-values in $(0,\pi)$ where $y$ is not defined.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"T","contract":{"kind":"exact"}},{"name":"zeros","contract":{"kind":"set"}},{"name":"asym","contract":{"kind":"set"}}]}
+            answer: 'T = pi/2; zeros = {0, pi/2}; asym = {pi/4, 3*pi/4}'
+            solution_sketch: 'The period of $\tan kx$ is $\pi/k$, so $T=\pi/2$. We have $\tan 2x=0$ when $2x=0,\pi$, so $x=0,\pi/2$. The tangent is not defined when $2x=\pi/2,3\pi/2$, so $x=\pi/4,3\pi/4$.'
+          - problem: 'Let $f(x)=4\sin(3x-\pi)+2$. (a) Find the least positive period of $f$. (b) Find the greatest value of $f$. (c) Find the least positive $x$ where $f$ takes its greatest value.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"T","contract":{"kind":"exact"}},{"name":"max","contract":{"kind":"exact"}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 'T = 2*pi/3; max = 6; x = pi/2'
+            solution_sketch: 'The period is $2\pi/3$. The greatest value is $4+2=6$. It needs $3x-\pi=\pi/2+2\pi k$, so $x=\pi/2+2\pi k/3$. The least positive value is $x=\pi/2$, because $k=-1$ gives a negative $x$.'
+        constraints: 'two- or three-part items; y=a*f(kx+b)+c with f sine, cosine or tangent; asked: period, extreme values, zeros, values at given points'
+      - id: kp2
+        name: 'Graphical solving of trigonometric equations'
+        key_prerequisites: [basic-trig-equations, trig-function-properties-graphical]
+        exemplars:
+          - problem: '(a) Solve $2\sin x=1$ on $[0,2\pi]$. (b) How many solutions has $\sin x=-1$ on $[0,4\pi]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'sols = {pi/6, 5*pi/6}; count = 2'
+            solution_sketch: 'We have $\sin x=1/2$, so $x=\pi/6$ or $x=5\pi/6$. The sine equals $-1$ at $x=3\pi/2$ and at $x=7\pi/2$ on $[0,4\pi]$. That gives $2$ solutions.'
+          - problem: '(a) Solve $\cos x=\dfrac12$ on $[-\pi,\pi]$. (b) Solve $\cos x>\dfrac12$ on $[-\pi,\pi]$. Write the answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"ineq","contract":{"kind":"inequality_union"}}]}
+            answer: 'sols = {-pi/3, pi/3}; ineq = -pi/3 < x < pi/3'
+            solution_sketch: 'The cosine equals $1/2$ at $x=\pm\pi/3$. On $[-\pi,\pi]$ the graph of the cosine is above $1/2$ between these two points.'
+          - problem: '(a) Solve $\sin x=-\dfrac{\sqrt3}{2}$ on $[0,2\pi]$. (b) Solve $\sin x\le-\dfrac{\sqrt3}{2}$ on $[0,2\pi]$. Write the answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"ineq","contract":{"kind":"inequality_union"}}]}
+            answer: 'sols = {4*pi/3, 5*pi/3}; ineq = 4*pi/3 <= x <= 5*pi/3'
+            solution_sketch: 'The sine equals $-\sqrt3/2$ at $x=4\pi/3$ and $x=5\pi/3$. Between these points the sine is at most $-\sqrt3/2$.'
+          - problem: '(a) Solve $\tan x=1$ on $[0,2\pi]$. (b) Solve $\tan x>1$ on $\left(0,\dfrac{\pi}{2}\right)$. Write the answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"ineq","contract":{"kind":"inequality_union"}}]}
+            answer: 'sols = {pi/4, 5*pi/4}; ineq = pi/4 < x < pi/2'
+            solution_sketch: 'The tangent equals $1$ at $x=\pi/4$ and $x=5\pi/4$. On $(0,\pi/2)$ the tangent grows, so $\tan x>1$ for $x>\pi/4$.'
+          - problem: '(a) Solve $2\sin 2x=\sqrt2$ on $[0,\pi]$. (b) Solve $2\sin 2x>\sqrt2$ on $[0,\pi]$. Write the answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"ineq","contract":{"kind":"inequality_union"}}]}
+            answer: 'sols = {pi/8, 3*pi/8}; ineq = pi/8 < x < 3*pi/8'
+            solution_sketch: 'We have $\sin 2x=\sqrt2/2$, so $2x=\pi/4$ or $2x=3\pi/4$. Then $x=\pi/8$ or $x=3\pi/8$. The sine is above $\sqrt2/2$ between these two points.'
+          - problem: 'Let $f(x)=2\cos x-1$ on $[0,2\pi]$. (a) Find the zeros of $f$. (b) Solve $f(x)<0$. Write the answer as an inequality. (c) Find the greatest value of $f$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"zeros","contract":{"kind":"set"}},{"name":"neg","contract":{"kind":"inequality_union"}},{"name":"max","contract":{"kind":"exact"}}]}
+            answer: 'zeros = {pi/3, 5*pi/3}; neg = pi/3 < x < 5*pi/3; max = 1'
+            solution_sketch: 'The zeros need $\cos x=1/2$, so $x=\pi/3$ or $5\pi/3$. We have $f(x)<0$ when $\cos x<1/2$, which holds between the zeros. The greatest value is $2\cdot1-1=1$.'
+        constraints: 'two- or three-part items; a trigonometric equation on a stated interval, then the matching inequality; standard angles only'
+    diagnostic_exemplar:
+      problem: 'Find the greatest value of $y=3\sin x-1$.'
+      answer_contract: {"kind":"exact"}
+      answer: '2'
+      solution_sketch: 'The greatest sine is $1$. So $3\cdot1-1=2$.'
+  - id: vbe-cp11-equations
+    name: Rational, irrational, exponential, logarithmic equations
+    lt_term: 'Lygtys'
+    area: models
+    program_items: [85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: biquadratic-equations
+        weight: 0.6
+        key: true
+      - id: irrational-equations-extended
+        weight: 0.4
+        key: false
+      - id: exp-log-equations-new-unknown-base
+        weight: 0.4
+        key: false
+      - id: zero-product-property
+        weight: 0.4
+        key: false
+      - id: remainder-factor-theorems
+        weight: 0.4
+        key: false
+      - id: rational-root-theorem
+        weight: 0.4
+        key: false
+      - id: polynomial-division
+        weight: 0.4
+        key: false
+      - id: quadratics-in-form
+        weight: 0.4
+        key: false
+      - id: radical-equations-basic
+        weight: 0.4
+        key: false
+      - id: logarithmic-equations
+        weight: 0.4
+        key: false
+      - id: cube-roots
+        weight: 0.4
+        key: false
+      - id: exponential-equations-same-base
+        weight: 0.4
+        key: false
+      - id: exponential-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Irrational equation with the root check'
+        key_prerequisites: [irrational-equations-extended, radical-equations-basic]
+        exemplars:
+          - problem: 'Consider the equation $\sqrt{x+6}=x$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
+            answer: 'squared = {-2, 3}; orig = 3'
+            solution_sketch: 'Squaring gives $x+6=x^2$, so $x^2-x-6=0$ and $x=-2$ or $x=3$. For $x=-2$ the left side is $2$ and the right side is $-2$, so reject it. For $x=3$ both sides equal $3$.'
+          - problem: 'Consider the equation $\sqrt{2x+3}=x$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
+            answer: 'squared = {-1, 3}; orig = 3'
+            solution_sketch: 'Squaring gives $x^2-2x-3=0$, so $x=-1$ or $x=3$. For $x=-1$ the left side is $1$ and the right side is $-1$, so reject it. For $x=3$ both sides equal $3$.'
+          - problem: 'Consider the equation $\sqrt{3x+1}=x-1$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
+            answer: 'squared = {0, 5}; orig = 5'
+            solution_sketch: 'Squaring gives $3x+1=x^2-2x+1$, so $x^2-5x=0$ and $x=0$ or $x=5$. For $x=0$ the left side is $1$ and the right side is $-1$, so reject it. For $x=5$ both sides equal $4$.'
+          - problem: 'Consider the equation $\sqrt{x+5}=x-1$. (a) Find the domain of the left side. Write it as an inequality in $x$. (b) Find the solution of the equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"dom","contract":{"kind":"inequality_union"}},{"name":"sol","contract":{"kind":"exact"}}]}
+            answer: 'dom = x >= -5; sol = 4'
+            solution_sketch: 'The root needs $x+5\ge0$, so $x\ge-5$. Squaring gives $x^2-3x-4=0$, so $x=4$ or $x=-1$. For $x=-1$ the right side is $-2$, so reject it. For $x=4$ both sides equal $3$.'
+          - problem: 'Consider the equation $\sqrt{x+7}-\sqrt{x}=1$. (a) Find the solution $x$. (b) Find the value of $\sqrt{x+7}\cdot\sqrt{x}$ at this solution.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"prod","contract":{"kind":"exact"}}]}
+            answer: 'x = 9; prod = 12'
+            solution_sketch: 'Write $\sqrt{x+7}=\sqrt{x}+1$ and square: $x+7=x+2\sqrt{x}+1$. So $\sqrt{x}=3$ and $x=9$. Then $\sqrt{16}\cdot\sqrt{9}=4\cdot3=12$.'
+          - problem: '(a) Solve $\sqrt[3]{5x-2}=-3$. (b) Solve $\sqrt[4]{x+1}=2$. (c) Solve $\sqrt{x+3}=x-3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = -5; b = 15; c = 6'
+            solution_sketch: '(a) Cube both sides: $5x-2=-27$, so $x=-5$. (b) Raise to the fourth power: $x+1=16$, so $x=15$. (c) Squaring gives $x^2-7x+6=0$, so $x=1$ or $x=6$. For $x=1$ the right side is $-2$, so reject it. The solution is $6$.'
+        constraints: 'two- or three-part items; a root equation solved by squaring; the first part shows the squared roots, the last part removes the extraneous root'
+      - id: kp2
+        name: 'Exponential and logarithmic equations by substitution'
+        key_prerequisites: [exp-log-equations-new-unknown-base, exponential-equations-same-base, logarithmic-equations]
+        exemplars:
+          - problem: '(a) Solve $2^{x+1}=32$. (b) Solve $9^x=27$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 4; b = 3/2'
+            solution_sketch: '(a) We have $2^{x+1}=2^5$, so $x=4$. (b) We have $3^{2x}=3^3$, so $2x=3$ and $x=3/2$.'
+          - problem: 'Consider $4^x-6\cdot2^x+8=0$. (a) Put $t=2^x$ and find the values of $t$. (b) Find the values of $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
+            answer: 't = {2, 4}; x = {1, 2}'
+            solution_sketch: 'The equation becomes $t^2-6t+8=0$, so $t=2$ or $t=4$. Both are positive. From $2^x=2$ and $2^x=4$ we get $x=1$ and $x=2$.'
+          - problem: '(a) Solve $\log_3(x+2)=\log_3(2x-1)$. (b) Solve $\log_2(x-1)=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 3; b = 9'
+            solution_sketch: '(a) Set the arguments equal: $x+2=2x-1$, so $x=3$. Both arguments equal $5$. (b) We have $x-1=2^3=8$, so $x=9$.'
+          - problem: 'Consider $2^{2x}-5\cdot2^x-24=0$. (a) Put $t=2^x$. Find the roots of the quadratic equation in $t$. (b) Find the solution $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"exact"}}]}
+            answer: 't = {-3, 8}; x = 3'
+            solution_sketch: 'The equation becomes $t^2-5t-24=0$, so $t=8$ or $t=-3$. A power of $2$ is positive, so reject $t=-3$. From $2^x=8$ we get $x=3$.'
+          - problem: 'Consider $(\log_2 x)^2-3\log_2 x+2=0$. (a) Put $u=\log_2 x$ and find the values of $u$. (b) Find the values of $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"u","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
+            answer: 'u = {1, 2}; x = {2, 4}'
+            solution_sketch: 'The equation becomes $u^2-3u+2=0$, so $u=1$ or $u=2$. Then $x=2^1=2$ or $x=2^2=4$.'
+          - problem: '(a) Solve $\log_x 49=2$ with $x>0$ and $x\ne1$. (b) Write $\log_2 x+\log_2(x-2)=3$ as a quadratic equation in $x$. Give its roots. (c) Give the solution of the logarithmic equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"quad","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"exact"}}]}
+            answer: 'a = 7; quad = {-2, 4}; sol = 4'
+            solution_sketch: '(a) We have $x^2=49$ and $x>0$, so $x=7$. (b) The equation gives $x(x-2)=8$, so $x^2-2x-8=0$ and $x=-2$ or $x=4$. The domain needs $x>2$, so only $x=4$ stays.'
+        constraints: 'two- or three-part items; common base or a substitution t=a^x or u=log x; the domain removes a root'
+      - id: kp3
+        name: 'Higher-degree and biquadratic equations in a multi-part item'
+        key_prerequisites: [biquadratic-equations, zero-product-property, rational-root-theorem]
+        exemplars:
+          - problem: 'Consider $(x-1)(x+2)(2x-3)=0$. (a) Find all solutions. (b) Find the sum of the solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'sols = {-2, 1, 3/2}; sum = 1/2'
+            solution_sketch: 'Set each factor to zero: $x=1$, $x=-2$ or $x=3/2$. The sum is $-2+1+\frac32=\frac12$.'
+          - problem: '(a) Solve $x^3-4x=0$. (b) Solve $x^3-x^2-4x+4=0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"set"}},{"name":"b","contract":{"kind":"set"}}]}
+            answer: 'a = {-2, 0, 2}; b = {-2, 1, 2}'
+            solution_sketch: '(a) We have $x(x-2)(x+2)=0$. (b) Group the terms: $x^2(x-1)-4(x-1)=(x-1)(x-2)(x+2)$.'
+          - problem: 'Consider $x^4-5x^2+4=0$. (a) Put $t=x^2$ and find the values of $t$. (b) Find all real solutions $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
+            answer: 't = {1, 4}; x = {-2, -1, 1, 2}'
+            solution_sketch: 'The equation becomes $t^2-5t+4=0$, so $t=1$ or $t=4$. Then $x=\pm1$ or $x=\pm2$.'
+          - problem: 'Consider $x^4+x^2-6=0$. (a) Put $t=x^2$. Find the roots of the quadratic equation in $t$. (b) Find all real solutions $x$. (c) Find the sum of the squares of the real solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}},{"name":"sq","contract":{"kind":"exact"}}]}
+            answer: 't = {-3, 2}; x = {-sqrt(2), sqrt(2)}; sq = 4'
+            solution_sketch: 'The equation becomes $t^2+t-6=0$, so $t=2$ or $t=-3$. A square is not negative, so only $t=2$ stays. Then $x=\pm\sqrt2$, and the squares add to $2+2=4$.'
+          - problem: 'The number $2$ is a root of $P(x)=x^3-3x^2-4x+12$. (a) Find $P(2)$. (b) Find all real roots of $P$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"val","contract":{"kind":"exact"}},{"name":"roots","contract":{"kind":"set"}}]}
+            answer: 'val = 0; roots = {-2, 2, 3}'
+            solution_sketch: 'We have $P(2)=8-12-8+12=0$. Divide by $x-2$: $P(x)=(x-2)(x^2-x-6)=(x-2)(x-3)(x+2)$.'
+          - problem: '(a) Find all real solutions of $x^4-10x^2+9=0$. (b) How many real solutions has $x^4+2x^2+5=0$? (c) Find the value of $k$ for which $x^4-5x^2+k=0$ has exactly three different real solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"set"}},{"name":"b","contract":{"kind":"exact"}},{"name":"k","contract":{"kind":"exact"}}]}
+            answer: 'a = {-3, -1, 1, 3}; b = 0; k = 0'
+            solution_sketch: '(a) Put $t=x^2$: $t^2-10t+9=0$, so $t=1$ or $t=9$ and $x=\pm1,\pm3$. (b) The left side is at least $5$, so there is no solution. (c) We need $t=0$ as one root, so $k=0$. Then $x^2(x^2-5)=0$ gives $x=0,\pm\sqrt5$.'
+        constraints: 'two- or three-part items; factored form, grouping, a known root, or x^4 with t=x^2; integer or simple radical roots'
+    diagnostic_exemplar:
+      problem: 'Solve $\sqrt{x+2}=3$.'
+      answer_contract: {"kind":"exact"}
+      answer: '7'
+      solution_sketch: 'Square both sides: $x+2=9$, so $x=7$.'
+  - id: vbe-cp12-moduli-systems
+    name: Equations with moduli and systems of equations
+    lt_term: 'Lygtys su moduliais; lygčių sistemos'
+    area: models
+    program_items: [96, 97, 98, 99]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: modulus-equations-inequalities
+        weight: 0.6
+        key: true
+      - id: multi-unknown-systems
+        weight: 0.4
+        key: false
+      - id: absolute-value-equations
+        weight: 0.4
+        key: false
+      - id: proof-by-cases
+        weight: 0.4
+        key: false
+      - id: solutions-of-two-variable-equations
+        weight: 0.4
+        key: false
+      - id: equations-of-circles
+        weight: 0.4
+        key: false
+      - id: solution-sets-free-variables
+        weight: 0.4
+        key: false
+      - id: row-reduction-echelon-forms
+        weight: 0.4
+        key: false
+      - id: back-substitution-triangular-systems
+        weight: 0.4
+        key: false
+      - id: linear-systems-applications
+        weight: 0.4
+        key: false
+      - id: systems-word-problems
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Equation with a modulus and the case check'
+        key_prerequisites: [modulus-equations-inequalities, absolute-value-equations]
+        exemplars:
+          - problem: '(a) Solve $|x-3|=5$. (b) Solve $|2x+1|=7$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"set"}},{"name":"b","contract":{"kind":"set"}}]}
+            answer: 'a = {-2, 8}; b = {-4, 3}'
+            solution_sketch: '(a) We have $x-3=5$ or $x-3=-5$, so $x=8$ or $x=-2$. (b) We have $2x+1=7$ or $2x+1=-7$, so $x=3$ or $x=-4$.'
+          - problem: 'Consider $|x-1|=2x-5$. (a) Solve the equation for the case $x\ge1$ and the equation for the case $x<1$. Give both numbers you find. (b) Find the solution of the original equation.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"cand","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"exact"}}]}
+            answer: 'cand = {2, 4}; sol = 4'
+            solution_sketch: 'For $x\ge1$ we have $x-1=2x-5$, so $x=4$. For $x<1$ we have $1-x=2x-5$, so $x=2$. The value $2$ is not less than $1$, and the right side is negative there, so reject it. The value $4$ gives $3=3$.'
+          - problem: 'Consider $|2x-1|=x+4$. (a) Find all solutions. (b) Find the sum of the solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'sols = {-1, 5}; sum = 4'
+            solution_sketch: 'For $2x-1\ge0$ we have $2x-1=x+4$, so $x=5$. For $2x-1<0$ we have $1-2x=x+4$, so $x=-1$. Both values satisfy the case condition. The sum is $4$.'
+          - problem: 'Consider $|x^2-4|=3$. (a) Find all solutions. (b) How many solutions are there?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'sols = {-sqrt(7), -1, 1, sqrt(7)}; count = 4'
+            solution_sketch: 'Either $x^2-4=3$ or $x^2-4=-3$. The first gives $x=\pm\sqrt7$. The second gives $x=\pm1$. That is $4$ solutions.'
+          - problem: '(a) Solve $|x-1|+|x-4|=5$. (b) Find the least value of $|x-1|+|x-4|$. (c) How many solutions has $|x-1|+|x-4|=2$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"min","contract":{"kind":"exact"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'sols = {0, 5}; min = 3; count = 0'
+            solution_sketch: 'For $x\le1$ the equation is $5-2x=5$, so $x=0$. For $1\le x\le4$ the left side is $3$, so there is no solution. For $x\ge4$ it is $2x-5=5$, so $x=5$. The sum of distances is at least $3$, so the value $2$ never occurs.'
+          - problem: '(a) Solve $|x+1|=|2x-3|$. (b) Find the value of $a$ for which $|x-2|=a$ has exactly one solution. (c) Solve $\big||x|-2\big|=1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"set"}},{"name":"val","contract":{"kind":"exact"}},{"name":"c3","contract":{"kind":"set"}}]}
+            answer: 's = {2/3, 4}; val = 0; c3 = {-3, -1, 1, 3}'
+            solution_sketch: '(a) Either $x+1=2x-3$, so $x=4$, or $x+1=-2x+3$, so $x=2/3$. (b) For $a>0$ there are two solutions, so $a=0$. (c) Then $|x|-2=\pm1$, so $|x|=3$ or $|x|=1$.'
+        constraints: 'two- or three-part items; |f|=a, |f|=g or a sum of two moduli; the case check removes a candidate'
+      - id: kp2
+        name: 'System with three unknowns or a mixed system, and its word problem'
+        key_prerequisites: [multi-unknown-systems, systems-word-problems]
+        exemplars:
+          - problem: 'Solve $x+y+z=6$, $x-y=-1$, $y-z=-1$ together. (a) Find $x$. (b) Find $y$. (c) Find $z$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}},{"name":"z","contract":{"kind":"exact"}}]}
+            answer: 'x = 1; y = 2; z = 3'
+            solution_sketch: 'The second and third equations give $x=y-1$ and $z=y+1$. Put these in the first equation: $3y=6$, so $y=2$. Then $x=1$ and $z=3$.'
+          - problem: 'Solve $x+y+z=9$, $2x-y=1$, $y+z=7$ together. (a) Find $x$. (b) Find $y$. (c) Find $z$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}},{"name":"z","contract":{"kind":"exact"}}]}
+            answer: 'x = 2; y = 3; z = 4'
+            solution_sketch: 'Replace $y+z$ by $7$ in the first equation: $x=2$. Then $2\cdot2-y=1$ gives $y=3$. Then $z=7-3=4$.'
+          - problem: 'Solve $x^2+y^2=25$ and $x+y=7$ together. (a) Find the value of $xy$. (b) Find the greater value of $x$ among the solutions. (c) Find the value of $y$ for this $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"x","contract":{"kind":"exact"}},{"name":"y","contract":{"kind":"exact"}}]}
+            answer: 'p = 12; x = 4; y = 3'
+            solution_sketch: 'We have $(x+y)^2=49$, so $2xy=49-25=24$ and $xy=12$. The numbers $x$ and $y$ are roots of $t^2-7t+12=0$, so they are $3$ and $4$. The greater $x$ is $4$, and then $y=3$.'
+          - problem: 'The line $y=x+2$ meets the parabola $y=x^2$. (a) Find the $x$-coordinates of the meet points. (b) Find the meet point with the greater $x$-coordinate.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"xs","contract":{"kind":"set"}},{"name":"pt","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'xs = {-1, 2}; pt = (2,4)'
+            solution_sketch: 'Solve $x^2=x+2$. This gives $x^2-x-2=0$, so $x=-1$ or $x=2$. For $x=2$ we have $y=4$.'
+          - problem: 'A shop sells pens, notebooks and folders. The price of $2$ pens, $1$ notebook and $1$ folder is $7$ euros. The price of $1$ pen, $2$ notebooks and $1$ folder is $8$ euros. The price of $1$ pen, $1$ notebook and $2$ folders is $9$ euros. (a) Find the price of a pen in euros. (b) Find the price of a notebook in euros. (c) Find the price of a folder in euros.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"pen","contract":{"kind":"exact"}},{"name":"note","contract":{"kind":"exact"}},{"name":"folder","contract":{"kind":"exact"}}]}
+            answer: 'pen = 1; note = 2; folder = 3'
+            solution_sketch: 'Add the three equations: $4(p+n+f)=24$, so $p+n+f=6$. The first equation minus this sum gives $p=1$. In the same way $n=8-6=2$ and $f=9-6=3$.'
+          - problem: 'A rectangle has perimeter $34$ and diagonal $13$. All lengths are in centimeters. (a) Find the area of the rectangle as a number. (b) Find the length of the shorter side. (c) Find the length of the longer side.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"area","contract":{"kind":"exact"}},{"name":"short","contract":{"kind":"exact"}},{"name":"long","contract":{"kind":"exact"}}]}
+            answer: 'area = 60; short = 5; long = 12'
+            solution_sketch: 'We have $a+b=17$ and $a^2+b^2=169$. Then $2ab=289-169=120$, so $ab=60$. The numbers $a$ and $b$ are roots of $t^2-17t+60=0$, so they are $5$ and $12$.'
+        constraints: 'three-part items; three unknowns with integer solutions, a line and a parabola, or a word problem that gives such a system'
+    diagnostic_exemplar:
+      problem: 'Find all $x$ with $|2x-3|=9$.'
+      answer_contract: {"kind":"set"}
+      answer: '{-3, 6}'
+      solution_sketch: 'We have $2x-3=9$ or $2x-3=-9$. So $x=6$ or $x=-3$.'
+  - id: vbe-cp13-inequalities
+    name: Rational, exponential, logarithmic and modulus inequalities
+    lt_term: 'Nelygybės'
+    area: models
+    program_items: [100, 101, 102, 103, 104, 105, 106]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: rational-inequality-systems-mixed
+        weight: 0.6
+        key: true
+      - id: exponential-inequalities
+        weight: 0.4
+        key: false
+      - id: logarithmic-inequalities
+        weight: 0.4
+        key: false
+      - id: modulus-equations-inequalities
+        weight: 0.4
+        key: false
+      - id: polynomial-inequalities
+        weight: 0.4
+        key: false
+      - id: rational-inequalities
+        weight: 0.4
+        key: false
+      - id: and-or-inequalities
+        weight: 0.4
+        key: false
+      - id: systems-of-linear-inequalities
+        weight: 0.4
+        key: false
+      - id: exponential-equations-same-base
+        weight: 0.4
+        key: false
+      - id: logarithmic-equations
+        weight: 0.4
+        key: false
+      - id: graphs-of-logarithmic-functions
+        weight: 0.4
+        key: false
+      - id: basic-absolute-value-inequalities
+        weight: 0.4
+        key: false
+      - id: absolute-value-equations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Rational and modulus inequalities with the interval method'
+        key_prerequisites: [rational-inequalities, polynomial-inequalities, modulus-equations-inequalities]
+        exemplars:
+          - problem: '(a) Solve $(x-1)(x+3)<0$. (b) Solve $(x-1)(x+3)\ge0$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = -3 < x < 1; b = x <= -3 or x >= 1'
+            solution_sketch: 'The zeros are $-3$ and $1$. The product is negative between them and not negative outside them.'
+          - problem: '(a) Solve $\dfrac{x-2}{x+1}>0$. (b) Solve $\dfrac{x-2}{x+1}\le0$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = x < -1 or x > 2; b = -1 < x <= 2'
+            solution_sketch: 'The fraction changes sign at $x=2$ and $x=-1$. It is positive outside $[-1,2]$. At $x=2$ it is zero, and $x=-1$ is not allowed.'
+          - problem: '(a) Solve $\dfrac{2x-1}{x-3}\ge1$. Write the answer as an inequality. (b) How many integers $x$ satisfy $\dfrac{x+2}{x-3}<0$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'a = x <= -2 or x > 3; count = 4'
+            solution_sketch: '(a) Move $1$ to the left: $\frac{x+2}{x-3}\ge0$. This holds for $x\le-2$ or $x>3$. (b) The fraction is negative for $-2<x<3$. The integers are $-1,0,1,2$.'
+          - problem: '(a) Solve $|x-2|<3$. (b) Solve $|2x+1|\ge5$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = -1 < x < 5; b = x <= -3 or x >= 2'
+            solution_sketch: '(a) We have $-3<x-2<3$, so $-1<x<5$. (b) Either $2x+1\ge5$, so $x\ge2$, or $2x+1\le-5$, so $x\le-3$.'
+          - problem: '(a) Solve $x(x-2)(x+3)>0$. (b) Solve $x(x-2)(x+3)\le0$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = -3 < x < 0 or x > 2; b = x <= -3 or 0 <= x <= 2'
+            solution_sketch: 'The zeros are $-3$, $0$ and $2$. The product is positive for $x>2$, negative on $(0,2)$, positive on $(-3,0)$ and negative for $x<-3$.'
+          - problem: '(a) Solve $\dfrac{2}{x-1}\ge\dfrac{1}{x+2}$. (b) Solve $|x^2-1|<15$. (c) How many integers satisfy both of the first two inequalities? Write the answers to the first two parts as inequalities.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'a = -5 <= x < -2 or x > 1; b = -4 < x < 4; count = 3'
+            solution_sketch: '(a) Move to one side: $\frac{x+5}{(x-1)(x+2)}\ge0$. The zeros and the poles are $-5,-2,1$. (b) We have $x^2<16$, so $-4<x<4$. (c) Both hold for $-4<x<-2$ or $1<x<4$. The integers are $-3$, $2$ and $3$.'
+        constraints: 'two- or three-part items; the interval method on a product or a fraction, or a modulus; the answer is an inequality'
+      - id: kp2
+        name: 'Logarithmic and exponential inequalities with the domain'
+        key_prerequisites: [exponential-inequalities, logarithmic-inequalities]
+        exemplars:
+          - problem: '(a) Solve $2^x<16$. (b) Solve $\left(\tfrac12\right)^x>4$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = x < 4; b = x < -2'
+            solution_sketch: '(a) We have $2^x<2^4$, so $x<4$. (b) We have $2^{-x}>2^2$, so $-x>2$ and $x<-2$.'
+          - problem: '(a) Solve $3^{2x-1}\ge27$. (b) Solve $5^x\le\dfrac1{25}$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = x >= 2; b = x <= -2'
+            solution_sketch: '(a) We have $2x-1\ge3$, so $x\ge2$. (b) We have $5^x\le5^{-2}$, so $x\le-2$.'
+          - problem: '(a) Solve $\log_2(x-1)<3$. (b) Solve $\log_2(x-1)\ge3$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 1 < x < 9; b = x >= 9'
+            solution_sketch: 'The domain is $x>1$. The base is greater than $1$, so $x-1<8$ in (a) and $x-1\ge8$ in (b). This gives $1<x<9$ and $x\ge9$.'
+          - problem: '(a) Solve $\log_3(2x-4)>2$. (b) Solve $\log_{1/2}(x+1)>-2$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = x > 13/2; b = -1 < x < 3'
+            solution_sketch: '(a) We have $2x-4>9$, so $x>13/2$. The domain $x>2$ holds. (b) The base is less than $1$, so $x+1<(1/2)^{-2}=4$. With the domain $x>-1$ this gives $-1<x<3$.'
+          - problem: '(a) Solve $\log_2 x+\log_2(x-2)<3$. (b) Solve $\log_{1/3}x\ge-1$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 2 < x < 4; b = 0 < x <= 3'
+            solution_sketch: '(a) The domain is $x>2$. The inequality becomes $x(x-2)<8$, so $-2<x<4$. With the domain, $2<x<4$. (b) The base is less than $1$, so $x\le(1/3)^{-1}=3$. With the domain $x>0$ this gives $0<x\le3$.'
+          - problem: '(a) Solve $4^x-5\cdot2^x+4<0$. (b) Solve $\log_{1/2}(x^2-4)\ge-5$. (c) How many integers satisfy the second inequality? Write the answers to the first two parts as inequalities.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'a = 0 < x < 2; b = -6 <= x < -2 or 2 < x <= 6; count = 8'
+            solution_sketch: '(a) Put $t=2^x$: $t^2-5t+4<0$, so $1<t<4$ and $0<x<2$. (b) The domain is $x^2>4$. The base is less than $1$, so $x^2-4\le32$ and $x^2\le36$. This gives the two intervals. (c) The integers are $-6,-5,-4,-3$ and $3,4,5,6$.'
+        constraints: 'two- or three-part items; base above or below 1; the domain of the logarithm limits the answer'
+      - id: kp3
+        name: 'Systems of inequalities and mixed systems'
+        key_prerequisites: [rational-inequality-systems-mixed, systems-of-linear-inequalities]
+        exemplars:
+          - problem: '(a) Find all $x$ with $x^2-x-6<0$ and $x>0$. (b) Find all $x$ with $2x-1>3$ and $x-5\le0$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 0 < x < 3; b = 2 < x <= 5'
+            solution_sketch: '(a) The first inequality gives $-2<x<3$. With $x>0$ the answer is $0<x<3$. (b) The first gives $x>2$ and the second gives $x\le5$.'
+          - problem: '(a) Find all $x$ with $x^2-5x+6\ge0$ and $x<4$. Write the answer as an inequality. (b) How many integers satisfy both $x^2-9<0$ and $x>-1$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'a = x <= 2 or 3 <= x < 4; count = 3'
+            solution_sketch: '(a) The first gives $x\le2$ or $x\ge3$. Together with $x<4$ we get $x\le2$ or $3\le x<4$. (b) Both conditions give $-1<x<3$. The integers are $0,1,2$.'
+          - problem: 'Consider the two conditions $\dfrac{x-1}{x+2}\ge0$ and $x^2<16$. (a) Find all $x$ that satisfy both. Write the answer as an inequality. (b) How many integers satisfy both?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'a = -4 < x < -2 or 1 <= x < 4; count = 4'
+            solution_sketch: 'The first gives $x<-2$ or $x\ge1$. The second gives $-4<x<4$. The integers are $-3,1,2,3$.'
+          - problem: 'Consider the equation $x^2-5x+6=0$ together with the condition $x>2.5$. (a) Find all solutions of the equation alone. (b) Find the solution that meets the condition.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"eq","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"exact"}}]}
+            answer: 'eq = {2, 3}; sol = 3'
+            solution_sketch: 'The equation gives $(x-2)(x-3)=0$, so $x=2$ or $x=3$. Only $3$ is greater than $2.5$.'
+          - problem: '(a) Find all $x$ with $\log_2 x>1$ and $x^2-10x+16<0$. (b) Find all $x$ with $2^x\ge4$ and $3-x>0$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 2 < x < 8; b = 2 <= x < 3'
+            solution_sketch: '(a) The first gives $x>2$. The second is $(x-2)(x-8)<0$, so $2<x<8$. (b) The first gives $x\ge2$ and the second gives $x<3$.'
+          - problem: '(a) Find all $x$ with $|x-1|<4$ and $\dfrac{x+2}{x-2}\ge0$. Write the answer as an inequality. (b) How many integers meet both conditions of the first part? (c) Find all solutions of $(x-2)(x+3)(x-5)=0$ that also satisfy $x+1>0$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"count","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"set"}}]}
+            answer: 'a = -3 < x <= -2 or 2 < x < 5; count = 3; c = {2, 5}'
+            solution_sketch: '(a) The first gives $-3<x<5$. The second gives $x\le-2$ or $x>2$. (b) The integers are $-2$, $3$ and $4$. (c) The roots are $2,-3,5$. Only $2$ and $5$ satisfy $x>-1$.'
+        constraints: 'two- or three-part items; two conditions in one unknown; some items mix an equation and an inequality; the last part counts integers'
+    diagnostic_exemplar:
+      problem: 'Solve $2^x<8$. Write the answer as an inequality.'
+      answer_contract: {"kind":"inequality_union"}
+      answer: 'x < 3'
+      solution_sketch: 'We have $2^x<2^3$, so $x<3$.'

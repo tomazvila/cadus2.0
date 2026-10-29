@@ -31,7 +31,8 @@ fn compose_session_runs_on_the_full_curriculum() {
     let graph = real_curriculum();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 1064 topics (was 1090).
     // Re-pinned 2026-10-28 after VBE skill wave 1: 1101 topics (was 1064).
-    assert_eq!(graph.topic_count(), 1101);
+    // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
+    assert_eq!(graph.topic_count(), 1127);
     let states = bench_states(&graph);
     let course = graph
         .topics()

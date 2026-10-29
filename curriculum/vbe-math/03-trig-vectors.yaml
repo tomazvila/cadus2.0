@@ -1,0 +1,380 @@
+unit: trig-vectors
+course: vbe-math
+module: "Checkpoints: Trigonometry and Vectors"
+topics:
+  - id: vbe-cp14-plane-vectors
+    name: Vectors on the plane and in coordinates
+    lt_term: 'Plokštumos vektoriai; vektoriai koordinačių plokštumoje'
+    area: geometry
+    program_items: [107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117]
+    core: false
+    difficulty: 0.6
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: vectors-polygon-scalar-product
+        weight: 0.6
+        key: true
+      - id: vectors-geometric-rules
+        weight: 0.4
+        key: false
+      - id: dot-product
+        weight: 0.4
+        key: false
+      - id: vector-arithmetic
+        weight: 0.4
+        key: false
+      - id: computing-dot-products
+        weight: 0.4
+        key: false
+      - id: dot-product-properties
+        weight: 0.4
+        key: false
+      - id: vector-norms-unit-vectors
+        weight: 0.4
+        key: false
+      - id: component-form-of-vectors
+        weight: 0.4
+        key: false
+      - id: vector-distance
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Express a polygon vector and find a scalar product from side lengths'
+        key_prerequisites: [vectors-polygon-scalar-product, vectors-geometric-rules]
+        exemplars:
+          - problem: 'In triangle $ABC$, the point $M$ is the midpoint of $BC$. Let $\vec a=\vec{AB}$ and $\vec b=\vec{AC}$. (a) Write $\vec{BC}$ in terms of $\vec a$ and $\vec b$. (b) Write $\vec{AM}$ in terms of $\vec a$ and $\vec b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"BC","contract":{"kind":"function","vars":["a","b"]}},{"name":"AM","contract":{"kind":"function","vars":["a","b"]}}]}
+            answer: 'BC = b-a; AM = (a+b)/2'
+            solution_sketch: 'By the triangle rule, $\vec{BC}=\vec{AC}-\vec{AB}=\vec b-\vec a$. Then $\vec{AM}=\vec{AB}+\tfrac12\vec{BC}=\vec a+\tfrac12(\vec b-\vec a)$. This equals $\tfrac12(\vec a+\vec b)$.'
+          - problem: 'In parallelogram $ABCD$, let $\vec a=\vec{AB}$ and $\vec d=\vec{AD}$. The point $K$ lies on side $BC$ and $BK:KC=1:3$. (a) Write $\vec{AC}$ in terms of $\vec a$ and $\vec d$. (b) Write $\vec{BK}$ in terms of $\vec d$. (c) Write $\vec{AK}$ in terms of $\vec a$ and $\vec d$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"AC","contract":{"kind":"function","vars":["a","d"]}},{"name":"BK","contract":{"kind":"function","vars":["d"]}},{"name":"AK","contract":{"kind":"function","vars":["a","d"]}}]}
+            answer: 'AC = a+d; BK = d/4; AK = a+d/4'
+            solution_sketch: 'By the parallelogram rule, $\vec{AC}=\vec a+\vec d$. Also $\vec{BC}=\vec d$, and $BK$ is one quarter of $BC$, so $\vec{BK}=\tfrac14\vec d$. Then $\vec{AK}=\vec{AB}+\vec{BK}=\vec a+\tfrac14\vec d$.'
+          - problem: 'Triangle $ABC$ is equilateral and its side is $6$. Find (a) $\vec{AB}\cdot\vec{AC}$, (b) $\vec{AB}\cdot\vec{BC}$, (c) $|\vec{AB}+\vec{AC}|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"len","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 18; p2 = -18; len = 6*sqrt(3)'
+            solution_sketch: 'The angle between $\vec{AB}$ and $\vec{AC}$ is $60^\circ$, so $\vec{AB}\cdot\vec{AC}=36\cdot\tfrac12=18$. The angle between $\vec{AB}$ and $\vec{BC}$ is $120^\circ$, so the product is $36\cdot(-\tfrac12)=-18$. Also $|\vec{AB}+\vec{AC}|^2=36+36+2\cdot18=108$, so the length is $6\sqrt3$.'
+          - problem: 'In parallelogram $ABCD$, $|AB|=4$, $|AD|=3$ and $\angle BAD=60^\circ$. Find (a) $\vec{AB}\cdot\vec{AD}$, (b) $\vec{AB}\cdot\vec{AC}$, (c) $|\vec{AC}|^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"sq","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 6; p2 = 22; sq = 37'
+            solution_sketch: 'We have $\vec{AB}\cdot\vec{AD}=4\cdot3\cdot\tfrac12=6$. Since $\vec{AC}=\vec{AB}+\vec{AD}$, we get $\vec{AB}\cdot\vec{AC}=16+6=22$. Also $|\vec{AC}|^2=16+9+2\cdot6=37$.'
+          - problem: 'In triangle $ABC$, $|AB|=4$, $|AC|=6$ and $\angle BAC=120^\circ$. The point $M$ is the midpoint of $BC$. Find (a) $\vec{AB}\cdot\vec{AC}$, (b) $\vec{AM}\cdot\vec{AB}$, (c) $|\vec{AM}|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"len","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -12; p2 = 2; len = sqrt(7)'
+            solution_sketch: 'We have $\vec{AB}\cdot\vec{AC}=24\cdot(-\tfrac12)=-12$. Next, $\vec{AM}=\tfrac12(\vec{AB}+\vec{AC})$, so $\vec{AM}\cdot\vec{AB}=\tfrac12(16-12)=2$. Also $|\vec{AM}|^2=\tfrac14(16+36-24)=7$, so $|\vec{AM}|=\sqrt7$.'
+          - problem: 'In the right trapezoid $ABCD$, the sides $AB$ and $DC$ are parallel and $\angle DAB=90^\circ$. Here $|AB|=8$, $|AD|=3$ and $|DC|=5$, and $\vec{DC}$ points the same way as $\vec{AB}$. Let $\vec a=\vec{AB}$. (a) Write $\vec{DC}$ in terms of $\vec a$. (b) Find $\vec{AC}\cdot\vec{AB}$. (c) Find $\vec{AC}\cdot\vec{BD}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"DC","contract":{"kind":"function","vars":["a"]}},{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'DC = 5/8*a; p1 = 40; p2 = -31'
+            solution_sketch: 'The vector $\vec{DC}$ has the direction of $\vec a$ and the length $5$, so $\vec{DC}=\tfrac58\vec a$. Then $\vec{AC}=\vec{AD}+\tfrac58\vec a$ and $\vec{AD}\perp\vec a$, so $\vec{AC}\cdot\vec{AB}=\tfrac58\cdot64=40$. Also $\vec{BD}=\vec{AD}-\vec a$, so $\vec{AC}\cdot\vec{BD}=9-\tfrac58\cdot64=-31$.'
+        constraints: 'The items vary the polygon and the side data. The rules for vectors stay fixed.'
+      - id: kp2
+        name: 'Coordinate vectors: length, collinear, perpendicular, parameter'
+        key_prerequisites: [vector-norms-unit-vectors, vector-arithmetic, dot-product]
+        exemplars:
+          - problem: 'The points are $A(1,2)$ and $B(4,6)$. (a) Find the coordinates of $\vec{AB}$. (b) Find $|\vec{AB}|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"v","contract":{"kind":"coordinates","arity":2}},{"name":"len","contract":{"kind":"exact"}}]}
+            answer: 'v = (3,4); len = 5'
+            solution_sketch: 'The coordinates of $\vec{AB}$ are $(4-1,\,6-2)=(3,4)$. The length is $\sqrt{9+16}=5$.'
+          - problem: 'Let $\vec a=(3,-2)$ and $\vec b=(1,4)$. Find (a) the coordinates of $2\vec a-\vec b$, (b) $\vec a\cdot\vec b$, (c) $|\vec a+\vec b|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"v","contract":{"kind":"coordinates","arity":2}},{"name":"dot","contract":{"kind":"exact"}},{"name":"len","contract":{"kind":"exact"}}]}
+            answer: 'v = (5,-8); dot = -5; len = 2*sqrt(5)'
+            solution_sketch: 'We have $2\vec a-\vec b=(6-1,\,-4-4)=(5,-8)$. Also $\vec a\cdot\vec b=3-8=-5$. Next, $\vec a+\vec b=(4,2)$ and $|\vec a+\vec b|=\sqrt{20}=2\sqrt5$.'
+          - problem: 'Let $\vec a=(4,-6)$ and $\vec b=(m,9)$, and let $\vec a$ and $\vec b$ be collinear. (a) Find $m$. (b) Find the number $\lambda$ with $\vec b=\lambda\vec a$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"m","contract":{"kind":"exact"}},{"name":"lam","contract":{"kind":"exact"}}]}
+            answer: 'm = -6; lam = -3/2'
+            solution_sketch: 'Collinear vectors have proportional coordinates, so $4\cdot9=-6m$ and $m=-6$. Then $\lambda=9/(-6)=-\tfrac32$. Check: $-\tfrac32\cdot4=-6$.'
+          - problem: 'Let $\vec a=(3,4)$ and $\vec b=(n,-3)$, and let $\vec a\perp\vec b$. (a) Find $n$. (b) Find $|\vec b|$. (c) Find $\vec a\cdot(\vec a+\vec b)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"len","contract":{"kind":"exact"}},{"name":"dot","contract":{"kind":"exact"}}]}
+            answer: 'n = 4; len = 5; dot = 25'
+            solution_sketch: 'Perpendicular vectors have scalar product $0$, so $3n-12=0$ and $n=4$. Then $|\vec b|=\sqrt{16+9}=5$. Also $\vec a+\vec b=(7,1)$, so $\vec a\cdot(\vec a+\vec b)=21+4=25$.'
+          - problem: 'Let $\vec a=(5,-12)$. (a) Find $|\vec a|$. (b) Find the coordinates of the vector that has the opposite direction to $\vec a$ and the length $39$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"len","contract":{"kind":"exact"}},{"name":"v","contract":{"kind":"coordinates","arity":2}}]}
+            answer: 'len = 13; v = (-15,36)'
+            solution_sketch: 'We have $|\vec a|=\sqrt{25+144}=13$. The new vector has length $39=3\cdot13$ and the opposite direction, so it equals $-3\vec a$. This is $(-15,36)$.'
+          - problem: 'Let $\vec a=(m,2)$ and $\vec b=(8,m)$. (a) Find all values of $m$ for which $\vec a$ and $\vec b$ are collinear. (b) Find the value of $m$ for which they are collinear and have the same direction. (c) Find the value of $m$ for which they are perpendicular.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"all","contract":{"kind":"set"}},{"name":"same","contract":{"kind":"exact"}},{"name":"perp","contract":{"kind":"exact"}}]}
+            answer: 'all = {-4, 4}; same = 4; perp = 0'
+            solution_sketch: 'Collinear vectors give $m\cdot m=2\cdot8$, so $m^2=16$ and $m=\pm4$. For $m=4$, $\vec b=2\vec a$, so the directions are the same. For $m=-4$, $\vec b=-2\vec a$. Perpendicular vectors give $8m+2m=0$, so $m=0$.'
+        constraints: 'The items vary the coordinates and the unknown parameter. The coordinate rules stay fixed.'
+      - id: kp3
+        name: 'Written proof of a vector identity'
+        key_prerequisites: [dot-product-properties, vectors-polygon-scalar-product]
+        exemplars:
+          - problem: 'Let $|\vec a|=3$, $|\vec b|=5$ and $\vec a\cdot\vec b=-6$. Find (a) $\vec a\cdot(\vec a+\vec b)$ and (b) $|\vec a+\vec b|^2$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"sq","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 3; sq = 22'
+            solution_sketch: 'We have $\vec a\cdot(\vec a+\vec b)=|\vec a|^2+\vec a\cdot\vec b=9-6=3$. Also $|\vec a+\vec b|^2=9+25+2\cdot(-6)=22$.'
+          - problem: 'Let $|\vec a|=4$, $|\vec b|=1$ and the angle between $\vec a$ and $\vec b$ be $60^\circ$. Find (a) $\vec a\cdot\vec b$ and (b) $(2\vec a+\vec b)\cdot\vec b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2; p2 = 5'
+            solution_sketch: 'We have $\vec a\cdot\vec b=4\cdot1\cdot\tfrac12=2$. Then $(2\vec a+\vec b)\cdot\vec b=2\cdot2+1=5$.'
+          - problem: 'Let $|\vec a|=2$, $|\vec b|=3$ and $\vec a\cdot\vec b=1$. Find (a) $(\vec a+\vec b)\cdot(\vec a-\vec b)$, (b) $|\vec a-\vec b|^2$, (c) $(2\vec a-\vec b)\cdot(\vec a+3\vec b)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"sq","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -5; sq = 11; p3 = -14'
+            solution_sketch: 'We have $(\vec a+\vec b)\cdot(\vec a-\vec b)=|\vec a|^2-|\vec b|^2=4-9=-5$. Also $|\vec a-\vec b|^2=4+9-2=11$. Expand the last product: $2\cdot4+6\cdot1-1-3\cdot9=-14$.'
+          - problem: 'Let $|\vec a|=3$, $|\vec b|=4$ and $|\vec a+\vec b|=6$. Find (a) $\vec a\cdot\vec b$, (b) $|\vec a-\vec b|^2$, (c) the cosine of the angle between $\vec a$ and $\vec b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"dot","contract":{"kind":"exact"}},{"name":"sq","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}}]}
+            answer: 'dot = 11/2; sq = 14; cos = 11/24'
+            solution_sketch: 'From $|\vec a+\vec b|^2=9+16+2\,\vec a\cdot\vec b=36$ we get $\vec a\cdot\vec b=\tfrac{11}{2}$. Then $|\vec a-\vec b|^2=25-11=14$. The cosine is $\tfrac{11/2}{12}=\tfrac{11}{24}$.'
+          - problem: 'Let $|\vec a|=5$ and let $\vec a+\vec b$ be perpendicular to $\vec a-\vec b$. (a) Find $|\vec b|$. (b) Let also $\vec a\cdot\vec b=15$. Find the cosine of the angle between $\vec a$ and $\vec b$. (c) Find $|\vec a+\vec b|$ for $\vec a\cdot\vec b=15$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"len","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'len = 5; cos = 3/5; sum = 4*sqrt(5)'
+            solution_sketch: 'Perpendicular vectors give $(\vec a+\vec b)\cdot(\vec a-\vec b)=|\vec a|^2-|\vec b|^2=0$, so $|\vec b|=5$. The cosine is $\tfrac{15}{25}=\tfrac35$. Also $|\vec a+\vec b|^2=25+25+30=80$, so the length is $4\sqrt5$.'
+          - problem: 'The sides of a parallelogram are $\vec a$ and $\vec b$ with $|\vec a|=3$ and $|\vec b|=5$. The diagonal $\vec a+\vec b$ has length $7$. Find (a) $\vec a\cdot\vec b$, (b) the length of the other diagonal $\vec a-\vec b$, (c) the cosine of the angle between $\vec a$ and $\vec b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"dot","contract":{"kind":"exact"}},{"name":"diag","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}}]}
+            answer: 'dot = 15/2; diag = sqrt(19); cos = 1/2'
+            solution_sketch: 'From $9+25+2\,\vec a\cdot\vec b=49$ we get $\vec a\cdot\vec b=\tfrac{15}{2}$. Then $|\vec a-\vec b|^2=34-15=19$, so the other diagonal has length $\sqrt{19}$. The cosine is $\tfrac{15/2}{15}=\tfrac12$.'
+          - problem: 'Prove that for all plane vectors $\vec a$ and $\vec b$: $|\vec a+\vec b|^2+|\vec a-\vec b|^2=2|\vec a|^2+2|\vec b|^2$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use $|\vec v|^2=\vec v\cdot\vec v$. Then $|\vec a+\vec b|^2=|\vec a|^2+2\,\vec a\cdot\vec b+|\vec b|^2$. In the same way, $|\vec a-\vec b|^2=|\vec a|^2-2\,\vec a\cdot\vec b+|\vec b|^2$. Add the two lines. The terms with $\vec a\cdot\vec b$ cancel. The sum is $2|\vec a|^2+2|\vec b|^2$.'
+            solution_sketch: 'Follow the reference proof step by step.'
+          - problem: 'Prove that the diagonals of a rhombus $ABCD$ are perpendicular.'
+            answer_contract: {"kind":"written"}
+            answer: 'Let $\vec a=\vec{AB}$ and $\vec d=\vec{AD}$. All sides of a rhombus are equal, so $|\vec a|=|\vec d|$. The diagonals are $\vec{AC}=\vec a+\vec d$ and $\vec{BD}=\vec d-\vec a$. Then $\vec{AC}\cdot\vec{BD}=|\vec d|^2-|\vec a|^2=0$. A zero scalar product means the diagonals are perpendicular.'
+            solution_sketch: 'Follow the reference proof step by step.'
+          - problem: 'In triangle $ABC$, the point $M$ is the midpoint of $BC$. Prove that $\vec{AM}=\tfrac12(\vec{AB}+\vec{AC})$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Since $M$ is the midpoint of $BC$, $\vec{BM}=\tfrac12\vec{BC}$. By the triangle rule, $\vec{BC}=\vec{AC}-\vec{AB}$. Then $\vec{AM}=\vec{AB}+\vec{BM}=\vec{AB}+\tfrac12(\vec{AC}-\vec{AB})$. This equals $\tfrac12\vec{AB}+\tfrac12\vec{AC}$.'
+            solution_sketch: 'Follow the reference proof step by step.'
+        constraints: 'The items vary the given lengths and products. The properties of the scalar product stay fixed.'
+    diagnostic_exemplar:
+      problem: 'Let $\vec a=(1,2)$ and $\vec b=(3,-1)$. Find (a) the coordinates of $\vec a+\vec b$ and (b) $\vec a\cdot\vec b$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"coordinates","arity":2}},{"name":"p","contract":{"kind":"exact"}}]}
+      answer: 's = (4,1); p = 1'
+      solution_sketch: 'Add the coordinates: $(4,1)$. Then $1\cdot3+2\cdot(-1)=1$.'
+  - id: vbe-cp15-trig-expressions
+    name: Trigonometric expressions
+    lt_term: 'Trigonometrinės išraiškos'
+    area: models
+    program_items: [118, 119, 120]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 360
+    prerequisites:
+      - id: tangent-formulas-proofs
+        weight: 0.6
+        key: true
+      - id: sum-difference-identities
+        weight: 0.4
+        key: false
+      - id: double-half-angle-identities
+        weight: 0.4
+        key: false
+      - id: trig-identities-basic
+        weight: 0.4
+        key: false
+      - id: trig-equations-identities
+        weight: 0.4
+        key: false
+      - id: product-to-sum-identities
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Addition and double-angle formulas in a numeric value'
+        key_prerequisites: [sum-difference-identities, double-half-angle-identities, tangent-formulas-proofs]
+        exemplars:
+          - problem: 'Let $\sin\alpha=\tfrac35$ and let $\alpha$ be an acute angle. Find (a) $\cos\alpha$, (b) $\sin2\alpha$, (c) $\cos2\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"c","contract":{"kind":"exact"}},{"name":"s2","contract":{"kind":"exact"}},{"name":"c2","contract":{"kind":"exact"}}]}
+            answer: 'c = 4/5; s2 = 24/25; c2 = 7/25'
+            solution_sketch: 'Since $\alpha$ is acute, $\cos\alpha=\sqrt{1-\tfrac9{25}}=\tfrac45$. Then $\sin2\alpha=2\cdot\tfrac35\cdot\tfrac45=\tfrac{24}{25}$. Also $\cos2\alpha=\tfrac{16}{25}-\tfrac9{25}=\tfrac7{25}$.'
+          - problem: 'Use the angle sum. Find the exact values of (a) $\sin75^\circ$ and (b) $\cos75^\circ$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 's = (sqrt(6)+sqrt(2))/4; c = (sqrt(6)-sqrt(2))/4'
+            solution_sketch: 'Write $75^\circ=45^\circ+30^\circ$. Then $\sin75^\circ=\tfrac{\sqrt2}{2}\cdot\tfrac{\sqrt3}{2}+\tfrac{\sqrt2}{2}\cdot\tfrac12=\tfrac{\sqrt6+\sqrt2}{4}$. Also $\cos75^\circ=\tfrac{\sqrt2}{2}\cdot\tfrac{\sqrt3}{2}-\tfrac{\sqrt2}{2}\cdot\tfrac12=\tfrac{\sqrt6-\sqrt2}{4}$.'
+          - problem: 'Let $\tan\alpha=2$ and $\tan\beta=3$. Find (a) $\tan(\alpha+\beta)$, (b) $\tan2\alpha$, (c) $\tan(\beta-\alpha)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t1","contract":{"kind":"exact"}},{"name":"t2","contract":{"kind":"exact"}},{"name":"t3","contract":{"kind":"exact"}}]}
+            answer: 't1 = -1; t2 = -4/3; t3 = 1/7'
+            solution_sketch: 'We have $\tan(\alpha+\beta)=\tfrac{2+3}{1-6}=-1$. Also $\tan2\alpha=\tfrac{4}{1-4}=-\tfrac43$. Last, $\tan(\beta-\alpha)=\tfrac{3-2}{1+6}=\tfrac17$.'
+          - problem: 'Let $\cos\alpha=-\tfrac5{13}$ and let $\alpha$ be in the second quadrant. Find (a) $\sin\alpha$, (b) $\sin2\alpha$, (c) $\cos2\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"exact"}},{"name":"s2","contract":{"kind":"exact"}},{"name":"c2","contract":{"kind":"exact"}}]}
+            answer: 's = 12/13; s2 = -120/169; c2 = -119/169'
+            solution_sketch: 'In the second quadrant $\sin\alpha>0$, so $\sin\alpha=\sqrt{1-\tfrac{25}{169}}=\tfrac{12}{13}$. Then $\sin2\alpha=2\cdot\tfrac{12}{13}\cdot(-\tfrac5{13})=-\tfrac{120}{169}$. Also $\cos2\alpha=\tfrac{25}{169}-\tfrac{144}{169}=-\tfrac{119}{169}$.'
+          - problem: 'Let $\alpha$ and $\beta$ be acute angles with $\sin\alpha=\tfrac45$ and $\cos\beta=\tfrac5{13}$. Find (a) $\cos(\alpha+\beta)$, (b) $\sin(\alpha+\beta)$, (c) $\tan(\alpha+\beta)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"c","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 'c = -33/65; s = 56/65; t = -56/33'
+            solution_sketch: 'Acute angles give $\cos\alpha=\tfrac35$ and $\sin\beta=\tfrac{12}{13}$. Then $\cos(\alpha+\beta)=\tfrac35\cdot\tfrac5{13}-\tfrac45\cdot\tfrac{12}{13}=-\tfrac{33}{65}$. Also $\sin(\alpha+\beta)=\tfrac45\cdot\tfrac5{13}+\tfrac35\cdot\tfrac{12}{13}=\tfrac{56}{65}$. The tangent is the quotient, $-\tfrac{56}{33}$.'
+          - problem: 'Let $\alpha$ be in the interval $(\tfrac\pi2,\pi)$ and let $\sin\alpha+\cos\alpha=\tfrac15$. Find (a) $\sin2\alpha$, (b) $\sin\alpha-\cos\alpha$, (c) $\sin\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s2","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"exact"}}]}
+            answer: 's2 = -24/25; d = 7/5; s = 4/5'
+            solution_sketch: 'Square the given equation: $1+\sin2\alpha=\tfrac1{25}$, so $\sin2\alpha=-\tfrac{24}{25}$. Then $(\sin\alpha-\cos\alpha)^2=1-\sin2\alpha=\tfrac{49}{25}$. In this interval $\sin\alpha>0>\cos\alpha$, so the difference is $\tfrac75$. Add the two equations: $2\sin\alpha=\tfrac85$, so $\sin\alpha=\tfrac45$.'
+        constraints: 'The items vary the given ratio and the angle. The sum and double-angle formulas stay fixed.'
+      - id: kp2
+        name: 'Prove an identity (show that) and an exact value'
+        key_prerequisites: [tangent-formulas-proofs, trig-identities-basic, product-to-sum-identities]
+        exemplars:
+          - problem: 'Find (a) $\sin\tfrac{\pi}{12}\cos\tfrac{\pi}{12}$ and (b) $\cos^2\tfrac{\pi}{12}-\sin^2\tfrac{\pi}{12}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
+            answer: 'p = 1/4; d = sqrt(3)/2'
+            solution_sketch: 'We have $\sin2\alpha=2\sin\alpha\cos\alpha$, so the product is $\tfrac12\sin\tfrac\pi6=\tfrac14$. The difference of squares is $\cos\tfrac\pi6=\tfrac{\sqrt3}{2}$.'
+          - problem: 'Let $t=\tan\tfrac\pi8$ and $t>0$. (a) Use $\tan\tfrac\pi4=1$ and the formula for $\tan2\alpha$ to find $t$. (b) Find $\dfrac1t$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"exact"}},{"name":"inv","contract":{"kind":"exact"}}]}
+            answer: 't = sqrt(2)-1; inv = sqrt(2)+1'
+            solution_sketch: 'Put $\alpha=\tfrac\pi8$: $1=\tfrac{2t}{1-t^2}$, so $t^2+2t-1=0$. The positive root is $t=\sqrt2-1$. Then $\tfrac1t=\tfrac1{\sqrt2-1}=\sqrt2+1$.'
+          - problem: 'Find the value of (a) $\cos40^\circ\cos20^\circ-\sin40^\circ\sin20^\circ$, (b) $\sin70^\circ\cos20^\circ+\cos70^\circ\sin20^\circ$, (c) $\dfrac{2\tan15^\circ}{1-\tan^2 15^\circ}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
+            answer: 'a = 1/2; b = 1; c = sqrt(3)/3'
+            solution_sketch: 'The first sum equals $\cos(40^\circ+20^\circ)=\cos60^\circ=\tfrac12$. The second equals $\sin90^\circ=1$. The fraction equals $\tan30^\circ=\tfrac{\sqrt3}{3}$.'
+          - problem: 'Let $\alpha$ be an acute angle with $\cos2\alpha=\tfrac7{25}$. Use $\cos2\alpha=1-2\sin^2\alpha$. Find (a) $\sin^2\alpha$, (b) $\sin\alpha$, (c) $\tan\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s2","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"exact"}},{"name":"t","contract":{"kind":"exact"}}]}
+            answer: 's2 = 9/25; s = 3/5; t = 3/4'
+            solution_sketch: 'From $1-2\sin^2\alpha=\tfrac7{25}$ we get $\sin^2\alpha=\tfrac9{25}$. An acute angle has $\sin\alpha=\tfrac35$ and $\cos\alpha=\tfrac45$. So $\tan\alpha=\tfrac34$.'
+          - problem: 'Find the value of (a) $\sin50^\circ\cos10^\circ+\cos50^\circ\sin10^\circ$, (b) $\cos^275^\circ-\sin^275^\circ$, (c) the product of the first two values.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"prod","contract":{"kind":"exact"}}]}
+            answer: 'a = sqrt(3)/2; b = -sqrt(3)/2; prod = -3/4'
+            solution_sketch: 'The first sum equals $\sin60^\circ=\tfrac{\sqrt3}{2}$. The second difference equals $\cos150^\circ=-\tfrac{\sqrt3}{2}$. The product is $-\tfrac34$.'
+          - problem: 'Let $\tan(\alpha+\beta)=3$ and $\tan\alpha=\tfrac12$. Find (a) $\tan\beta$, (b) $\tan(\alpha-\beta)$, (c) $\tan2\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"tb","contract":{"kind":"exact"}},{"name":"td","contract":{"kind":"exact"}},{"name":"t2","contract":{"kind":"exact"}}]}
+            answer: 'tb = 1; td = -1/3; t2 = 4/3'
+            solution_sketch: 'From $3=\tfrac{1/2+t}{1-t/2}$ we get $3-\tfrac32t=\tfrac12+t$, so $t=1$. Then $\tan(\alpha-\beta)=\tfrac{1/2-1}{1+1/2}=-\tfrac13$. Also $\tan2\alpha=\tfrac{1}{1-1/4}=\tfrac43$.'
+          - problem: 'Prove that $\sin2\alpha=\dfrac{2\tan\alpha}{1+\tan^2\alpha}$ for every angle $\alpha$ with $\cos\alpha\ne0$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Write $\sin2\alpha=2\sin\alpha\cos\alpha$. Divide and multiply by $\cos\alpha$: $2\sin\alpha\cos\alpha=2\tan\alpha\cos^2\alpha$. The identity $1+\tan^2\alpha=\tfrac1{\cos^2\alpha}$ gives $\cos^2\alpha=\tfrac1{1+\tan^2\alpha}$. Put this in the line above. The result is $\tfrac{2\tan\alpha}{1+\tan^2\alpha}$.'
+            solution_sketch: 'Follow the reference proof step by step.'
+          - problem: 'Prove that $\cos^4\alpha-\sin^4\alpha=\cos2\alpha$ for every angle $\alpha$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Factor the left side as a difference of squares: $\cos^4\alpha-\sin^4\alpha=(\cos^2\alpha-\sin^2\alpha)(\cos^2\alpha+\sin^2\alpha)$. The second factor equals $1$. The first factor equals $\cos2\alpha$ by the double angle formula. So the left side equals $\cos2\alpha$.'
+            solution_sketch: 'Follow the reference proof step by step.'
+          - problem: 'Prove that $\sin3\alpha=3\sin\alpha-4\sin^3\alpha$ for every angle $\alpha$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Write $\sin3\alpha=\sin(2\alpha+\alpha)=\sin2\alpha\cos\alpha+\cos2\alpha\sin\alpha$. Use $\sin2\alpha=2\sin\alpha\cos\alpha$ and $\cos2\alpha=1-2\sin^2\alpha$. Then $\sin3\alpha=2\sin\alpha(1-\sin^2\alpha)+(1-2\sin^2\alpha)\sin\alpha$. Expand: $2\sin\alpha-2\sin^3\alpha+\sin\alpha-2\sin^3\alpha$. This equals $3\sin\alpha-4\sin^3\alpha$.'
+            solution_sketch: 'Follow the reference proof step by step.'
+        constraints: 'The items vary the expression and the exact value. The identities stay fixed.'
+    diagnostic_exemplar:
+      problem: 'Let $\alpha$ be an acute angle with $\sin\alpha=\tfrac5{13}$. Find (a) $\cos\alpha$ and (b) $\sin2\alpha$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"c","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"exact"}}]}
+      answer: 'c = 12/13; s = 120/169'
+      solution_sketch: 'An acute angle has $\cos\alpha=\tfrac{12}{13}$. Then $\sin2\alpha=2\cdot\tfrac5{13}\cdot\tfrac{12}{13}=\tfrac{120}{169}$.'
+  - id: vbe-cp16-trig-equations
+    name: Trigonometric equations and inequalities
+    lt_term: 'Trigonometrinės lygtys ir nelygybės'
+    area: models
+    program_items: [121, 122, 123, 124, 125, 126, 127, 128]
+    core: false
+    difficulty: 0.65
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 420
+    prerequisites:
+      - id: trig-equations-general-solutions
+        weight: 0.6
+        key: true
+      - id: trig-inequalities
+        weight: 0.4
+        key: false
+      - id: basic-trig-equations
+        weight: 0.4
+        key: false
+      - id: sinusoid-phase-shift
+        weight: 0.4
+        key: false
+      - id: inverse-trig-functions
+        weight: 0.4
+        key: false
+      - id: trig-equations-identities
+        weight: 0.4
+        key: false
+      - id: zero-product-property
+        weight: 0.4
+        key: false
+      - id: graphing-inequalities-number-line
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Equation with a general solution and the roots in an interval'
+        key_prerequisites: [trig-equations-general-solutions, basic-trig-equations]
+        exemplars:
+          - problem: 'Solve $2\sin x-1=0$. (a) Find all solutions in $[0,2\pi]$. (b) How many solutions are in $[0,4\pi]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 'sol = {pi/6, 5*pi/6}; n = 4'
+            solution_sketch: 'The equation gives $\sin x=\tfrac12$, so $x=\tfrac\pi6$ or $x=\tfrac{5\pi}6$ in $[0,2\pi]$. The next period adds $2\pi$ to each, which gives two more solutions in $[2\pi,4\pi]$. The total is $4$.'
+          - problem: 'Solve $\cos x=-\tfrac{\sqrt3}{2}$. (a) Find all solutions in $[0,2\pi]$. (b) Write the series of solutions that contains $\tfrac{5\pi}6$ in the form $x=\dots$ with an integer $k$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"series","contract":{"kind":"function","vars":["k"]}}]}
+            answer: 'sol = {5*pi/6, 7*pi/6}; series = 5*pi/6+2*pi*k'
+            solution_sketch: 'The angles with cosine $-\tfrac{\sqrt3}{2}$ are $\tfrac{5\pi}6$ and $\tfrac{7\pi}6$. The cosine has period $2\pi$. So the series with $\tfrac{5\pi}6$ is $\tfrac{5\pi}6+2\pi k$.'
+          - problem: 'Solve $\tan x=\sqrt3$. (a) Write all solutions in the form $x=\dots$ with an integer $k$. (b) Find the sum of the solutions in $[0,2\pi]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"gen","contract":{"kind":"function","vars":["k"]}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'gen = pi/3+pi*k; sum = 5*pi/3'
+            solution_sketch: 'The tangent has period $\pi$ and $\tan\tfrac\pi3=\sqrt3$, so $x=\tfrac\pi3+\pi k$. In $[0,2\pi]$ the solutions are $\tfrac\pi3$ and $\tfrac{4\pi}3$. Their sum is $\tfrac{5\pi}3$.'
+          - problem: 'Solve $\sin2x=\tfrac{\sqrt3}{2}$. (a) Find all solutions in $[0,\pi]$. (b) Find the largest solution in $[0,2\pi]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"big","contract":{"kind":"exact"}}]}
+            answer: 'sol = {pi/6, pi/3}; big = 4*pi/3'
+            solution_sketch: 'Put $t=2x$. Then $\sin t=\tfrac{\sqrt3}{2}$, so $t=\tfrac\pi3$ or $t=\tfrac{2\pi}3$ in $[0,2\pi]$. This gives $x=\tfrac\pi6$ or $x=\tfrac\pi3$. In $[0,2\pi]$ the variable $t$ runs to $4\pi$. The largest $t$ is $\tfrac{8\pi}3$, so the largest $x$ is $\tfrac{4\pi}3$.'
+          - problem: 'Solve $2\cos\left(x-\tfrac\pi3\right)=1$. (a) Find all solutions in $[0,2\pi]$. (b) Find the sum of these solutions. (c) How many solutions are in $[0,6\pi]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 'sol = {0, 2*pi/3, 2*pi}; sum = 8*pi/3; n = 7'
+            solution_sketch: 'We have $\cos(x-\tfrac\pi3)=\tfrac12$, so $x-\tfrac\pi3=\pm\tfrac\pi3+2\pi k$. This gives $x=2\pi k$ or $x=\tfrac{2\pi}3+2\pi k$. In $[0,2\pi]$ the solutions are $0$, $\tfrac{2\pi}3$ and $2\pi$, with sum $\tfrac{8\pi}3$. In $[0,6\pi]$ the first series gives $0,2\pi,4\pi,6\pi$ and the second gives $\tfrac{2\pi}3,\tfrac{8\pi}3,\tfrac{14\pi}3$. The total is $7$.'
+          - problem: 'Solve $\sin\left(2x+\tfrac\pi4\right)=-\tfrac{\sqrt2}{2}$. (a) Find all solutions in $[0,\pi]$. (b) How many solutions are in $[0,2\pi]$? (c) Find the sum of the solutions in $[0,2\pi]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"n","contract":{"kind":"exact"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'sol = {pi/2, 3*pi/4}; n = 4; sum = 9*pi/2'
+            solution_sketch: 'We have $2x+\tfrac\pi4=-\tfrac\pi4+2\pi k$ or $2x+\tfrac\pi4=\tfrac{5\pi}4+2\pi k$. So $x=-\tfrac\pi4+\pi k$ or $x=\tfrac\pi2+\pi k$. In $[0,\pi]$ these are $\tfrac{3\pi}4$ and $\tfrac\pi2$. In $[0,2\pi]$ they are $\tfrac{3\pi}4,\tfrac{7\pi}4,\tfrac\pi2,\tfrac{3\pi}2$, which are $4$ numbers with sum $\tfrac{9\pi}2$.'
+        constraints: 'The items vary the function, the argument and the interval. The solution formulas stay fixed.'
+      - id: kp2
+        name: 'Product and quadratic forms'
+        key_prerequisites: [trig-equations-general-solutions, zero-product-property, trig-equations-identities]
+        exemplars:
+          - problem: 'Solve $(2\sin x-1)\cos x=0$. (a) Find all solutions in $[0,\pi]$. (b) How many solutions are in $[0,2\pi]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 'sol = {pi/6, pi/2, 5*pi/6}; n = 4'
+            solution_sketch: 'A product is zero when a factor is zero. If $\sin x=\tfrac12$, then $x=\tfrac\pi6$ or $\tfrac{5\pi}6$. If $\cos x=0$, then $x=\tfrac\pi2$ in $[0,\pi]$. In $[0,2\pi]$ the cosine is also zero at $\tfrac{3\pi}2$, and the sine gives only two roots, so the total is $4$.'
+          - problem: 'Solve $(2\cos x-1)(\tan x-1)=0$ in $[0,\pi]$. (a) Find all solutions. (b) Find the sum of the solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'sol = {pi/4, pi/3}; sum = 7*pi/12'
+            solution_sketch: 'The factor $2\cos x-1$ is zero at $x=\tfrac\pi3$. The factor $\tan x-1$ is zero at $x=\tfrac\pi4$. The sum is $\tfrac\pi3+\tfrac\pi4=\tfrac{7\pi}{12}$.'
+          - problem: 'Solve $2\sin^2x-3\sin x+1=0$. (a) Find the values of $\sin x$. (b) Find all solutions in $[0,2\pi]$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"vals","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"set"}}]}
+            answer: 'vals = {1/2, 1}; sol = {pi/6, pi/2, 5*pi/6}'
+            solution_sketch: 'Put $s=\sin x$. Then $2s^2-3s+1=(2s-1)(s-1)=0$, so $s=\tfrac12$ or $s=1$. The value $\tfrac12$ gives $x=\tfrac\pi6$ and $\tfrac{5\pi}6$. The value $1$ gives $x=\tfrac\pi2$.'
+          - problem: 'Solve $2\cos^2x+\cos x-1=0$. (a) Find the values of $\cos x$. (b) Find all solutions in $[0,2\pi]$. (c) Find the sum of these solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"vals","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'vals = {-1, 1/2}; sol = {pi/3, pi, 5*pi/3}; sum = 3*pi'
+            solution_sketch: 'Put $c=\cos x$. Then $2c^2+c-1=(2c-1)(c+1)=0$, so $c=\tfrac12$ or $c=-1$. The value $\tfrac12$ gives $\tfrac\pi3$ and $\tfrac{5\pi}3$. The value $-1$ gives $\pi$. The sum is $\tfrac\pi3+\pi+\tfrac{5\pi}3=3\pi$.'
+          - problem: 'Solve $2\cos^2x+3\sin x=0$. Replace $\cos^2x$ by $1-\sin^2x$. (a) Find the root of the new quadratic equation in $\sin x$ that lies in $[-1,1]$. (b) Find all solutions in $[0,2\pi]$. (c) How many solutions are in $[0,4\pi]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s","contract":{"kind":"exact"}},{"name":"sol","contract":{"kind":"set"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 's = -1/2; sol = {7*pi/6, 11*pi/6}; n = 4'
+            solution_sketch: 'We get $2-2s^2+3s=0$, which is $2s^2-3s-2=0$ with roots $s=2$ and $s=-\tfrac12$. Only $-\tfrac12$ lies in $[-1,1]$. Then $x=\tfrac{7\pi}6$ or $x=\tfrac{11\pi}6$ in $[0,2\pi]$. The next period doubles the count, so there are $4$ solutions in $[0,4\pi]$.'
+          - problem: 'Solve $\cos2x=\sin x$. Use $\cos2x=1-2\sin^2x$. (a) Find the values of $\sin x$. (b) Find all solutions in $[0,2\pi]$. (c) Find the sum of these solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"vals","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'vals = {-1, 1/2}; sol = {pi/6, 5*pi/6, 3*pi/2}; sum = 5*pi/2'
+            solution_sketch: 'We get $1-2s^2=s$, so $2s^2+s-1=(2s-1)(s+1)=0$. Then $s=\tfrac12$ or $s=-1$. The value $\tfrac12$ gives $\tfrac\pi6$ and $\tfrac{5\pi}6$. The value $-1$ gives $\tfrac{3\pi}2$. The sum is $\tfrac{5\pi}2$.'
+        constraints: 'The items vary the factors and the quadratic. The method of substitution stays fixed.'
+      - id: kp3
+        name: 'Trigonometric inequality'
+        key_prerequisites: [trig-inequalities, graphing-inequalities-number-line]
+        exemplars:
+          - problem: 'Solve $\sin x>\tfrac12$ in $[0,2\pi]$. (a) Find the solution of $\sin x=\tfrac12$ in $[0,\tfrac\pi2]$. (b) Write the solution set of the inequality as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x0","contract":{"kind":"exact"}},{"name":"sol","contract":{"kind":"inequality_union"}}]}
+            answer: 'x0 = pi/6; sol = pi/6 < x < 5*pi/6'
+            solution_sketch: 'The sine equals $\tfrac12$ at $\tfrac\pi6$ and $\tfrac{5\pi}6$. Between these two angles the sine is larger than $\tfrac12$. So $\tfrac\pi6<x<\tfrac{5\pi}6$.'
+          - problem: 'Solve $\cos x\le0$ in $[0,2\pi]$. (a) Write the solution set as an inequality in $x$. (b) Find the length of the solution interval.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sol","contract":{"kind":"inequality_union"}},{"name":"len","contract":{"kind":"exact"}}]}
+            answer: 'sol = pi/2 <= x <= 3*pi/2; len = pi'
+            solution_sketch: 'The cosine is zero at $\tfrac\pi2$ and $\tfrac{3\pi}2$ and negative between them. So $\tfrac\pi2\le x\le\tfrac{3\pi}2$. The length is $\pi$.'
+          - problem: 'Solve $2\cos x-1>0$. (a) Write the solution set in $[-\pi,\pi]$ as an inequality in $x$. (b) Write the solution set in $[0,2\pi]$ as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = -pi/3 < x < pi/3; b = 0 <= x < pi/3 or 5*pi/3 < x <= 2*pi'
+            solution_sketch: 'The inequality gives $\cos x>\tfrac12$. On $[-\pi,\pi]$ this holds for $-\tfrac\pi3<x<\tfrac\pi3$. On $[0,2\pi]$ the angles near $2\pi$ count too, and they are $\tfrac{5\pi}3<x\le2\pi$.'
+          - problem: 'Solve the inequalities for $x\in\left(-\tfrac\pi2,\tfrac\pi2\right)$. (a) $\tan x\le-1$. (b) $\tan x>1$. Write each answer as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = -pi/2 < x <= -pi/4; b = pi/4 < x < pi/2'
+            solution_sketch: 'The tangent increases on this interval. It equals $-1$ at $-\tfrac\pi4$ and $1$ at $\tfrac\pi4$. So $\tan x\le-1$ for $-\tfrac\pi2<x\le-\tfrac\pi4$, and $\tan x>1$ for $\tfrac\pi4<x<\tfrac\pi2$.'
+          - problem: 'Solve $\sin x\le-\tfrac{\sqrt2}{2}$ in $[0,2\pi]$. (a) Write the solution set as an inequality in $x$. (b) Write the solution set of $\sin x>-\tfrac{\sqrt2}{2}$ in $[0,2\pi]$ as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = 5*pi/4 <= x <= 7*pi/4; b = 0 <= x < 5*pi/4 or 7*pi/4 < x <= 2*pi'
+            solution_sketch: 'The sine equals $-\tfrac{\sqrt2}{2}$ at $\tfrac{5\pi}4$ and $\tfrac{7\pi}4$. It is at most that value between them. The rest of $[0,2\pi]$ gives the second answer.'
+          - problem: 'Solve in $[0,2\pi]$. (a) Solve $\sin x>\tfrac{\sqrt3}{2}$. (b) Solve $\sin2x<\tfrac{\sqrt3}{2}$ in $[0,\pi]$. Write each answer as an inequality in $x$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"inequality_union"}},{"name":"b","contract":{"kind":"inequality_union"}}]}
+            answer: 'a = pi/3 < x < 2*pi/3; b = 0 <= x < pi/6 or pi/3 < x <= pi'
+            solution_sketch: 'The sine is larger than $\tfrac{\sqrt3}{2}$ between $\tfrac\pi3$ and $\tfrac{2\pi}3$. For (b), put $t=2x$ with $t\in[0,2\pi]$. Then $\sin t<\tfrac{\sqrt3}{2}$ for $0\le t<\tfrac\pi3$ or $\tfrac{2\pi}3<t\le2\pi$. Divide by $2$ to get the answer for $x$.'
+        constraints: 'The items vary the function and the bound. The interval of the answer stays inside the given domain.'
+    diagnostic_exemplar:
+      problem: 'Solve $2\cos x=1$. Find (a) the smallest positive solution and (b) the number of solutions in $[0,2\pi]$.'
+      answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"n","contract":{"kind":"exact"}}]}
+      answer: 'x = pi/3; n = 2'
+      solution_sketch: 'The cosine equals $\tfrac12$ at $\tfrac\pi3$. The other root in $[0,2\pi]$ is $\tfrac{5\pi}3$, so there are $2$ solutions.'

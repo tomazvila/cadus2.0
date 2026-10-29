@@ -1,0 +1,689 @@
+unit: numbers
+course: vbe-math
+module: "Checkpoints: Numbers and Calculations"
+topics:
+  - id: vbe-cp01-number-sets
+    name: Number sets
+    lt_term: 'Skaičių aibės'
+    area: numbers
+    program_items: [2, 3, 4, 5, 6]
+    core: false
+    difficulty: 0.45
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: number-sets-structure
+        weight: 0.6
+        key: true
+      - id: numbers-with-given-remainder
+        weight: 0.4
+        key: false
+      - id: set-notation
+        weight: 0.4
+        key: false
+      - id: division-algorithm
+        weight: 0.4
+        key: false
+      - id: union-intersection-difference
+        weight: 0.4
+        key: false
+      - id: venn-diagram-counting
+        weight: 0.4
+        key: false
+      - id: set-operations
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Nesting and kinds of number sets, set operations on intervals and finite sets'
+        key_prerequisites: [number-sets-structure, union-intersection-difference]
+        exemplars:
+          - problem: 'Let $A=\{-2,-1,0,1,2,3\}$ and $B=\{0,2,4,6\}$. (a) Find $A\cap B$. (b) Find $A\setminus B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"inter","contract":{"kind":"set"}},{"name":"diff","contract":{"kind":"set"}}]}
+            answer: 'inter = {0, 2}; diff = {-2, -1, 1, 3}'
+            solution_sketch: 'The members of both sets are $0$ and $2$. Remove these two from $A$. The rest is $\{-2,-1,1,3\}$.'
+          - problem: 'Let $A=[-3,5)$ and $B=(1,8]$. (a) Find $A\cap B$. (b) Find $A\cup B$. Write each answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"inter","contract":{"kind":"inequality_union"}},{"name":"union","contract":{"kind":"inequality_union"}}]}
+            answer: 'inter = 1 < x < 5; union = -3 <= x <= 8'
+            solution_sketch: 'A number is in both sets if $x>1$ and $x<5$. The two intervals overlap, so the union has no gap. It runs from $-3$ to $8$, and both ends are in a set.'
+          - problem: 'Let $M=\{\sqrt{2},\ \tfrac13,\ -4,\ 0,\ \pi,\ 2.5,\ \sqrt{9}\}$. (a) How many members of $M$ are irrational? (b) How many members of $M$ are integers?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"irrational","contract":{"kind":"exact"}},{"name":"integers","contract":{"kind":"exact"}}]}
+            answer: 'irrational = 2; integers = 3'
+            solution_sketch: 'Only $\sqrt2$ and $\pi$ are irrational. The number $\sqrt9$ equals $3$, so it is an integer. The integers are $-4$, $0$ and $3$.'
+          - problem: 'Let $A=\{x\in\mathbb{Z}: -3<x\le 2\}$ and $B=\{x\in\mathbb{Z}: |x|\ge 2\}$. (a) List the members of $A$. (b) List the members of $A\cap B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"A","contract":{"kind":"set"}},{"name":"inter","contract":{"kind":"set"}}]}
+            answer: 'A = {-2, -1, 0, 1, 2}; inter = {-2, 2}'
+            solution_sketch: 'The integers greater than $-3$ and at most $2$ are $-2,-1,0,1,2$. Of these, only $-2$ and $2$ have modulus at least $2$.'
+          - problem: 'Let $A=[-2,4]$. (a) How many integers are in $A$? (b) Find $A\setminus(0,4]$. Write the answer as an inequality.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"count","contract":{"kind":"exact"}},{"name":"diff","contract":{"kind":"inequality_union"}}]}
+            answer: 'count = 7; diff = -2 <= x <= 0'
+            solution_sketch: 'The integers from $-2$ to $4$ are $-2,-1,0,1,2,3,4$. Remove the numbers greater than $0$. The number $0$ stays, because $0$ is not in $(0,4]$.'
+          - problem: 'Let $S=\{-3,\ -\sqrt5,\ 0,\ \tfrac72,\ \sqrt{16},\ \log_2 8,\ \sqrt{10}\}$. (a) List the irrational members of $S$. (b) Find the sum of the integers in $S$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"irrational","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
+            answer: 'irrational = {-sqrt(5), sqrt(10)}; sum = 4'
+            solution_sketch: 'The numbers $\sqrt{16}=4$ and $\log_2 8=3$ are integers. The irrational members are $-\sqrt5$ and $\sqrt{10}$. The integers are $-3,0,4,3$, and their sum is $4$.'
+        constraints: 'two-part items; sets are finite lists, intervals or sets with irrational members; part one is a direct operation, part two counts or combines'
+      - id: kp2
+        name: 'Remainder sets and Venn diagrams in short exam items'
+        key_prerequisites: [numbers-with-given-remainder, venn-diagram-counting]
+        exemplars:
+          - problem: 'Natural numbers leave remainder $3$ when you divide them by $7$. (a) Write the general form of these numbers with $k=0,1,2,\dots$ (b) List the ones less than $30$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"form","contract":{"kind":"function","vars":["k"]}},{"name":"list","contract":{"kind":"set"}}]}
+            answer: 'form = 7*k+3; list = {3, 10, 17, 24}'
+            solution_sketch: 'A number with remainder $3$ is $7k+3$. Put $k=0,1,2,3$ to get $3,10,17,24$. For $k=4$ the number is $31$, which is too large.'
+          - problem: 'Natural numbers leave remainder $2$ when you divide them by $5$. (a) Write the general form of these numbers with $k=0,1,2,\dots$ (b) How many of them are in the interval $[1,100]$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"form","contract":{"kind":"function","vars":["k"]}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'form = 5*k+2; count = 20'
+            solution_sketch: 'The form is $5k+2$. The condition $5k+2\le100$ gives $k\le19.6$. So $k=0,1,\dots,19$, which is $20$ numbers.'
+          - problem: 'In a class of $30$ students, $18$ play chess, $14$ play football and $6$ play both games. (a) How many students play chess or football? (b) How many students play neither game?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"either","contract":{"kind":"exact"}},{"name":"neither","contract":{"kind":"exact"}}]}
+            answer: 'either = 26; neither = 4'
+            solution_sketch: 'The union has $18+14-6=26$ students. The other students play neither game: $30-26=4$.'
+          - problem: 'The set $U$ has $40$ members. The sets $A$ and $B$ are in $U$, with $|A|=22$, $|B|=19$ and $|A\cap B|=8$. (a) Find $|A\setminus B|$. (b) Find the number of members of $U$ that are in neither $A$ nor $B$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"onlyA","contract":{"kind":"exact"}},{"name":"outside","contract":{"kind":"exact"}}]}
+            answer: 'onlyA = 14; outside = 7'
+            solution_sketch: 'The set $A\setminus B$ has $22-8=14$ members. The union has $22+19-8=33$ members. So $40-33=7$ members are in neither set.'
+          - problem: 'Let $A=\{n\in\mathbb{N}: n=4k+1,\ n\le 30\}$ and $B=\{n\in\mathbb{N}: n=6m+5,\ n\le 30\}$. (a) List the members of $A\cap B$. (b) Write the general form of the numbers in $A\cap B$ with $j=0,1,2,\dots$ (the numbers may exceed $30$).'
+            answer_contract: {"kind":"multipart","parts":[{"name":"inter","contract":{"kind":"set"}},{"name":"form","contract":{"kind":"function","vars":["j"]}}]}
+            answer: 'inter = {5, 17, 29}; form = 12*j+5'
+            solution_sketch: 'The set $A$ is $\{1,5,9,13,17,21,25,29\}$. The set $B$ is $\{5,11,17,23,29\}$. The common members are $5,17,29$. They differ by $12$, so the form is $12j+5$.'
+          - problem: 'Among the numbers $1,2,\dots,60$, (a) how many are multiples of $4$ or multiples of $6$? (b) How many are multiples of $4$ but not multiples of $6$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"either","contract":{"kind":"exact"}},{"name":"only4","contract":{"kind":"exact"}}]}
+            answer: 'either = 20; only4 = 10'
+            solution_sketch: 'There are $15$ multiples of $4$, $10$ multiples of $6$ and $5$ multiples of $12$. The union has $15+10-5=20$ numbers. The multiples of $4$ that are not multiples of $6$ number $15-5=10$.'
+        constraints: 'two-part items; remainder form n=d*k+r with d from 4 to 12, or two-set counts with a total of at most 60; the last item joins two conditions'
+    diagnostic_exemplar:
+      problem: 'Find $\{1,2,3,4\}\cap\{3,4,5\}$.'
+      answer_contract: {"kind":"set"}
+      answer: '{3, 4}'
+      solution_sketch: 'The members of both sets are $3$ and $4$.'
+  - id: vbe-cp02-modulus
+    name: Modulus of a real number
+    lt_term: 'Realiojo skaičiaus modulis'
+    area: numbers
+    program_items: [7, 8, 9, 10, 11, 12, 13]
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 240
+    prerequisites:
+      - id: modulus-real-numbers
+        weight: 0.6
+        key: true
+      - id: roots-letter-expressions
+        weight: 0.4
+        key: false
+      - id: absolute-value
+        weight: 0.4
+        key: false
+      - id: number-line-integers
+        weight: 0.4
+        key: false
+      - id: piecewise-absolute-value-graphs
+        weight: 0.4
+        key: false
+      - id: basic-absolute-value-equations
+        weight: 0.4
+        key: false
+      - id: basic-absolute-value-inequalities
+        weight: 0.4
+        key: false
+      - id: integer-order-of-operations
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals-variables
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Value and properties of expressions with moduli'
+        key_prerequisites: [modulus-real-numbers]
+        exemplars:
+          - problem: '(a) Find $|{-7}|+|3|$. (b) Find $|2-5|-|{-4}|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sum","contract":{"kind":"exact"}},{"name":"diff","contract":{"kind":"exact"}}]}
+            answer: 'sum = 10; diff = -1'
+            solution_sketch: 'The modulus of $-7$ is $7$, so the sum is $7+3=10$. Next, $|2-5|=3$ and $|-4|=4$, so $3-4=-1$.'
+          - problem: 'Let $x=-3$. (a) Find $|x-2|$. (b) Find $|x|^2-|x^2-10|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 8'
+            solution_sketch: 'We have $|-3-2|=5$. Next, $|x|^2=9$ and $|9-10|=1$, so the value is $9-1=8$.'
+          - problem: 'The numbers $a$ and $b$ satisfy $|a|=5$, $|b|=2$ and $a<0<b$. (a) Find $a+b$. (b) Find $|a-b|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sum","contract":{"kind":"exact"}},{"name":"dist","contract":{"kind":"exact"}}]}
+            answer: 'sum = -3; dist = 7'
+            solution_sketch: 'Since $a<0$, we have $a=-5$. Since $b>0$, we have $b=2$. Then $a+b=-3$ and $|a-b|=|-7|=7$.'
+          - problem: '(a) Find $|3-\sqrt{10}|+|\sqrt{10}-4|$. (b) Find $|2-\sqrt5|-|\sqrt5-3|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 1; b = 2*sqrt(5)-5'
+            solution_sketch: 'We have $3<\sqrt{10}<4$. So $|3-\sqrt{10}|=\sqrt{10}-3$ and $|\sqrt{10}-4|=4-\sqrt{10}$, and the sum is $1$. We have $2<\sqrt5<3$, so the difference is $(\sqrt5-2)-(3-\sqrt5)=2\sqrt5-5$.'
+          - problem: 'Let $x<-1$. Write each expression without moduli. (a) $|x+1|$ (b) $|x-2|+|x+1|$'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"function","vars":["x"]}},{"name":"b","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'a = -x-1; b = 1-2*x'
+            solution_sketch: 'For $x<-1$ the number $x+1$ is negative, so $|x+1|=-x-1$. The number $x-2$ is also negative, so $|x-2|=2-x$. The sum is $2-x-x-1=1-2x$.'
+          - problem: 'The numbers $a$ and $b$ satisfy $|a|=3$ and $|b|=4$. (a) Find the greatest possible value of $|a-b|$. (b) Find the least possible value of $|a+b|$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"greatest","contract":{"kind":"exact"}},{"name":"least","contract":{"kind":"exact"}}]}
+            answer: 'greatest = 7; least = 1'
+            solution_sketch: 'The value $a$ is $3$ or $-3$, and $b$ is $4$ or $-4$. The values of $|a-b|$ are $1$ and $7$. The values of $|a+b|$ are $7$ and $1$. So the greatest is $7$ and the least is $1$.'
+        constraints: 'two-part items; numbers, irrational differences and letters with a stated sign; part two needs a case or a range of values'
+      - id: kp2
+        name: 'Roots of even powers and the modulus in one expression'
+        key_prerequisites: [roots-letter-expressions, modulus-real-numbers]
+        exemplars:
+          - problem: '(a) Find $\sqrt{(-5)^2}$. (b) Find $\sqrt[4]{(-2)^4}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 5; b = 2'
+            solution_sketch: 'An even root of an even power gives the modulus of the base. So $\sqrt{(-5)^2}=|-5|=5$ and $\sqrt[4]{(-2)^4}=|-2|=2$.'
+          - problem: '(a) Simplify $\sqrt{(2-\sqrt7)^2}$. (b) Find $\sqrt{(\sqrt5-3)^2}+\sqrt{(2-\sqrt5)^2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = sqrt(7)-2; b = 1'
+            solution_sketch: 'We have $\sqrt7>2$, so $|2-\sqrt7|=\sqrt7-2$. Also $2<\sqrt5<3$, so the terms are $3-\sqrt5$ and $\sqrt5-2$. Their sum is $1$.'
+          - problem: 'Let $x<0$. Simplify each expression. (a) $\sqrt{x^2}+3$ (b) $\sqrt[4]{16x^4}$'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"function","vars":["x"]}},{"name":"b","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'a = 3-x; b = -2*x'
+            solution_sketch: 'The root of $x^2$ is $|x|$, which is $-x$ for $x<0$. So the first expression is $3-x$. The fourth root of $16x^4$ is $2|x|$, which is $-2x$.'
+          - problem: 'Let $-1<x<2$. (a) Simplify $\sqrt{(x-2)^2}$. (b) Find the value of $\sqrt{(x-2)^2}+\sqrt{(x+1)^2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"function","vars":["x"]}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a = 2-x; b = 3'
+            solution_sketch: 'For $x<2$ the number $x-2$ is negative, so the root is $2-x$. For $x>-1$ the root of $(x+1)^2$ is $x+1$. The sum is $2-x+x+1=3$.'
+          - problem: 'Let $a<0$. Simplify each expression. (a) $\sqrt{a^2}-a$ (b) $\sqrt{a^6}$'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"function","vars":["a"]}},{"name":"b","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'a = -2*a; b = -a^3'
+            solution_sketch: 'The root of $a^2$ is $|a|=-a$. So the first expression is $-2a$. The root of $a^6$ is $|a^3|$. For $a<0$ the cube $a^3$ is negative, so the result is $-a^3$.'
+          - problem: '(a) Solve $\sqrt{(x-4)^2}=3$. (b) Find the least value of $\sqrt{(x-1)^2}+\sqrt{(x-5)^2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"roots","contract":{"kind":"set"}},{"name":"least","contract":{"kind":"exact"}}]}
+            answer: 'roots = {1, 7}; least = 4'
+            solution_sketch: 'The equation means $|x-4|=3$, so $x=1$ or $x=7$. The sum is $|x-1|+|x-5|$, the total distance from $x$ to $1$ and $5$. The least value is the distance between $1$ and $5$, which is $4$.'
+        constraints: 'two-part items; even root of an even power equals the modulus of the base; the sign of the base is stated or follows from the numbers'
+    diagnostic_exemplar:
+      problem: 'Find $|4-9|-|{-2}|$.'
+      answer_contract: {"kind":"exact"}
+      answer: '3'
+      solution_sketch: 'We have $|4-9|=5$ and $|-2|=2$. So $5-2=3$.'
+  - id: vbe-cp03-powers
+    name: Powers with rational exponents
+    lt_term: 'Laipsniai'
+    area: numbers
+    program_items: [14, 15, 16, 17, 18, 19, 20, 21]
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: rational-power-meaning-bracketing
+        weight: 0.6
+        key: true
+      - id: special-products
+        weight: 0.4
+        key: false
+      - id: sum-difference-of-cubes
+        weight: 0.4
+        key: false
+      - id: rational-exponents
+        weight: 0.4
+        key: false
+      - id: estimating-square-roots
+        weight: 0.4
+        key: false
+      - id: exponent-product-rule
+        weight: 0.4
+        key: false
+      - id: power-of-a-power-rule
+        weight: 0.4
+        key: false
+      - id: power-rule-exponents
+        weight: 0.4
+        key: false
+      - id: exponent-product-quotient-rules
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Cube formulas and rational exponents in numeric expressions'
+        key_prerequisites: [special-products, rational-exponents]
+        exemplars:
+          - problem: '(a) Compute $8^{2/3}$. (b) Compute $27^{-1/3}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 4; p2 = 1/3'
+            solution_sketch: 'We have $8^{2/3}=(\sqrt[3]{8})^2=2^2=4$. Also $27^{-1/3}=1/\sqrt[3]{27}=1/3$.'
+          - problem: '(a) Compute $81^{3/4}$. (b) Compute $\left(\tfrac14\right)^{-3/2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 27; p2 = 8'
+            solution_sketch: 'The fourth root of $81$ is $3$, and $3^3=27$. Next, $(1/4)^{-3/2}=4^{3/2}=(\sqrt{4})^3=8$.'
+          - problem: '(a) Expand $(x+2)^3$. (b) Compute $\left(\sqrt[3]{2}+1\right)\left(\sqrt[3]{4}-\sqrt[3]{2}+1\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"expand","contract":{"kind":"function","vars":["x"]}},{"name":"value","contract":{"kind":"exact"}}]}
+            answer: 'expand = x^3+6*x^2+12*x+8; value = 3'
+            solution_sketch: 'Use $(a+b)^3=a^3+3a^2b+3ab^2+b^3$ with $a=x$ and $b=2$. For (b), use $(a+b)(a^2-ab+b^2)=a^3+b^3$ with $a=\sqrt[3]{2}$ and $b=1$. The result is $2+1=3$.'
+          - problem: '(a) Expand $(2x-3)^3$. (b) Compute $101^3-3\cdot 101^2+3\cdot 101-1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"expand","contract":{"kind":"function","vars":["x"]}},{"name":"value","contract":{"kind":"exact"}}]}
+            answer: 'expand = 8*x^3-36*x^2+54*x-27; value = 1000000'
+            solution_sketch: 'Use $(a-b)^3=a^3-3a^2b+3ab^2-b^3$ with $a=2x$ and $b=3$. The number in (b) has the form $(101-1)^3$. So it equals $100^3=1000000$.'
+          - problem: '(a) Compute $\dfrac{3^{1/2}\cdot 3^{5/2}}{3^{2}}$. (b) Compute $\left(2^{1/3}\cdot 4^{1/6}\right)^{3}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 3; p2 = 4'
+            solution_sketch: 'In (a) the numerator is $3^{1/2+5/2}=3^3$. Then $3^3/3^2=3$. In (b), $4^{1/6}=2^{1/3}$. So the product is $2^{2/3}$, and its cube is $2^2=4$.'
+          - problem: '(a) Solve $27^{x}=9^{5/4}$. (b) Compute $\left(3^{2/3}+3^{1/3}\right)\left(3^{4/3}-3+3^{2/3}\right)$. (c) The numbers $a$ and $b$ have $a+b=5$ and $ab=6$. Find $a^3+b^3$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"value","contract":{"kind":"exact"}},{"name":"cubes","contract":{"kind":"exact"}}]}
+            answer: 'x = 5/6; value = 12; cubes = 35'
+            solution_sketch: 'In (a), $3^{3x}=3^{5/2}$, so $x=5/6$. In (b), put $a=3^{2/3}$ and $b=3^{1/3}$. Then $ab=3$, and the product equals $a^3+b^3=9+3=12$. In (c), $a^3+b^3=(a+b)^3-3ab(a+b)=125-90=35$.'
+        constraints: 'two or three parts; cube formulas with small integers, and powers a^(m/n) with perfect powers; the last item joins two methods'
+      - id: kp2
+        name: 'Letter expressions with rational powers, bracketing and comparison'
+        key_prerequisites: [rational-power-meaning-bracketing, exponent-product-quotient-rules]
+        exemplars:
+          - problem: 'Let $a>0$. (a) Simplify $a^{1/2}\cdot a^{3/2}$. (b) Simplify $(a^{1/2})^{4}\cdot a^{-1}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'p1 = a^2; p2 = a'
+            solution_sketch: 'Add the exponents in (a): $1/2+3/2=2$. In (b), $(a^{1/2})^4=a^2$. Then $a^2\cdot a^{-1}=a$.'
+          - problem: '(a) Find the integer $n$ with $n<10^{1/3}<n+1$. (b) Find the integer $m$ with $m<3^{5/2}<m+1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}}]}
+            answer: 'n = 2; m = 15'
+            solution_sketch: 'We have $2^3=8<10<27=3^3$, so $n=2$. Also $3^{5/2}=9\sqrt3$. Also $9\sqrt3=\sqrt{243}$. Since $15^2=225<243<256=16^2$, we get $m=15$.'
+          - problem: 'Let $x>0$. (a) Simplify $\dfrac{x^{3/4}\cdot x^{-1/4}}{x^{1/4}}$. (b) Find the value of the result at $x=81$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"simple","contract":{"kind":"function","vars":["x"]}},{"name":"value","contract":{"kind":"exact"}}]}
+            answer: 'simple = x^(1/4); value = 3'
+            solution_sketch: 'The exponent is $3/4-1/4-1/4=1/4$. At $x=81$ we get $81^{1/4}=3$.'
+          - problem: '(a) Find $\left(2^{1/2}\right)^{6}$. (b) Find $\left(3^{1/3}\right)^{6}$. (c) Find the least positive integer $n$ with $n^{1/3}>2^{1/2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"n","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 8; p2 = 9; n = 3'
+            solution_sketch: 'We have $(2^{1/2})^6=2^3=8$ and $(3^{1/3})^6=3^2=9$. In (c), raise both sides to the power $6$. Then $n^2>8$. The least integer is $n=3$.'
+          - problem: 'Let $a>0$. (a) Simplify $\sqrt[3]{a^{2}\sqrt{a}}$ to one power of $a$. (b) Find $a$ when this power equals $32$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"simple","contract":{"kind":"function","vars":["a"]}},{"name":"a","contract":{"kind":"exact"}}]}
+            answer: 'simple = a^(5/6); a = 64'
+            solution_sketch: 'Write $a^2\sqrt a=a^{5/2}$. The cube root gives $a^{5/6}$. Then $a^{5/6}=32=2^5$ gives $a=2^6=64$.'
+          - problem: 'The number $a>0$ has $a^{1/2}+a^{-1/2}=3$. (a) Find $a+a^{-1}$. (b) Find $a^{3/2}+a^{-3/2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"s2","contract":{"kind":"exact"}},{"name":"s3","contract":{"kind":"exact"}}]}
+            answer: 's2 = 7; s3 = 18'
+            solution_sketch: 'Square the given sum: $a+2+a^{-1}=9$, so $a+a^{-1}=7$. Cube the given sum: $s^3=a^{3/2}+a^{-3/2}+3s$. Then $27=t+9$, so $t=18$.'
+        constraints: 'two or three parts; letters are positive; exponents are simple fractions; bracketing and comparison use small bases'
+    diagnostic_exemplar:
+      problem: 'Compute $4^{3/2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: '8'
+      solution_sketch: 'We have $4^{3/2}=(\sqrt4)^3=2^3=8$.'
+  - id: vbe-cp04-roots
+    name: Roots
+    lt_term: 'Šaknys'
+    area: numbers
+    program_items: [22, 23, 24, 25, 26, 27, 28, 29, 30]
+    core: false
+    difficulty: 0.5
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: nth-roots
+        weight: 0.6
+        key: true
+      - id: roots-letter-expressions
+        weight: 0.4
+        key: false
+      - id: proof-by-contradiction
+        weight: 0.4
+        key: false
+      - id: cube-roots
+        weight: 0.4
+        key: false
+      - id: square-roots
+        weight: 0.4
+        key: false
+      - id: rational-exponents
+        weight: 0.4
+        key: false
+      - id: domain-range
+        weight: 0.4
+        key: false
+      - id: estimating-square-roots
+        weight: 0.4
+        key: false
+      - id: radical-operations
+        weight: 0.4
+        key: false
+      - id: dividing-radicals
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals
+        weight: 0.4
+        key: false
+      - id: adding-subtracting-radicals
+        weight: 0.4
+        key: false
+      - id: rationalizing-denominators
+        weight: 0.4
+        key: false
+      - id: simplifying-radicals-variables
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Rationalizing denominators of every exam form'
+        key_prerequisites: [rationalizing-denominators, radical-operations]
+        exemplars:
+          - problem: 'Remove the root from the denominator. (a) Simplify $\dfrac{6}{\sqrt3}$. (b) Simplify $\dfrac{4}{\sqrt8}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2*sqrt(3); p2 = sqrt(2)'
+            solution_sketch: 'Multiply the top and bottom of (a) by $\sqrt3$. This gives $6\sqrt3/3=2\sqrt3$. In (b), $\sqrt8=2\sqrt2$. So the fraction is $4/(2\sqrt2)=\sqrt2$.'
+          - problem: 'Remove the root from the denominator. (a) Simplify $\dfrac{1}{\sqrt5+2}$. (b) Simplify $\dfrac{3}{\sqrt7-2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = sqrt(5)-2; p2 = sqrt(7)+2'
+            solution_sketch: 'Multiply the top and bottom by the sum with the opposite sign. In (a), $(\sqrt5+2)(\sqrt5-2)=1$. In (b), $(\sqrt7-2)(\sqrt7+2)=3$, so the result is $\sqrt7+2$.'
+          - problem: 'Remove the root from the denominator. (a) Simplify $\dfrac{2}{\sqrt6-\sqrt2}$. (b) Simplify $\dfrac{\sqrt3}{\sqrt3+1}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = (sqrt(6)+sqrt(2))/2; p2 = (3-sqrt(3))/2'
+            solution_sketch: 'In (a), the product $(\sqrt6-\sqrt2)(\sqrt6+\sqrt2)=4$. So the result is $2(\sqrt6+\sqrt2)/4$. In (b), multiply by $\sqrt3-1$. The denominator is $2$ and the numerator is $3-\sqrt3$.'
+          - problem: '(a) Simplify $\dfrac{1}{\sqrt2+1}+\dfrac{1}{\sqrt2-1}$. (b) Simplify $\dfrac{1}{3-\sqrt5}+\dfrac{1}{3+\sqrt5}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2*sqrt(2); p2 = 3/2'
+            solution_sketch: 'In (a), the fractions are $\sqrt2-1$ and $\sqrt2+1$. Their sum is $2\sqrt2$. In (b), use the common denominator $9-5=4$. The numerator is $6$, so the sum is $3/2$.'
+          - problem: '(a) The equality $\dfrac{1}{\sqrt[3]{2}}=\dfrac{\sqrt[3]{4}}{k}$ is true. Find $k$. (b) The equality $\dfrac{4}{\sqrt[3]{16}}=\sqrt[3]{m}$ is true. Find $m$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"k","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}}]}
+            answer: 'k = 2; m = 4'
+            solution_sketch: 'In (a), multiply the top and bottom by $\sqrt[3]{4}$. The denominator is $\sqrt[3]{8}=2$. In (b), $\sqrt[3]{16}=2^{4/3}$. So the fraction is $2^{2-4/3}=2^{2/3}=\sqrt[3]{4}$.'
+          - problem: '(a) Simplify $\dfrac{\sqrt5+\sqrt3}{\sqrt5-\sqrt3}$. (b) Find the value of $\dfrac{\sqrt5+\sqrt3}{\sqrt5-\sqrt3}+\dfrac{\sqrt5-\sqrt3}{\sqrt5+\sqrt3}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 4+sqrt(15); p2 = 8'
+            solution_sketch: 'Multiply the top and bottom of (a) by $\sqrt5+\sqrt3$. The numerator is $8+2\sqrt{15}$ and the denominator is $2$. So the result is $4+\sqrt{15}$. The second fraction is $4-\sqrt{15}$, so the sum is $8$.'
+        constraints: 'two-part items; denominators of the forms root a, root a plus or minus b, root a plus or minus root b and cube root; keys are exact'
+      - id: kp2
+        name: 'n-th roots, domain and letter expressions with roots'
+        key_prerequisites: [nth-roots, roots-letter-expressions]
+        exemplars:
+          - problem: '(a) Compute $\sqrt[3]{-64}$. (b) Compute $\sqrt[4]{81}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -4; p2 = 3'
+            solution_sketch: 'We have $(-4)^3=-64$. Also $3^4=81$ and the root of even index is not negative.'
+          - problem: 'Find all $x$ for which the expression has a meaning. (a) $\sqrt{2x-6}$. (b) $\sqrt[4]{8-2x}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"inequality_union"}},{"name":"p2","contract":{"kind":"inequality_union"}}]}
+            answer: 'p1 = x >= 3; p2 = x <= 4'
+            solution_sketch: 'A root of even index needs a radicand that is not negative. In (a), $2x-6\ge0$ gives $x\ge3$. In (b), $8-2x\ge0$ gives $x\le4$.'
+          - problem: '(a) Find the integer $n$ with $n<\sqrt{50}<n+1$. (b) Find the integer $m$ with $m<\sqrt[3]{100}<m+1$. (c) How many integers lie strictly between $\sqrt{30}$ and $\sqrt[3]{400}$?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}},{"name":"count","contract":{"kind":"exact"}}]}
+            answer: 'n = 7; m = 4; count = 2'
+            solution_sketch: 'We have $49<50<64$, so $n=7$. Also $64<100<125$, so $m=4$. Next, $5<\sqrt{30}<6$ and $343<400<512$, so $7<\sqrt[3]{400}<8$. The integers $6$ and $7$ lie between them.'
+          - problem: 'Let $x<5$. (a) Simplify $\sqrt{(x-5)^2}$. (b) Simplify $\sqrt[3]{(x-5)^3}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["x"]}},{"name":"p2","contract":{"kind":"function","vars":["x"]}}]}
+            answer: 'p1 = 5-x; p2 = x-5'
+            solution_sketch: 'An even root of a square gives the modulus. For $x<5$, we have $|x-5|=5-x$. An odd root of a cube gives the base, so (b) is $x-5$.'
+          - problem: 'Simplify. (a) $\sqrt{a^2b^4}$ for $a<0$. (b) $\sqrt[3]{8a^6}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a","b"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'p1 = -a*b^2; p2 = 2*a^2'
+            solution_sketch: 'In (a), the root equals $|a|b^2$. Since $a<0$, we have $|a|=-a$. In (b), $\sqrt[3]{8}=2$ and $\sqrt[3]{a^6}=a^2$.'
+          - problem: '(a) Solve $\sqrt{x+2}=x$. (b) Solve $\sqrt{x-1}+\sqrt{x+4}=5$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"set"}},{"name":"p2","contract":{"kind":"set"}}]}
+            answer: 'p1 = {2}; p2 = {5}'
+            solution_sketch: 'In (a), square both sides: $x+2=x^2$. The roots are $2$ and $-1$. The value $x=-1$ gives a negative right side, so only $2$ stays. In (b), $x=5$ gives $2+3=5$. The left side grows with $x$, so no other root exists.'
+        constraints: 'two or three parts; roots of index 2 to 4, domains of roots, letters with a stated sign'
+    diagnostic_exemplar:
+      problem: 'Simplify $\dfrac{2}{\sqrt2}$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'sqrt(2)'
+      solution_sketch: 'Multiply the top and bottom by $\sqrt2$. The result is $2\sqrt2/2=\sqrt2$.'
+  - id: vbe-cp05-logarithms
+    name: Logarithms
+    lt_term: 'Logaritmai'
+    area: numbers
+    program_items: [31, 32, 33, 34, 35, 36, 37, 38, 39, 40]
+    core: true
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: number-sets-structure
+        weight: 0.6
+        key: true
+      - id: log-identity-base-rules
+        weight: 0.4
+        key: false
+      - id: logarithm-basics
+        weight: 0.4
+        key: false
+      - id: natural-exponential-function
+        weight: 0.4
+        key: false
+      - id: common-natural-logarithms
+        weight: 0.4
+        key: false
+      - id: logarithm-properties
+        weight: 0.4
+        key: false
+      - id: log-product-quotient-rules
+        weight: 0.4
+        key: false
+      - id: log-power-rule
+        weight: 0.4
+        key: false
+      - id: change-of-base-formula
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Express one logarithm through given logarithms'
+        key_prerequisites: [log-product-quotient-rules, change-of-base-formula]
+        exemplars:
+          - problem: 'Let $a=\log_2 3$. (a) Express $\log_2 12$ through $a$. (b) Express $\log_2\dfrac92$ through $a$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'p1 = a+2; p2 = 2*a-1'
+            solution_sketch: 'We have $\log_2 12=\log_2 3+\log_2 4=a+2$. Also $\log_2(9/2)=2\log_2 3-\log_2 2=2a-1$.'
+          - problem: 'Let $a=\lg 2$ and $b=\lg 3$. (a) Express $\lg 6$ through $a$ and $b$. (b) Express $\lg 5$ through $a$. (c) Express $\lg 0.18$ through $a$ and $b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a","b"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}},{"name":"p3","contract":{"kind":"function","vars":["a","b"]}}]}
+            answer: 'p1 = a+b; p2 = 1-a; p3 = a+2*b-2'
+            solution_sketch: 'We have $\lg6=\lg2+\lg3$. Also $\lg5=\lg10-\lg2=1-a$. Last, $0.18=18/100$ and $\lg18=\lg2+2\lg3$. So $\lg0.18=a+2b-2$.'
+          - problem: 'Let $a=\log_3 2$. (a) Express $\log_3 18$ through $a$. (b) Express $\log_9 8$ through $a$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'p1 = a+2; p2 = 3*a/2'
+            solution_sketch: 'We have $\log_3 18=\log_3 9+\log_3 2=2+a$. Also $\log_9 8=\frac12\log_3 8=\frac32 a$.'
+          - problem: 'Let $a=\lg 2$. (a) Express $\log_5 2$ through $a$. (b) Express $\log_2 50$ through $a$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a"]}},{"name":"p2","contract":{"kind":"function","vars":["a"]}}]}
+            answer: 'p1 = a/(1-a); p2 = (2-a)/a'
+            solution_sketch: 'Use the change of base to base $10$. In (a), $\log_5 2=\lg2/\lg5=a/(1-a)$. In (b), $\lg50=2-\lg2$. So $\log_2 50=(2-a)/a$.'
+          - problem: 'Let $a=\log_2 3$ and $b=\log_2 5$. (a) Express $\log_2 45$ through $a$ and $b$. (b) Express $\log_{15} 6$ through $a$ and $b$. (c) Express $\log_3 20$ through $a$ and $b$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["a","b"]}},{"name":"p2","contract":{"kind":"function","vars":["a","b"]}},{"name":"p3","contract":{"kind":"function","vars":["a","b"]}}]}
+            answer: 'p1 = 2*a+b; p2 = (1+a)/(a+b); p3 = (2+b)/a'
+            solution_sketch: 'We have $\log_2 45=2a+b$. For (b), $\log_{15}6=\log_2 6/\log_2 15=(1+a)/(a+b)$. For (c), $\log_3 20=\log_2 20/\log_2 3=(2+b)/a$.'
+          - problem: 'Let $p=\ln 2$ and $q=\ln 3$. (a) Express $\log_4 18$ through $p$ and $q$. (b) Express $\log_{0.5}72$ through $p$ and $q$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"function","vars":["p","q"]}},{"name":"p2","contract":{"kind":"function","vars":["p","q"]}}]}
+            answer: 'p1 = (p+2*q)/(2*p); p2 = -(3*p+2*q)/p'
+            solution_sketch: 'Change to natural logarithms. In (a), $\ln18=p+2q$ and $\ln4=2p$. In (b), $\ln72=3p+2q$ and $\ln0.5=-p$. So $\log_{0.5}72=-(3p+2q)/p$.'
+        constraints: 'two or three parts; the given logarithms are named a and b; the key is an expression in a and b'
+      - id: kp2
+        name: 'Domain, identity and number set of a logarithm'
+        key_prerequisites: [number-sets-structure, logarithm-basics]
+        exemplars:
+          - problem: 'Find all $x$ for which the expression has a meaning. (a) $\lg(2x-8)$. (b) $\log_{0.2}(6-x)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"inequality_union"}},{"name":"p2","contract":{"kind":"inequality_union"}}]}
+            answer: 'p1 = x > 4; p2 = x < 6'
+            solution_sketch: 'The argument of a logarithm must be positive. In (a), $2x-8>0$ gives $x>4$. In (b), $6-x>0$ gives $x<6$.'
+          - problem: 'Find all $x$ for which the expression has a meaning. (a) $\ln(x^2-4)$. (b) $\lg(x+1)+\lg(5-x)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"inequality_union"}},{"name":"p2","contract":{"kind":"inequality_union"}}]}
+            answer: 'p1 = x < -2 or x > 2; p2 = -1 < x < 5'
+            solution_sketch: 'In (a), $x^2>4$ gives $x<-2$ or $x>2$. In (b), both $x+1>0$ and $5-x>0$ must hold. So $-1<x<5$.'
+          - problem: 'Look at the numbers $\log_2 8$, $\log_3 5$, $\lg 1000$, $\log_2\tfrac14$, $\log_2 3$. (a) How many of them are integers? (b) How many of them are irrational? (c) How many of them are negative?'
+            answer_contract: {"kind":"multipart","parts":[{"name":"integers","contract":{"kind":"exact"}},{"name":"irrational","contract":{"kind":"exact"}},{"name":"negative","contract":{"kind":"exact"}}]}
+            answer: 'integers = 3; irrational = 2; negative = 1'
+            solution_sketch: 'We have $\log_2 8=3$, $\lg1000=3$ and $\log_2\frac14=-2$. These are integers. The numbers $\log_3 5$ and $\log_2 3$ are irrational. Only $-2$ is negative.'
+          - problem: '(a) Compute $5^{\log_5 7}$. (b) Compute $9^{\log_3 4}$. (c) Compute $2^{3+\log_2 5}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 7; p2 = 16; p3 = 40'
+            solution_sketch: 'Use $a^{\log_a b}=b$. In (b), $9^{\log_3 4}=3^{2\log_3 4}=4^2=16$. In (c), $2^{3+\log_2 5}=8\cdot5=40$.'
+          - problem: '(a) Compute $e^{2\ln 3}$. (b) Compute $\left(\tfrac12\right)^{\log_2 5}$. (c) Compute $10^{1-\lg 2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 9; p2 = 1/5; p3 = 5'
+            solution_sketch: 'We have $e^{2\ln3}=(e^{\ln3})^2=9$. Also $(1/2)^{\log_2 5}=2^{-\log_2 5}=1/5$. Last, $10^{1-\lg2}=10/2=5$.'
+          - problem: '(a) Find the integer $n$ with $n<\log_2 20<n+1$. (b) Find the integer $m$ with $m<\lg 5000<m+1$. (c) Find all $x$ for which $\log_{x-1}10$ has a meaning.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}},{"name":"dom","contract":{"kind":"inequality_union"}}]}
+            answer: 'n = 4; m = 3; dom = 1 < x < 2 or x > 2'
+            solution_sketch: 'In (a), $16<20<32$ gives $n=4$. In (b), $1000<5000<10000$ gives $m=3$. In (c), the base must be positive and not equal to $1$. So $x-1>0$ and $x-1\ne1$.'
+        constraints: 'two or three parts; domains with linear and quadratic arguments, number sets of log values, and the identity a^(log_a b)=b'
+      - id: kp3
+        name: 'Value of an expression with logarithms and powers'
+        key_prerequisites: [log-identity-base-rules, log-power-rule]
+        exemplars:
+          - problem: '(a) Compute $\log_2 12-\log_2 3$. (b) Compute $\lg 4+\lg 25$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2; p2 = 2'
+            solution_sketch: 'In (a), $\log_2(12/3)=\log_2 4=2$. In (b), $\lg(4\cdot25)=\lg100=2$.'
+          - problem: '(a) Compute $\log_3\frac1{27}$. (b) Compute $\log_{25}5$. (c) Compute $\log_8 4$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -3; p2 = 1/2; p3 = 2/3'
+            solution_sketch: 'In (a), $3^{-3}=1/27$. In (b), $25^{1/2}=5$. In (c), $8^{x}=4$ means $2^{3x}=2^2$, so $x=2/3$.'
+          - problem: '(a) Compute $2\log_5 10-\log_5 4$. (b) Compute $\log_2\sqrt8$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 2; p2 = 3/2'
+            solution_sketch: 'In (a), the sum is $\log_5(100/4)=\log_5 25=2$. In (b), $\sqrt8=2^{3/2}$, so the logarithm is $3/2$.'
+          - problem: '(a) Compute $\dfrac{\log_2 27}{\log_2 9}$. (b) Compute $\log_4 8\cdot\log_8 16$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 3/2; p2 = 2'
+            solution_sketch: 'In (a), the change of base gives $\log_9 27=3/2$. In (b), $\log_4 8=3/2$ and $\log_8 16=4/3$. The product is $2$.'
+          - problem: '(a) Compute $25^{\log_5 3}$. (b) Compute $2^{\log_2 6-1}$. (c) Compute $\log_6 4+\log_6 9$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 9; p2 = 3; p3 = 2'
+            solution_sketch: 'In (a), $25^{\log_5 3}=5^{2\log_5 3}=9$. In (b), the value is $6/2=3$. In (c), $\log_6 36=2$.'
+          - problem: '(a) The number $x>1$ has $\log_2 x=3$. Find $\log_x 2$. (b) Solve $\log_2 x+\log_2(x-2)=3$. (c) The numbers $x$ and $y$ have $5^{x}=7$ and $7^{y}=25$. Find $xy$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"inv","contract":{"kind":"exact"}},{"name":"sol","contract":{"kind":"set"}},{"name":"prod","contract":{"kind":"exact"}}]}
+            answer: 'inv = 1/3; sol = {4}; prod = 2'
+            solution_sketch: 'In (a), $\log_x 2=1/\log_2 x=1/3$. In (b), $x(x-2)=8$ gives $x=4$ or $x=-2$. Only $x=4$ keeps both arguments positive. In (c), $5^{xy}=7^{y}=25$, so $xy=2$.'
+        constraints: 'two or three parts; bases 2, 3, 5, 10 and 25; every value is exact'
+    diagnostic_exemplar:
+      problem: 'Compute $\log_2 32$.'
+      answer_contract: {"kind":"exact"}
+      answer: '5'
+      solution_sketch: 'We have $2^5=32$, so the logarithm is $5$.'
+  - id: vbe-cp06-trig-basics
+    name: Sine, cosine, tangent and arc functions
+    lt_term: 'Sinusas, kosinusas ir tangentas'
+    area: numbers
+    program_items: [41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53]
+    core: false
+    difficulty: 0.55
+    drill: false
+    answer_kind: multi-step
+    expected_time_secs: 300
+    prerequisites:
+      - id: unit-circle-tangent-line
+        weight: 0.6
+        key: true
+      - id: trig-parity-period-formulas
+        weight: 0.4
+        key: false
+      - id: unit-circle
+        weight: 0.4
+        key: false
+      - id: coterminal-angles
+        weight: 0.4
+        key: false
+      - id: unit-circle-special-angles
+        weight: 0.4
+        key: false
+      - id: radians-degrees
+        weight: 0.4
+        key: false
+      - id: sine-cosine-parent-graphs
+        weight: 0.4
+        key: false
+      - id: tangent-reciprocal-graphs
+        weight: 0.4
+        key: false
+      - id: even-odd-functions
+        weight: 0.4
+        key: false
+      - id: inverse-trig-functions
+        weight: 0.4
+        key: false
+      - id: right-triangle-trig
+        weight: 0.4
+        key: false
+    knowledge_points:
+      - id: kp1
+        name: 'Read sine, cosine and tangent from a unit circle figure'
+        key_prerequisites: [unit-circle-tangent-line, unit-circle]
+        exemplars:
+          - problem: 'The terminal side of a turn angle $\alpha$ meets the unit circle at $P\left(\tfrac35,\tfrac45\right)$. (a) Find $\sin\alpha$. (b) Find $\cos\alpha$. (c) Find $\tan\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'sin = 4/5; cos = 3/5; tan = 4/3'
+            solution_sketch: 'The sine is the ordinate of $P$ and the cosine is the abscissa. The tangent is the ratio $\sin\alpha/\cos\alpha=(4/5)/(3/5)=4/3$.'
+          - problem: 'The terminal side of a turn angle $\alpha$ meets the unit circle at $P\left(-\tfrac5{13},\tfrac{12}{13}\right)$. (a) Find $\sin\alpha$. (b) Find $\tan\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'sin = 12/13; tan = -12/5'
+            solution_sketch: 'The sine is the ordinate, $12/13$. The tangent is $(12/13)/(-5/13)=-12/5$.'
+          - problem: 'The terminal side of a turn angle $\alpha$ meets the unit circle at $P(x,-\tfrac12)$ with $x>0$. (a) Find $x$. (b) Find $\tan\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"x","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'x = sqrt(3)/2; tan = -sqrt(3)/3'
+            solution_sketch: 'A point of the unit circle has $x^2+y^2=1$. So $x^2=3/4$, and $x>0$ gives $x=\sqrt3/2$. Then $\tan\alpha=(-1/2)/(\sqrt3/2)=-1/\sqrt3=-\sqrt3/3$.'
+          - problem: 'The terminal side of an angle $\alpha$ with $0<\alpha<90^\circ$ meets the tangent line $x=1$ of the unit circle at the point $(1,2)$. (a) Find $\tan\alpha$. (b) Find $\cos\alpha$. (c) Find $\sin\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"tan","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"sin","contract":{"kind":"exact"}}]}
+            answer: 'tan = 2; cos = sqrt(5)/5; sin = 2*sqrt(5)/5'
+            solution_sketch: 'The ordinate on the line $x=1$ is $\tan\alpha=2$. From $\sin\alpha=2\cos\alpha$ and $\sin^2\alpha+\cos^2\alpha=1$ we get $5\cos^2\alpha=1$. So $\cos\alpha=\sqrt5/5$ and $\sin\alpha=2\sqrt5/5$.'
+          - problem: 'The terminal side of a turn angle $\alpha$ meets the unit circle at a point $P$ below the $x$-axis. The abscissa of $P$ is $-\tfrac45$. (a) Find $\sin\alpha$. (b) Find $\tan\alpha$. (c) Find $\sin(\alpha+180^\circ)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}},{"name":"sin180","contract":{"kind":"exact"}}]}
+            answer: 'sin = -3/5; tan = 3/4; sin180 = 3/5'
+            solution_sketch: 'We have $y^2=1-16/25=9/25$ and $y<0$, so $\sin\alpha=-3/5$. Then $\tan\alpha=(-3/5)/(-4/5)=3/4$. A turn by $180^\circ$ changes the sign of the ordinate, so the result is $3/5$.'
+          - problem: 'A turn angle $\alpha$ has $\cos\alpha=-\tfrac13$, and its terminal side lies in the third quadrant. (a) Find $\sin\alpha$. (b) Find $\tan\alpha$. (c) Find $\sin2\alpha$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}},{"name":"sin2","contract":{"kind":"exact"}}]}
+            answer: 'sin = -2*sqrt(2)/3; tan = 2*sqrt(2); sin2 = 4*sqrt(2)/9'
+            solution_sketch: 'We have $\sin^2\alpha=1-1/9=8/9$, and the sine is negative. So $\sin\alpha=-2\sqrt2/3$. Then $\tan\alpha=(-2\sqrt2/3)/(-1/3)=2\sqrt2$. Last, $\sin2\alpha=2\sin\alpha\cos\alpha=4\sqrt2/9$.'
+        constraints: 'a point of the unit circle or of the line x=1 is given in words; the parts ask for sine, cosine and tangent'
+      - id: kp2
+        name: 'Exact values, parity and period formulas in one expression'
+        key_prerequisites: [trig-parity-period-formulas, unit-circle-special-angles]
+        exemplars:
+          - problem: '(a) Compute $\sin150^\circ$. (b) Compute $\cos225^\circ$. (c) Compute $\tan120^\circ$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'sin = 1/2; cos = -sqrt(2)/2; tan = -sqrt(3)'
+            solution_sketch: 'The reference angles are $30^\circ$, $45^\circ$ and $60^\circ$. The signs follow the quadrants. The sine is positive in the second quadrant. The cosine is negative in the third quadrant. The tangent is negative in the second quadrant.'
+          - problem: '(a) Compute $\sin\left(-\tfrac{\pi}{6}\right)$. (b) Compute $\cos\tfrac{7\pi}{3}$. (c) Compute $\tan\tfrac{5\pi}{4}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'sin = -1/2; cos = 1/2; tan = 1'
+            solution_sketch: 'The sine is odd, so $\sin(-\pi/6)=-1/2$. Also $7\pi/3=2\pi+\pi/3$, so the cosine is $1/2$. Last, $\tan(5\pi/4)=\tan(\pi/4)=1$.'
+          - problem: '(a) Compute $\sin\tfrac{\pi}{3}\cos\tfrac{\pi}{6}-\cos\tfrac{\pi}{3}\sin\tfrac{\pi}{6}$. (b) Compute $\tan60^\circ\cdot\cos30^\circ$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 1/2; p2 = 3/2'
+            solution_sketch: 'In (a), the value is $\frac{\sqrt3}{2}\cdot\frac{\sqrt3}{2}-\frac12\cdot\frac12=\frac34-\frac14=\frac12$. In (b), it is $\sqrt3\cdot\frac{\sqrt3}{2}=\frac32$.'
+          - problem: '(a) Compute $\sin(-420^\circ)$. (b) Compute $\cos\left(-\tfrac{11\pi}{3}\right)$. (c) Compute $\tan\tfrac{13\pi}{4}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"sin","contract":{"kind":"exact"}},{"name":"cos","contract":{"kind":"exact"}},{"name":"tan","contract":{"kind":"exact"}}]}
+            answer: 'sin = -sqrt(3)/2; cos = 1/2; tan = 1'
+            solution_sketch: 'We have $\sin(-420^\circ)=-\sin60^\circ=-\sqrt3/2$. The cosine is even and has period $2\pi$. So $\cos(11\pi/3)=\cos(-\pi/3)=1/2$. The tangent has period $\pi$, so $\tan(13\pi/4)=\tan(\pi/4)=1$.'
+          - problem: '(a) Compute $\sin\left(-\tfrac{\pi}{4}\right)\cos\tfrac{9\pi}{4}$. (b) Compute $\dfrac{\sin390^\circ+\cos(-60^\circ)}{\tan225^\circ}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -1/2; p2 = 1'
+            solution_sketch: 'In (a), the product is $\left(-\frac{\sqrt2}{2}\right)\cdot\frac{\sqrt2}{2}=-\frac12$. In (b), $\sin390^\circ=\sin30^\circ=\frac12$ and $\cos(-60^\circ)=\frac12$. Also $\tan225^\circ=1$. So the value is $1$.'
+          - problem: '(a) Compute $\sin\tfrac{7\pi}{6}+\cos\tfrac{5\pi}{3}+\tan\tfrac{3\pi}{4}$. (b) The number $x$ has $\sin x=\tfrac13$. Find $\sin(-x)+\sin(x+2\pi)+\sin(x-2\pi)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = -1; p2 = 1/3'
+            solution_sketch: 'In (a), the terms are $-\frac12$, $\frac12$ and $-1$. Their sum is $-1$. In (b), the sine is odd, so the first term is $-\frac13$. The other two terms equal $\frac13$ each. The sum is $\frac13$.'
+        constraints: 'table angles in degrees or radians; parity and period move the angle to a table angle; keys are exact'
+      - id: kp3
+        name: 'Arcsine, arccosine and arctangent in a short equation'
+        key_prerequisites: [inverse-trig-functions, unit-circle-special-angles]
+        exemplars:
+          - problem: '(a) Compute $\arcsin\tfrac12$. (b) Compute $\arccos\left(-\tfrac12\right)$. (c) Compute $\arctan1$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = pi/6; p2 = 2*pi/3; p3 = pi/4'
+            solution_sketch: 'The arcsine is in $[-\pi/2,\pi/2]$, so $\arcsin\frac12=\pi/6$. The arccosine is in $[0,\pi]$, so $\arccos(-\frac12)=2\pi/3$. Also $\tan(\pi/4)=1$.'
+          - problem: '(a) Compute $\arccos0$. (b) Compute $\arcsin(-1)$. (c) Compute $\arctan(-\sqrt3)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = pi/2; p2 = -pi/2; p3 = -pi/3'
+            solution_sketch: 'We have $\cos(\pi/2)=0$ and $\sin(-\pi/2)=-1$. The arctangent is in $(-\pi/2,\pi/2)$ and $\tan(-\pi/3)=-\sqrt3$.'
+          - problem: '(a) Solve $\arccos(2x-1)=\tfrac{\pi}{3}$. (b) Solve $\arcsin(3x)=-\tfrac{\pi}{6}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 3/4; p2 = -1/6'
+            solution_sketch: 'In (a), $2x-1=\cos(\pi/3)=1/2$, so $x=3/4$. In (b), $3x=\sin(-\pi/6)=-1/2$, so $x=-1/6$.'
+          - problem: '(a) Compute $\cos\left(\arcsin\tfrac35\right)$. (b) Compute $\tan\left(\arccos\tfrac5{13}\right)$. (c) Compute $\sin\left(2\arcsin\tfrac35\right)$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 4/5; p2 = 12/5; p3 = 24/25'
+            solution_sketch: 'The angle $\arcsin\frac35$ is in the first quadrant, so its cosine is $\frac45$. For (b), the sine is $\frac{12}{13}$, so the tangent is $\frac{12}{5}$. For (c), $\sin2t=2\cdot\frac35\cdot\frac45=\frac{24}{25}$.'
+          - problem: '(a) Solve $\arctan(x+1)=\tfrac{\pi}{4}$. (b) Solve $3\arcsin x=\tfrac{\pi}{2}$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"exact"}},{"name":"p2","contract":{"kind":"exact"}}]}
+            answer: 'p1 = 0; p2 = 1/2'
+            solution_sketch: 'In (a), $x+1=\tan(\pi/4)=1$, so $x=0$. In (b), $\arcsin x=\pi/6$, so $x=\sin(\pi/6)=1/2$.'
+          - problem: '(a) Solve $\arcsin x=\arccos x$. (b) Compute $\arcsin\tfrac12+\arccos\tfrac12$. (c) Find all integers $a$ for which $\arccos(a-2)$ exists.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"p1","contract":{"kind":"set"}},{"name":"p2","contract":{"kind":"exact"}},{"name":"p3","contract":{"kind":"set"}}]}
+            answer: 'p1 = {sqrt(2)/2}; p2 = pi/2; p3 = {1, 2, 3}'
+            solution_sketch: 'In (a), the sine and the cosine of the angle are equal, so the angle is $\pi/4$ and $x=\sqrt2/2$. In (b), the sum is $\pi/6+\pi/3=\pi/2$. In (c), the argument must be in $[-1,1]$. So $1\le a\le3$.'
+        constraints: 'arcsin, arccos and arctan of table values; short equations with one arc function'
+    diagnostic_exemplar:
+      problem: 'Compute $\sin45^\circ$.'
+      answer_contract: {"kind":"exact"}
+      answer: 'sqrt(2)/2'
+      solution_sketch: 'This is a table value: $\sin45^\circ=\sqrt2/2$.'
