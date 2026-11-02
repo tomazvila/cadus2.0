@@ -22,8 +22,14 @@ export async function loadPlannedTask<T>(
         || (error.status === 409 && error.code === 'session_rolled_over'))) throw error;
 
     const plan = await api.getPlan();
-    // An inconsistent response stays retryable without an automatic request loop.
-    if (plan.tasks.some((task) => task.task_id === taskId && !task.progress.done)) throw error;
-    return { kind: 'replanned', plan };
+    const refused = plan.tasks.find((task) => task.task_id === taskId && !task.progress.done);
+    if (!refused) return { kind: 'replanned', plan };
+    // The plan still lists the refused task as open. The server may have served another task
+    // of a mixed review block and refused that one (D-F11). Serve the next open task and move
+    // the refused task to the end, so no request loop starts. The toast stays only when the
+    // plan holds no other open task.
+    const others = plan.tasks.filter((task) => task.task_id !== taskId);
+    if (!others.some((task) => !task.progress.done)) throw error;
+    return { kind: 'replanned', plan: { ...plan, tasks: [...others, refused] } };
   }
 }

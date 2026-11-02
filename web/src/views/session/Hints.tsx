@@ -66,3 +66,23 @@ export function HintButton({ hidden, locked, onClick }: {
     </button>
   );
 }
+
+/**
+ * D-L5: the plain way to give up a problem. One press records a miss and shows the solution.
+ *
+ * A lesson problem and a review problem carry it. The re-solve after a helped answer does not
+ * (`hidden`): it is the unaided second try of the same problem.
+ */
+export function GiveUpButton({ taskType, hidden, locked, onClick }: {
+  taskType: string;
+  hidden: boolean;
+  locked: boolean;
+  onClick: () => void;
+}) {
+  if (hidden || (taskType !== 'lesson' && taskType !== 'review')) return null;
+  return (
+    <button type="button" className="btn btn-ghost" disabled={locked} onClick={onClick}>
+      I don&apos;t know. Show the solution.
+    </button>
+  );
+}

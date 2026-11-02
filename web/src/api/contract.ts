@@ -12,7 +12,9 @@ import type {
   ProofSeenResponse,
   ProofsResponse,
 } from './types-study';
-import type { ProblemReportReceipt, ProblemReportSubmission } from './types-report';
+import type {
+  AdminReportsResponse, MyReportsResponse, ProblemReportReceipt, ProblemReportSubmission,
+} from './types-report';
 import type {
   EnrollResponse,
   GraphResponse,
@@ -124,6 +126,8 @@ export interface ApiClient {
   getPlan(): Promise<SessionPlanResponse>;
   taskReport(taskId: string, body: ProblemReportSubmission, signal?: AbortSignal): Promise<ProblemReportReceipt>;
   getProblemReport(reportId: string, signal?: AbortSignal): Promise<ProblemReportReceipt>;
+  /** The own reports of the learner, newest first, at most 50. */
+  listMyReports(signal?: AbortSignal): Promise<MyReportsResponse>;
   taskServe(taskId: string): Promise<ServedProblem>;
   taskQuizResult(taskId: string, practice?: boolean): Promise<QuizResultResponse>;
   /** `set` names the exam set when `scope` is `paper`; `length` is then ignored. */
@@ -134,7 +138,7 @@ export interface ApiClient {
   taskHint(taskId: string, problemId: string): Promise<HintResponse>;
   taskAnswer(
     taskId: string,
-    body: { problem_id: string; answer: string; work?: string; assisted?: boolean },
+    body: { problem_id: string; answer: string; work?: string; assisted?: boolean; gave_up?: boolean },
   ): Promise<TaskAnswerResponse>;
 
   // The integrated task of D-F10. The serve carries no answer, the hint carries one rung,
@@ -197,6 +201,12 @@ export interface ApiClient {
 
   // The recovery path of the third outcome (D-F2). Admin only, like the four above.
   listUngraded(): Promise<UngradedListResponse>;
+  /** The learner reports the owner reads: `unresolved` (the default) or `all`. Read only. */
+  listAdminReports(status?: 'unresolved' | 'all'): Promise<AdminReportsResponse>;
+  /** The owner keeps a flagged question: the learner gets it back. */
+  keepReportQuestion(reportId: string): Promise<{ report_id: string; status: string }>;
+  /** The owner retires a flagged question: no learner gets it again. */
+  retireReportQuestion(reportId: string): Promise<{ report_id: string; status: string }>;
   listOverturns(): Promise<OverturnsResponse>;
   regradeUngraded(attemptId: string, outcome: 'correct' | 'incorrect'): Promise<RegradeResponse>;
 }
@@ -260,6 +270,7 @@ export const ROUTES: readonly RouteRow[] = [
   { method: 'POST', path: '/api/task/{task_id}/hint', auth: 'S', via: 'method', client: 'taskHint' },
   { method: 'POST', path: '/api/task/{task_id}/answer', auth: 'S', via: 'method', client: 'taskAnswer' },
   { method: 'POST', path: '/api/task/{task_id}/report', auth: 'S', via: 'method', client: 'taskReport' },
+  { method: 'GET', path: '/api/reports', auth: 'S', via: 'method', client: 'listMyReports' },
   { method: 'GET', path: '/api/reports/{report_id}', auth: 'S', via: 'method', client: 'getProblemReport' },
   { method: 'POST', path: '/api/task/{task_id}/integrated', auth: 'S', via: 'method', client: 'taskIntegrated' },
   { method: 'POST', path: '/api/task/{task_id}/integrated/hint', auth: 'S', via: 'method', client: 'taskIntegratedHint' },
@@ -313,6 +324,9 @@ export const ROUTES: readonly RouteRow[] = [
 
   // f4-outcome: the recovery path of the third outcome (D-F2). Admin only.
   { method: 'GET', path: '/api/admin/ungraded', auth: 'S', via: 'method', client: 'listUngraded' },
+  { method: 'GET', path: '/api/admin/reports', auth: 'S', via: 'method', client: 'listAdminReports' },
+  { method: 'POST', path: '/api/admin/reports/{id}/keep', auth: 'S', via: 'method', client: 'keepReportQuestion' },
+  { method: 'POST', path: '/api/admin/reports/{id}/retire', auth: 'S', via: 'method', client: 'retireReportQuestion' },
   { method: 'GET', path: '/api/admin/equivalence/overturns', auth: 'S', via: 'method', client: 'listOverturns' },
   { method: 'POST', path: '/api/admin/ungraded/{attempt_id}/regrade', auth: 'S', via: 'method', client: 'regradeUngraded' },
 ];

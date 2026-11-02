@@ -34,6 +34,7 @@ mod eligible;
 mod frontier;
 mod gap_fill;
 mod interleave;
+mod lapse;
 mod mixed_review;
 mod multistep;
 mod plan;
@@ -57,6 +58,9 @@ pub use gap_fill::{
     resolve_gap_fill_stack, serveable_gap_frontier,
 };
 pub use interleave::{SlotKind, assign_ids, interleave};
+pub use lapse::{
+    LAPSE_BREAK_DAYS, LAPSE_OVERDUE_INTERVALS, LAPSE_SITTING_TOPICS, break_days, is_lapse_sitting,
+};
 pub use mixed_review::{
     ReviewSlot, joins_mixed_review, mixed_review_block, mixed_review_order, next_mixed_review,
 };

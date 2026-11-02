@@ -50,6 +50,8 @@ import { Session } from '@/views/session/Session';
 import { CurriculumMap } from '@/views/map/Map';
 import { TopicRead } from '@/views/read/TopicRead';
 import { ProofsScreen } from '@/views/proofs/Proofs';
+import { MyReportsScreen } from '@/views/reports/MyReports';
+import { OpenReportsContext } from './reportsLink';
 import { OperatorScreen } from '@/views/admin/Ops';
 import { ReviewScreen } from '@/views/admin/Review';
 import { resolveDiag } from '@/api/diag';
@@ -69,6 +71,7 @@ export type View =
   | { name: 'quiz'; task: PlanTask; fromSession: boolean; round?: QuizRound | undefined; resumed?: boolean }
   | { name: 'diagnostic' }
   | { name: 'proofs' }
+  | { name: 'reports'; back: View }
   | { name: 'map'; back: View; picked?: string }
   | { name: 'read'; topic: string; back: View };
 
@@ -249,6 +252,12 @@ export function Root({
     goHome();
   }
 
+  /** Open the list of the own reports over the screen on. */
+  function openReports(): void {
+    navigate(HOME_PATH);
+    setView((from) => (from.name === 'reports' ? from : { name: 'reports', back: from.name === 'map' ? HOME : from }));
+  }
+
   const route = adminRouteFor(path);
   const screen = adminOr(route, view);
 
@@ -275,18 +284,25 @@ export function Root({
         navigate(HOME_PATH);
         setView((from) => (from.name === 'map' ? from : { name: 'map', back: from }));
       }}
+      onReports={openReports}
       onLogout={() => void logout()}
     >
       {user ? (
-        <Screen
-          api={api}
-          route={route}
-          view={view}
-          placement={placement}
-          onUnauthorized={onUnauthorized}
-          goHome={goHome}
-          setView={setView}
-        />
+        <OpenReportsContext.Provider value={openReports}>
+          <Screen
+            api={api}
+            route={route}
+            view={view}
+            placement={placement}
+            onUnauthorized={onUnauthorized}
+            goHome={goHome}
+            setView={setView}
+            onOpenTopic={(topic) => {
+              navigate(HOME_PATH);
+              setView({ name: 'read', topic, back: HOME });
+            }}
+          />
+        </OpenReportsContext.Provider>
       ) : (
         <Auth api={api} mode={authMode} token={resetToken} onSignedIn={setUser} />
       )}
@@ -303,6 +319,8 @@ interface ScreenProps {
   onUnauthorized: () => void;
   goHome: () => void;
   setView: Dispatch<SetStateAction<View>>;
+  /** Leaves an operator path and opens one topic in the reading view. */
+  onOpenTopic: (topic: string) => void;
 }
 
 /**
@@ -312,12 +330,14 @@ interface ScreenProps {
  * it came from: the session is still open behind it and its remaining tasks are re-served,
  * while a quiz opened from the dashboard has none.
  */
-function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }: ScreenProps) {
+function Screen({ api, route, view, placement, onUnauthorized, goHome, setView, onOpenTopic }: ScreenProps) {
   const common = { api, demo: api.demo, onUnauthorized };
   const openDiagnostic = () => { setView({ name: 'diagnostic' }); };
 
   if (route === 'ops') return <OperatorScreen {...common} />;
-  if (route === 'review') return <ReviewScreen {...common} />;
+  if (route === 'review') {
+    return <ReviewScreen {...common} onOpenTopic={onOpenTopic} />;
+  }
 
   switch (view.name) {
     case 'session':
@@ -364,6 +384,8 @@ function Screen({ api, route, view, placement, onUnauthorized, goHome, setView }
       );
     case 'proofs':
       return <ProofsScreen {...common} onExit={goHome} />;
+    case 'reports':
+      return <MyReportsScreen {...common} onExit={() => { setView(view.back); }} />;
     default:
       return (
         <Dashboard
@@ -394,6 +416,7 @@ const TITLES: Record<string, string> = {
   quiz: 'Quiz',
   diagnostic: 'Starting questions',
   proofs: 'Your proofs',
+  reports: 'My reports',
   read: 'Lesson text',
   ops: 'Operator',
   review: 'Review',

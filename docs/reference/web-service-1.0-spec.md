@@ -67,6 +67,33 @@ Auth column: **S** = session required, **P** = public.
 
 **New in 2.0:** `GET /api/diagnosis/{diagnosis_id}` and `GET /api/diagnosis/stream`.
 
+**Report lists (D-RP2).** `GET /api/reports` (S) answers `{reports[]}`: the own reports of the
+learner, newest first, at most 50. A row holds `report_id`, `task_id`, `problem_id`, `topic`,
+`question`, `note`, `status`, `stage`, `outcome`, `grade_corrected`, `details_hidden`,
+`created_at` and `updated_at`. When the details are visible, a row also holds `explanation` and
+`corrected_answer`. `outcome` is `regraded`, `no_issue_found`, `confirmed_issue`, `needs_review`
+or `failed`, and it is null while the check runs. `GET /api/admin/reports?status=unresolved|all`
+(S, admin only) answers `{reports[]}` for every learner, newest first, at most 200. A row holds
+`user_id`, `task_id`, `topic`, `kp`, `question`, `note`, `status`, `attempt`, `result_message`
+and `last_step{stage, message}`. The default `status` is `unresolved`. Statuses: 401, 403, 422
+for an unknown `status`, 503 `admin_path_unavailable` when the deployment has no admin
+connection. Both routes are read only.
+A report body may carry `concern: "question_unclear"`. The server then writes a `question_flags`
+row (status `waiting_owner`), answers `{report_id, status: "waiting_owner", set_aside: true}`,
+starts no model review, and the serve path skips the question for that learner. Only `attempt`
+and `served` reports can be flagged (else 422). `POST /api/admin/reports/{id}/keep` ends the
+set-aside. `POST /api/admin/reports/{id}/retire` writes `retired_items`, so no learner gets the
+question again. Both answer 404 when no flag waits under the id. Rows of the lists carry `kind`
+(`check` or `question_unclear`); a decided flag shows `kept` or `retired`.
+
+**Retention probe with no unseen item (D-F11, D-F11b).** A serve or an answer in a mixed review
+block can pick a retention probe whose draw finds no unseen item. The server sets that probe aside
+in the scratch state. It writes no event. The answer route then hands on to another open review of
+the block, or to the answered review when it is still open, so `next` carries a problem. The serve
+route picks again inside the block. `409 task_complete` names only the task the client asked for.
+If the plan still lists the refused task as open after this status, the client serves the next open
+task of the plan. It shows the retry toast only when the plan has no other open task.
+
 ### 2.1 The grade response changes (A3 + A4)
 
 1.0 returns `{correct, feedback, work_quality, task_status, remediation, next, solution?, xp?,
@@ -98,6 +125,24 @@ returns the whole verdict from local CPU and hands the prose off:
 
 A `continue` reply can carry `remediation` of kind `in_sitting_prereq` after two consecutive misses on
 one knowledge point of an open lesson. The targets are the key prerequisites of that point (D-L4).
+
+D-L5 applies the same rules to a review, and adds four fields and rules to the answer route:
+
+- **`non_answer`.** A typed answer with no digit and no math symbol, on an item whose contract is a
+  number or an expression, and that the checker cannot read, is a decided miss with the error tag
+  `non_answer`. The reply carries the line `That is not a number.` (or `That is not an expression.`)
+  in `notation`, and the solution. An empty answer keeps the tag `blank-answer`. An answer with a
+  digit or a symbol that the checker cannot read stays ungraded, and its `reason` says what to type.
+- **`gave_up`.** The request body may carry `"gave_up": true` on a lesson task or a review task. The
+  answer text is ignored. The attempt is a decided miss with the error tag `gave_up`. No equivalence
+  check and no diagnosis follow.
+- **`teach_first`.** On the second miss in a row at one knowledge point, the reply carries
+  `"teach_first": {"topic": "<id>", "kp": "<id>"}`. The client reads `GET /api/topics/{topic}/teach`
+  (D-TR1) and shows the page of that point before it goes on. It applies to a lesson and a review.
+- **Review rules.** `lesson.fail_after` counts the misses of one knowledge point on a review. The
+  second miss in a row appends the `in_sitting_prereq` remediation. A corrective loop that holds three
+  misses in a row (the first miss and two failed fresh items) ends: the reply status is `task_failed`,
+  a `review_result` with `passed: false` is written, and the task is done.
 
 `diagnosis` rules: **`not_offered`** — correct, blank, or an undecidable kind with no template
 diagnosis; no job row is written. **`ready`** — the prose stands now, from one of three sources. A
@@ -375,6 +420,10 @@ carries no tag except `notation`, a claim about form, not mathematics.
 **not** in `ERROR_TAGS` and is the only underscore-spelled tag. It bypasses `coerce_error_tags`
 and reaches the append-only log. 2.0 must either add `blank-answer` to the vocabulary or drop the
 tag; it must not ship the 1.0 inconsistency.
+
+D-L5 adds two tags that the server writes. `non_answer` marks a typed word where a number or an
+expression belongs. `gave_up` marks the choice "I don't know. Show the solution." Both are decided
+misses and count like any other miss.
 
 ### 5.4 The H3 re-solve rule
 

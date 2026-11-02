@@ -111,6 +111,18 @@ describe('stale session plan recovery', () => {
     expect(screen.queryByLabelText('Answer')).toBeNull();
   });
 
+  it('serves the next open task when a 409 task_complete leaves the asked task open in the plan', async () => {
+    const getPlan = vi.fn<ApiClient['getPlan']>().mockResolvedValue(planOf(stale, replacement));
+    const taskServe = vi.fn<ApiClient['taskServe']>()
+      .mockRejectedValueOnce(new ApiError(409, 'task_complete'))
+      .mockResolvedValue(P(1, { problem_id: 'fresh', text: 'Fresh question' }));
+    await mount({ plan: planOf(stale), api: stubApi({ getPlan, taskServe }) });
+    expect(getPlan).toHaveBeenCalledTimes(1);
+    expect(taskServe.mock.calls.map(([id]) => id)).toEqual(['t-stale', 't-current']);
+    expect(screen.getByText('Fresh question')).toBeTruthy();
+    expect(toasts()).toHaveLength(0);
+  });
+
   it('does not serve from a recovered plan after leaving the screen', async () => {
     const pending = held<SessionPlanResponse>();
     const taskServe = vi.fn<ApiClient['taskServe']>().mockRejectedValue(new ApiError(404, 'unknown_task'));

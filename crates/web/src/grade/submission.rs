@@ -14,6 +14,8 @@ pub(super) struct Submission {
     pub(super) work: Option<String>,
     /// Whether the client flags the attempt reference-assisted (H3).
     pub(super) assisted: bool,
+    /// Whether the learner chose "I don't know. Show the solution." (D-L5).
+    pub(super) gave_up: bool,
 }
 
 /// Read the body, or the `422`/`413` that refuses it.
@@ -51,6 +53,7 @@ pub(super) fn submission(body: Option<&Value>) -> Result<Submission, ApiError> {
         answer,
         work,
         assisted: field("assisted").and_then(Value::as_bool).unwrap_or(false),
+        gave_up: field("gave_up").and_then(Value::as_bool).unwrap_or(false),
     })
 }
 
@@ -281,6 +284,7 @@ mod tests {
             answer: "14".to_string(),
             work: Some(String::new()),
             assisted: false,
+            gave_up: false,
         }
     }
 

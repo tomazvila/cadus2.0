@@ -228,7 +228,7 @@ mod tests {
             "courses:\n  - id: calculus-1\n    name: Calculus 1\n    order: 1\n",
         )
         .expect("the fixture catalog");
-        let topic = |id: &str, problems: &[&str]| {
+        let topic = |id: &str, problems: &[&str], needs: &str| {
             let exemplars: String = problems
                 .iter()
                 .map(|p| {
@@ -237,14 +237,24 @@ mod tests {
                     )
                 })
                 .collect();
+            let edge = if needs.is_empty() {
+                "[]".to_owned()
+            } else {
+                format!("[{{id: {needs}, weight: 0.5, key: true}}]")
+            };
+            let key = if needs.is_empty() {
+                "[]".to_owned()
+            } else {
+                format!("[{needs}]")
+            };
             format!(
-                "  - id: {id}\n    name: Topic {id}\n    core: true\n    difficulty: 0.45\n    drill: false\n    answer_kind: numeric\n    expected_time_secs: 90\n    prerequisites: []\n    knowledge_points:\n      - id: kp1\n        name: Point\n        key_prerequisites: []\n        exemplars:\n{exemplars}        constraints: \"c\"\n"
+                "  - id: {id}\n    name: Topic {id}\n    core: true\n    difficulty: 0.45\n    drill: false\n    answer_kind: numeric\n    expected_time_secs: 90\n    prerequisites: {edge}\n    knowledge_points:\n      - id: kp1\n        name: Point\n        key_prerequisites: {key}\n        exemplars:\n{exemplars}        constraints: \"c\"\n"
             )
         };
         let body = format!(
             "unit: variety\ncourse: calculus-1\nmodule: \"M\"\ntopics:\n{}{}",
-            topic("solo", &["Add 1 and 1."]),
-            topic("pair", &["Add 2 and 2.", "Add 3 and 3."]),
+            topic("solo", &["Add 1 and 1."], ""),
+            topic("pair", &["Add 2 and 2.", "Add 3 and 3."], "solo"),
         );
         std::fs::write(course.join("00-unit.yaml"), body).expect("the fixture file");
         let (graph, _findings) =
@@ -388,5 +398,143 @@ mod tests {
             3
         );
         assert_eq!(servable_items(&graph, Some("missing"), &[]), 0);
+    }
+
+    // ---- D-L5: the lesson rules on a review, and the exit of the loop --------
+
+    /// The rows of earlier answers (digest, correct, in the corrective loop).
+    fn rows(answers: &[(&str, bool, bool)]) -> Vec<EventRow> {
+        answers
+            .iter()
+            .enumerate()
+            .map(|(n, (digest, ok, practice))| {
+                let mut body = attempt(n, Some(digest), *ok, &format!("text {digest}"));
+                body.feedback_practice = *practice;
+                EventRow {
+                    seq: i64::try_from(n).expect("a small index") + 1,
+                    event: Event::Attempt(body),
+                }
+            })
+            .collect()
+    }
+
+    /// Run the review rules for the answer after `earlier`.
+    fn rules(earlier: &[(&str, bool, bool)], now: (&str, bool, bool)) -> (Advance, Option<Value>) {
+        let t = task("pair", &[], 4);
+        let prior = rows(earlier);
+        let mut current = attempt(
+            earlier.len(),
+            Some(now.0),
+            now.1,
+            &format!("text {}", now.0),
+        );
+        current.feedback_practice = now.2;
+        let graph = graph();
+        let cfg = Config::default();
+        let closed = close_review(&t, &current, &prior, &cfg, &graph);
+        let moved = review_rules(&t, &current, &prior, &cfg, &graph, closed);
+        let teach = teach_first(&t, &current, &prior, &moved);
+        (moved, teach)
+    }
+
+    /// Rule 2: two misses in a row on a review give the in-sitting prerequisite
+    /// step. The same pair gives the teach page of the point (rule 3).
+    #[test]
+    fn two_misses_in_a_row_on_a_review_queue_the_prerequisite_and_the_teach_page() {
+        let (first, teach) = rules(&[], ("a", false, false));
+        assert!(first.remediation.is_empty() && teach.is_none());
+        let (second, teach) = rules(&[("a", false, false)], ("b", false, true));
+        assert_eq!(second.status, STATUS_CONTINUE);
+        assert_eq!(second.remediation.len(), 1);
+        assert_eq!(second.remediation[0].kind, REMEDIATION_IN_SITTING_PREREQ);
+        assert_eq!(
+            second.remediation[0].targets,
+            vec![Slug::new("solo").expect("a slug")]
+        );
+        let page = teach.expect("the second miss owes the teach page");
+        assert_eq!(page["topic"], "pair");
+        assert_eq!(page["kp"], "kp1");
+    }
+
+    /// The pair fires once: a third miss in a row queues nothing more.
+    #[test]
+    fn the_second_miss_fires_once() {
+        let (third, teach) = rules(
+            &[("a", false, false), ("b", false, true)],
+            ("c", false, true),
+        );
+        assert!(third.remediation.is_empty());
+        assert!(teach.is_none());
+    }
+
+    /// Rule 4: a corrective loop ends after two failed fresh items. The review
+    /// result stands with `passed: false` and the task closes.
+    #[test]
+    fn two_failed_fresh_items_close_the_loop_with_a_failed_result() {
+        let (moved, teach) = rules(
+            &[("a", false, false), ("b", false, true)],
+            ("c", false, true),
+        );
+        assert!(teach.is_none());
+        // The loop limit is three misses in a row: the first miss and two fresh items.
+        assert_eq!(moved.status, STATUS_TASK_FAILED);
+        let result = body(&moved);
+        assert!(!result.passed && !result.inconclusive);
+        assert_eq!(result.task_id.as_deref(), Some("t-review"));
+        assert!(moved.remediation.is_empty());
+    }
+
+    /// An unassisted right answer ends the run, and a right fresh item keeps the
+    /// loop open.
+    #[test]
+    fn a_right_answer_ends_the_run_of_misses() {
+        let (moved, _) = rules(
+            &[("a", false, false), ("b", true, true)],
+            ("c", false, false),
+        );
+        assert_ne!(moved.status, STATUS_TASK_FAILED);
+        assert!(moved.result.is_none());
+        assert_eq!(
+            trailing_misses(
+                &rows(&[("a", false, false), ("b", true, false)]),
+                &attempt(2, Some("c"), false, "text c")
+            ),
+            1
+        );
+    }
+
+    /// Rule 2: `fail_after` counts the misses of one point on a review.
+    #[test]
+    fn misses_reach_fail_after_on_a_review() {
+        let cfg = Config::default();
+        let fail_after = usize::try_from(cfg.lesson.fail_after).expect("a small count");
+        // `fail_after - 1` misses stand, each apart from the next by a right answer.
+        let mut padded: Vec<(&str, bool, bool)> = Vec::new();
+        for n in 0..fail_after - 1 {
+            padded.push(("x", false, false));
+            if n + 1 < fail_after - 1 {
+                padded.push(("y", true, false));
+            }
+        }
+        let (moved, _) = rules(&padded, ("z", false, false));
+        assert_eq!(moved.status, STATUS_TASK_FAILED);
+        assert!(!body(&moved).passed);
+    }
+
+    /// A lesson and a review read the same sequence, and an ungraded answer
+    /// stays out of it.
+    #[test]
+    fn an_ungraded_answer_is_not_a_miss_in_the_sequence() {
+        let mut quiet = attempt(0, Some("a"), false, "text a");
+        quiet.outcome = AttemptOutcome::Ungraded {
+            reason: "no verdict".to_owned(),
+        };
+        let prior = vec![EventRow {
+            seq: 1,
+            event: Event::Attempt(quiet),
+        }];
+        let current = attempt(1, Some("b"), false, "text b");
+        assert_eq!(trailing_misses(&prior, &current), 1);
+        assert_eq!(kp_sequence(&prior, &current, Some("kp1")), vec![false]);
     }
 }

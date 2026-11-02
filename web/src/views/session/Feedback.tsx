@@ -194,6 +194,8 @@ function EnterNote() {
 /** The label of the forward button. A corrected attempt always reads "Continue". */
 function continueLabel(res: AnswerResponse, hasNext: boolean): string {
   if (res.equivalence?.status === 'accepted') return 'Continue →';
+  // D-L5: after two misses in a row the next screen is the lesson page of the point.
+  if (res.teach_first) return 'Read the lesson page →';
   if (res.feedback_blocked) return 'Get a fresh problem →';
   if (res.feedback_practice) return 'Try a fresh problem →';
   return hasNext ? 'Next problem →' : 'Continue →';

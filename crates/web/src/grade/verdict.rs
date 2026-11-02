@@ -22,7 +22,123 @@ use super::*;
 /// it. It is never a model verdict and never a pass.
 #[must_use]
 pub fn deterministic_grade(expected: &str, answer: &str, kind: AnswerKind) -> Grade {
-    grade_outcome(expected, answer, check(expected, answer, kind))
+    let outcome = check(expected, answer, kind);
+    if is_non_answer(&outcome, answer, kind_noun(kind)) {
+        return non_answer_grade();
+    }
+    grade_outcome(expected, answer, outcome)
+}
+
+/// What a number-or-expression answer is called in the learner line.
+const NUMBER: &str = "number";
+
+/// What an expression answer is called in the learner line.
+const EXPRESSION: &str = "expression";
+
+/// Whether `text` has no digit and no math symbol (D-L5).
+///
+/// A word such as `idk` or `no clue` has neither. The text must not be blank:
+/// a blank answer has its own grade.
+fn carries_no_math(text: &str) -> bool {
+    let text = text.trim();
+    !text.is_empty()
+        && !text.chars().any(|c| {
+            c.is_ascii_digit()
+                || "+-*/^=<>()[]{}|%!:\u{2212}\u{d7}\u{f7}\u{b7}\u{3c0}\u{221a}\u{221e}\u{b0}"
+                    .contains(c)
+        })
+}
+
+/// The learner noun of the answer kind, when the kind is a number or an expression.
+const fn kind_noun(kind: AnswerKind) -> Option<&'static str> {
+    match kind {
+        AnswerKind::Numeric => Some(NUMBER),
+        AnswerKind::Expression => Some(EXPRESSION),
+        AnswerKind::MultiStep | AnswerKind::Proof => None,
+    }
+}
+
+/// The learner noun of an answer contract, or `None` for a contract that is
+/// neither a number nor an expression (a choice, a set, a matrix, a sentence).
+fn contract_noun(
+    contract: &cadus_core::answer::AnswerContract,
+    kind: AnswerKind,
+) -> Option<&'static str> {
+    use cadus_core::answer::AnswerContract as C;
+    match contract {
+        C::Exact
+        | C::RequiredAssignment
+        | C::Approx { .. }
+        | C::Tolerance { .. }
+        | C::Unit { .. }
+        | C::QuotientRemainder { .. }
+        | C::RequiredForm { .. }
+        | C::RequiredSinglePower
+        | C::RequiredNormalizedScientificNotation
+        | C::RequiredSimplestRadical => kind_noun(kind).or(Some(NUMBER)),
+        C::Function { .. }
+        | C::FunctionForm { .. }
+        | C::PolynomialDivision { .. }
+        | C::PolynomialRelation
+        | C::MonicPolynomialRelation
+        | C::RelationSetup => Some(EXPRESSION),
+        _ => None,
+    }
+}
+
+/// The learner noun of one expected answer: the contract decides, and an item
+/// with no contract falls back to its kind.
+fn expected_noun(
+    expected: &cadus_core::pool::PoolAnswer,
+    kind: AnswerKind,
+) -> Option<&'static str> {
+    match expected.answer_contract.as_ref() {
+        None => kind_noun(kind),
+        Some(contract) => contract_noun(contract, kind),
+    }
+}
+
+/// Whether an answer is a D-L5 non-answer: a number or expression item, text with
+/// no digit and no math symbol, and a checker that cannot read it.
+fn is_non_answer(outcome: &Outcome, answer: &str, noun: Option<&str>) -> bool {
+    noun.is_some() && matches!(outcome, Outcome::Undecidable(_)) && carries_no_math(answer)
+}
+
+/// The decided miss of a non-answer (D-L5). It counts like any other miss.
+fn non_answer_grade() -> Grade {
+    Grade {
+        correct: false,
+        outcome: AttemptOutcome::Incorrect,
+        work_quality: WorkQuality::NearlyPassable,
+        error_tags: vec![TAG_NON_ANSWER.to_string()],
+    }
+}
+
+/// The decided miss of a learner who chose to see the solution (D-L5).
+///
+/// The tier is `nearly_passable`, as for any decided miss.
+#[must_use]
+pub fn gave_up_grade() -> Grade {
+    Grade {
+        correct: false,
+        outcome: AttemptOutcome::Incorrect,
+        work_quality: WorkQuality::NearlyPassable,
+        error_tags: vec![TAG_GAVE_UP.to_string()],
+    }
+}
+
+/// The line the reply shows beside the solution of a non-answer, or `None`.
+fn non_answer_line(
+    expected: &cadus_core::pool::PoolAnswer,
+    grade: &Grade,
+    kind: AnswerKind,
+) -> Option<String> {
+    if !grade.error_tags.iter().any(|tag| tag == TAG_NON_ANSWER) {
+        return None;
+    }
+    let noun = expected_noun(expected, kind).unwrap_or(NUMBER);
+    let article = if noun == EXPRESSION { "an" } else { "a" };
+    Some(format!("That is not {article} {noun}."))
 }
 
 /// Grade the policy captured in the served item (D-F1, C2).
@@ -43,6 +159,7 @@ pub fn grade_item(
         None => return deterministic_grade(&expected.answer, answer, kind),
         Some(contract) => contract,
     };
+    let noun = contract_noun(&contract, kind);
     let quantity_answer = matches!(&contract, cadus_core::answer::AnswerContract::Unit { .. });
     let relabelled = super::answer_format::part_labels(&contract, answer);
     let mut outcome =
@@ -57,10 +174,14 @@ pub fn grade_item(
             outcome = second;
         }
     }
+    // D-L5: a typed word where a number or an expression belongs is a decided
+    // miss. It is not an ungraded answer: the checker is not unsure, the
+    // learner did not answer.
+    if is_non_answer(&outcome, answer, noun) {
+        return non_answer_grade();
+    }
     if quantity_answer && matches!(&outcome, Outcome::Undecidable(_)) {
-        return ungraded_grade(
-            "I could not interpret this quantity reliably. This answer is ungraded.",
-        );
+        return ungraded_grade(&quantity_guidance(&expected.answer));
     }
     grade_outcome(&expected.answer, answer, outcome)
 }
@@ -77,6 +198,9 @@ pub fn notation_text(
     kind: AnswerKind,
     grade: &Grade,
 ) -> Option<String> {
+    if let Some(line) = non_answer_line(expected, grade, kind) {
+        return Some(line);
+    }
     if grade.error_tags.iter().any(|tag| tag == TAG_NOTATION) {
         return cadus_core::answer::check::notation_note(&expected.answer, answer, kind);
     }
@@ -147,11 +271,10 @@ fn grade_outcome(expected: &str, answer: &str, outcome: Outcome) -> Grade {
 fn format_guidance(expected: &str, answer: &str, reason: &str) -> String {
     match reason {
         "a unit is missing" => missing_unit_guidance(expected),
-        "a name that is not a function or variable" => {
-            "I could not read a word in that answer. Enter just the number or expression \
-             \u{2014} remove any words, such as 'units'."
-                .to_string()
-        }
+        "a name that is not a function or variable" => format!(
+            "This answer is not marked. {} Remove any words, such as 'units'.",
+            type_example(expected)
+        ),
         "a unit on the learner side only" => {
             "The expected answer here is a bare number, so enter the value alone, without a unit."
                 .to_string()
@@ -322,6 +445,23 @@ fn bucket_guidance(expected: &str, reason: &str) -> String {
             .to_string();
     }
     unreadable_guidance(expected)
+}
+
+/// The line that tells the learner what to type (D-L5).
+///
+/// An authored number asks for a number, and anything else asks for an expression.
+/// The examples never carry the authored value (Hard Rule 1).
+fn type_example(expected: &str) -> &'static str {
+    match canonical_form(expected) {
+        Ok(Canon::Rational(_)) => "Type a number, for example 12 or 3/4.",
+        _ => "Type an expression, for example 3x + 1.",
+    }
+}
+
+/// The copy of a measured answer that the checker could not read (D-L5).
+fn quantity_guidance(expected: &str) -> String {
+    let example = expected_unit(expected).map_or_else(|| "12 cm".to_owned(), unit_example);
+    format!("This answer is not marked. Type a number and its unit, for example {example}.")
 }
 
 /// The guidance of an answer the grammar could not read at all.

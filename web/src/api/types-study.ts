@@ -479,6 +479,11 @@ export interface AnswerContractHint {
 export interface AnswerResponse {
   /** The notation hint text of a wrong-form answer, when the grader sends one. */
   notation?: string | boolean;
+  /**
+   * D-L5: the second miss in a row. The learner reads the approved lesson text of this topic
+   * (`GET /api/topics/{topic}/teach`) before the next problem. `kp` names the point missed.
+   */
+  teach_first?: { topic: string; kp: string | null };
   /** Set after the report service confirms a committed grade correction. */
   report_corrected?: boolean;
   /** The next question confirms independent work after feedback. */

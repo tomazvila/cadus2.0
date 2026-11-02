@@ -1087,6 +1087,30 @@ reads `x = 4, x = -4`; two signs keep the plain reading. A learner side is an or
 when one parenthesis or bracket pair encloses all of it, so `(3-√5)/2, (3+√5)/2` is a bare list
 in any order. Tests: `crates/core/tests/answer_list_multiset.rs`.
 
+### 8.8 Precedence of products and quotients (2026-11-02, D-IM1)
+
+The parser reads a product and a quotient with this order. Implied multiplication
+(`2x`, `lh`, `2(x+1)`) binds tighter than `/`. An explicit `*` and an explicit `/`
+have the same level and read from left to right. `^` binds tighter than all of them.
+
+| Source | Reading |
+|---|---|
+| `V/lh`, `a/bc` | `V/(l*h)`, `a/(b*c)` |
+| `1/2x` | `1/(2*x)` |
+| `6/2(1+2)` | `6/(2*(1+2))` |
+| `x/2y^2` | `x/(2*(y^2))` |
+| `a/b*c` | `(a/b)*c` |
+| `a/b/c` | `(a/b)/c` |
+| `2x/3y` | `(2*x)/(3*y)` |
+
+The divisor takes every factor that is glued to it. A factor after a space never joins,
+whatever the divisor is: `1/2 x`, `a/b c`, and `1/sqrt(2) atan(x)` are a quotient times
+a coefficient. A mixed number
+(`x/2 1/2`), a spaced times-sign `x`, and a number that reads as a label stay refused
+or unchanged, as in section 8.4. Reason: the textbook convention for inline fractions
+and the compute engine of the editor read `a/bc` as `a/(bc)`. Tests:
+`crates/core/tests/answer_divisor_juxtaposition.rs`.
+
 ---
 
 ## 9. A proposed fuzz oracle (V3)

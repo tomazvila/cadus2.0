@@ -37,8 +37,8 @@ impl Parser<'_> {
                     continue;
                 }
                 if parser.eat(&Tok::Slash) {
-                    let divisor = parser.parse_unary()?;
                     let dividend = collapse(std::mem::take(&mut factors), Ast::Mul);
+                    let divisor = parser.parse_divisor()?;
                     factors.push(make_quotient(dividend, divisor)?);
                     continue;
                 }
@@ -65,6 +65,49 @@ impl Parser<'_> {
             }
             Ok(collapse(factors, Ast::Mul))
         })
+    }
+
+    /// Parse the divisor after a `/`: one factor and the factors glued to it.
+    ///
+    /// Implied multiplication binds tighter than division, so `a/bc` is
+    /// `a/(b*c)`, `1/2x` is `1/(2*x)`, and `6/2(1+2)` is `6/(2*3)`. An explicit
+    /// `*` or `/` ends the divisor: `a/b*c` is `(a/b)*c`. A mixed number, a
+    /// times-sign `x`, and a unit stay with the product loop, which reads or
+    /// refuses them as before (2026-11-02, implicit multiplication binds
+    /// tighter than division).
+    ///
+    /// Only a factor glued to the divisor joins it. A factor after a space never
+    /// does: `1/2 x` and `1/sqrt(2) atan(x)` are a quotient times a coefficient.
+    fn parse_divisor(&mut self) -> Result<Ast, Undecidable> {
+        let mut factors = vec![self.parse_unary()?];
+        while self.starts_operand() && self.read_fraction_part().is_none() {
+            if self.times_letter_ahead(factors.last()) {
+                break;
+            }
+            let token = self.tokens.get(self.at);
+            if token.is_some_and(|token| token.space_before) {
+                break;
+            }
+            if let Some(token) = token
+                && let Tok::Num(text) = &token.kind
+                && self.continues_a_space_group(text)
+            {
+                return Err(Undecidable::new(
+                    "a space-grouped number stands after a factor",
+                ));
+            }
+            self.check_implicit_factor(&factors)?;
+            factors.push(self.parse_unary()?);
+        }
+        Ok(collapse(factors, Ast::Mul))
+    }
+
+    /// Whether the cursor stands on a times-sign `x` between two numbers.
+    fn times_letter_ahead(&mut self, previous: Option<&Ast>) -> bool {
+        let at = self.at;
+        let found = self.eat_times_letter(previous);
+        self.at = at;
+        found
     }
 
     /// Refuse the number at the cursor when it reads as a label, before an implicit factor.

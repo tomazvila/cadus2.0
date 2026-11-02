@@ -147,8 +147,8 @@ fn a_word_beside_the_value_teaches_the_format() {
         assert_eq!(
             grade.outcome.reason(),
             Some(
-                "I could not read a word in that answer. Enter just the number or expression \
-                 \u{2014} remove any words, such as 'units'."
+                "This answer is not marked. Type a number, for example 12 or 3/4. \
+                 Remove any words, such as 'units'."
             )
         );
     }
@@ -377,4 +377,118 @@ fn only_an_authoring_fault_says_the_problem_may_be_at_fault() {
         authored.contains("the problem itself may be at fault"),
         "{authored}"
     );
+}
+
+// ---------------------------------------------------------------------------
+// D-L5: a non-answer is a decided miss; a give-up is one too.
+// ---------------------------------------------------------------------------
+
+fn pool(answer: &str, contract: Option<AnswerContract>) -> PoolAnswer {
+    PoolAnswer {
+        answer_contract: contract,
+        v: cadus_core::pool::POOL_ROW_VERSION,
+        answer: answer.to_owned(),
+    }
+}
+
+/// Rule 1: words with no digit and no math symbol are a decided miss with the
+/// tag `non_answer`, and the reply line names the thing that was asked for.
+#[test]
+fn a_word_where_a_number_belongs_is_a_decided_miss() {
+    for text in ["idk", "no clue", "about thirteen and a half", "?"] {
+        let grade = deterministic_grade("13.5", text, AnswerKind::Numeric);
+        assert!(!grade.correct, "{text}");
+        assert_eq!(grade.outcome, AttemptOutcome::Incorrect, "{text}");
+        assert_eq!(grade.error_tags, vec![TAG_NON_ANSWER.to_owned()], "{text}");
+    }
+    let numeric = pool("13.5", Some(AnswerContract::Exact));
+    let grade = grade_item(&numeric, "idk", AnswerKind::Numeric);
+    assert_eq!(grade.outcome, AttemptOutcome::Incorrect);
+    assert_eq!(
+        notation_text(&numeric, "idk", AnswerKind::Numeric, &grade).as_deref(),
+        Some("That is not a number.")
+    );
+    let expression = pool(
+        "3x+1",
+        Some(AnswerContract::Function {
+            vars: vec!["x".to_owned()],
+            up_to_constant: false,
+            domain: std::collections::BTreeMap::new(),
+        }),
+    );
+    let grade = grade_item(&expression, "no idea", AnswerKind::Expression);
+    assert_eq!(grade.error_tags, vec![TAG_NON_ANSWER.to_owned()]);
+    assert_eq!(
+        notation_text(&expression, "no idea", AnswerKind::Expression, &grade).as_deref(),
+        Some("That is not an expression.")
+    );
+}
+
+/// A measured item gets the same decided miss.
+#[test]
+fn a_word_where_a_measurement_belongs_is_a_decided_miss() {
+    let quantity = pool(
+        "12 cm",
+        Some(AnswerContract::Unit {
+            quantity: cadus_core::answer::Quantity::Length,
+            unit: "cm".to_owned(),
+            allow_omitted: false,
+            form: None,
+        }),
+    );
+    let grade = grade_item(&quantity, "idk", AnswerKind::Numeric);
+    assert_eq!(grade.outcome, AttemptOutcome::Incorrect);
+    assert_eq!(grade.error_tags, vec![TAG_NON_ANSWER.to_owned()]);
+}
+
+/// A blank answer keeps its own grade. An answer with a digit or a symbol that
+/// the checker cannot read stays ungraded and says what to type. A right answer
+/// that is a bare name is still right.
+#[test]
+fn only_a_text_with_no_math_is_a_non_answer() {
+    let blank = deterministic_grade("13.5", "", AnswerKind::Numeric);
+    assert_eq!(blank.error_tags, vec![TAG_BLANK_ANSWER.to_owned()]);
+    let digits = deterministic_grade("6/5", "6/5 units long", AnswerKind::Numeric);
+    assert!(matches!(digits.outcome, AttemptOutcome::Ungraded { .. }));
+    let name = deterministic_grade("x", "x", AnswerKind::Expression);
+    assert!(name.correct);
+    let proof = deterministic_grade("p", "because", AnswerKind::Proof);
+    assert!(proof.error_tags.is_empty());
+}
+
+/// Rule 8: the ungraded copy says what to type.
+#[test]
+fn the_ungraded_copy_says_what_to_type() {
+    let quantity = pool(
+        "12 cm",
+        Some(AnswerContract::Unit {
+            quantity: cadus_core::answer::Quantity::Length,
+            unit: "cm".to_owned(),
+            allow_omitted: false,
+            form: None,
+        }),
+    );
+    let grade = grade_item(&quantity, "12 !! cm cm", AnswerKind::Numeric);
+    if let AttemptOutcome::Ungraded { reason } = &grade.outcome {
+        assert!(reason.starts_with("This answer is not marked. Type a number"));
+        assert!(!reason.contains("interpret"));
+    }
+    assert_eq!(
+        quantity_guidance("12 cm"),
+        "This answer is not marked. Type a number and its unit, for example 42 cm."
+    );
+    assert_eq!(
+        quantity_guidance("12"),
+        "This answer is not marked. Type a number and its unit, for example 12 cm."
+    );
+}
+
+/// Rule 6: the give-up is a decided miss with its own tag.
+#[test]
+fn the_give_up_is_a_decided_miss() {
+    let grade = gave_up_grade();
+    assert!(!grade.correct);
+    assert_eq!(grade.outcome, AttemptOutcome::Incorrect);
+    assert_eq!(grade.error_tags, vec![TAG_GAVE_UP.to_owned()]);
+    assert_eq!(grade.work_quality, WorkQuality::NearlyPassable);
 }

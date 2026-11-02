@@ -130,7 +130,7 @@ pub use hint::hint;
 pub(crate) use payload::progress_for;
 use payload::*;
 pub use route::serve;
-pub(crate) use route::{install_next, record_first_serve};
+pub(crate) use route::{install_next, mark_probe_aside, record_first_serve};
 pub(crate) use session_tasks::restore_session_tasks;
 use target::*;
 pub(crate) use teach::{kp_visuals, teach_figure, teach_page};

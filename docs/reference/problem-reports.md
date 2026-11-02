@@ -24,6 +24,13 @@ Completed lesson, review, and quiz results and their XP are recalculated from co
 Integrated corrections update the selected field and derived grade totals and skills. Integrated tasks do not award XP under the existing grading model.
 Diagnostic runs record their start, full balance state, policy, and placement boundary. A correction updates the matching run and its placement; it cannot spill into a restarted diagnostic. Historical diagnostic answers without a trustworthy run boundary remain unresolved.
 The public result reports corrected_outcome only when a learner regrade was committed. The interface changes its displayed grade only after that confirmation.
+## Visibility
+A learner sees every own report in "My reports" (`GET /api/reports`), also after a reload. The list shows the status in plain words: "Waiting for the check", "Checked: your answer was right, the grade changed", "Checked: the key was right", "Checked: no decision; the owner reads it", "The check could not run; try again later". The assessment rule below also applies to the list: while a quiz or placement is open, the row shows no explanation and no reviewed answer.
+A report that ends `unresolved` has no retry button. A second send gives the same result. The owner reads the report in the Reports section of the review page (`GET /api/admin/reports`). The section shows the learner, the task, the question, the note, the last step and its message, and the topic and knowledge point. The section is read only.
+
+## Question flags
+The report form asks what is wrong: "My answer is right", "The answer key is wrong", or "The question is unclear or wrong". The first two start the review above. The third sends `concern: question_unclear` and starts no review, because no model can judge an unclear question. The server writes one `question_flags` row with the status `waiting_owner` and sets the question aside for this learner. The serve path skips a set-aside question. The owner keeps the question (the set-aside ends) or retires it (`retired_items`: no learner gets it again). Only ordinary questions can be flagged.
+
 ## Assessment integrity
 The server withholds report answers and solution details before submission and while a quiz or placement assessment remains open. This restriction also applies to direct report-polling requests. The frontend preserves a report receipt when the learner advances to the next question.
 ## Isolation and operation

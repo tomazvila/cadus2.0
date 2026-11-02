@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import type { ApiClient, ProblemReportReceipt, ProblemReportSubmission, SubmittedProblemContext } from '@/api/types';
+import type { ApiClient, ProblemReportReceipt, ProblemReportSubmission, ReportConcern, SubmittedProblemContext } from '@/api/types';
 
 const active = (receipt: ProblemReportReceipt) => receipt.status === 'queued' || receipt.status === 'running';
 
@@ -7,10 +7,21 @@ const active = (receipt: ProblemReportReceipt) => receipt.status === 'queued' ||
 export type ProblemReportApi = Pick<ApiClient, 'taskReport' | 'getProblemReport'>;
 export type ReportApplied = (receipt: ProblemReportReceipt, context: SubmittedProblemContext) => void;
 
+/** A question with no submitted answer cannot say "My answer is right". */
+function firstConcern(context: SubmittedProblemContext | null | undefined): ReportConcern {
+  return context && (context.submitted ?? context.report_kind !== 'served') ? 'answer_right' : 'key_wrong';
+}
+
+/** Only an ordinary question can be set aside; the server refuses the other kinds. */
+export function canFlagQuestion(context: SubmittedProblemContext | null | undefined): boolean {
+  return !!context && (context.report_kind === undefined || context.report_kind === 'attempt' || context.report_kind === 'served');
+}
+
 export function useProblemReport(api: ProblemReportApi | null, initialContext?: SubmittedProblemContext, onApplied?: ReportApplied) {
   const [context, setContext] = useState<SubmittedProblemContext | null>(() => initialContext ? { ...initialContext } : null);
   const [open, setOpen] = useState(false);
   const [note, setNote] = useState('');
+  const [concern, setConcern] = useState<ReportConcern>(() => firstConcern(initialContext));
   const [receipt, setReceipt] = useState<ProblemReportReceipt | null>(null);
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
@@ -38,6 +49,7 @@ export function useProblemReport(api: ProblemReportApi | null, initialContext?: 
     applied.current = null;
     setNoteLocked(false);
     setContext({ ...value });
+    setConcern(firstConcern(value));
     setReceipt(null);
     setNote('');
     setError('');
@@ -107,6 +119,7 @@ export function useProblemReport(api: ProblemReportApi | null, initialContext?: 
       ...(context.item_digest ? { item_digest: context.item_digest } : {}),
       ...(context.field_id ? { field_id: context.field_id } : {}),
       request_id: crypto.randomUUID(), ...(note.trim() ? { note: note.trim().slice(0, 2000) } : {}),
+      ...(concern === 'question_unclear' && canFlagQuestion(context) ? { concern } : {}),
     };
     setNoteLocked(true);
     const request = new AbortController();
@@ -137,7 +150,7 @@ export function useProblemReport(api: ProblemReportApi | null, initialContext?: 
     setOpen(false);
   }
 
-  return { context, open, note, setNote, receipt, error, busy, remember, clear, show, close, send,
+  return { context, open, note, setNote, concern, setConcern, receipt, error, busy, remember, clear, show, close, send,
     refresh: () => { if (receipt) void refresh(receipt.report_id); },
     noteLocked,
   };

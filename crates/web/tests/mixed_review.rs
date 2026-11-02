@@ -469,6 +469,16 @@ async fn a_reload_serves_the_corrective_practice_a_sibling_review_owes() {
 /// `multiplication` lesson passed at 2026-01-01, long enough ago to owe the
 /// 7-day retention probe (D-F11).
 async fn learner_owing_a_probe(db: &TestDb, email: &str, curriculum: &Curriculum) -> Uuid {
+    learner_owing_a_probe_without(db, email, curriculum, &[]).await
+}
+
+/// The same, with no serving pool row for the topics in `dark`.
+async fn learner_owing_a_probe_without(
+    db: &TestDb,
+    email: &str,
+    curriculum: &Curriculum,
+    dark: &[&str],
+) -> Uuid {
     let user = seed_learner(db, email).await;
     seed_open_session(db, user).await;
     seed_typed_event(
@@ -506,6 +516,9 @@ async fn learner_owing_a_probe(db: &TestDb, email: &str, curriculum: &Curriculum
     put_state(db, user, &WebState::for_session(SESSION)).await;
     let digest = review_context_digest(curriculum).unwrap();
     for topic in ["addition", "subtraction", "multiplication"] {
+        if dark.contains(&topic) {
+            continue;
+        }
         for kp in ["kp1", "kp2"] {
             for index in 0..10 {
                 seed_pool_row(
@@ -591,6 +604,93 @@ async fn the_retention_probe_is_one_question_of_the_block_and_still_records() {
         assert_eq!(probes[0]["kp"], "kp1");
         assert_eq!(probes[0]["delay_days"], 7);
         assert_eq!(probes[0]["exposure"], "first");
+    })
+    .await;
+}
+
+/// The three topics, with no authored exemplar for `multiplication`: the
+/// probe of that topic finds nothing to draw.
+fn dark_probe_curriculum() -> Curriculum {
+    let mut topics = review_topics();
+    topics.push(topic(
+        "multiplication",
+        vec![kp("kp1", vec![]), kp("kp2", vec![])],
+    ));
+    one_unit_curriculum(topics)
+}
+
+const PROBE_ASIDE: &str = "s_2026-01-01a-review-multiplication-probe";
+
+/// The open probe finds no pool row. The learner misses a question, answers
+/// the corrective practice right, and the hand-off must reach another review.
+#[tokio::test]
+async fn a_probe_with_an_empty_pool_is_set_aside_and_the_answer_hands_on_to_another_review() {
+    TestDb::with(|db| async move {
+        let curriculum = dark_probe_curriculum();
+        let app = app_with_content(&db, curriculum.clone());
+        let user = learner_owing_a_probe_without(
+            &db,
+            "mixed-probe-dark@example.com",
+            &curriculum,
+            &["multiplication"],
+        )
+        .await;
+        let first = serve_ok(&app, user, ADDITION).await;
+        let missed = first["task_id"].as_str().unwrap().to_owned();
+        assert_ne!(missed, PROBE_ASIDE, "{first}");
+
+        // A wrong answer owes corrective practice on the same review.
+        let reply = answer_live(&app, &db, user, &missed, false).await;
+        assert_eq!(reply["feedback_practice"], true, "{reply}");
+        assert_eq!(reply["next"]["task_id"], missed.as_str(), "{reply}");
+
+        // The practice answer is right. The probe is due and has no item.
+        let reply = answer_live(&app, &db, user, &missed, true).await;
+        let next = &reply["next"];
+        assert!(!next.is_null(), "{reply}");
+        assert!(reply.get("next_unavailable").is_none(), "{reply}");
+        let shown = next["task_id"].as_str().unwrap();
+        assert_ne!(shown, PROBE_ASIDE, "{reply}");
+        let state = stored_state(&db, user).await;
+        assert!(state.served.contains_key(shown));
+        assert!(state.plan_progress(PROBE_ASIDE).1, "the probe is set aside");
+        assert!(
+            events_of_type(&db, user, "retention_probe")
+                .await
+                .is_empty(),
+            "no event records a probe that never reached the learner"
+        );
+    })
+    .await;
+}
+
+/// A serve of a review moves onto the probe, the probe finds no item, and the
+/// serve must give a question of the block, never `409` for a task it moved.
+#[tokio::test]
+async fn a_serve_moved_onto_a_dark_probe_serves_a_question_of_the_block() {
+    TestDb::with(|db| async move {
+        let curriculum = dark_probe_curriculum();
+        let app = app_with_content(&db, curriculum.clone());
+        let user = learner_owing_a_probe_without(
+            &db,
+            "mixed-probe-serve@example.com",
+            &curriculum,
+            &["multiplication"],
+        )
+        .await;
+        let first = serve_ok(&app, user, ADDITION).await;
+        let answered = first["task_id"].as_str().unwrap().to_owned();
+        // The next draw is the probe: the live problem is gone, as after a reload.
+        let reply = answer_live(&app, &db, user, &answered, true).await;
+        assert!(!reply["next"].is_null(), "{reply}");
+        let mut state = stored_state(&db, user).await;
+        state.served.clear();
+        put_state(&db, user, &state).await;
+
+        let served = serve_ok(&app, user, &answered).await;
+        let shown = served["task_id"].as_str().unwrap();
+        assert_ne!(shown, PROBE_ASIDE, "{served}");
+        assert!(served["mixed_review"].is_object(), "{served}");
     })
     .await;
 }

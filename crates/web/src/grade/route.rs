@@ -79,6 +79,12 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         expected_time(graph, &served),
     );
     let kind = served_kind(&served)?;
+    // D-L5: "I don't know. Show the solution." is a decided miss with no typing.
+    // It applies to a lesson and to a review. A quiz, a drill and a multi-step
+    // task keep their own rules.
+    let gave_up = submitted.gave_up
+        && !verified_answer
+        && matches!(task.task_type, TaskType::Lesson | TaskType::Review);
     let mut grade = if verified_answer {
         Grade {
             correct: true,
@@ -86,9 +92,14 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             work_quality: WorkQuality::NearlyPerfect,
             error_tags: Vec::new(),
         }
+    } else if gave_up {
+        gave_up_grade()
     } else {
         grade_served_item(&served, &submitted.answer, kind)
     };
+    // A give-up and a non-answer are final misses. No model check and no
+    // diagnosis follow: nothing in the text can turn the miss into a right answer.
+    let no_check = gave_up || has_tag(&grade.error_tags, TAG_NON_ANSWER);
     // Amendment K (note 114, the owner's design): a deterministic WRONG or an
     // unparseable answer is checked against the owner's local model, through
     // the (item digest, normalized text) cache. A cache hit answers at once —
@@ -149,7 +160,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         )
     );
     let mut equivalence_hit = None;
-    if !verified_answer && !grade.correct && !written_proof && !closed_item {
+    if !verified_answer && !grade.correct && !written_proof && !closed_item && !no_check {
         match equivalence::lookup(&state, &mut tx, &served, &submitted.answer).await {
             Ok(Some(equivalence::Cached::Accepted(verdict))) => {
                 grade = Grade {
@@ -225,7 +236,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
             answer: &submitted.answer,
             work: submitted.work.as_deref(),
             correct: grade.correct,
-            ungraded: grade.outcome.is_ungraded(),
+            ungraded: grade.outcome.is_ungraded() || no_check,
         },
         write: true,
     };
@@ -248,6 +259,14 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     )
     .await?;
     let proof_pending = moved.status == STATUS_PROOF_PENDING;
+    // D-L5: a review that failed before its last question owes no more practice.
+    if task.task_type == TaskType::Review
+        && moved.status == STATUS_TASK_FAILED
+        && moved.result.is_some()
+    {
+        scratch.feedback_practice.remove(&task_id);
+    }
+    let teach = teach_first(&task, &recorded, &events, &moved);
 
     // Step 8 and step 10: move the task on, draw the next problem, write the row.
     if task.task_type == TaskType::Quiz && !recorded.feedback_practice {
@@ -281,7 +300,7 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     // Amendment K: on a wrong or unparseable answer with no cached verdict,
     // the background check is enqueued in the same transaction. A miss that
     // was flipped by the cache carries no job (the verdict is already here).
-    let equivalence_job = if grade.correct || written_proof || closed_item {
+    let equivalence_job = if grade.correct || written_proof || closed_item || no_check {
         None
     } else {
         match equivalence_hit {
@@ -402,6 +421,9 @@ pub async fn answer(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
         equivalence_field,
         proof_grading::reply_field(proof_job),
     );
+    if let Some(page) = teach {
+        body["teach_first"] = page;
+    }
     if let Some(text) = notation_text(&served.expected, &submitted.answer, kind, &grade) {
         body["notation"] = json!(text);
     }
@@ -449,18 +471,33 @@ async fn mixed_hand_on(
     } else {
         scratch.served.remove(&task.task_id);
     }
-    let Some(next_task) = plan.tasks.iter().find(|item| item.task_id == other) else {
-        return Ok(None);
-    };
-    let drawn = install_next(
-        state, content, tx, user_id, next_task, scratch, readiness, now,
-    )
-    .await;
-    let mut payload = match drawn {
-        Ok(payload) => payload,
-        Err(err) => {
-            tracing::warn!(task_id = %other, code = %err.code, "answer: no next mixed review problem");
+    let mut other = other.to_owned();
+    let (next_task, mut payload) = loop {
+        let Some(next_task) = plan.tasks.iter().find(|item| item.task_id == other) else {
             return Ok(None);
+        };
+        let drawn = install_next(
+            state, content, tx, user_id, next_task, scratch, readiness, now,
+        )
+        .await;
+        match drawn {
+            Ok(payload) => break (next_task, payload),
+            // A retention probe with no unseen item closes, as in the serve
+            // route. The block then goes on with another review, or with the
+            // answered review when it is still open.
+            Err(err) if next_task.probe_delay_days.is_some() => {
+                crate::serve::mark_probe_aside(scratch, next_task, &content.curriculum, &err);
+                let following = crate::serve::mixed::after_answer(plan, scratch, task);
+                other = match following {
+                    Some(following) => following,
+                    None if !scratch.plan_progress(&task.task_id).1 => task.task_id.clone(),
+                    None => return Ok(None),
+                };
+            }
+            Err(err) => {
+                tracing::warn!(task_id = %other, code = %err.code, "answer: no next mixed review problem");
+                return Ok(None);
+            }
         }
     };
     let appended =
@@ -496,7 +533,9 @@ async fn already_recorded(
         write: false,
         miss: Miss {
             correct: standing.correct,
-            ungraded: standing.outcome.is_ungraded(),
+            ungraded: standing.outcome.is_ungraded()
+                || has_tag(&standing.error_tags, TAG_NON_ANSWER)
+                || has_tag(&standing.error_tags, TAG_GAVE_UP),
             ..about.miss
         },
         ..about
@@ -545,7 +584,14 @@ pub(super) async fn advance_and_fold(
             ..Advance::carry_on()
         }
     } else if task.task_type == TaskType::Review {
-        review::close_review(task, recorded, events, &content.cfg, &content.curriculum)
+        review_rules(
+            task,
+            recorded,
+            events,
+            &content.cfg,
+            &content.curriculum,
+            review::close_review(task, recorded, events, &content.cfg, &content.curriculum),
+        )
     } else if task.task_type == TaskType::Quiz {
         quiz::close_quiz(task, recorded, events, &content.cfg, &content.curriculum)
     } else if task.task_type == TaskType::Drill {

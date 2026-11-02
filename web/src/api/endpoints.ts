@@ -5,7 +5,7 @@
  * table is the index; this is the implementation.
  */
 import { downloadFile, request } from './client';
-import type { ProblemReportReceipt } from './types-report';
+import type { AdminReportsResponse, MyReportsResponse, ProblemReportReceipt } from './types-report';
 import type {
   DiagAnswerResponse,
   DiagCurrentResponse,
@@ -128,14 +128,16 @@ export const api: ApiClient = {
   sessionEnd: (minutes) =>
     request<SessionEndResponse>('POST', '/session/end', minutes === undefined ? {} : { minutes }),
   getPlan: () => request<SessionPlanResponse>('GET', '/session/plan'),
-  taskReport: (taskId, { problem_id, attempt_id, note, request_id, report_kind, item_digest, field_id }, signal) =>
+  taskReport: (taskId, { problem_id, attempt_id, note, request_id, report_kind, item_digest, field_id, concern }, signal) =>
     request<ProblemReportReceipt>('POST', `/task/${seg(taskId)}/report`, {
       problem_id, request_id, ...(attempt_id === undefined ? {} : { attempt_id }),
       ...(report_kind === undefined ? {} : { report_kind }),
       ...(item_digest === undefined ? {} : { item_digest }),
       ...(field_id === undefined ? {} : { field_id }),
       ...(note === undefined ? {} : { note }),
+      ...(concern === undefined ? {} : { concern }),
     }, signal),
+  listMyReports: (signal) => request<MyReportsResponse>('GET', '/reports', undefined, signal),
   getProblemReport: (reportId, signal) =>
     request<ProblemReportReceipt>('GET', `/reports/${seg(reportId)}`, undefined, signal),
   taskServe: (taskId) => request<ServedProblem>('POST', `/task/${seg(taskId)}/serve`, {}),
@@ -152,12 +154,13 @@ export const api: ApiClient = {
   taskQuizResult: (taskId, practice = false) => request<QuizResultResponse>('POST', `/task/${seg(taskId)}/quiz-result`, { practice }),
   startQuizRound: (length, scope, set) =>
     request<QuizRoundResponse>('POST', '/quiz/round', scope === 'paper' ? { kind: 'paper', set: set ?? '' } : { length, scope }),
-  taskAnswer: (taskId, { problem_id, answer, work, assisted }) =>
+  taskAnswer: (taskId, { problem_id, answer, work, assisted, gave_up }) =>
     request<TaskAnswerResponse>('POST', `/task/${seg(taskId)}/answer`, {
       problem_id,
       answer,
       ...(work === undefined ? {} : { work }),
       ...(assisted === undefined ? {} : { assisted }),
+      ...(gave_up === undefined ? {} : { gave_up }),
     }),
 
   // The integrated task (D-F10). Every one of the three resolves the item from the TASK,
@@ -270,6 +273,12 @@ export const api: ApiClient = {
   revokeContent: (digest, reason) =>
     request<RevokeResponse>('POST', `/admin/content/${seg(digest)}/revoke`, { reason }),
   listUngraded: () => request<UngradedListResponse>('GET', '/admin/ungraded'),
+  keepReportQuestion: (reportId) =>
+    request<{ report_id: string; status: string }>('POST', `/admin/reports/${seg(reportId)}/keep`, {}),
+  retireReportQuestion: (reportId) =>
+    request<{ report_id: string; status: string }>('POST', `/admin/reports/${seg(reportId)}/retire`, {}),
+  listAdminReports: (status = 'unresolved') =>
+    request<AdminReportsResponse>('GET', `/admin/reports?status=${status}`),
   listOverturns: () => request<OverturnsResponse>('GET', '/admin/equivalence/overturns'),
   regradeUngraded: (attemptId, outcome) =>
     request<RegradeResponse>('POST', `/admin/ungraded/${seg(attemptId)}/regrade`, { outcome }),

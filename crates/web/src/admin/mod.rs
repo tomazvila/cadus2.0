@@ -74,10 +74,12 @@ use crate::error::ApiError;
 use crate::operator::{FORBIDDEN, FORBIDDEN_MESSAGE};
 
 mod queue;
+mod reports;
 mod review;
 mod ungraded;
 
 pub use queue::{list, show};
+pub use reports::{keep_question, list_reports, retire_question};
 pub use review::{Regated, approve, reject, revoke};
 pub use ungraded::{list_ungraded, regrade_ungraded};
 

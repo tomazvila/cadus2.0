@@ -266,6 +266,7 @@ pub fn create_app(state: AppState) -> Router {
             post(grade::proof_continue),
         )
         .route("/api/task/{task_id}/report", post(problem_reports::create))
+        .route("/api/reports", get(problem_reports::mine))
         .route("/api/reports/{report_id}", get(problem_reports::get))
         // D-F10: the integrated task. A multi-step task with an authored item
         // serves it here as ONE problem and grades it in one submission; a task
@@ -320,6 +321,12 @@ pub fn create_app(state: AppState) -> Router {
         // refuse an account that is not an admin.
         // The items whose first pass the background check overturned most.
         .route("/api/admin/equivalence/overturns", get(diag::overturns))
+        .route("/api/admin/reports", get(admin::list_reports))
+        .route("/api/admin/reports/{id}/keep", post(admin::keep_question))
+        .route(
+            "/api/admin/reports/{id}/retire",
+            post(admin::retire_question),
+        )
         .route("/api/admin/ungraded", get(admin::list_ungraded))
         .route(
             "/api/admin/ungraded/{attempt_id}/regrade",

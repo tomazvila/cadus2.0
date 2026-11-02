@@ -109,28 +109,7 @@ pub(super) fn advance(
         .map(|slug| slug.as_str().to_string())
         .or_else(|| kp_ids.first().cloned());
 
-    let mut sequence: Vec<bool> = prior
-        .iter()
-        .filter_map(|row| match &row.event {
-            // An ungraded prior attempt is not evidence, so it never enters the
-            // sequence the pass rule reads (D-F2).
-            Event::Attempt(body)
-                if body.task_id == attempt.task_id
-                    && !body.outcome.is_ungraded()
-                    && !body.assisted
-                    && is_pass_evidence(body)
-                    && body.kp.as_ref().map(|slug| slug.as_str().to_string()) == kp =>
-            {
-                Some(body.correct)
-            }
-            _ => None,
-        })
-        .collect();
-    // A label answer is not pass evidence (owner rule, 2026-10-07): the current
-    // attempt joins the sequence only when it is not a label attempt.
-    if is_pass_evidence(attempt) {
-        sequence.push(attempt.correct);
-    }
+    let sequence = kp_sequence(prior, attempt, kp.as_deref());
 
     if kp_failed(&sequence, cfg) {
         return lesson_failed(graph, cfg, now, attempt, kp.as_deref(), history);
@@ -156,6 +135,37 @@ pub(super) fn advance(
         };
     }
     lesson_passed(cfg, now, attempt, prior, kp_ids.len())
+}
+
+/// The decided, unassisted answers of one knowledge point in one task, oldest
+/// first, with the current attempt last (the pass-evidence sequence).
+///
+/// An ungraded or an assisted answer is not evidence (D-F2), and a label answer
+/// is not either. A lesson and a review read the same sequence (D-L5), so the
+/// fail rule and the in-sitting step count the same answers in both.
+pub(super) fn kp_sequence(prior: &[EventRow], attempt: &Attempt, kp: Option<&str>) -> Vec<bool> {
+    let mut sequence: Vec<bool> = prior
+        .iter()
+        .filter_map(|row| match &row.event {
+            Event::Attempt(body)
+                if body.task_id == attempt.task_id
+                    && body.topic == attempt.topic
+                    && !body.outcome.is_ungraded()
+                    && !body.assisted
+                    && is_pass_evidence(body)
+                    && body.kp.as_ref().map(Slug::as_str) == kp =>
+            {
+                Some(body.correct)
+            }
+            _ => None,
+        })
+        .collect();
+    // A label answer is not pass evidence (owner rule, 2026-10-07): the current
+    // attempt joins the sequence only when it is evidence.
+    if !attempt.outcome.is_ungraded() && !attempt.assisted && is_pass_evidence(attempt) {
+        sequence.push(attempt.correct);
+    }
+    sequence
 }
 
 /// Whether the last two answers are the first adjacent pair of misses.
@@ -472,6 +482,161 @@ fn triggered(
     }]
 }
 
+/// A corrective loop on a review ends after this many misses in a row: the
+/// first miss and two failed fresh items (D-L5).
+pub(super) const REVIEW_LOOP_LIMIT: usize = 3;
+
+/// The decided misses at the end of one task, newest last (D-L5).
+///
+/// The run counts the current attempt. An ungraded answer and an assisted
+/// right answer neither add to the run nor end it. An unassisted right answer
+/// ends it.
+pub(super) fn trailing_misses(prior: &[EventRow], attempt: &Attempt) -> usize {
+    let earlier = prior.iter().filter_map(|row| match &row.event {
+        Event::Attempt(body) if body.task_id == attempt.task_id => Some(body),
+        _ => None,
+    });
+    let mut run = 0;
+    for body in earlier
+        .chain(std::iter::once(attempt))
+        .collect::<Vec<_>>()
+        .into_iter()
+        .rev()
+    {
+        if body.outcome.is_ungraded() {
+            continue;
+        }
+        if !body.correct {
+            run += 1;
+        } else if !body.assisted {
+            break;
+        }
+    }
+    run
+}
+
+/// The topic and the knowledge point a review answer belongs to.
+///
+/// The `skills` field names the topic that produced the statement, which differs
+/// from the topic of the attempt when a review serves a part skill.
+fn skill_of(attempt: &Attempt) -> (String, Option<String>) {
+    attempt
+        .skills
+        .first()
+        .and_then(|skill| skill.split_once('/'))
+        .map_or_else(
+            || {
+                (
+                    attempt.topic.as_str().to_owned(),
+                    attempt.kp.as_ref().map(|kp| kp.as_str().to_owned()),
+                )
+            },
+            |(topic, kp)| (topic.to_owned(), Some(kp.to_owned())),
+        )
+}
+
+/// The lesson rules of D-L1 and D-L4 on a review, and the exit of its
+/// corrective loop (D-L5).
+///
+/// `moved` is the answer of the ordinary review close. A review that the close
+/// already ended stays as it is. An open review ends as failed when its misses on
+/// one knowledge point reach `lesson.fail_after`, and when a corrective loop
+/// holds [`REVIEW_LOOP_LIMIT`] misses in a row. The result then stands with
+/// `passed: false`, and the next review of the topic follows the fold. A second
+/// miss in a row queues the in-sitting prerequisite question.
+pub(super) fn review_rules(
+    task: &Task,
+    attempt: &Attempt,
+    prior: &[EventRow],
+    cfg: &Config,
+    graph: &Curriculum,
+    moved: Advance,
+) -> Advance {
+    if task.task_type != TaskType::Review
+        || moved.result.is_some()
+        || attempt.outcome.is_ungraded()
+        || attempt.assisted
+    {
+        return moved;
+    }
+    let (topic, kp) = skill_of(attempt);
+    let sequence = kp_sequence(prior, attempt, attempt.kp.as_ref().map(Slug::as_str));
+    let out_of_misses = kp_failed(&sequence, cfg);
+    let stuck = attempt.feedback_practice
+        && !attempt.correct
+        && trailing_misses(prior, attempt) >= REVIEW_LOOP_LIMIT;
+    if out_of_misses || stuck {
+        return review_failed(task, attempt);
+    }
+    if !attempt.correct && second_consecutive_miss(&sequence) {
+        let queued = remediation_for_in_sitting(&topic, kp.as_deref().unwrap_or_default(), graph);
+        return Advance {
+            remediation: triggered(
+                attempt.ts,
+                attempt,
+                REMEDIATION_IN_SITTING_PREREQ,
+                queued.targets,
+            ),
+            ..moved
+        };
+    }
+    moved
+}
+
+/// The failed close of a review that cannot go on (D-L5).
+///
+/// The result carries no score and no XP. The fold lowers the repetition count
+/// of the topic, as for any failed review.
+fn review_failed(task: &Task, attempt: &Attempt) -> Advance {
+    Advance {
+        status: STATUS_TASK_FAILED,
+        result: Some(Event::ReviewResult(cadus_core::event::ReviewResult {
+            ts: attempt.ts,
+            session: attempt.session.clone(),
+            v: SchemaVersion::current(),
+            topic: attempt.topic.clone(),
+            passed: false,
+            weighted_score: 0.0,
+            xp: 0.0,
+            quality_tier: attempt.work_quality,
+            assisted: false,
+            task_id: Some(task.task_id.clone()),
+            inconclusive: false,
+            confirmation_skills: Vec::new(),
+            variety_waived: false,
+        })),
+        ..Advance::carry_on()
+    }
+}
+
+/// The teach page the reply sends the learner to after the second miss in a
+/// row (D-L5), or `None`.
+///
+/// The page is the approved text of the topic that produced the statement, read
+/// through `GET /api/topics/{topic}/teach` (D-TR1). The reply names the topic
+/// and the knowledge point. It applies to a lesson and to a review.
+pub(super) fn teach_first(
+    task: &Task,
+    attempt: &Attempt,
+    prior: &[EventRow],
+    moved: &Advance,
+) -> Option<Value> {
+    if !matches!(task.task_type, TaskType::Lesson | TaskType::Review)
+        || moved.result.is_some()
+        || attempt.outcome.is_ungraded()
+        || attempt.assisted
+        || attempt.correct
+    {
+        return None;
+    }
+    let sequence = kp_sequence(prior, attempt, attempt.kp.as_ref().map(Slug::as_str));
+    if !second_consecutive_miss(&sequence) {
+        return None;
+    }
+    let (topic, kp) = skill_of(attempt);
+    Some(json!({ "topic": topic, "kp": kp }))
+}
+
 /// Move the task's progress on, and say whether the task is now closed.
 ///
 /// A lesson closes on the core's status. Every other kind closes by count
@@ -512,6 +677,11 @@ pub(super) fn practice_progress(
         task_moved_on(progress, kind, moved);
     }
     progress.done = !pending && progress.total > 0 && progress.answered >= progress.total;
+    // D-L5: a review that failed before its last question is over. Its result
+    // is written, and the learner moves on.
+    if kind == TaskType::Review && moved.status == STATUS_TASK_FAILED && moved.result.is_some() {
+        progress.done = true;
+    }
     progress.done
 }
 

@@ -128,16 +128,28 @@ fn the_three_deterministic_tiers_are_the_d_m5_2_ruling() {
             error_tags: Vec::new(),
         }
     );
-    // An answer outside the grammar is UNGRADED, never a pass, never a miss, and
-    // never a model verdict (D-F2, audit finding c). The refusal reason is the
-    // ISSUE-13 learner copy: the grammar's wording never reaches the learner.
+    // A typed word where a number belongs is a decided miss with the tag
+    // `non_answer` (D-L5, 2026-11-02). Before D-L5 it was UNGRADED.
     assert_eq!(
         deterministic_grade("13.5", "about thirteen and a half", AnswerKind::Numeric),
         Grade {
             correct: false,
+            outcome: AttemptOutcome::of_correct(false),
+            work_quality: WorkQuality::NearlyPassable,
+            error_tags: vec!["non_answer".to_owned()],
+        }
+    );
+    // An answer with a digit that the grammar cannot read is UNGRADED, never a
+    // pass, never a miss, and never a model verdict (D-F2, audit finding c). The
+    // refusal reason says what to type (D-L5): the grammar's wording never
+    // reaches the learner.
+    assert_eq!(
+        deterministic_grade("13.5", "about 13 and a half", AnswerKind::Numeric),
+        Grade {
+            correct: false,
             outcome: AttemptOutcome::Ungraded {
-                reason: "I could not read a word in that answer. Enter just the number or \
-                         expression \u{2014} remove any words, such as 'units'."
+                reason: "This answer is not marked. Type a number, for example 12 or 3/4. \
+                         Remove any words, such as 'units'."
                     .to_owned(),
             },
             work_quality: WorkQuality::NearlyPassable,
@@ -237,7 +249,7 @@ async fn a_word_beside_the_value_teaches_the_format() {
         assert_eq!(body.get("correct"), None);
         assert_eq!(
             body["reason"],
-            "I could not read a word in that answer. Enter just the number or expression \u{2014} remove any words, such as 'units'."
+            "This answer is not marked. Type a number, for example 12 or 3/4. Remove any words, such as 'units'."
         );
         // An ungraded attempt reveals no solution (D-F2).
         assert!(body.get("solution").is_none());

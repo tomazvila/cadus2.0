@@ -51,16 +51,43 @@ const REPORT_STAGE: Record<string, string> = {
   core_checks: 'Checking your report',
 };
 
+/** What a finished report says, in words that name the outcome. */
+const OUTCOME_TEXT: Record<string, string> = {
+  regraded: 'Checked: your answer was right, the grade changed.',
+  no_issue_found: 'Checked: the key was right.',
+  confirmed_issue: 'Checked: the key was wrong, the stored answer changed.',
+  needs_review: 'Checked: no decision; the owner reads it.',
+  failed: 'The check could not run; try again later.',
+  question_kept: 'Checked: the owner kept the question; it can come back to you.',
+  question_retired: 'Checked: the owner removed the question; nobody gets it again.',
+};
+
+/** The line after a learner flags a question. It states what happened. */
+export const FLAG_SENT = 'Sent. The question is set aside for you until the owner decides.';
+
+/** The line of the report list: the status in plain words. */
+export function reportListText(status: string, outcome: string | null, hidden = false): string {
+  if (status === 'waiting_owner') return 'Waiting for the owner. The question is set aside for you.';
+  if (status === 'queued') return 'Waiting for the check.';
+  if (status === 'running') return 'The check is running.';
+  if (hidden) return 'Checked: the details show after the quiz or the starting questions end.';
+  const key = status === 'unresolved' ? 'needs_review' : status === 'failed' ? 'failed' : outcome;
+  return (key ? OUTCOME_TEXT[key] : undefined) ?? 'The check is finished.';
+}
+
 /** The status line of a problem report. Only the end states name the count of checks. */
 export function reportStatusText(
-  status: string, stage: string, attempt: number, maxAttempts: number,
+  status: string, stage: string, attempt: number, maxAttempts: number, resolution?: string,
 ): string {
   const tries = `check ${String(attempt)} of ${String(maxAttempts)}`;
   switch (status) {
+    case 'waiting_owner': return FLAG_SENT;
     case 'queued': return `Your report is waiting to be checked (${tries}).`;
     case 'running': return `${REPORT_STAGE[stage] ?? 'Checking your report'}.`;
-    case 'completed': return `The check is finished (${tries}).`;
-    case 'unresolved': return `The check could not settle this question (${tries}). You can send the report again.`;
-    default: return `The check stopped before it finished (${tries}). You can send the report again.`;
+    case 'completed': return resolution && OUTCOME_TEXT[resolution]
+      ? `${OUTCOME_TEXT[resolution]} (${tries})`
+      : `The check is finished (${tries}).`;
+    case 'unresolved': return `${OUTCOME_TEXT['needs_review']!} (${tries})`;
+    default: return `${OUTCOME_TEXT['failed']!} (${tries})`;
   }
 }

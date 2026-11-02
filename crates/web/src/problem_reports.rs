@@ -5,7 +5,12 @@ use cadus_core::event::{AttemptProblem, Event};
 use cadus_store::reports;
 use sha2::{Digest, Sha256};
 
+mod flag;
+mod list;
 mod sources;
+
+pub(crate) use flag::is_set_aside;
+pub use list::mine;
 
 fn text_field<'a>(body: &'a Value, name: &str, max: usize) -> Result<&'a str, ApiError> {
     body.get(name)
@@ -103,6 +108,11 @@ pub async fn create(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     if !["attempt", "served", "integrated", "diagnostic"].contains(&kind) {
         return Err(ApiError::invalid_request("Unknown report kind."));
     }
+    let unclear = match body.get("concern").map(Value::as_str) {
+        None | Some(Some("answer_right" | "key_wrong")) => false,
+        Some(Some("question_unclear")) => true,
+        _ => return Err(ApiError::invalid_request("Unknown report concern.")),
+    };
     let note = match body.get("note") {
         None | Some(Value::Null) => "",
         Some(Value::String(s)) if s.chars().count() <= 2000 => s,
@@ -114,6 +124,12 @@ pub async fn create(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     };
     let mut tx = store(&state, cadus_store::begin_tenant(state.db.pool(), user)).await?;
     store(&state, cadus_store::state::lock_web_state(&mut tx, user)).await?;
+    if unclear {
+        return flag::create(
+            &state, content, tx, user, request_id, &task, problem, note, body,
+        )
+        .await;
+    }
     let initial = body.get("attempt_id").and_then(Value::as_str).unwrap_or("");
     if let Some(existing) = store(
         &state,
@@ -195,9 +211,12 @@ pub async fn get(
     ApiPath(id): ApiPath<Uuid>,
 ) -> Result<Json<Value>, ApiError> {
     let mut tx = store(&state, cadus_store::begin_tenant(state.db.pool(), user)).await?;
-    let row = store(&state, reports::get(&mut tx, user, id))
-        .await?
-        .ok_or_else(ApiError::not_found)?;
+    let Some(row) = store(&state, reports::get(&mut tx, user, id)).await? else {
+        let flagged = flag::get(&mut tx, user, id)
+            .await?
+            .ok_or_else(ApiError::not_found)?;
+        return Ok(Json(flag::receipt(&flagged)));
+    };
     let visible = reveal(&mut tx, user, &row).await?;
     Ok(Json(response(&row, visible)))
 }

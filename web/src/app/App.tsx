@@ -37,6 +37,7 @@ export interface AppProps {
   demo?: boolean;
   onHome?: () => void;
   onMap?: () => void;
+  onReports?: () => void;
   onLogout?: () => void;
   /**
    * The name of the routed screen.
@@ -61,6 +62,7 @@ export function App({
   demo = false,
   onHome = noop,
   onMap = noop,
+  onReports,
   onLogout = noop,
   routeKey,
   view,
@@ -74,6 +76,7 @@ export function App({
         demo={demo}
         onHome={onHome}
         onMap={onMap}
+        {...(onReports ? { onReports } : {})}
         onLogout={onLogout}
         {...(view === undefined ? {} : { view })}
         focus={focus}

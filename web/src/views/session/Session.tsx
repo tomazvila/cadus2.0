@@ -32,12 +32,13 @@ import {
   EmptyPlan, NoInstruction, ProblemHeader, SessionSummary, emptyPlanMessage, reviewTopic,
 } from './SessionScreens';
 import { Teach, WorkedFold } from './Teach';
+import { Reteach } from './Reteach';
 import { Integrated } from './Integrated';
 import { serveIntegrated } from './serveIntegrated';
 import { loadPlannedTask } from './loadPlannedTask';
 import { ProofAwareFeedback, Rework } from './Feedback';
 import { LessonProof } from './LessonProof';
-import { HintButton, HintPanel } from './Hints';
+import { GiveUpButton, HintButton, HintPanel } from './Hints';
 import { Diagnosis } from './Diagnosis';
 import { useDiagnosisStream } from './useDiagnosis';
 import { useProblemReport } from './useProblemReport';
@@ -101,6 +102,8 @@ export function Session({
     setResult((previous) => applyReportCorrection(previous, receipt, context));
   });
   const [rework, setRework] = useState<ReworkResponse | null>(null);
+  // D-L5: the answer that is held while the learner reads the lesson text after two misses.
+  const [reteach, setReteach] = useState<{ result: AnswerResponse; next?: ServedProblem | null | undefined; nextUnavailable: boolean } | null>(null);
   const [summary, setSummary] = useState<SessionEndResponse | null>(null);
 
   // The display clock: display only, and the re-solve is untimed (trap T4, DD-3/P1).
@@ -311,6 +314,7 @@ export function Session({
       setTeaching(null);
       setIntegrated(null);
       setRework(null);
+      setReteach(null);
       replanForBlock();
     };
   });
@@ -370,7 +374,7 @@ export function Session({
 
   // ---- submitting ----------------------------------------------------------
 
-  const { submit, requestHint } = useGrade({
+  const { submit, giveUp, requestHint } = useGrade({
     api, call, gate, life, session,
     problemRef, taskRef, answerRef,
     answeredForRef: answeredFor, timedOutForRef: timedOutFor,
@@ -379,17 +383,39 @@ export function Session({
     countdown, elapsed,
   });
 
-  /** The ONE way out of `feedback`. A second click stops at the already-shut gate. */
+  /**
+   * The ONE way out of `feedback`. A second click stops at the already-shut gate. After two
+   * misses in a row the reply names a lesson page (D-L5): the learner reads it first, and the
+   * held answer goes on from there.
+   */
   const advance = (next?: ServedProblem | null, nextUnavailable = false): void => {
     if (!gate.tryEnter('feedback', 'loading')) return;
+    if (result?.teach_first) {
+      setReteach({ result, next, nextUnavailable });
+      gate.enter('reteaching');
+      return;
+    }
+    leaveFeedback(result, next, nextUnavailable);
+  };
+
+  /** The learner read the lesson page after two misses. The phase goes to `loading` first. */
+  const finishReteach = (): void => {
+    if (!reteach || !gate.tryEnter('reteaching', 'loading')) return;
+    const held = reteach;
+    setReteach(null);
+    leaveFeedback(held.result, held.next, held.nextUnavailable);
+  };
+
+  /** Leave the verdict of `res`. The phase is `loading` on every path that leads here. */
+  const leaveFeedback = (res: AnswerResponse | null, next?: ServedProblem | null, nextUnavailable = false): void => {
     // A reply that keeps the lesson open and carries remediation asks the core for the plan
     // at once. The core puts the prerequisite question at the head and keeps the lesson.
-    if (result?.task_status === 'continue' && (result.remediation?.length ?? 0) > 0) {
+    if (res?.task_status === 'continue' && (res.remediation?.length ?? 0) > 0) {
       setResult(null);
       replanForBlock();
       return;
     }
-    const restampAfterStudy = result?.feedback_practice;
+    const restampAfterStudy = res?.feedback_practice;
     // The verdict goes now, so no feedback panel stands over the next task's load.
     setResult(null);
     if (restampAfterStudy) { serveThenShow(); return; }
@@ -483,6 +509,20 @@ export function Session({
       <section className="view-session">
         <NoInstruction task={session.task} onSkip={skipTask} onExit={onExit} />
       </section>
+    );
+  }
+
+  // D-L5: two misses in a row. The learner reads the lesson page of the point, then goes on.
+  if (phase === 'reteaching') {
+    // The held reply is set before the phase enters `reteaching`, so it stands here.
+    const held = reteach!.result;
+    return (
+      <Reteach
+        key={`${session.task.task_id}/${held.attempt_id}`}
+        api={api}
+        result={held}
+        onContinue={finishReteach}
+      />
     );
   }
 
@@ -600,6 +640,8 @@ export function Session({
               Submit
             </TypedSubmit>
             <HintButton hidden={!hintsAvailable} locked={locked} onClick={requestHint} />
+            {/* D-L5: the plain way to give up. It records a miss and shows the solution. */}
+            <GiveUpButton taskType={session.task.task_type} hidden={rework !== null} locked={locked} onClick={giveUp} />
           </div>
         )}
 

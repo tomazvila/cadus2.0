@@ -18,6 +18,7 @@ use super::eligible::{gate_of, hold_lessons, hold_quiz, hold_topics};
 use super::frontier::Frontier;
 use super::gap_fill::is_course_complete;
 use super::interleave::{SlotKind, assign_ids, interleave};
+use super::lapse::{cap_sitting, is_lapse_sitting, prerequisite_questions};
 use super::mixed_review::joins_mixed_review;
 use super::multistep::{multistep_components, multistep_is_due, multistep_task, remediation_tasks};
 use super::plan::{BlockedTask, SessionPlan};
@@ -274,6 +275,14 @@ pub fn compose_session(
         blocked.extend(hold_topics(gate, TaskType::Review, &mut review_topics));
     }
 
+    // D-L5, the lapse rule. After a break of seven days or more the sitting
+    // holds at most eight topics, the foundations first. The cut comes before
+    // the multi-step task, so that task takes its parts from the eight.
+    let lapse = is_lapse_sitting(ctx, t_us);
+    if lapse {
+        cap_sitting(&mut review_topics, &mut lessons_ordered, graph);
+    }
+
     // The multi-step integration task absorbs several due reviews.
     let multistep = multistep_plan(states, graph, ctx, &reviews.due, &mut review_topics);
 
@@ -299,9 +308,24 @@ pub fn compose_session(
         front: &front,
         reviews: &reviews,
     };
+    // D-L5: a review topic overdue by more than three of its intervals starts
+    // with one question on a key prerequisite.
+    let served: Vec<String> = seq
+        .iter()
+        .filter(|(kind, _)| *kind == SlotKind::Review)
+        .map(|(_, tid)| tid.clone())
+        .collect();
+    let questions = prerequisite_questions(&served, &busy, states, graph, cfg, t_us);
     let mut tasks: Vec<Task> = remediation;
     tasks.extend(confirm);
-    tasks.extend(seq.iter().map(|(kind, tid)| slots.task(*kind, tid)));
+    for (kind, tid) in &seq {
+        if *kind == SlotKind::Review
+            && let Some(question) = questions.get(tid)
+        {
+            tasks.push(question.clone());
+        }
+        tasks.push(slots.task(*kind, tid));
+    }
     tasks.extend(multistep);
 
     let quiz_due = quiz_is_due(
@@ -312,7 +336,9 @@ pub fn compose_session(
         t_us,
         ctx.active_study_days,
     );
-    if quiz_due {
+    // A lapse sitting holds no quiz: a quiz spans many topics, and the sitting
+    // is limited to eight (D-L5).
+    if quiz_due && !lapse {
         let mut plan = quiz_composer(states, graph, cfg, t_us, sampler, ctx.learned_at);
         if let Some(gate) = gate {
             blocked.extend(hold_quiz(gate, &mut plan));

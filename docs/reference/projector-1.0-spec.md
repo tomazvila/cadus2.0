@@ -335,6 +335,11 @@ If `open_plan` is given, it delegates to `_reserve_open_plan` (`selector.py:1630
 15. Build tasks: remediation first, then `seq` in order, then the multi-step task, then the quiz (if `quiz_is_due`, sampled by `quiz_composer` with the passed `rng`), then `sorted()` drills (`:1434–1467`).
 16. `tasks = tasks[:n]`; then `_assign_ids`.
 
+**The lapse rule (D-L5, 2.0 only; `selector/lapse.rs`).** It reads `active_study_days`, the days that hold an attempt.
+- *Break.* `break_days = today - max(study day <= today)`. With no study day, or a study day today, it is 0.
+- *Sitting cap.* When `break_days >= 7`, step 11 is followed by a cut. `review_topics` sorts by load index (the course order, so foundations come first) and keeps 8. `lessons_ordered` keeps the room that is left. The cut comes before step 13, so the multi-step task takes its parts from the 8. A lapse sitting holds no quiz.
+- *Prerequisite question.* In step 15, a review topic with `days_since_t0 / interval_days - 1 > 3` gets one review task of one question on a key prerequisite of one of its knowledge points, placed just before the topic. The prerequisite must be due or nearly due and must not stand in another task of the plan. The task is a plain review (not `is_remediation`), with `nearly_due` set when the prerequisite is nearly due, so the re-serve rule keeps it.
+
 **`compress`** (`selector.py:502–590`) — greedy weighted set-cover, two phases:
 - `free_candidates = sorted((frontier | nearly) - due_set)`. Loop: for each `c` **in that sorted order**, `cov = {d in uncovered : d != c and W(c→d) >= 0.8}`; keep the first `c` with **strictly greater** `len(cov)` (so ties break to the lowest id); record `knockouts[best] = sorted(cov)`; remove. Stop when nothing covers anything.
 - Phase 2: while `remaining`, for each `c` in `sorted(remaining)` take `cov = {c} | covers(c, remaining)`, pick the strict-max (lowest id on ties), append to `surviving`, record `knockouts[best] = sorted(cov - {best})` when non-empty, remove `cov`.

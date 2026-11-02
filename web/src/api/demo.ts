@@ -385,6 +385,7 @@ export function createDemoApi(): ApiClient {
     // SERVE-idem: the SAME problem comes back until an answer commits it. `cursor` is read
     // here and written only by `taskAnswer`.
     taskReport: async () => { throw new ApiError(503, 'report_unavailable', 'Reports need a signed-in session. The demo has no review worker.'); },
+    listMyReports: async () => ({ reports: [] }),
     getProblemReport: async () => { throw new ApiError(503, 'report_unavailable', 'Reports need a signed-in session. The demo has no review worker.'); },
     taskServe: async (taskId) => {
       if (taskId !== DEMO_TASK_ID) refuse(404, 'unknown_task', 'The demo plans one task.');
@@ -491,7 +492,8 @@ export function createDemoApi(): ApiClient {
       if (body.problem_id !== problem.problem_id) {
         refuse(404, 'unknown_problem', 'That problem changed. Press Retry to get a new one.');
       }
-      const correct = norm(body.answer) === norm(problem.expected);
+      const gaveUp = body.gave_up === true;
+      const correct = !gaveUp && norm(body.answer) === norm(problem.expected);
       const attempt = `${taskId}-${answered + 1}`;
       // The cursor moves HERE, and only here.
       cursor += 1;
@@ -503,7 +505,7 @@ export function createDemoApi(): ApiClient {
         outcome: correct ? 'correct' : 'incorrect',
         correct,
         work_quality: correct ? 'perfect' : 'nearly_passable',
-        error_tags: [],
+        error_tags: gaveUp ? ['gave_up'] : [],
         secs: 30,
         task_status: done ? 'task_passed' : 'continue',
         remediation: [],
@@ -591,6 +593,9 @@ export function createDemoApi(): ApiClient {
     revokeContent: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     // The recovery path of the third outcome is admin-only too (D-F2).
     listUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    listAdminReports: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    keepReportQuestion: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
+    retireReportQuestion: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     listOverturns: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
     regradeUngraded: async () => refuse(403, 'forbidden', DEMO_ADMIN_ONLY),
   };

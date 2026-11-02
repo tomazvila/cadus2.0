@@ -25,6 +25,8 @@ export interface TopbarProps {
   demo: boolean;
   onHome: () => void;
   onMap: () => void;
+  /** Opens the list of the own reports. Absent, the bar shows no such button. */
+  onReports?: () => void;
   onLogout: () => void;
   /** The name of the screen on: the brand marks the dashboard, the Map button the map. */
   view?: string;
@@ -32,7 +34,7 @@ export interface TopbarProps {
   focus?: boolean;
 }
 
-export function Topbar({ user, demo, onHome, onMap, onLogout, view, focus = false }: TopbarProps) {
+export function Topbar({ user, demo, onHome, onMap, onReports, onLogout, view, focus = false }: TopbarProps) {
   const host = document.getElementById('topbar');
   if (!host) return null;
 
@@ -79,6 +81,16 @@ export function Topbar({ user, demo, onHome, onMap, onLogout, view, focus = fals
       ) : user ? (
         <>
           {focus ? null : mapLink}
+          {focus || !onReports ? null : (
+            <button
+              type="button"
+              className="topbar-link"
+              aria-current={view === 'reports' ? 'page' : undefined}
+              onClick={onReports}
+            >
+              My reports
+            </button>
+          )}
           <div className="topbar-user">
             {/* The address is mono, because it is an identifier, and it truncates rather
                 than pushing Log out off the bar on a narrow screen. `title` keeps the full

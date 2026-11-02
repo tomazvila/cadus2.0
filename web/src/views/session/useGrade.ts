@@ -42,7 +42,7 @@ import type { SessionPlan } from './useSessionPlan';
 type ReferenceLesson = { topic: string; name: string };
 
 export type SessionPhase =
-  | 'loading' | 'teaching' | 'no-instruction' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
+  | 'loading' | 'teaching' | 'reteaching' | 'no-instruction' | 'ready' | 'submitting' | 'feedback' | 'closing' | 'done';
 
 export interface GradeDeps {
   api: ApiClient;
@@ -70,7 +70,9 @@ export interface GradeDeps {
 }
 
 export interface Grade {
-  submit: (opts?: { timedOut?: boolean }) => void;
+  submit: (opts?: { timedOut?: boolean; gaveUp?: boolean }) => void;
+  /** D-L5: "I don't know. Show the solution." Records a miss and shows the solution. */
+  giveUp: () => void;
   requestHint: () => void;
 }
 
@@ -82,17 +84,19 @@ export function useGrade({
 }: GradeDeps): Grade {
   // Plain functions, rebuilt per render: `session` is a new object every render, so a memo
   // over them would hold nothing, and every consumer reads them at event time.
-  const submit = (opts: { timedOut?: boolean } = {}): void => {
+  const submit = (opts: { timedOut?: boolean; gaveUp?: boolean } = {}): void => {
     // Every submit path starts from a problem on screen, so both refs name one, and the
     // two fields are mounted beside it.
     const current = problemRef.current!;
     const task = taskRef.current!;
     const field = answerRef.current!;
 
-    const answer = field.value();
+    // A give-up sends no answer text: the service records the miss and shows the solution.
+    const gaveUp = opts.gaveUp === true;
+    const answer = gaveUp ? '' : field.value();
     // A timed-out drill submits whatever is there, blank included — an honest miss.
     // Otherwise an empty answer says what to do and refocuses.
-    if (!answer && !opts.timedOut) { field.remindEmpty?.(); field.focus(); return; }
+    if (!answer && !opts.timedOut && !gaveUp) { field.remindEmpty?.(); field.focus(); return; }
 
     // THE GATE (F-37-1c). Synchronous, before the first await, so two events inside the
     // grading window can never both post this `problem_id`.
@@ -102,6 +106,7 @@ export function useGrade({
       () => api.taskAnswer(task.task_id, {
         problem_id: current.problem_id,
         answer,
+        ...(gaveUp ? { gave_up: true } : {}),
       }),
       (reply) => {
         // THE SERVICE ANSWERED THIS PROBLEM, whatever the reply says. The latch is set here,
@@ -198,5 +203,7 @@ export function useGrade({
     });
   };
 
-  return { submit, requestHint };
+  const giveUp = (): void => { submit({ gaveUp: true }); };
+
+  return { submit, giveUp, requestHint };
 }

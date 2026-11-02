@@ -35,6 +35,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AdminFailureBlock } from './AdminFailure';
 import { ReviewDocumentPane } from './ReviewDocument';
+import { ReviewReports } from './ReviewReports';
 import { shortDigest } from './GateBlock';
 import { alerts, usd } from './cost';
 import { groupByKp, step, walkOrder } from './groups';
@@ -178,6 +179,8 @@ export interface ReviewScreenProps {
   demo: boolean;
   /** The session-expired path. */
   onUnauthorized: () => void;
+  /** Opens one topic in the reading view. Absent, the report rows show the topic as text. */
+  onOpenTopic?: (topic: string) => void;
 }
 
 /** What one decision posts, and how the toast names it. */
@@ -187,7 +190,7 @@ interface Decision {
   kind: 'success' | 'info';
 }
 
-export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
+export function ReviewScreen({ api, demo, onUnauthorized, onOpenTopic }: ReviewScreenProps) {
   const life = useLifetime();
   const dialogs = useDialogs();
   const busy = useBusy();
@@ -423,6 +426,7 @@ export function ReviewScreen({ api, demo, onUnauthorized }: ReviewScreenProps) {
           </div>
         </div>
       )}
+      <ReviewReports api={api} demo={demo} onUnauthorized={onUnauthorized} onOpenTopic={onOpenTopic} />
     </section>
   );
 }

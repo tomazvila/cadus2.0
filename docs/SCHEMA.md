@@ -320,6 +320,15 @@ grant names four columns: `user_id`, `topic`, `kp`, `problem_hash`. The primary 
 items, and the first draft of an item settles that item's row alone. A row of `0027` keeps
 the empty hash and stands for the only written item of its point.
 
+## `question_flags` and `retired_items` (D-RP2)
+
+Migration `0031_question_flags.sql`. `question_flags` holds the report of a learner who says a
+question is unclear or wrong. It is under row-level security (`tenant_isolation`). `cadus_app`
+reads and inserts; `cadus_admin` also updates the status (`waiting_owner`, `kept`, `retired`).
+A `waiting_owner` row sets the question aside for its learner: the serve path skips a drawn
+problem whose `problem_text_hash` equals `problem_hash`. `retired_items` has no `user_id`:
+`cadus_app` reads it, `cadus_admin` inserts, and the serve path skips every hash in it.
+
 ## The `serving_pool` pop rule (D-O1, C6, A5)
 
 The pop is `cadus_store::pool::pop_with_ring_tx`. It reads at most 8 rows of one

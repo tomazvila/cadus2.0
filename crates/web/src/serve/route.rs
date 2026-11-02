@@ -155,6 +155,7 @@ async fn serve_one(
     // The mixed review block: a review of a block serves the block's live
     // problem, or the question the interleaving rule picks next. The payload
     // names the task it belongs to.
+    let requested = task_id.clone();
     let task_id = super::mixed::serve_target(&plan, &scratch, &events, &task_id).unwrap_or(task_id);
     let task = find(&plan, &task_id)?;
 
@@ -244,9 +245,20 @@ async fn serve_one(
                 // whole session; the probe closes instead and the learner goes
                 // on to the next task.
                 Err(error) if task.probe_delay_days.is_some() => {
-                    return Err(
-                        set_probe_aside(state, tx, user_id, scratch, task, graph, error).await,
-                    );
+                    let moved = task_id != requested;
+                    let refusal =
+                        set_probe_aside(state, tx, user_id, scratch, task, graph, error).await;
+                    // The block moved the request onto this probe. The client
+                    // did not ask for the probe, so a `409` for it would send
+                    // the client to the wrong task. Pick again inside the block.
+                    if moved && refusal.code == TASK_COMPLETE {
+                        let reopened = open(state, content, user_id, now, true).await?;
+                        return Box::pin(serve_one(
+                            state, content, reopened, user_id, requested, now, started_at,
+                        ))
+                        .await;
+                    }
+                    return Err(refusal);
                 }
                 Err(error) => return Err(error),
             }
@@ -272,6 +284,20 @@ async fn serve_one(
     Ok(Json(payload))
 }
 
+/// Mark a retention probe done in the scratch state after its draw failed.
+///
+/// The serve route and the answer route share this close. No event records a
+/// probe that never reached the learner.
+pub(crate) fn mark_probe_aside(
+    scratch: &mut WebState,
+    task: &Task,
+    graph: &Curriculum,
+    error: &ApiError,
+) {
+    tracing::info!(task = %task.task_id, code = %error.code, "retention probe set aside: no unseen item");
+    progress_for(scratch, task, graph).done = true;
+}
+
 /// Close a retention probe whose draw found nothing to serve, and answer the
 /// `409 task_complete` that sends the client to the next task (D-F11).
 ///
@@ -287,8 +313,7 @@ async fn set_probe_aside(
     graph: &Curriculum,
     error: ApiError,
 ) -> ApiError {
-    tracing::info!(task = %task.task_id, code = %error.code, "retention probe set aside: no unseen item");
-    progress_for(&mut scratch, task, graph).done = true;
+    mark_probe_aside(&mut scratch, task, graph, &error);
     if write_state(&state.db, &mut tx, user_id, &scratch)
         .await
         .is_err()
@@ -705,7 +730,9 @@ pub(super) async fn draw_fresh(
             }
             None => false,
         };
-        if !repeated_probe && !repeats_feedback(policy.feedback, &digest) {
+        // A question the learner set aside, or the owner retired, never serves (D-RP2).
+        let set_aside = crate::problem_reports::is_set_aside(tx, user_id, &digest).await?;
+        if !repeated_probe && !set_aside && !repeats_feedback(policy.feedback, &digest) {
             if policy.prefer_new_in_task
                 && (memory.contains(&row.instance_hash) || memory.contains(&digest))
             {

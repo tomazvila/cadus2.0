@@ -155,7 +155,7 @@ use route::{next_problem, save_and_commit};
 use submission::*;
 use verdict::round2;
 pub use verdict::{
-    deterministic_grade, grade_item, grade_served_item, measure_secs, notation_text,
+    deterministic_grade, gave_up_grade, grade_item, grade_served_item, measure_secs, notation_text,
     reference_assisted, ungraded_grade,
 };
 
@@ -210,6 +210,17 @@ pub const GRADER_NOTE: &str = "deterministic";
 /// The form tag of a period-grouped integer (`deterministic_grade.py:146-149`).
 pub const TAG_NOTATION: &str = "notation";
 
+/// The tag of a typed answer that is not a number and not an expression (D-L5).
+///
+/// The text has no digit and no math symbol, and the checker cannot read it. The
+/// attempt is a decided miss.
+pub const TAG_NON_ANSWER: &str = "non_answer";
+
+/// The tag of an attempt the learner gave up (D-L5).
+///
+/// The learner chose "I don't know. Show the solution." The attempt is a decided miss.
+pub const TAG_GAVE_UP: &str = "gave_up";
+
 /// The tag of an elapsed time over the cap (`api.py:740`).
 pub const TAG_TIMING_UNRELIABLE: &str = "timing-unreliable";
 
@@ -219,6 +230,11 @@ pub const TAG_TIMING_UNRELIABLE: &str = "timing-unreliable";
 /// outside its own vocabulary (trap W1). D-M5-7 adds the hyphenated spelling to
 /// the vocabulary, so 2.0 ships one spelling rule and not the 1.0 exception.
 pub const TAG_BLANK_ANSWER: &str = "blank-answer";
+
+/// Whether a list of error tags holds `tag`.
+pub(super) fn has_tag(tags: &[String], tag: &str) -> bool {
+    tags.iter().any(|held| held == tag)
+}
 
 /// The stock re-solve instruction (D-M5-3, spec section 5.5).
 ///
