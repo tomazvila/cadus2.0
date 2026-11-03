@@ -211,11 +211,21 @@ topics:
             answer_contract: {"kind":"written"}
             answer: 'Right distributivity with k equal to c + d splits the first factor. Then left distributivity splits each part.'
             solution_sketch: 'Right distributivity with $k=c+d$ gives $(a+b)(c+d)=a(c+d)+b(c+d)$. Left distributivity on each part gives $(ac+ad)+(bc+bd)$. Proposition 3.13 and Proposition 3.14 give the two laws. They prove Proposition 3.15 again.'
-          # source: FoM exercise 3.1-3-7
-          - problem: 'Let $a,b,c,d,e\in\mathbb{N}$. (a) Prove $(a+b)((c+d)+e)=((((ac+ad)+ae)+bc)+bd)+be$. (b) Prove that the full product of a sum of $m$ summands and a sum of $n$ summands has $mn$ products as summands.'
+          # source: FoM exercise 3.1-3-7 part (a)
+          - problem: 'Let $a,b,c,d,e\in\mathbb{N}$. Prove $(a+b)((c+d)+e)=((((ac+ad)+ae)+bc)+bd)+be$.'
             answer_contract: {"kind":"written"}
-            answer: 'Use left and right distributivity to split each factor. Then every summand of one factor meets every summand of the other, so there are mn products.'
-            solution_sketch: 'For (a), right distributivity gives $a((c+d)+e)+b((c+d)+e)$. Left distributivity splits each product into three terms, and associativity of addition groups the six terms. For (b), split the first factor one summand at a time with right distributivity. Then split each product with left distributivity, as in Proposition 3.15. Each of the $m$ summands of the first factor meets each of the $n$ summands of the second factor once, so $mn$ products appear.'
+            answer: 'Use right distributivity to split the first factor. Then use left distributivity and associativity of addition to split each product into three terms.'
+            solution_sketch: 'Right distributivity gives $a((c+d)+e)+b((c+d)+e)$. Left distributivity splits each product into three terms. Associativity of addition groups the six terms in the stated order.'
+          # source: FoM exercise 3.1-3-7 part (b)
+          - problem: 'Give a short explanation of why a mechanical use of the FOIL rule fails for the product $(a+b)((c+d)+e)$.'
+            answer_contract: {"kind":"written"}
+            answer: 'FOIL names four products for two summands in each factor. Here the factors have two and three summands, so six products appear and FOIL misses two of them.'
+            solution_sketch: 'FOIL lists the first, outer, inner and last products. It fits only two summands in each factor. The second factor here is $(c+d)+e$ with three summands after the grouping is dropped. Each of 2 summands meets each of 3 summands, so 6 products appear, not 4.'
+          # source: FoM exercise 3.1-3-7 part (c)
+          - problem: 'Give a rule in words for how to multiply out two parentheses with $m$ summands and $n$ summands. Show that the result has $mn$ products as summands.'
+            answer_contract: {"kind":"written"}
+            answer: 'Multiply every summand of the first factor by every summand of the second factor, and add all products. There are m times n such pairs.'
+            solution_sketch: 'Split the first factor one summand at a time with right distributivity. Then split each product with left distributivity, as in Proposition 3.15. Each of the $m$ summands of the first factor meets each of the $n$ summands of the second factor once. So $mn$ products appear.'
         constraints: 'laws of multiplication, distributivity and multiplying out sums'
     diagnostic_exemplar:
       problem: 'Give the value of $(2+3)\cdot 4$.'
@@ -684,11 +694,36 @@ topics:
             answer_contract: {"kind":"written"}
             answer: 'The pair (n,1) goes to n for each n. The pairs (1,2) and (2,1) both go to 2.'
             solution_sketch: 'Take any $n$ in $\mathbb{N}$. Then $n\cdot 1=n$, so $(n,1)$ is a preimage of $n$. Hence the function is surjective. The pairs $(1,2)$ and $(2,1)$ both give 2, so the function is not injective.'
-          # source: FoM exercise 3.3-3-28
-          - problem: 'Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Prove these facts. (a) $z+x=z+y$ implies $x=y$. (b) $x+z=y+z$ implies $x=y$. (c) Let also $x+y\in S^+$ for all $x,y\in S^+$. The relation $x\le y$ iff $x=y$ or $x+d=y$ for some $d$ in $S^+$ is a total order on $S$. (d) If $x\le y$, then $x+z\le y+z$. (e) Let $\cdot$ be associative and distributive over $+$, with $xy\in S^+$ for $x,y\in S^+$. If $x\le y$ and $z\in S^+$, then $xz\le yz$. (f) Explain why part (e) needs $z\in S^+$.'
+          # source: FoM exercise 3.3-3-28 part (a)
+          - problem: 'Prove: Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Then $z+x=z+y$ implies $x=y$ for all $x,y,z$ in $S$.'
             answer_contract: {"kind":"written"}
-            answer: 'Each part follows from the three-case rule and the semigroup laws. In part f, multiplying by 0 or by a negative integer destroys or reverses the order.'
-            solution_sketch: 'For (a), suppose $x\ne y$ and let $y=x+d$ with $d$ in $S^+$. Then $z+y=(z+x)+d=(z+y)+d$, so the pair $z+y$ and $z+y$ fits case one and case two at once. That breaks the exactly-one rule, so $x=y$. Part (b) follows from (a) and commutativity. Parts (c) to (e) use closure of $S^+$ under addition, the three cases, Proposition 3.6 and distributivity. For (f), in the integers multiplication by 0 or by a negative number breaks the order.'
+            answer: 'Suppose x differs from y, so y = x + d. Then z + y = (z + y) + d, which makes two cases hold at once and breaks the exactly-one rule.'
+            solution_sketch: 'Suppose $x\ne y$. By the three cases, write $y=x+d$ with $d$ in $S^+$. Then $z+y=z+x+d=(z+y)+d$. So the elements $z+y$ and $z+y$ fit case one and case two at once. That breaks the exactly-one rule, so $x=y$.'
+          # source: FoM exercise 3.3-3-28 part (b)
+          - problem: 'Prove: Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Then $x+z=y+z$ implies $x=y$ for all $x,y,z$ in $S$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Commutativity turns x + z = y + z into z + x = z + y. Then apply the cancellation rule from the left.'
+            solution_sketch: 'Addition is commutative, so $x+z=z+x$ and $y+z=z+y$. The hypothesis becomes $z+x=z+y$. The left cancellation rule of the previous part gives $x=y$.'
+          # source: FoM exercise 3.3-3-28 part (c)
+          - problem: 'Prove: Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Let also $x+y\in S^+$ for all $x,y\in S^+$. Then the relation $x\le y$ iff $x=y$ or $x+d=y$ for some $d$ in $S^+$ is a total order on $S$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Check reflexive, antisymmetric, transitive and total. Transitivity adds two elements of S^+ and uses closure; the three cases give totality and antisymmetry.'
+            solution_sketch: 'Reflexivity holds by the case $x=y$. For transitivity, from $x+d=y$ and $y+e=z$ get $x+(d+e)=z$ and $d+e\in S^+$ by closure. For antisymmetry, $x\le y$ and $y\le x$ with $x\ne y$ put two cases together, which the exactly-one rule forbids. Totality is the three cases themselves.'
+          # source: FoM exercise 3.3-3-28 part (d)
+          - problem: 'Prove: Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Let $x\le y$ as in the order of the previous part. Then $x+z\le y+z$ and $z+x\le z+y$ for every $z$ in $S$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If x = y, add z to both sides. If x + d = y, then (x + z) + d = y + z by commutativity and associativity.'
+            solution_sketch: 'If $x=y$, then $x+z=y+z$ at once. If $x+d=y$ with $d$ in $S^+$, then $(x+z)+d=(x+d)+z=y+z$ by associativity and commutativity. So $x+z\le y+z$. The second inequality follows by commutativity.'
+          # source: FoM exercise 3.3-3-28 part (e)
+          - problem: 'Prove: Let $(S,+)$ be a commutative semigroup. Let $S^+\subseteq S$ be such that, for all $x,y$ in $S$, exactly one of three cases holds: $x=y$, or $x+d=y$ for some $d$ in $S^+$, or $y+d=x$ for some $d$ in $S^+$. Let $\cdot$ be associative and distributive over $+$, with $xy\in S^+$ for all $x,y\in S^+$. If $x\le y$ and $z\in S^+$, then $xz\le yz$ and $zx\le zy$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If x = y the products are equal. If x + d = y, distributivity gives xz + dz = yz, and dz lies in S^+ by closure of the product.'
+            solution_sketch: 'If $x=y$, then $xz=yz$. If $x+d=y$ with $d$ in $S^+$, distributivity gives $xz+dz=yz$. Here $dz\in S^+$ because $d$ and $z$ lie in $S^+$. So $xz\le yz$. The inequality $zx\le zy$ follows in the same way with left distributivity.'
+          # source: FoM exercise 3.3-3-28 part (f)
+          - problem: 'Give a short explanation of why the product rule for $x\le y$ in the previous part needs $z\in S^+$.'
+            answer_contract: {"kind":"written"}
+            answer: 'If z is 0 or a negative integer, multiplication by z gives equality or reverses the order, so x less than y does not give xz less than yz.'
+            solution_sketch: 'The proof needs $dz\in S^+$, and that holds only if $z$ is in $S^+$. A counterexample uses the integers with $S^+$ the positive integers. Here $1\le 2$, but multiplication by $-1$ gives $-1\ge -2$. Multiplication by $0$ gives $0=0$, which also loses the strict order.'
         constraints: 'Compute differences of natural numbers and test the rules for differences on numbers.'
       - id: kp4
         name: 'Definition 3.43 to Proposition 3.44: quotients of natural numbers'
@@ -845,11 +880,41 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 81; b = 7; c = 24'
             solution_sketch: 'We have $3^4=81$. Also $3^6=729$ and $3^7=2187$, so the smallest $k$ is 7. For $k=3$ we get $27-3=24$.'
-          # source: FoM exercise 3.4-3-34
-          - problem: 'A loan of $150000$ dollars has a yearly rate of $6\%$ and monthly payments. The balance after payment $n$ is $a_{n+1}=1.005\,a_n-P$, where $P$ is the monthly payment. (a) Give $P$ in dollars, rounded to cents, for a 30-year loan that ends at balance $0$ after 360 payments. (b) Give the sum of all 360 payments in dollars, using the exact $P$ and rounded to a whole dollar. (c) Give $P$ in dollars, rounded to cents, for a 15-year loan with 180 payments. (d) Give the sum of all 180 payments in dollars, using the exact $P$ and rounded to a whole dollar. (e) Give the smallest whole number of payments that pay off the 30-year loan when each payment is $P\cdot\frac{13}{12}$. (f) Give the same number for the 15-year loan.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"approx","decimals":2}},{"name":"b","contract":{"kind":"approx","decimals":0}},{"name":"c","contract":{"kind":"approx","decimals":2}},{"name":"d","contract":{"kind":"approx","decimals":0}},{"name":"e","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}}]}
-            answer: 'a=899.33;b=323757;c=1265.79;d=227841;e=295;f=159'
-            solution_sketch: 'Solve $a_n=0$ with $a_n=1.005^nB-P\frac{1.005^n-1}{0.005}$. For 360 payments this gives $P=899.33$ and a total of $323757$. For 180 payments it gives $P=1265.79$ and a total of $227841$. With payments larger by the factor $\frac{13}{12}$, the balance reaches 0 at payment number 295 for the 30-year loan and 159 for the 15-year loan.'
+          # source: FoM exercise 3.4-3-34 part (a)
+          - problem: 'Give an explanation in financial terms of why a loan with start balance $B$, yearly rate $r$, $k$ payments per year and payment $P$ has $a_0=B$ and $a_{n+1}=\left(1+\frac{r}{k}\right)a_n-P$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The balance starts at B. In each period the balance grows by the interest r/k times itself, and then the payment P is taken off.'
+            solution_sketch: 'Before any payment the balance is the start balance $B$, so $a_0=B$. In one period the interest $\frac{r}{k}a_n$ is added to the balance $a_n$. This gives $(1+\frac{r}{k})a_n$. The payment $P$ at the end of the period lowers this amount, so $a_{n+1}=(1+\frac{r}{k})a_n-P$.'
+          # source: FoM exercise 3.4-3-34 part (b)
+          - problem: 'Prove: Let $r,B,P$ be real numbers, let $k$ be a natural number, and let $a_0=B$ and $a_{n+1}=\left(1+\frac{r}{k}\right)a_n-P$. Then for all $n\ge 0$ we have $a_n=\left(1+\frac{r}{k}\right)^nB-P\,\dfrac{\left(1+\frac{r}{k}\right)^n-1}{r/k}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Induct on n starting at 0. Put the formula for n into the recursion and combine the powers of the factor 1 + r/k.'
+            solution_sketch: 'For $n=0$ the formula gives $a_0=B$. Assume it holds for $n$ and write $q=1+\frac{r}{k}$. Then $a_{n+1}=qa_n-P=q^{n+1}B-P\frac{q^{n+1}-q}{q-1}-P$. Since $\frac{q^{n+1}-q}{q-1}+1=\frac{q^{n+1}-1}{q-1}$, the formula holds for $n+1$ by Theorem 3.45.'
+          # source: FoM exercise 3.4-3-34 part (c)
+          - problem: 'Prove: A 30 year fixed rate mortgage with start balance $B$, yearly rate $r$ and monthly payments is paid off by the monthly payment $P=\dfrac{\frac{r}{12}\left(1+\frac{r}{12}\right)^{360}}{\left(1+\frac{r}{12}\right)^{360}-1}B$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Use the formula for the balance a_n with k = 12. Set a_360 equal to 0 and solve the equation for P.'
+            solution_sketch: 'The loan is paid off when $a_{360}=0$. Put $k=12$ and $n=360$ in the formula for $a_n$. This gives $0=q^{360}B-P\frac{q^{360}-1}{r/12}$ with $q=1+\frac{r}{12}$. Solve for $P$ to get the stated payment.'
+          # source: FoM exercise 3.4-3-34 part (d)
+          - problem: 'A loan of $150000$ dollars has a yearly rate of $6\%$ and monthly payments. The balance after payment $n$ is $a_{n+1}=1.005\,a_n-P$ with $a_0=150000$, where $P$ is the fixed monthly payment. (a) Give $P$ in dollars, rounded to cents, for a 30-year loan that ends at balance $0$ after 360 payments. (b) Give the sum of all 360 payments in dollars, using the exact $P$ and rounded to a whole dollar.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"approx","decimals":2}},{"name":"b","contract":{"kind":"approx","decimals":0}}]}
+            answer: 'a=899.33;b=323757'
+            solution_sketch: 'Solve $a_{360}=0$ with $a_n=1.005^nB-P\frac{1.005^n-1}{0.005}$. This gives $P=899.33$. The sum of 360 payments is $360P$, which is $323757$.'
+          # source: FoM exercise 3.4-3-34 part (e)
+          - problem: 'A loan of $150000$ dollars has a yearly rate of $6\%$ and monthly payments. The balance after payment $n$ is $a_{n+1}=1.005\,a_n-P$ with $a_0=150000$, where $P$ is the fixed monthly payment. (a) Give $P$ in dollars, rounded to cents, for a 15-year loan that ends at balance $0$ after 180 payments. (b) Give the sum of all 180 payments in dollars, using the exact $P$ and rounded to a whole dollar.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"approx","decimals":2}},{"name":"b","contract":{"kind":"approx","decimals":0}}]}
+            answer: 'a=1265.79;b=227841'
+            solution_sketch: 'Solve $a_{180}=0$ with $a_n=1.005^nB-P\frac{1.005^n-1}{0.005}$. This gives $P=1265.79$. The sum of 180 payments is $180P$, which is $227841$.'
+          # source: FoM exercise 3.4-3-34 part (f)
+          - problem: 'A loan of $150000$ dollars has a yearly rate of $6\%$ and monthly payments. The balance after payment $n$ is $a_{n+1}=1.005\,a_n-P$ with $a_0=150000$, where $P$ is the fixed monthly payment. Each payment is now the exact payment of the plain loan times $\frac{13}{12}$. (a) Give the smallest whole number of payments that pay off the 30-year loan. (b) Give the smallest whole number of payments that pay off the 15-year loan.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
+            answer: 'a=295;b=159'
+            solution_sketch: 'Put the payment $\frac{13}{12}P$ into the balance formula and find the first $n$ with $a_n\le 0$. For the 30-year loan this gives $n=295$. For the 15-year loan it gives $n=159$.'
+          # source: FoM exercise 3.4-3-34 part (g)
+          - problem: 'Give a description of how to obtain the formula for $a_n$ by writing $a_n$ in terms of $a_{n-1}$, then $a_{n-2}$, and so on down to $a_0$, with $a_{n+1}=qa_n-P$ and $q=1+\frac{r}{k}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Unroll the recursion to get q^n a_0 minus P times the sum of q^j for j from 0 to n-1. Then apply the geometric sum formula.'
+            solution_sketch: 'Write $a_n=qa_{n-1}-P=q(qa_{n-2}-P)-P=q^2a_{n-2}-P(q+1)$. After $n$ steps, $a_n=q^na_0-P(q^{n-1}+\dots+q+1)$. The pattern is clear from the first three steps. The geometric sum from Exercise 3-32 gives $q^{n-1}+\dots+1=\frac{q^n-1}{q-1}$. With $q-1=\frac{r}{k}$ this is the formula.'
           # source: FoM exercise 3.4-3-31
           - problem: 'Prove each sum formula by induction. (a) $1+2+\cdots+n=\frac{n(n+1)}{2}$. (b) $1^3+2^3+\cdots+n^3=\frac{n^2(n+1)^2}{4}$. (c) $1^4+2^4+\cdots+n^4=\frac{n(n+1)(2n+1)(3n^2+3n-1)}{30}$.'
             answer_contract: {"kind":"written"}
@@ -860,11 +925,16 @@ topics:
             answer_contract: {"kind":"written"}
             answer: 'Prove each base case, then add the new term to the formula for n. For (e) and (f) start at the right base value and compare sizes.'
             solution_sketch: 'For (a) to (d), check the base case and add the new term to both sides of the formula for $n$. For (d), put the two fractions over the common denominator $1-q$. For (e), start at $n=5$ with $32>25$. Then $2^{n+1}=2\cdot 2^n>2n^2\ge(n+1)^2$ for $n\ge 5$. For (f), start at $k=1$ with $1<3$, and use $3^{k+1}=3\cdot 3^k>3k\ge k+1$. Theorem 3.45, with the changed start from Exercise 3-37, finishes each part.'
-          # source: FoM exercise 3.4-3-33
+          # source: FoM exercise 3.4-3-33 part (a)
           - problem: 'Prove: Let $r$ and $B$ be real numbers, let $k$ be a natural number, and let $a_0=B$ and $a_{n+1}=\left(1+\frac{r}{k}\right)a_n$ for all $n\ge 0$. Then $a_n=\left(1+\frac{r}{k}\right)^nB$ for all $n\ge 0$.'
             answer_contract: {"kind":"written"}
             answer: 'Induct on n starting at 0. Multiply the formula for n by the factor 1 + r/k to get the formula for n + 1.'
             solution_sketch: 'For $n=0$ the formula gives $a_0=B$. Assume $a_n=(1+\frac{r}{k})^nB$. Then $a_{n+1}=(1+\frac{r}{k})a_n=(1+\frac{r}{k})^{n+1}B$. Induction from $n=0$ gives the formula for all $n$ by Theorem 3.45.'
+          # source: FoM exercise 3.4-3-33 part (b)
+          - problem: 'Give a short explanation of why the formula $a_n=(1+\frac{r}{k})^nB$ is called the compound interest formula.'
+            answer_contract: {"kind":"written"}
+            answer: 'Each of the k periods of a year adds the interest r/k on the whole balance, interest of earlier periods included. So the balance grows by one factor per period.'
+            solution_sketch: 'A balance $B$ earns the yearly rate $r$ in $k$ equal periods. Each period multiplies the balance by $1+\frac{r}{k}$. The interest of one period is part of the balance of the next period, so interest earns interest. After $n$ periods the balance is $B$ times the factor to the power $n$.'
           # source: FoM exercise 3.4-3-36
           - problem: 'Prove: Look at the false formula $1+2+\cdots+n=\frac{n(n+1)}{2}+\pi$. The step from the formula for $n$ to the formula for $n+1$ works for every $n$. Yet the formula fails for every $n$, so no base case holds.'
             answer_contract: {"kind":"written"}

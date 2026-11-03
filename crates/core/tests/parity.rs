@@ -14,7 +14,7 @@ use common::dump::tree;
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "96be18befa91b01b34db86cacbf2825772dd64f2a34cfbb85c75792e62d623a6";
+const TREE_HASH: &str = "88add6ec5c24ca5338ca2d840d1ee1b2c66e430b53000b23605040309506209b";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -34,7 +34,8 @@ const TREE_HASH: &str = "96be18befa91b01b34db86cacbf2825772dd64f2a34cfbb85c75792
 // 2026-10-29, VBE course wave 2a (the course vbe-math): dump length 13,565,575 (was 13,267,884); hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): dump length 13,709,049 (was 13,565,575); hash 8c62ed82... (was 0d3ac571...).
 // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): dump length 15,210,810 (was 13,709,049); hash 96be18be... (was 8c62ed82...); topics 1183 (was 1133), courses 15 (was 14), units 105 (was 98), knowledge points 3516 (was 3327), exemplars 28373 (was 26374), prereq edges 4094 (was 3794), encompassing edges 4013 (was 3713).
-const DUMP_LEN: usize = 15_210_810;
+// 2026-11-03, explain sub-parts of the book exercises become written items (D-FOM1): dump length 15,225,855 (was 15,210,810), measured with `dump_curriculum curriculum`; hash re-pinned (was 96be18be...23a6).
+const DUMP_LEN: usize = 15_225_855;
 
 /// The `counts` object of the dump, as the oracle writes it.
 // 2026-10-12, Foundations merge (D-C1): counts re-pinned to the merged tree.
@@ -42,7 +43,7 @@ const DUMP_LEN: usize = 15_210_810;
 // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: exemplars 25789 (was 25795).
 // 2026-10-29, VBE wave 2b (the six exam sets): topics 1133 (was 1127), units 98 (was 97), knowledge points 3327 (was 3303), exemplars 26374 (was 26188), prereq edges 3794 (was 3638), encompassing edges 3713 (was 3557).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): courses 14 (was 13), topics 1127 (was 1101), units 97 (was 91), knowledge points 3303 (was 3238), exemplars 26188 (was 25789), prereq edges 3638 (was 3378), encompassing edges 3557 (was 3297).
-const COUNTS: &str = "\"counts\":{\"anki_seeds\":2218,\"courses\":15,\"encompassing_edges\":4013,\"exemplars\":28373,\"knowledge_points\":3516,\"prereq_edges\":4094,\"topics\":1183,\"units\":105}";
+const COUNTS: &str = "\"counts\":{\"anki_seeds\":2218,\"courses\":15,\"encompassing_edges\":4013,\"exemplars\":28398,\"knowledge_points\":3516,\"prereq_edges\":4094,\"topics\":1183,\"units\":105}";
 
 // --------------------------------------------------------------------------- //
 // The hash and the shape of the dump

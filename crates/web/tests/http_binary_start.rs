@@ -43,7 +43,7 @@ async fn binary_exits_2_with_a_bad_shutdown_deadline() {
             .env("SHUTDOWN_DEADLINE_SECS", "many"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "bad shutdown deadline");
+    let (code, stderr) = exit_of(child, START_WAIT, "bad shutdown deadline");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -62,7 +62,7 @@ async fn binary_exits_2_with_an_unknown_argon2_profile() {
             .env("CADUS_AUTH_ARGON2_PROFILE", "prd"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "bad argon2 profile");
+    let (code, stderr) = exit_of(child, START_WAIT, "bad argon2 profile");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -92,7 +92,7 @@ async fn binary_exits_2_with_a_curriculum_that_does_not_load() {
             .env("CADUS_CURRICULUM", "/no/such/curriculum/tree"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "curriculum load");
+    let (code, stderr) = exit_of(child, START_WAIT, "curriculum load");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -130,7 +130,7 @@ async fn binary_opens_the_admin_pool_when_the_admin_dsn_is_set() {
         assert_eq!(code, 200);
 
         send_sigterm(child.as_ref());
-        wait_for_exit(child.as_mut(), Duration::from_secs(10), "admin-pool stop");
+        wait_for_exit(child.as_mut(), START_WAIT, "admin-pool stop");
         let (code, stderr) = collect_exit(child);
         assert_eq!(
             code,
@@ -176,7 +176,7 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
             .env("DATABASE_URL", format!("postgresql://x@127.0.0.1:{port}/x"))
             .env("BIND_ADDR", "127.0.0.1:0"),
     );
-    let deadline = Instant::now() + Duration::from_secs(10);
+    let deadline = Instant::now() + START_WAIT;
     let held_connection = loop {
         match silent.accept() {
             Ok((connection, _peer)) => break connection,
@@ -185,7 +185,7 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
                     panic!("cadus-web exited before the database connect: {status:?}");
                 }
                 if Instant::now() >= deadline {
-                    panic!("cadus-web did not start the database connect within 10 s");
+                    panic!("cadus-web did not start the database connect within 60 s");
                 }
                 sleep(Duration::from_millis(50));
             }
@@ -194,7 +194,7 @@ async fn binary_exits_zero_on_sigterm_during_the_connect() {
     };
     send_sigterm(child.as_ref());
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "stop during connect");
+    let (code, stderr) = exit_of(child, START_WAIT, "stop during connect");
 
     assert_eq!(code, Some(0), "stderr:\n{stderr}");
     assert!(
@@ -260,7 +260,7 @@ async fn binary_exits_2_with_a_deadline_that_is_not_unicode() {
             .env("SHUTDOWN_DEADLINE_SECS", OsStr::from_bytes(b"7\xff")),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "deadline");
+    let (code, stderr) = exit_of(child, START_WAIT, "deadline");
 
     assert_eq!(code, Some(2), "stderr:\n{stderr}");
     assert!(
@@ -304,7 +304,7 @@ async fn binary_reads_the_default_log_filter_and_curriculum_path() {
             .env_remove("CADUS_CURRICULUM"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "defaults");
+    let (code, stderr) = exit_of(child, START_WAIT, "defaults");
 
     // The default tree is not under the test directory, or the database
     // refuses the connection: both end the start with exit code 2 after the
@@ -325,7 +325,7 @@ async fn binary_exits_zero_on_sigint() {
         assert_eq!(code, 200);
 
         send_signal(child.as_ref(), "-INT");
-        let (code, stderr) = exit_of(child, Duration::from_secs(10), "SIGINT stop");
+        let (code, stderr) = exit_of(child, START_WAIT, "SIGINT stop");
 
         assert_eq!(code, Some(0), "stderr:\n{stderr}");
         assert!(
@@ -348,7 +348,7 @@ async fn binary_pins_a_public_origin_and_stops_clean() {
         assert_eq!(code, 200);
 
         send_sigterm(child.as_ref());
-        let (code, stderr) = exit_of(child, Duration::from_secs(10), "public-origin stop");
+        let (code, stderr) = exit_of(child, START_WAIT, "public-origin stop");
         assert_eq!(code, Some(0), "stderr:\n{stderr}");
         assert!(
             !stderr.contains("PUBLIC_ORIGIN is not set"),

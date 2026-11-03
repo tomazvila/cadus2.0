@@ -95,7 +95,7 @@ async fn binary_exits_2_without_a_database_url() {
             .env("BIND_ADDR", "127.0.0.1:0"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "start error");
+    let (code, stderr) = exit_of(child, START_WAIT, "start error");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -122,7 +122,7 @@ async fn binary_exits_2_with_a_bind_addr_that_is_not_unicode() {
             .env("BIND_ADDR", broken),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "bad BIND_ADDR");
+    let (code, stderr) = exit_of(child, START_WAIT, "bad BIND_ADDR");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -151,11 +151,11 @@ async fn binary_exits_zero_on_sigterm_during_the_boot_guard() {
 
     // Wait until the guard query reaches the deaf server. The process is then
     // inside `boot_check` and answers only through the signal path.
-    let deadline = Instant::now() + Duration::from_secs(10);
+    let deadline = Instant::now() + START_WAIT;
     while !deaf.query_seen() {
         assert!(
             Instant::now() < deadline,
-            "cadus-web must send its boot-guard query within 10 s"
+            "cadus-web must send its boot-guard query within 60 s"
         );
         sleep(Duration::from_millis(50));
     }
@@ -290,7 +290,7 @@ async fn binary_exits_2_with_a_bad_insecure_cookie_value() {
             .env("CADUS_WEB_INSECURE_COOKIE", "true"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "cookie posture");
+    let (code, stderr) = exit_of(child, START_WAIT, "cookie posture");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -314,7 +314,7 @@ async fn binary_exits_2_with_a_public_origin_that_is_not_an_origin() {
             .env("PUBLIC_ORIGIN", "https://tutor.example/app"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "public origin");
+    let (code, stderr) = exit_of(child, START_WAIT, "public origin");
 
     assert_eq!(code, Some(2));
     assert!(
@@ -365,7 +365,7 @@ async fn binary_exits_2_when_the_boot_guard_times_out() {
             .env("DB_CLIENT_TIMEOUT_MS", "300"),
     );
 
-    let (code, stderr) = exit_of(child, Duration::from_secs(10), "boot guard timeout");
+    let (code, stderr) = exit_of(child, START_WAIT, "boot guard timeout");
 
     assert_eq!(code, Some(2), "stderr:\n{stderr}");
 }

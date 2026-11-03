@@ -1984,11 +1984,21 @@ topics:
             answer_contract: {"kind":"written"}
             answer: 'Put x = y - b/(3a) and expand. The y^2 coefficient is zero, and division by a gives the form y^3+py+q, because each step is reversible.'
             solution_sketch: 'Put $x=y-\alpha$ with a free number $\alpha$ and expand. The coefficient of $y^2$ is $3a\alpha$ plus $b$ with the right signs. Pick $\alpha=\frac{b}{3a}$ so that this coefficient is 0. Divide by $a$ and collect the terms to get $p$ and $q$. The shift is reversible, so the solution sets match.'
-          # source: FoM exercise 5.8-5-65
-          - problem: 'Prove: Let $\mathbb F$ be a field with $5\neq0$. Then $x$ solves $x^5+ax^4+bx^3+cx^2+dx+e=0$ if and only if $y=x+\frac a5$ solves an equation $y^5+py^3+qy^2+ry+s=0$ with no $y^4$ term.'
+          # source: FoM exercise 5.8-5-65 part (a)
+          - problem: 'Let $\mathbb F$ be a field with $5\neq0$. Find a number $\alpha$ such that $x$ solves $x^5+ax^4+bx^3+cx^2+dx+e=0$ if and only if $y=x+\alpha$ solves an equation $y^5+py^3+qy^2+ry+s=0$ with no $y^4$ term, and prove it.'
             answer_contract: {"kind":"written"}
-            answer: 'Put x = y - a/5 and expand. The y^4 coefficient is -5(a/5) + a, which is 0.'
-            solution_sketch: 'Put $x=y-\frac a5$ in the equation. The term $x^5$ gives $y^5-ay^4+\dots$. The term $ax^4$ gives $ay^4+\dots$. The two $y^4$ terms cancel, as in Theorem 5.65 for the cubic. The other terms give $p$, $q$, $r$ and $s$, and the reversible shift keeps the solutions. The same step removes the term of order $n-1$ in an equation of degree $n$.'
+            answer: 'Take alpha = a/5 and put x = y - a/5. The y^4 coefficient becomes -5(a/5) + a, which is 0.'
+            solution_sketch: 'Put $x=y-\frac a5$ in the equation. The term $x^5$ gives $y^5-ay^4+\dots$. The term $ax^4$ gives $ay^4+\dots$. The two $y^4$ terms cancel, as in Theorem 5.65 for the cubic. The shift is reversible, so the solutions correspond.'
+          # source: FoM exercise 5.8-5-65 part (b)
+          - problem: 'Take the equation $x^5+5x^4+10x^3=0$ over the real numbers. Let $y=x+\alpha$ remove the $x^4$ term, so the new equation is $y^5+py^3+qy^2+ry+s=0$. Give (a) $\alpha$, (b) $p$, (c) $q$, (d) $r$, (e) $s$.'
+            answer_contract: {"kind":"multipart","parts":[{"name":"alpha","contract":{"kind":"exact"}},{"name":"p","contract":{"kind":"exact"}},{"name":"q","contract":{"kind":"exact"}},{"name":"r","contract":{"kind":"exact"}},{"name":"s","contract":{"kind":"exact"}}]}
+            answer: 'alpha=1;p=0;q=-10;r=15;s=-6'
+            solution_sketch: 'Here $\alpha=\frac a5=1$, so put $x=y-1$. Then $(y-1)^5=y^5-5y^4+10y^3-10y^2+5y-1$, $5(y-1)^4=5y^4-20y^3+30y^2-20y+5$ and $10(y-1)^3=10y^3-30y^2+30y-10$. The sum is $y^5+0y^3-10y^2+15y-6$. So $p=0$, $q=-10$, $r=15$ and $s=-6$.'
+          # source: FoM exercise 5.8-5-65 part (c)
+          - problem: 'Give a short explanation of how the term of order $n-1$ can be removed from an equation of degree $n$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Replace x by y minus a over n, where a is the coefficient of the term of order n-1. Then the two contributions to y^(n-1) cancel.'
+            solution_sketch: 'Write the equation as $x^n+ax^{n-1}+\dots=0$ with $n\ne0$ in the field. Put $x=y-\frac an$. The term $x^n$ gives $-ay^{n-1}$ and the term $ax^{n-1}$ gives $ay^{n-1}$. So the $y^{n-1}$ terms cancel, as in part (a) for $n=5$.'
         constraints: 'Shift a cubic equation so that the square term vanishes.'
       - id: kp5
         name: 'Theorem 5.66: the cubic formula, step 2, Cardano''s formula'
@@ -2204,11 +2214,41 @@ topics:
             answer_contract: {"kind":"written"}
             answer: 'Subtract two combinations of the same vector. Independence of B forces every coefficient of the difference to be 0.'
             solution_sketch: 'Write $x$ as two combinations of vectors of $B$. Join both lists of vectors and give the missing ones coefficient 0. Subtract the two sums to get a combination equal to 0. By Definition 5.73 the set $B$ is linearly independent, so each coefficient of the difference is 0. Hence the two combinations agree, up to terms with coefficient 0.'
-          # source: FoM exercise 5.9-5-72
-          - problem: 'Prove all parts: In the quaternions, the set of sums $a+bi+cj+dk$ with real $a,b,c,d$ has these properties. It is an algebra over $\mathbb{R}$ of dimension 4. It has a unit and each nonzero element has an inverse. It is not a field. Its norm is the root of $a^2+b^2+c^2+d^2$, and the norm of a product is the product of the norms.'
+          # source: FoM exercise 5.9-5-72 part (a)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Then $\mathbb{H}$ is an algebra over $\mathbb{R}$ of dimension 4.'
             answer_contract: {"kind":"written"}
-            answer: 'Check the algebra rules on the base. Build inverses from the reflected element, and show that ij differs from ji and the norm is multiplicative.'
-            solution_sketch: 'Check the rules of Definition 5.76 on the base $1,i,j,k$. The element 1 is the unit. For $x\neq 0$, the reflected element $a-bi-cj-dk$ divided by $a^2+b^2+c^2+d^2$ is the inverse. We have $ij=k$ and $ji=-k$, so the product is not commutative and the set is not a field. The norm of a product equals the product of the norms by direct expansion. For scalars in $\mathbb{C}$, the rule $\alpha(xy)=x(\alpha y)$ of Definition 5.76 fails, so the set is not an algebra over $\mathbb{C}$.'
+            answer: 'The elements 1, i, j, k form a basis, so the dimension is 4. The product is associative and distributive, and real scalars move through it.'
+            solution_sketch: 'The four elements $1,i,j,k$ are linearly independent and span $\mathbb{H}$, so the dimension is 4. Check the three rules of Definition 5.76 on the base elements. Bilinearity then extends them to all elements.'
+          # source: FoM exercise 5.9-5-72 part (b)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Then $\mathbb{H}$ has a multiplicative unit element.'
+            answer_contract: {"kind":"written"}
+            answer: 'The element 1 times any base element x equals x, and x times 1 equals x. Bilinearity gives the same for all elements.'
+            solution_sketch: 'By the multiplication rule, $1x=x1=x$ for $x$ in $\{i,j,k\}$ and for $x=1$. Both sides are linear in $x$, so the rule holds for all elements. This is the unit of the algebra in Definition 5.76.'
+          # source: FoM exercise 5.9-5-72 part (c)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Then every $a+bi+cj+dk\neq0$ has a multiplicative inverse.'
+            answer_contract: {"kind":"written"}
+            answer: 'Multiply the element by a - bi - cj - dk. The product is the real number a^2 + b^2 + c^2 + d^2, which is not 0, so divide by it.'
+            solution_sketch: 'Let $z=a+bi+cj+dk$ and $\bar z=a-bi-cj-dk$. Expand $z\bar z$. The mixed terms cancel in pairs, for example $-abi+abi$, and $-bcij-cbji$ cancels because $ji=-ij$. So $z\bar z=a^2+b^2+c^2+d^2$, which is positive for $z\ne0$. Then $\bar z$ divided by this number is the inverse, in the algebra of Definition 5.76.'
+          # source: FoM exercise 5.9-5-72 part (d)
+          - problem: 'Give a short explanation of why $\mathbb{H}$ is not a field.'
+            answer_contract: {"kind":"written"}
+            answer: 'A field has a commutative product. In H, ij = k but ji = -k, and k is not equal to -k, so the product is not commutative.'
+            solution_sketch: 'A field has a commutative product. In $\mathbb{H}$ we have $ij=k$ and $ji=-k$. Since $k\neq-k$, the product is not commutative. So $\mathbb{H}$ is not a field, although every nonzero element has an inverse as in Definition 5.76 for algebras.'
+          # source: FoM exercise 5.9-5-72 part (e)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Let $\|a+bi+cj+dk\|=\sqrt{a^2+b^2+c^2+d^2}$. Then $\|z\|=0$ only for $z=0$, $\|\alpha z\|=|\alpha|\|z\|$ for real $\alpha$, and $\|z+w\|\le\|z\|+\|w\|$.'
+            answer_contract: {"kind":"written"}
+            answer: 'The norm is the length of the vector (a,b,c,d) in four-dimensional real space. The three rules are the rules of that length, including the triangle inequality.'
+            solution_sketch: 'A sum of squares is zero only if every term is zero, which gives the first rule. Factor $\alpha^2$ out of the square root for the second rule. The triangle inequality is the Cauchy-Schwarz inequality for the vectors $(a,b,c,d)$ in $\mathbb{R}^4$. This treats $\mathbb{H}$ as a vector space as in Definition 5.76.'
+          # source: FoM exercise 5.9-5-72 part (f)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Let $\|a+bi+cj+dk\|=\sqrt{a^2+b^2+c^2+d^2}$. Then $\|xy\|=\|x\|\|y\|$ for all $x,y$ in $\mathbb{H}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Expand xy and add the squares of the four coefficients. The mixed terms cancel and the result is the product of the squared norms.'
+            solution_sketch: 'Write $x=a+bi+cj+dk$ and $y=a''+b''i+c''j+d''k$. Expand $xy$ with the multiplication rules of Definition 5.76 applied to the base. Then add the squares of the four coefficients. After the mixed terms cancel, the sum equals $(a^2+b^2+c^2+d^2)(a''^2+b''^2+c''^2+d''^2)$.'
+          # source: FoM exercise 5.9-5-72 part (g)
+          - problem: 'Prove: In the quaternions $\mathbb{H}$ every element is $a+bi+cj+dk$ with real $a,b,c,d$. The units multiply by $i^2=j^2=k^2=-1$, $ij=k=-ji$, $jk=i=-kj$, $ki=j=-ik$, and $1$ is neutral. Let a complex number $\alpha$ act on $\mathbb{H}$ by $\alpha(a+bi+cj+dk)=\alpha a+\alpha bi+\alpha cj+\alpha dk$, with the complex $i$ equal to the quaternion $i$. Then rule 3 of the algebra definition fails, so $\mathbb{H}$ is not an algebra over $\mathbb{C}$.'
+            answer_contract: {"kind":"written"}
+            answer: 'Take alpha = i, x = j and y = 1. Then alpha(xy) = ij = k, but x(alpha y) = ji = -k, so the two sides differ.'
+            solution_sketch: 'Rule 3 of Definition 5.76 asks for $\alpha(xy)=(\alpha x)y=x(\alpha y)$. Take $\alpha=i$, $x=j$ and $y=1$. Then $\alpha(xy)=ij=k$. But $x(\alpha y)=ji=-k$. Since $k\neq-k$, rule 3 fails.'
         constraints: 'Find coordinates, count base sizes, multiply in algebras.'
     diagnostic_exemplar:
       problem: 'In $\mathbb{R}^2$ let $x=(2,1)$. (a) Give the first component of $3x$. (b) Give the second component of $x+x$.'

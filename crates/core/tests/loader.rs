@@ -77,7 +77,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-29, VBE course wave 2a (the course vbe-math): 26188 (was 25789).
     // 2026-10-29, VBE wave 2b (the six exam sets): 26374 (was 26188).
     // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 28373 (was 26374).
-    assert_eq!(exemplars, 28373, "exemplars");
+    // 2026-11-03, explain sub-parts become written items: 28398 (was 28373).
+    assert_eq!(exemplars, 28398, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).

@@ -177,10 +177,19 @@ pub fn wait_for_exit(child: &mut Child, limit: Duration, what: &str) {
 
 /// Poll `/api/health` until the server answers, and return the answer.
 ///
+/// The longest wait for a spawned debug binary to reach a stage (a listener,
+/// a database connect, an exit after a refused start). See `wait_until_healthy`.
+pub const START_WAIT: Duration = Duration::from_secs(60);
+
 /// The server needs a pool and a listener first, so the poll runs for at most
-/// 10 seconds. A child that ends early fails the test at once.
+/// 60 seconds. A child that ends early fails the test at once.
+///
+/// 2026-11-03: the wait was 10 seconds. The tree holds 1,183 topics (a 15 MB
+/// canonical dump) and the thirteen tests of `http_binary_start` start a debug
+/// binary each at the same time, so one start took more than 10 seconds under
+/// the merge check. The wait is a harness limit, not a product rule.
 pub fn wait_until_healthy(child: &mut Child, address: &str) -> (u16, String) {
-    let deadline = Instant::now() + Duration::from_secs(10);
+    let deadline = Instant::now() + START_WAIT;
     while Instant::now() < deadline {
         if let Some(early) = child.try_wait().expect("try_wait on the child") {
             let _ = child.kill();
@@ -193,7 +202,7 @@ pub fn wait_until_healthy(child: &mut Child, address: &str) -> (u16, String) {
     }
     let _ = child.kill();
     let _ = child.wait();
-    panic!("cadus-web did not answer /api/health within 10 s");
+    panic!("cadus-web did not answer /api/health within 60 s");
 }
 
 /// Send `SIGTERM` to one child process.
