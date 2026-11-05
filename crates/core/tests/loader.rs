@@ -82,7 +82,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 28373 (was 26374).
     // 2026-11-03, explain sub-parts become written items: 28398 (was 28373).
     // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 28997 (was 28398).
-    assert_eq!(exemplars, 28997, "exemplars");
+    // 2026-11-05, eight paper tasks restored (D-FG1): 29005 (was 28997).
+    assert_eq!(exemplars, 28999, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).

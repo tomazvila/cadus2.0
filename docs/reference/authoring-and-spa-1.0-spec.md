@@ -246,6 +246,33 @@ refuses an exemplar that names it (`visual_motion_on_exemplar`) and reports a st
 runs the leak test on the text of every step. The name must let a stranger predict what moves
 ("slope", not "m").
 
+**Figure with several curves (D-FG1).** A `curve` figure gives either `curve` (one function, as
+before) or `curves` (two to six entries), never both and never neither. An entry is
+`{label, curve, key_points?}`. A label is one or two characters and is unique in the figure. The
+figure itself holds no `key_points` when it has `curves`, and it holds no `motion`. Each curve draws
+in its own stroke, so the figure reads without colour: solid, dashed, dotted, dash-dot, long dash,
+dash-dot-dot (the classes `cadus-visual-curve-s1` to `-s6`). The label sits at the last drawn point
+of its curve, left of it and above it, inside the plane. If two labels meet, the later label moves up
+by one y tick, then down by one, then up by two, and so on, up to six ticks. The caption and the
+`<desc>` text name each label with its function: "Curve A is y = ...". The family `sqrt` draws
+`y = a * sqrt(b x + c) + d` (`a` and `b` not zero) only where `b x + c >= 0`, and the line starts at
+that edge. A key point on a root curve is exact only where `b x + c` is the square of a rational.
+```yaml
+kind: curve
+x_min: '-5'
+x_max: '5'
+y_min: '-5'
+y_max: '5'
+x_tick: '1'
+y_tick: '1'
+caption: Which graph is y = sqrt(x - 3)?
+curves:
+- {label: A, curve: {family: sqrt, a: '1', b: '1', c: '0', d: '0'}}
+- {label: B, curve: {family: sqrt, a: '1', b: '1', c: '-3', d: '0'},
+   key_points: [{x: '4', y: '1'}]}
+```
+A one-curve figure keeps its bytes.
+
 **T3 — authoring cost per KP.** Every attempt writes one `model_call_log` row with
 `purpose = 'authoring'` and `user_id = NULL` (`migrations/0005_content.sql:52-57`). On store,
 the job sets `content_store.authoring_attempts` and `authoring_cost_usd` to the sum over that

@@ -20,8 +20,8 @@ mod helpers;
 
 use evaluate::{
     exponential_exact, exponential_f64, logarithm_exact, logarithm_f64, natural_exact, natural_f64,
-    polynomial_exact, polynomial_f64, reciprocal_exact, reciprocal_f64, validate_polynomial,
-    validate_scaled, validate_trig,
+    polynomial_exact, polynomial_f64, reciprocal_exact, reciprocal_f64, sqrt_exact, sqrt_f64,
+    validate_polynomial, validate_scaled, validate_trig,
 };
 use helpers::{TrigFamily, nonzero, polynomial_text, positive_and_not_one, trig_exact, trig_f64};
 
@@ -85,6 +85,18 @@ pub enum CurveKind {
         /// The vertical shift; the horizontal asymptote sits at `y = k`.
         k: Scalar,
     },
+    /// `y = a * sqrt(b x + c) + d`, drawn only where `b x + c >= 0`. Exact
+    /// whenever `b x + c` is the square of a rational.
+    Sqrt {
+        /// The vertical scale. Never zero.
+        a: Scalar,
+        /// The horizontal scale inside the root. Never zero.
+        b: Scalar,
+        /// The shift inside the root; the curve starts where `b x + c = 0`.
+        c: Scalar,
+        /// The vertical shift.
+        d: Scalar,
+    },
     /// `y = amplitude * sin(2π (x - phase) / period) + midline`.
     Sine {
         /// The height above and below the midline. Never zero.
@@ -125,7 +137,27 @@ pub enum Asymptote {
     },
 }
 
-/// A coordinate plane with one drawn curve.
+/// The fewest labelled curves one figure holds.
+pub const MIN_CURVES: usize = 2;
+
+/// The most labelled curves one figure holds. The stroke palette has this
+/// many styles.
+pub const MAX_CURVES: usize = 6;
+
+/// One labelled curve of a figure with several curves (D-FG1).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct LabeledCurve {
+    /// The label the learner reads, one or two characters, for example `A`.
+    pub label: String,
+    /// The function this curve draws.
+    pub curve: CurveKind,
+    /// The exact points this curve is checked to pass through.
+    #[serde(default)]
+    pub key_points: Vec<LabeledPoint>,
+}
+
+/// A coordinate plane with one drawn curve, or with two to six labelled curves.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct CurveFigure {
@@ -141,9 +173,16 @@ pub struct CurveFigure {
     pub x_tick: Scalar,
     /// The distance between two y ticks.
     pub y_tick: Scalar,
-    /// The function the figure draws.
-    pub curve: CurveKind,
-    /// The exact points the curve is checked to pass through.
+    /// The function the figure draws. A figure gives `curve` or `curves`,
+    /// never both.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub curve: Option<CurveKind>,
+    /// Two to six labelled curves on one plane (D-FG1). Empty for a figure
+    /// that gives `curve`.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub curves: Vec<LabeledCurve>,
+    /// The exact points the curve is checked to pass through. A figure with
+    /// `curves` keeps its key points on each labelled curve instead.
     #[serde(default)]
     pub key_points: Vec<LabeledPoint>,
     /// The asymptotes the curve is drawn approaching.
@@ -169,7 +208,8 @@ impl CurveFigure {
             y_max,
             x_tick,
             y_tick,
-            curve,
+            curve: Some(curve),
+            curves: Vec::new(),
             key_points: Vec::new(),
             asymptotes: Vec::new(),
             caption: None,
@@ -185,18 +225,15 @@ impl CurveFigure {
     /// Whether the figure carries mathematical meaning.
     pub fn validate(&self) -> Result<(), VisualError> {
         self.ticks()?;
-        self.curve.validate_parameters()?;
-        for point in &self.key_points {
-            inside("a key point", &self.x_min, &self.x_max, &point.x)?;
-            inside("a key point", &self.y_min, &self.y_max, &point.y)?;
-            let (x, y) = point.value()?;
-            let exact = self
-                .curve
-                .exact_value_at(&x)
-                .ok_or_else(|| off_curve(point))?;
-            if exact != y {
-                return Err(off_curve(point));
-            }
+        self.validate_curve_choice()?;
+        if let Some(curve) = &self.curve {
+            curve.validate_parameters()?;
+            self.validate_key_points(curve, &self.key_points, "")?;
+        }
+        for item in &self.curves {
+            item.curve.validate_parameters()?;
+            let suffix = format!(" on curve {}", item.label);
+            self.validate_key_points(&item.curve, &item.key_points, &suffix)?;
         }
         for asymptote in &self.asymptotes {
             match asymptote {
@@ -209,22 +246,107 @@ impl CurveFigure {
         Ok(())
     }
 
+    /// The rules for `curve`, `curves`, their labels, and `motion`.
+    fn validate_curve_choice(&self) -> Result<(), VisualError> {
+        let refuse = |reason: String| Err(VisualError::CurveSet { reason });
+        if self.curve.is_some() && !self.curves.is_empty() {
+            return refuse("gives both `curve` and `curves`; give one of them".to_owned());
+        }
+        if self.curve.is_none() && self.curves.is_empty() {
+            return refuse("gives neither `curve` nor `curves`; give one of them".to_owned());
+        }
+        if self.curves.is_empty() {
+            return Ok(());
+        }
+        let count = self.curves.len();
+        if !(MIN_CURVES..=MAX_CURVES).contains(&count) {
+            return refuse(format!(
+                "has {count} entries in `curves`; the count is {MIN_CURVES} to {MAX_CURVES}"
+            ));
+        }
+        if !self.key_points.is_empty() {
+            return refuse("has `key_points` on the figure; put them on each curve".to_owned());
+        }
+        if self.motion.is_some() {
+            return refuse(
+                "has `curves` and `motion`; a figure with `curves` has no slider".to_owned(),
+            );
+        }
+        for (at, item) in self.curves.iter().enumerate() {
+            let length = item.label.chars().count();
+            if length == 0 || length > 2 || item.label.trim() != item.label {
+                return refuse(format!(
+                    "has the curve label {:?}; a label is one or two characters",
+                    item.label
+                ));
+            }
+            if self.curves[..at]
+                .iter()
+                .any(|other| other.label == item.label)
+            {
+                return refuse(format!("repeats the curve label {:?}", item.label));
+            }
+        }
+        Ok(())
+    }
+
+    /// Check that every key point sits in the plane and exactly on `curve`.
+    fn validate_key_points(
+        &self,
+        curve: &CurveKind,
+        points: &[LabeledPoint],
+        suffix: &str,
+    ) -> Result<(), VisualError> {
+        for point in points {
+            inside("a key point", &self.x_min, &self.x_max, &point.x)?;
+            inside("a key point", &self.y_min, &self.y_max, &point.y)?;
+            let (x, y) = point.value()?;
+            let exact = curve
+                .exact_value_at(&x)
+                .ok_or_else(|| off_curve(point, suffix))?;
+            if exact != y {
+                return Err(off_curve(point, suffix));
+            }
+        }
+        Ok(())
+    }
+
     /// The accessible equivalent.
+    ///
+    /// A figure with `curves` names every label with its function: "Curve A is
+    /// y = ...". Each key point names its curve.
     #[must_use]
     pub fn text_equivalent(&self) -> String {
-        let mut out = format!(
+        let plane = format!(
             "A coordinate plane with x from {} to {} and y from {} to {}. \
-             The x ticks step by {} and the y ticks step by {}. The curve {}.",
-            self.x_min,
-            self.x_max,
-            self.y_min,
-            self.y_max,
-            self.x_tick,
-            self.y_tick,
-            self.curve.describe()
+             The x ticks step by {} and the y ticks step by {}.",
+            self.x_min, self.x_max, self.y_min, self.y_max, self.x_tick, self.y_tick,
         );
+        let mut out = match &self.curve {
+            Some(curve) => format!("{plane} The curve {}.", curve.describe()),
+            None => {
+                let mut text = format!("{plane} The plane holds {} curves.", self.curves.len());
+                for item in &self.curves {
+                    text.push_str(&format!(
+                        " Curve {} is {}.",
+                        item.label,
+                        item.curve.describe()
+                    ));
+                }
+                text
+            }
+        };
         for point in &self.key_points {
             out.push_str(&format!(" A key point at {}.", point.spoken()));
+        }
+        for item in &self.curves {
+            for point in &item.key_points {
+                out.push_str(&format!(
+                    " A key point on curve {} at {}.",
+                    item.label,
+                    point.spoken()
+                ));
+            }
         }
         for asymptote in &self.asymptotes {
             match asymptote {
@@ -241,9 +363,9 @@ impl CurveFigure {
 }
 
 /// The error a key point that misses the curve gives.
-fn off_curve(point: &LabeledPoint) -> VisualError {
+fn off_curve(point: &LabeledPoint, suffix: &str) -> VisualError {
     VisualError::KeyPointOffCurve {
-        point: point.spoken(),
+        point: format!("{}{suffix}", point.spoken()),
     }
 }
 
@@ -266,6 +388,10 @@ impl CurveKind {
                 positive_and_not_one("the logarithm base", &base.value()?)
             }
             Self::Reciprocal { a, h, k } => validate_scaled(a, h, k, "the reciprocal scale a"),
+            Self::Sqrt { a, b, c, d } => {
+                validate_scaled(a, c, d, "the square-root scale a")?;
+                nonzero("the square-root factor b", &b.value()?)
+            }
             Self::Sine {
                 amplitude,
                 period,
@@ -291,6 +417,7 @@ impl CurveKind {
             Self::NaturalExponential { a, rate, h, k } => natural_exact(a, rate, h, k, x),
             Self::Logarithm { a, base, h, k } => logarithm_exact(a, base, h, k, x),
             Self::Reciprocal { a, h, k } => reciprocal_exact(a, h, k, x),
+            Self::Sqrt { a, b, c, d } => sqrt_exact([a, b, c, d], x),
             Self::Sine {
                 amplitude,
                 period,
@@ -322,6 +449,10 @@ impl CurveKind {
                 format!("y = {a} · log base {base} of (x - {h}) + {k}")
             }
             Self::Reciprocal { a, h, k } => format!("y = {a} / (x - {h}) + {k}"),
+            Self::Sqrt { a, b, c, d } => format!(
+                "y = {a} · sqrt({b} · x + {c}) + {d}, the square-root curve \
+                 shifted so that it starts where {b} · x + {c} = 0"
+            ),
             Self::Sine {
                 amplitude,
                 period,
@@ -337,6 +468,15 @@ impl CurveKind {
         }
     }
 
+    /// The x where a root curve starts (`b x + c = 0`), or `None` for a family
+    /// with no domain edge. The render pass draws a sample exactly there.
+    pub(super) fn domain_edge(&self) -> Option<f64> {
+        match self {
+            Self::Sqrt { b, c, .. } => Some(-c.to_f64().ok()? / b.to_f64().ok()?),
+            _ => None,
+        }
+    }
+
     /// The value at `x`, approximated for the render pass only.
     ///
     /// `None` means `x` sits outside the family's domain: below a logarithm's
@@ -349,6 +489,7 @@ impl CurveKind {
             Self::NaturalExponential { a, rate, h, k } => natural_f64(a, rate, h, k, x),
             Self::Logarithm { a, base, h, k } => logarithm_f64(a, base, h, k, x),
             Self::Reciprocal { a, h, k } => reciprocal_f64(a, h, k, x),
+            Self::Sqrt { a, b, c, d } => sqrt_f64([a, b, c, d], x),
             Self::Sine {
                 amplitude,
                 period,

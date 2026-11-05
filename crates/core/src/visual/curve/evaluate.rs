@@ -184,3 +184,41 @@ pub(super) fn reciprocal_f64(a: &Scalar, h: &Scalar, k: &Scalar, x: f64) -> Opti
     let denominator = x - h;
     (denominator.abs() >= 1e-9).then(|| a / denominator + k)
 }
+
+/// The exact rational square root of `value`, or `None` when `value` is
+/// negative or not the square of a rational.
+fn rational_sqrt(value: &BigRational) -> Option<BigRational> {
+    use num_bigint::BigInt;
+    if value.is_negative() {
+        return None;
+    }
+    let root = |n: &BigInt| {
+        let r = n.sqrt();
+        (&r * &r == *n).then_some(r)
+    };
+    Some(BigRational::new(root(value.numer())?, root(value.denom())?))
+}
+
+pub(super) fn sqrt_exact(coefficients: [&Scalar; 4], x: &BigRational) -> Option<BigRational> {
+    let [a, b, c, d] = coefficients;
+    let (a, b, c, d) = (
+        a.value().ok()?,
+        b.value().ok()?,
+        c.value().ok()?,
+        d.value().ok()?,
+    );
+    Some(a * rational_sqrt(&(b * x + c))? + d)
+}
+
+pub(super) fn sqrt_f64(coefficients: [&Scalar; 4], x: f64) -> Option<f64> {
+    let [a, b, c, d] = coefficients;
+    let (a, b, c, d) = (
+        a.to_f64().ok()?,
+        b.to_f64().ok()?,
+        c.to_f64().ok()?,
+        d.to_f64().ok()?,
+    );
+    let inside = b.mul_add(x, c);
+    // A tolerance keeps the domain edge itself, which a float sum can miss by a hair.
+    (inside >= -1e-9).then(|| a.mul_add(inside.max(0.0).sqrt(), d))
+}

@@ -8,8 +8,8 @@
 
 use cadus_core::visual::{
     Asymptote, CoordinateFigure, CurveFigure, CurveKind, FractionFigure, GeometryFigure,
-    LabeledPoint, MarkedRay, NumberLineFigure, RayDirection, RenderOptions, Scalar, Segment,
-    ShadedHalfPlane, VisualError, VisualSpec, render,
+    LabeledCurve, LabeledPoint, MarkedRay, NumberLineFigure, RayDirection, RenderOptions, Scalar,
+    Segment, ShadedHalfPlane, VisualError, VisualSpec, render,
 };
 
 #[path = "visual_render/geometry.rs"]
@@ -287,11 +287,12 @@ fn a_curve_draws_a_broken_polyline_around_its_asymptote_and_its_key_points() {
         y_max: Scalar::from("6"),
         x_tick: Scalar::from("1"),
         y_tick: Scalar::from("1"),
-        curve: CurveKind::Reciprocal {
+        curve: Some(CurveKind::Reciprocal {
             a: Scalar::from("4"),
             h: Scalar::from("0"),
             k: Scalar::from("0"),
-        },
+        }),
+        curves: Vec::new(),
         key_points: vec![
             LabeledPoint::labeled(2_i64, 2_i64, "A"),
             LabeledPoint::new(-2_i64, -2_i64),
@@ -367,4 +368,147 @@ fn the_payload_drops_a_refused_figure_and_gives_each_kept_one_its_own_ids() {
          The figure shows 3/4."
     );
     assert!(cadus_core::visual::render_all(&[], "p7").is_empty());
+}
+
+fn line(slope: &str, offset: &str) -> CurveKind {
+    CurveKind::Polynomial {
+        coefficients: vec![Scalar::from(offset), Scalar::from(slope)],
+    }
+}
+
+fn labeled(label: &str, curve: CurveKind) -> LabeledCurve {
+    LabeledCurve {
+        label: label.to_owned(),
+        curve,
+        key_points: Vec::new(),
+    }
+}
+
+/// Four curves on one plane. A and D both end at (5, 5), so their labels collide.
+fn which_graph() -> CurveFigure {
+    let mut figure = CurveFigure::square(5, line("1", "0"));
+    figure.curve = None;
+    figure.curves = vec![
+        labeled("A", line("1", "0")),
+        labeled("B", line("-1", "0")),
+        labeled("C", line("0", "1")),
+        labeled(
+            "D",
+            CurveKind::Polynomial {
+                coefficients: vec![Scalar::from("0"), Scalar::from("0"), Scalar::from("1/5")],
+            },
+        ),
+    ];
+    figure.curves[0].key_points = vec![LabeledPoint::new(2_i64, 2_i64)];
+    figure.caption = Some("Which graph is y = x?".to_owned());
+    figure
+}
+
+/// The `(x, y)` of the `<text>` element that holds `label`.
+fn label_at(svg: &str, label: &str) -> (f64, f64) {
+    let end = svg.find(&format!(">{label}</text>")).unwrap();
+    let start = svg[..end].rfind("<text").unwrap();
+    let tag = &svg[start..end];
+    let number = |name: &str| -> f64 {
+        let at = tag.find(&format!(" {name}=\"")).unwrap() + name.len() + 3;
+        tag[at..].split('"').next().unwrap().parse().unwrap()
+    };
+    (number("x"), number("y"))
+}
+
+#[test]
+fn four_curves_draw_four_strokes_and_four_labels() {
+    let spec = VisualSpec::Curve(which_graph());
+    let svg = render(&spec, &RenderOptions::default()).unwrap();
+    for index in 1..=4 {
+        assert_eq!(
+            count(
+                &svg,
+                &format!("class=\"cadus-visual-curve cadus-visual-curve-s{index}\"")
+            ),
+            1,
+            "stroke {index}"
+        );
+    }
+    assert_eq!(count(&svg, "<polyline"), 4);
+    for label in ["A", "B", "C", "D"] {
+        assert_eq!(count(&svg, &format!(">{label}</text>")), 1, "label {label}");
+    }
+    assert_eq!(count(&svg, "cadus-visual-point\""), 1, "the key point of A");
+    assert!(svg.contains("Curve A is y = x."));
+    assert!(svg.contains("Curve D is y ="));
+    assert!(svg.contains("A key point on curve A at (2, 2)."));
+    assert_eq!(svg, render(&spec, &RenderOptions::default()).unwrap());
+}
+
+#[test]
+fn two_labels_at_one_end_never_overlap_and_stay_inside_the_plane() {
+    let svg = render(&VisualSpec::Curve(which_graph()), &RenderOptions::default()).unwrap();
+    let a = label_at(&svg, "A");
+    let d = label_at(&svg, "D");
+    assert!((a.1 - d.1).abs() >= 14.0, "A at {a:?} and D at {d:?}");
+    for (x, y) in [a, label_at(&svg, "B"), label_at(&svg, "C"), d] {
+        assert!(
+            (36.0..=444.0).contains(&x) && (36.0..=164.0).contains(&y),
+            "({x}, {y})"
+        );
+    }
+}
+
+#[test]
+fn a_curve_figure_with_one_curve_renders_exactly_as_before_d_fg1() {
+    let mut figure = CurveFigure::square(
+        5,
+        CurveKind::Polynomial {
+            coefficients: vec![Scalar::from("-4"), Scalar::from("0"), Scalar::from("1")],
+        },
+    );
+    figure.key_points = vec![
+        LabeledPoint::labeled(0_i64, -4_i64, "vertex"),
+        LabeledPoint::new(2_i64, 0_i64),
+    ];
+    figure.caption = Some("Parabola".to_owned());
+    let svg = render(&VisualSpec::Curve(figure), &RenderOptions::default()).unwrap();
+    // The fixture holds the bytes the render gave before `curves` existed.
+    assert_eq!(svg, include_str!("fixtures/visual/curve_one_parabola.svg"));
+}
+
+#[test]
+fn a_figure_with_curves_takes_no_slider() {
+    let mut figure = which_graph();
+    figure.motion = Some(
+        serde_norway::from_str(
+            "parameter: {name: m, min: '1', max: '3', default: '1', step: '1'}\n\
+             drives: [{kind: line_slope, segment: 0}]\n",
+        )
+        .unwrap(),
+    );
+    assert!(matches!(
+        render(&VisualSpec::Curve(figure), &RenderOptions::default()),
+        Err(VisualError::CurveSet { .. })
+    ));
+}
+
+#[test]
+fn a_root_curve_draws_among_the_labelled_curves() {
+    let root = |a: &str, b: &str, c: &str, d: &str| CurveKind::Sqrt {
+        a: Scalar::from(a),
+        b: Scalar::from(b),
+        c: Scalar::from(c),
+        d: Scalar::from(d),
+    };
+    let mut figure = CurveFigure::square(5, line("1", "0"));
+    figure.curve = None;
+    figure.curves = vec![
+        labeled("A", root("1", "1", "0", "0")),
+        labeled("B", root("1", "1", "-3", "0")),
+        labeled("C", root("-1", "1", "0", "2")),
+    ];
+    figure.curves[1].key_points = vec![LabeledPoint::new(4_i64, 1_i64)];
+    let svg = render(&VisualSpec::Curve(figure), &RenderOptions::default()).unwrap();
+    assert_eq!(count(&svg, "<polyline"), 3);
+    for label in ["A", "B", "C"] {
+        assert_eq!(count(&svg, &format!(">{label}</text>")), 1, "label {label}");
+    }
+    assert!(svg.contains("Curve B is y = 1 · sqrt(1 · x + -3) + 0"));
 }

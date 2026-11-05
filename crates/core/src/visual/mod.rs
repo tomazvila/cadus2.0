@@ -43,7 +43,7 @@ use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 pub use agree::{absent_terms, clashing_labels};
-pub use curve::{Asymptote, CurveFigure, CurveKind};
+pub use curve::{Asymptote, CurveFigure, CurveKind, LabeledCurve, MAX_CURVES, MIN_CURVES};
 pub use fraction::{FractionFigure, FractionShape};
 pub use geometry::{AngleMark, GeometryFigure, GeometryShape};
 pub use motion::{
@@ -171,6 +171,12 @@ pub enum VisualError {
     KeyPointOffCurve {
         /// The point, in words.
         point: String,
+    },
+    /// A curve figure breaks the `curve` or `curves` rules (D-FG1).
+    #[error("a curve figure {reason}")]
+    CurveSet {
+        /// What is wrong, in words.
+        reason: String,
     },
     /// The `motion` object of a figure is wrong (see [`MotionError`]).
     #[error(transparent)]

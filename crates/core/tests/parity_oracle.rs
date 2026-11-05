@@ -16,7 +16,7 @@ use common::dump::{curriculum_root, fixture_arena};
 // Regenerated for the expanded live tree; independently derived alongside parity.rs.
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "7d54e7fe77a7c6594c23ed4f922d0321fdfc280541349196678670c44da7e871";
+const TREE_HASH: &str = "93c5f7d5be8693809bc166ad2aa5e48544d0cbbc14ba4168609c09eeab81d570";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-07, courses rewrite: dump length 13,180,744 (was 10,922,819) and a new
@@ -37,7 +37,8 @@ const TREE_HASH: &str = "7d54e7fe77a7c6594c23ed4f922d0321fdfc280541349196678670c
 // 2026-11-03, explain sub-parts of the book exercises become written items (D-FOM1): dump length 15,225,855 (was 15,210,810), measured with `dump_curriculum curriculum`; hash re-pinned (was 96be18be...23a6).
 // 2026-11-05, 233 names carry their math inside $...$ (D-NM1): dump length 15,227,332 (was 15,225,855), measured with `dump_curriculum curriculum`; hash re-pinned (was 88add6ec...209b).
 // 2026-11-05, the public exam papers and the part I sets (D-VBE4): dump length 15,641,091 (was 15,227,332), measured with `dump_curriculum curriculum`; hash re-pinned (was 576d76a0...).
-const DUMP_LEN: usize = 15_641_091;
+// 2026-11-05, eight paper tasks with labelled-curve figures and name answers (D-FG1): dump length 15,647,372 (was 15,641,091), measured with `dump_curriculum curriculum`; hash re-pinned (was 7d54e7fe...e871).
+const DUMP_LEN: usize = 15_647_372;
 
 #[test]
 fn the_binary_writes_the_dump_and_the_hash() {

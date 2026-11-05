@@ -43,7 +43,7 @@ fn every_manifest_figure_is_installed_valid_accessible_and_deterministic() {
         cadus_core::curriculum::canonical_dump(&curriculum)
             .matches("\"visuals\"")
             .count(),
-        365 // 2026-11-05, the public exam papers and the part I sets (D-VBE4): was 357.
+        368 // 2026-11-05, six labelled-curve figures of the papers (D-FG1): was 365 (D-VBE4), 357 before.
     );
     let mut count = 0;
     let mut broken: Vec<String> = Vec::new();
