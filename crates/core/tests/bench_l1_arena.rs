@@ -74,18 +74,21 @@ const ARENA_DUE_STRIDE: usize = 5;
 /// wave 2a (the course vbe-math), 2026-10-29: 1,127 (was 1,101).
 /// VBE wave 2b (the six exam sets), 2026-10-29: 1,133 (was 1,127).
 /// The course fundamentals-of-mathematics (D-FOM1), 2026-10-30: 1,183 (was 1,133).
-const ARENA_TOPICS: usize = 1_183;
+/// the public exam papers and the part I sets (D-VBE4), 2026-11-05: 1,204 (was 1,183).
+const ARENA_TOPICS: usize = 1_204;
 
 /// The count of topics the fixture puts into the states map (2026-10-29, VBE course
 /// wave 2a: 376, was 367 on 2026-10-28; 355 on 2026-10-12).
 /// VBE wave 2b (the six exam sets), 2026-10-29: 378 (was 376).
 /// The course fundamentals-of-mathematics (D-FOM1), 2026-10-30: 395 (was 378).
-const ARENA_LEARNED_TOPICS: usize = 395;
+/// the public exam papers and the part I sets (D-VBE4), 2026-11-05: 402 (was 395).
+const ARENA_LEARNED_TOPICS: usize = 402;
 
 /// The count of tasks every composition returns (2026-10-29, VBE course wave 2a: 129,
 /// was 127 on 2026-10-28; 109 on 2026-10-12). The course fundamentals-of-mathematics
 /// (D-FOM1), 2026-10-30: 132 (was 129).
-const ARENA_TASKS: usize = 132;
+/// the public exam papers and the part I sets (D-VBE4), 2026-11-05: 134 (was 132).
+const ARENA_TASKS: usize = 134;
 
 /// The `task_id` of the first task of every composition (2026-10-28; the
 /// review of angle-of-elevation-depression on 2026-10-12).

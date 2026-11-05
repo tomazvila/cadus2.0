@@ -35,22 +35,23 @@ fn the_arena_holds_the_literal_edge_counts() {
     // 1127 topics (was 1101), 3638 prerequisite edges (was 3378).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127), 3794 prerequisite edges (was 3638).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 1183 topics (was 1133), 4094 prerequisite edges (was 3794).
-    assert_eq!(curriculum.topic_count(), 1183, "topics");
-    assert_eq!(curriculum.prereq_edge_count(), 4094, "prerequisite edges");
-    assert_eq!(curriculum.dependent_edge_count(), 4094, "dependent edges");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 1204 topics (was 1183), 4640 prerequisite edges (was 4094).
+    assert_eq!(curriculum.topic_count(), 1204, "topics");
+    assert_eq!(curriculum.prereq_edge_count(), 4640, "prerequisite edges");
+    assert_eq!(curriculum.dependent_edge_count(), 4640, "dependent edges");
     assert_eq!(
         curriculum.enc_forward_count(),
-        4013, // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): was 3713.
+        4559, // 2026-11-05, the public exam papers and the part I sets (D-VBE4): was 4013.
         "forward encompassing entries: 3639 declared edges less the 82 that stay at weight 0"
     );
     assert_eq!(
         curriculum.enc_reverse_count(),
-        4095, // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): was 3795; the 82 weight-0 edges are unchanged.
+        4641, // 2026-11-05, the public exam papers and the part I sets (D-VBE4): was 4095; the 82 weight-0 edges are unchanged.
         "reverse encompassing entries: every declared edge, weight 0 included"
     );
     assert_eq!(
         curriculum.enc_node_count(),
-        1183, // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): was 1133.
+        1204, // 2026-11-05, the public exam papers and the part I sets (D-VBE4): was 1183.
         "the tree has no dangling encompassing target, so no phantom node"
     );
 }
@@ -58,17 +59,17 @@ fn the_arena_holds_the_literal_edge_counts() {
 #[test]
 fn the_prerequisite_and_dependent_directions_hold_the_same_edges() {
     let curriculum = tree();
-    let forward: usize = (0..1183)
+    let forward: usize = (0..1204)
         .map(|raw| curriculum.prerequisites(TopicIdx::from_u32(raw)).len())
         .sum();
-    let backward: usize = (0..1183)
+    let backward: usize = (0..1204)
         .map(|raw| curriculum.dependents(TopicIdx::from_u32(raw)).len())
         .sum();
     assert_eq!(
-        forward, 4094,
+        forward, 4640,
         "prerequisite edges walked one topic at a time"
     );
-    assert_eq!(backward, 4094, "dependent edges walked one topic at a time");
+    assert_eq!(backward, 4640, "dependent edges walked one topic at a time");
 }
 
 // --------------------------------------------------------------------------- //
@@ -84,7 +85,8 @@ fn topo_order_matches_the_spec_literals() {
     // Re-pinned 2026-10-29, VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 1183 topics (was 1133).
-    assert_eq!(order.len(), 1183, "every topic is ordered");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 1204 topics (was 1183).
+    assert_eq!(order.len(), 1204, "every topic is ordered");
 
     let names = ids(&curriculum, order);
     assert_eq!(
@@ -99,13 +101,13 @@ fn topo_order_matches_the_spec_literals() {
         "the first five after the Foundations merge (2026-10-12)"
     );
     assert_eq!(
-        &names[1180..],
+        &names[1201..],
         [
             "fom-7-1-axiom-choice-zorns-lemma",
             "fom-7-2-ordinal-numbers-axiom-replacement",
             "fom-7-3-cardinal-numbers-continuum-hypothesis",
         ],
-        "the last three of the topological order; re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1), was vbe-set4-2026-main, vbe-set5-2026-repeat, vbe-set6-lmma-mock; before 2026-10-29 it was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables"
+        "the last three of the topological order; the tail did not move on 2026-11-05 (D-VBE4); re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1), was vbe-set4-2026-main, vbe-set5-2026-repeat, vbe-set6-lmma-mock; before 2026-10-29 it was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables"
     );
 }
 
@@ -161,7 +163,7 @@ fn topics_in_course_holds_the_authored_counts() {
         ("differential-equations", 59),
         ("abstract-algebra", 54),
         ("category-theory", 70),
-        ("vbe-math", 32), // 2026-10-29, VBE wave 2b (the six exam sets): 6 set topics (was 26).
+        ("vbe-math", 53), // 2026-11-05, the public exam papers and the part I sets (D-VBE4): 21 set topics added (was 32).
     ];
     for (course, size) in expected {
         assert_eq!(
@@ -234,7 +236,7 @@ fn ancestors_and_descendants_have_the_oracle_sizes() {
     let first = idx(&curriculum, "single-digit-addition");
     assert_eq!(
         curriculum.descendants(first).len(),
-        1176, // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): was 1126.
+        1197, // 2026-11-05, the public exam papers and the part I sets (D-VBE4): was 1176.
         "descendants of single-digit-addition"
     );
     assert!(

@@ -43,7 +43,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // Re-pinned 2026-10-29 after VBE course wave 2a: 97 unit files (was 91).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 98 unit files (was 97).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 105 unit files (was 98).
-    assert_eq!(parsed.units.len(), 105, "unit files");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 107 unit files (was 105).
+    assert_eq!(parsed.units.len(), 107, "unit files");
 
     let raw = RawCurriculum::from_parsed(parsed).expect("the catalog is present");
     let topics: Vec<_> = raw.topics().collect();
@@ -51,8 +52,9 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // Re-pinned 2026-10-29 after VBE course wave 2a (the course vbe-math): 1127 topics (was 1101).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 1133 topics (was 1127).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 1183 topics (was 1133).
-    assert_eq!(topics.len(), 1183, "topics");
-    assert_eq!(raw.topic_count(), 1183, "topics");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 1204 topics (was 1183).
+    assert_eq!(topics.len(), 1204, "topics");
+    assert_eq!(raw.topic_count(), 1204, "topics");
 
     let knowledge_points: usize = topics.iter().map(|t| t.topic.knowledge_points.len()).sum();
     // Re-pinned 2026-10-12 after the Foundations merge (D-C1): 3113 (was 3138).
@@ -60,7 +62,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // Re-pinned 2026-10-29 after VBE course wave 2a: 3303 (was 3238).
     // Re-pinned 2026-10-29, VBE wave 2b (the six exam sets): 3327 (was 3303).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 3516 (was 3327).
-    assert_eq!(knowledge_points, 3516, "knowledge points");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 3558 (was 3516).
+    assert_eq!(knowledge_points, 3558, "knowledge points");
 
     let exemplars: usize = topics
         .iter()
@@ -78,7 +81,8 @@ fn loads_the_checked_in_curriculum_with_the_literal_counts() {
     // 2026-10-29, VBE wave 2b (the six exam sets): 26374 (was 26188).
     // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): 28373 (was 26374).
     // 2026-11-03, explain sub-parts become written items: 28398 (was 28373).
-    assert_eq!(exemplars, 28398, "exemplars");
+    // Re-pinned 2026-11-05, the public exam papers and the part I sets (D-VBE4): 28997 (was 28398).
+    assert_eq!(exemplars, 28997, "exemplars");
 
     let anki_seeds: usize = topics.iter().map(|t| t.topic.anki_seeds.len()).sum();
     // 2026-10-28, VBE skill wave 1: 2218 anki seeds (was 2144).
@@ -141,7 +145,7 @@ fn the_load_index_counts_topics_in_load_order() {
     let topics: Vec<_> = raw.topics().collect();
 
     let indices: Vec<usize> = topics.iter().map(|t| t.load_index).collect();
-    assert_eq!(indices, (0..1183).collect::<Vec<usize>>());
+    assert_eq!(indices, (0..1204).collect::<Vec<usize>>());
 
     let named: Vec<&str> = topics.iter().take(3).map(|t| t.topic.id.as_str()).collect();
     assert_eq!(
@@ -152,7 +156,8 @@ fn the_load_index_counts_topics_in_load_order() {
             "multiplication-tables"
         ]
     );
-    let last: Vec<&str> = topics[1180..].iter().map(|t| t.topic.id.as_str()).collect();
+    let last: Vec<&str> = topics[1201..].iter().map(|t| t.topic.id.as_str()).collect();
+    // 2026-11-05, the public exam papers and the part I sets (D-VBE4): the tail did not move; the slice start is 1201 (was 1180).
     // Re-pinned 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): the last three topics of its unit 07 load last (was vbe-set4-2026-main, vbe-set5-2026-repeat, vbe-set6-lmma-mock). Before that, 2026-10-29, VBE wave 2b (the six exam sets): the six set topics loaded last (was vbe-cp24-combinatorics, vbe-cp25-probability-models, vbe-cp26-random-variables).
     assert_eq!(
         last,
