@@ -10,11 +10,12 @@ use axum::http::{HeaderValue, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use cadus_core::config::Config;
 use cadus_core::curriculum::{Curriculum, TopicIdx};
-use cadus_core::event::{Timestamp, TopicStatus};
+use cadus_core::event::{QuizResult, Timestamp, TopicStatus};
 use cadus_core::learner::{LearnerModel, TopicState};
 use cadus_core::selector::{
     FrontierReport, FrontierWait, SessionPlan, confirmations, course_scope, due_reviews, exam_sets,
-    frontier_report, is_known, nearly_due, quiz_is_due, schedule_drills,
+    form_key, frontier_report, is_known, nearly_due, newest_paper_results, paper_exam_points,
+    part_of, quiz_is_due, schedule_drills,
 };
 use cadus_core::xp::{CourseCounts, course_counts};
 use cadus_store::state::{EventRow, latest_graded_topic, load_raw_events, load_session_plan};
@@ -37,7 +38,11 @@ fn course_view(graph: &Curriculum, course: Option<&str>) -> Value {
 }
 
 /// The ordered course journey with the enrolled one flagged (`api.py:784-787`).
-fn journey(graph: &Curriculum, course: Option<&str>) -> Value {
+///
+/// A course with `exam_weights` lists its exam sets. Each set carries its part,
+/// its form key and the points of its newest finished paper (D-VBE4).
+fn journey(graph: &Curriculum, course: Option<&str>, papers: &[QuizResult]) -> Value {
+    let newest = newest_paper_results(papers);
     let mut courses: Vec<_> = graph.courses().iter().collect();
     courses.sort_by_key(|item| item.order);
     Value::Array(
@@ -58,7 +63,13 @@ fn journey(graph: &Curriculum, course: Option<&str>) -> Value {
                                 .idx_of(&id)
                                 .and_then(|idx| graph.topic(idx))
                                 .map(|topic| topic.name.clone());
-                            json!({"id": id, "name": name})
+                            let part = part_of(graph, &id);
+                            let points = newest
+                                .get(&id)
+                                .and_then(|result| paper_exam_points(graph, &id, result));
+                            json!({"id": id, "name": name, "part": part.number(),
+                                "form": form_key(&id), "max_points": part.max_points(),
+                                "target_points": part.target_points(), "points": points})
                         })
                         .collect();
                 }
@@ -242,6 +253,7 @@ pub async fn status(req: Ready) -> Reply {
         &readiness,
     );
     let scratch = req.read_state(&mut tx).await?;
+    let papers = super::round_paper::paper_results(&req, &mut tx).await?;
     // The set frozen at the first session start of the local day (D-DP1).
     let frozen = req
         .store(load_session_plan(&mut tx, req.user_id))
@@ -282,7 +294,7 @@ pub async fn status(req: Ready) -> Reply {
         // D-DP1: the Today card. No statement, no answer, no solution.
         "today": today,
         "last_active_at": last_active_at,
-        "courses": journey(graph, course),
+        "courses": journey(graph, course, &papers),
         // The F6 test-prep set lives on the `profiles` row, and no M5 unit
         // writes that row. The key stays on the wire with its "off" value.
         "test_prep": Value::Null,
@@ -404,7 +416,7 @@ pub async fn graph(req: Ready, Query(query): Query<GraphQuery>) -> Reply {
     Ok(Json(json!({
         "now": req.wall.to_rfc3339(),
         "scope": scope,
-        "courses": journey(graph, enrolled),
+        "courses": journey(graph, enrolled, &[]),
         "modules": view.modules,
         "counts": {
             "nodes": view.nodes.len(),

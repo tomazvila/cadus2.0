@@ -16,6 +16,7 @@
  * mastery, XP, the pass rule or the schedule. A failed check never strands the learner: the
  * page moves on as if the attempt had been answered.
  */
+import { MathName } from '@/components/MathName';
 import { useEffect, useRef, useState } from 'react';
 import { AnswerInput, TypedSubmit } from '@/components/AnswerInput';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
@@ -138,7 +139,7 @@ function TeachHeader({ task, badge }: { task: PlanTask; badge: string }) {
     <div className="task-header">
       <div className="task-meta">
         <Chip className="chip-lesson">{task.task_type === 'multi-step' ? 'getting ready for a mixed problem' : 'lesson'}</Chip>
-        <h1 className="h-screen topic-name">{topic?.name || topic?.id || 'Lesson'}</h1>
+        <h1 className="h-screen topic-name"><MathName>{topic?.name || topic?.id || 'Lesson'}</MathName></h1>
         {topic?.module ? <span className="topic-module">{topic.module}</span> : null}
       </div>
       <div className="task-right">

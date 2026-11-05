@@ -1,6 +1,7 @@
 /**
  * The hint panel and the hint button of the study loop. `Session.tsx` renders the two.
  */
+import { MathName } from '@/components/MathName';
 import { MathBlock } from '@/components/MathBlock';
 import type { PlanTask } from '@/api/types';
 
@@ -29,10 +30,10 @@ export function HintPanel({ hints, referenceLesson, hintsAvailable, taskType, on
       ))}
       {referenceLesson ? (
         <div className="reference-lesson">
-          {`Still stuck? Read the lesson “${referenceLesson.name}” again, then answer as well as you can.`}
+          <MathName>{`Still stuck? Read the lesson “${referenceLesson.name}” again, then answer as well as you can.`}</MathName>
           {onRead ? (
             <button type="button" className="btn btn-ghost" onClick={() => { onRead(referenceLesson.topic); }}>
-              {`Open the lesson “${referenceLesson.name}”`}
+              <MathName>{`Open the lesson “${referenceLesson.name}”`}</MathName>
             </button>
           ) : null}
         </div>

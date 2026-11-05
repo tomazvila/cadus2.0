@@ -90,6 +90,8 @@ pub fn topic(
         lt_term: None,
         program_items: Vec::new(),
         area: None,
+        exam_part: None,
+        paper_form: None,
     }
 }
 

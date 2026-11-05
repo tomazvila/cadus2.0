@@ -2,7 +2,7 @@
  * The dashboard, control by control: the stats and their classes, the course arc, the busy
  * keys of the quiet menu, and the moves that land after the screen left.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, cleanup, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ApiError, createDemoApi } from '@/api';
@@ -15,6 +15,15 @@ import type { EnrollResponse, QuizRoundResponse, SessionStartResponse } from '@/
 const button = (name: string) => screen.getByRole('button', { name }) as HTMLButtonElement;
 const stat = (label: string) =>
   Array.from(document.querySelectorAll('.stat')).find((s) => s.querySelector('.stat-label')?.textContent === label)!;
+
+// The demo status carries the fixed finish day 2026-11-04, and the card dashes a day
+// in the past, so the clock of these tests stands still on 2026-09-15 (only Date is faked;
+// timers keep running for waitFor). The shared setup restores real timers after every
+// test, so the freeze is set before each one.
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date('2026-09-15T12:00:00'));
+});
 
 describe('hasScheduledWork', () => {
   it('counts each kind of work on its own', () => {

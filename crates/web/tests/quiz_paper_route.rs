@@ -347,8 +347,10 @@ async fn only_a_course_with_exam_weights_lists_its_exam_sets() {
         assert_eq!(
             courses[1]["exam_sets"],
             json!([
-                {"id": "set1", "name": "The set1 topic"},
-                {"id": "set2", "name": "The set2 topic"},
+                {"id": "set1", "name": "The set1 topic", "part": 2, "form": "set1",
+                    "max_points": 60, "target_points": 57, "points": null},
+                {"id": "set2", "name": "The set2 topic", "part": 2, "form": "set2",
+                    "max_points": 60, "target_points": 57, "points": null},
             ])
         );
     })

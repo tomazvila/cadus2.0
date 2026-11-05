@@ -5,7 +5,7 @@ use serde_norway::{Mapping, Value};
 
 use super::super::finding::Finding;
 use super::super::model::{
-    ANKI_TYPES, ANSWER_KINDS, MAX_ITEM_POINTS, MIN_ITEM_POINTS, TOPIC_AREAS,
+    ANKI_TYPES, ANSWER_KINDS, MAX_ITEM_POINTS, MIN_ITEM_POINTS, PAPER_FORMS, TOPIC_AREAS,
 };
 use super::MERGE_KEY;
 use super::message::{
@@ -302,7 +302,7 @@ impl<'a> Checker<'a> {
     }
 
     fn check_topic(&mut self, value: &Value) {
-        const FIELDS: [&str; 15] = [
+        const FIELDS: [&str; 17] = [
             "id",
             "name",
             "core",
@@ -318,6 +318,8 @@ impl<'a> Checker<'a> {
             "lt_term",
             "program_items",
             "area",
+            "exam_part",
+            "paper_form",
         ];
         let Some(map) = self.struct_map(value, "Topic") else {
             return;
@@ -360,6 +362,21 @@ impl<'a> Checker<'a> {
         self.field(map, "area", false, |checker, value| {
             if !value.is_null() {
                 checker.check_enum(value, &TOPIC_AREAS);
+            }
+        });
+        self.field(map, "exam_part", false, |checker, value| {
+            if value.is_null() {
+                return;
+            }
+            match integer_of(value) {
+                Err(message) => checker.report(&message),
+                Ok(1 | 2) => {}
+                Ok(_) => checker.report_range("Input should be 1 or 2"),
+            }
+        });
+        self.field(map, "paper_form", false, |checker, value| {
+            if !value.is_null() {
+                checker.check_enum(value, &PAPER_FORMS);
             }
         });
         self.extras(map, &FIELDS);

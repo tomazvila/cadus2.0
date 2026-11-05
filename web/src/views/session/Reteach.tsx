@@ -6,6 +6,7 @@
  * The learner reads the explanation and the worked example, then presses one button to go on.
  * A page that does not load never blocks the learner: the same button goes on.
  */
+import { MathName } from '@/components/MathName';
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { Chip, LoadingBlock } from '@/components/primitives';
@@ -70,7 +71,7 @@ export function Reteach({ api, result, onContinue }: ReteachProps) {
         <div className="task-meta">
           <Chip className="chip-lesson">read again</Chip>
           <h1 className="h-screen topic-name">
-            {state.kind === 'ready' ? (state.page.name ?? state.page.topic) : 'Read this first'}
+            <MathName>{state.kind === 'ready' ? (state.page.name ?? state.page.topic) : 'Read this first'}</MathName>
           </h1>
         </div>
       </div>
@@ -81,7 +82,7 @@ export function Reteach({ api, result, onContinue }: ReteachProps) {
       ) : null}
       {shown.map((point) => point.page ? (
         <div key={point.kp} className="card teach-card read-point">
-          <h2 className="read-point-name">{point.name}</h2>
+          <h2 className="read-point-name"><MathName>{point.name}</MathName></h2>
           <PictureFold picture={point.page.picture} />
           <div className="teach-concept">
             <MathBlock className="teach-concept-text">{point.page.concept}</MathBlock>

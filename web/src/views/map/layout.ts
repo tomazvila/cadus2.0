@@ -15,6 +15,7 @@
  * jsdom returns '' for every CSS custom property, so `readTokens` can never be asserted on
  * color. The layout and the size math can, and they are what this file exists for.
  */
+import { plainName } from '@/components/MathName';
 import type { GraphEdge, GraphNode, TopicStatus } from '@/api/types';
 
 /** Horizontal gap between two topics of the same layer, in graph units. */
@@ -138,7 +139,7 @@ export function toElements(nodes: GraphNode[], edges: GraphEdge[]): MapElement[]
     data: {
       id: node.id,
       // The label is the name, and the id when the payload carries no name.
-      name: node.name ?? node.id,
+      name: plainName(node.name ?? node.id),
       module: node.module,
       size: sizeOf(node.ability),
     },

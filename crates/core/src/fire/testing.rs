@@ -68,6 +68,8 @@ pub(crate) fn topic(id: &str, prereqs: &[(&str, f64, bool)]) -> Topic {
         lt_term: None,
         program_items: Vec::new(),
         area: None,
+        exam_part: None,
+        paper_form: None,
     }
 }
 

@@ -30,6 +30,7 @@
  *
  * WHAT THIS UNIT DOES NOT OWN. There is no router yet, so navigation arrives as props.
  */
+import { MathName } from '@/components/MathName';
 import { useEffect, useRef, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import type { AnswerFieldHandle } from '@/components/AnswerField';
@@ -265,7 +266,7 @@ export function Diagnostic({ diag, reportApi, demo, onUnauthorized, onExit }: Di
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-accent">starting questions</Chip>
-          <span className="topic-name">{topicName(question.topic)}</span>
+          <span className="topic-name"><MathName>{topicName(question.topic)}</MathName></span>
         </div>
         <div className="task-right">
           <span className="progress-count">{`Question ${qNum} of up to ${cap}`}</span>

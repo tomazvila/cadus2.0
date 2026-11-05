@@ -6,6 +6,7 @@
  * composed, frozen at the first session start of the local day. The card adds no primary
  * action (W-C2): the read button is a plain `.btn`.
  */
+import { MathName, plainName } from '@/components/MathName';
 import type { StatusResponse, TodayItem } from '@/api/types';
 
 export interface TodayCardProps {
@@ -65,15 +66,15 @@ export function TodayCard({ status, onRead }: TodayCardProps) {
       ) : (
         <ul className="today-set">
           {today.set.map((item, i) => (
-            <li key={`${item.task_id}-${i}`}>{itemLine(item)}</li>
+            <li key={`${item.task_id}-${i}`}><MathName>{itemLine(item)}</MathName></li>
           ))}
         </ul>
       )}
       {read ? (
         <div className="today-read">
-          <p>{`Read: ${readName}`}</p>
-          <button type="button" className="btn" onClick={() => { onRead(read.topic.id, readName); }}>
-            {`Read the lesson text: ${readName}`}
+          <p><MathName>{`Read: ${readName}`}</MathName></p>
+          <button type="button" className="btn" onClick={() => { onRead(read.topic.id, plainName(readName)); }}>
+            <MathName>{`Read the lesson text: ${readName}`}</MathName>
           </button>
         </div>
       ) : null}

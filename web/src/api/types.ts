@@ -157,13 +157,27 @@ export interface ReadingEntry {
   note: string;
 }
 
+/**
+ * One exam set of a course (D-VBE3, D-VBE4). `part` is 1 or 2 and `form` joins the two parts of one
+ * paper. `points` is the points of the newest finished paper of the set, or null when none is done.
+ */
+export interface ExamSetEntry {
+  id: string;
+  name: string | null;
+  part?: 1 | 2 | undefined;
+  form?: string | undefined;
+  max_points?: number | undefined;
+  target_points?: number | undefined;
+  points?: number | null | undefined;
+}
+
 /** One course of the ordered journey, with the enrolled one flagged. */
 export interface JourneyCourse {
   id: string;
   name: string;
   current: boolean;
   /** The exam sets of a course that has exam weights (D-VBE3). Absent for any other course. */
-  exam_sets?: { id: string; name: string | null }[] | undefined;
+  exam_sets?: ExamSetEntry[] | undefined;
 }
 
 /** The XP totals of the learner (`core::learner::XpState`). */

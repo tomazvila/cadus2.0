@@ -19,6 +19,7 @@
  * reads "Checking your proof…" while the worker runs, then "Proof accepted" or "Needs
  * revision" with the grader's feedback, its checks, and the solution (`ProofGrading.tsx`).
  */
+import { MathName } from '@/components/MathName';
 import { useEffect, useState } from 'react';
 import { Chip, Cross, Question, Tick } from '@/components/primitives';
 import { MathBlock } from '@/components/MathBlock';
@@ -116,7 +117,7 @@ function GradedFeedback({
         <HeadChips res={res} hidden={ungraded} accepted={accepted} afterHint={head.afterHint} />
       </div>
 
-      {revealTopic ? <p className="feedback-topic muted">{`Topic: ${revealTopic}`}</p> : null}
+      {revealTopic ? <p className="feedback-topic muted"><MathName>{`Topic: ${revealTopic}`}</MathName></p> : null}
       <AcceptedLines res={res} />
       <TaskStatusLines res={res} />
       {head.proof ? <ProofResult state={head.proof} /> : <Reason reason={res.reason} shown={notationHint(res) === null} />}
@@ -181,7 +182,7 @@ function ReadLesson({ miss, topic, onRead }: {
   if (!miss || !topic || !onRead) return null;
   return (
     <button type="button" className="btn btn-ghost read-lesson" onClick={() => { onRead(topic.id); }}>
-      {`Read the lesson: ${topic.name ?? topic.id}`}
+      <MathName>{`Read the lesson: ${topic.name ?? topic.id}`}</MathName>
     </button>
   );
 }

@@ -3,6 +3,7 @@
  * picture, the limit and the second example. A page from before the fields holds none of
  * them, so every part renders nothing for an absent value.
  */
+import { MathName } from '@/components/MathName';
 import type { ReactNode } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 
@@ -21,7 +22,7 @@ export function TermList({ terms }: { terms: { term: string; meaning: string }[]
       <dl className="teach-term-list">
         {terms.map((row) => (
           <div key={row.term} className="teach-term">
-            <dt className="teach-term-word">{row.term}</dt>
+            <dt className="teach-term-word"><MathName>{row.term}</MathName></dt>
             <dd className="teach-term-meaning">
               <MathBlock as="span">{row.meaning}</MathBlock>
             </dd>

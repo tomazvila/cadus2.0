@@ -12,7 +12,7 @@
  * holds the three claims and the ways out; `dashboard.reads.test.tsx` holds the picker, the
  * reads and the payload shapes.
  */
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { axe } from 'vitest-axe';
@@ -25,6 +25,15 @@ import {
   EMPTY_PLAN, ONE_COURSE, mount, pressInMenu, pressInTheOpen, primaries, status, stubApi,
 } from './helpers/dashboard';
 import type { StatusResponse } from '@/api/types';
+
+// The demo status carries the fixed finish day 2026-11-04, and the card dashes a day
+// in the past, so the clock of these tests stands still on 2026-09-15 (only Date is faked;
+// timers keep running for waitFor). The shared setup restores real timers after every
+// test, so the freeze is set before each one.
+beforeEach(() => {
+  vi.useFakeTimers({ toFake: ['Date'] });
+  vi.setSystemTime(new Date('2026-09-15T12:00:00'));
+});
 
 describe('the dashboard', () => {
   it('waits with a labelled block, then paints the status card', async () => {

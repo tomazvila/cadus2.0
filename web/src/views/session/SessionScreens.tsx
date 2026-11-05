@@ -5,6 +5,7 @@
  * Each one is pure render over the props the loop hands it, so `Session.tsx` keeps the
  * four machines and none of the markup that surrounds them.
  */
+import { MathName } from '@/components/MathName';
 import '../../styles/fix-session.css';
 import { Chip, Stat } from '@/components/primitives';
 import { fmtClock, num, signed } from '@/lib/format';
@@ -67,7 +68,7 @@ export function EmptyPlan({ message, onExit }: EmptyPlanProps) {
   return (
     <section className="view-session">
       <div className="empty">
-        <p>{message}</p>
+        <p><MathName>{message}</MathName></p>
         <button type="button" className="btn btn-primary" onClick={onExit}>
           Back to dashboard
         </button>
@@ -95,7 +96,7 @@ export function NoInstruction({ task, onSkip, onExit }: NoInstructionProps) {
     <div className="card no-instruction-card">
       <h2>{NO_INSTRUCTION_MESSAGE}</h2>
       <p className="muted">
-        {`The worked example for ${topic?.name || topic?.id || 'this topic'} is not ready yet. `}
+        <MathName>{`The worked example for ${topic?.name || topic?.id || 'this topic'} is not ready yet. `}</MathName>
         Practice starts after the lesson is ready.
       </p>
       <div className="actions">
@@ -172,7 +173,7 @@ export function StudyHeader({
     <div className="task-header">
       <div className="task-meta">
         <Chip className={chipClass}>{kind}</Chip>
-        <h1 className="h-screen topic-name">{title}</h1>
+        <h1 className="h-screen topic-name"><MathName>{title}</MathName></h1>
         {module ? <span className="topic-module">{module}</span> : null}
       </div>
       <div className="task-right">

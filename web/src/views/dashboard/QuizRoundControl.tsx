@@ -10,8 +10,8 @@
 import { useState } from 'react';
 import type { Call } from '@/hooks/useCall';
 import { useLifetime } from '@/hooks/useLifetime';
-import { startSetLabel } from '@/views/roundLabel';
-import type { ApiClient, PlanTask, QuizRound, QuizScope } from '@/api/types';
+import { setStateLine, startSetLabel } from '@/views/roundLabel';
+import type { ApiClient, ExamSetEntry, PlanTask, QuizRound, QuizScope } from '@/api/types';
 
 const LENGTHS = [5, 10, 20];
 
@@ -22,9 +22,20 @@ export interface QuizRoundControlProps {
   /** The name of the enrolled course, or null when none stands. */
   courseName: string | null;
   /** The exam sets of the enrolled course. Undefined when the course has no exam weights. */
-  examSets?: { id: string; name: string | null }[] | undefined;
+  examSets?: ExamSetEntry[] | undefined;
   /** Called with the round task, after the service answers. `resumed` is true for a round that already runs. */
   onStarted: (task: PlanTask, round: QuizRound, resumed?: boolean) => void;
+}
+
+/** The exam sets with the two parts of one form side by side, part I first. */
+function inFormOrder(sets: ExamSetEntry[]): ExamSetEntry[] {
+  const order: string[] = [];
+  for (const set of sets) {
+    const form = set.form ?? set.id;
+    if (!order.includes(form)) order.push(form);
+  }
+  const place = (set: ExamSetEntry): number => order.indexOf(set.form ?? set.id);
+  return [...sets].sort((a, b) => place(a) - place(b) || (a.part ?? 2) - (b.part ?? 2));
 }
 
 export function QuizRoundControl({ api, call, courseName, examSets, onStarted }: QuizRoundControlProps) {
@@ -109,17 +120,21 @@ export function QuizRoundControl({ api, call, courseName, examSets, onStarted }:
         <>
           <p className="auth-label" id="quiz-paper-label">Or take a full exam paper</p>
           <div className="more-actions" role="group" aria-labelledby="quiz-paper-label">
-            {examSets.map((set) => (
-              <button
-                key={set.id}
-                type="button"
-                className="btn"
-                disabled={busy}
-                title="You see the number of questions and the target time before the clock starts."
-                onClick={() => { void show(set.id); }}
-              >
-                {startSetLabel(set.name, set.id)}
-              </button>
+            {inFormOrder(examSets).map((set) => (
+              <div key={set.id} className="exam-set">
+                <button
+                  type="button"
+                  className="btn"
+                  disabled={busy}
+                  title="You see the number of questions and the target time before the clock starts."
+                  onClick={() => { void show(set.id); }}
+                >
+                  {startSetLabel(set.name, set.id, set.part)}
+                </button>
+                {set.part === undefined ? null : (
+                  <p className="auth-label">{setStateLine(set.points, set.max_points, set.target_points)}</p>
+                )}
+              </div>
             ))}
           </div>
         </>

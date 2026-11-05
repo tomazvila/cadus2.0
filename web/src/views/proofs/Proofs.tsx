@@ -8,6 +8,7 @@
  *
  * The same card renders the chains of one topic in the map's topic panel.
  */
+import { MathName } from '@/components/MathName';
 import { useEffect, useState } from 'react';
 import { MathBlock } from '@/components/MathBlock';
 import { LoadingBlock } from '@/components/primitives';
@@ -133,7 +134,7 @@ export function ChainCard({ api, call, chain, onChanged }: {
   return (
     <article className="card proof-chain" data-phase={chain.phase}>
       <div className="proof-chain-head">
-        <strong>{chain.topic_name ?? chain.topic ?? 'Proof'}</strong>
+        <strong><MathName>{chain.topic_name ?? chain.topic ?? 'Proof'}</MathName></strong>
         {chain.kp ? <span className="muted">{` · ${chain.kp}`}</span> : null}
         <span className="chip">{PHASE_LABEL[chain.phase]}</span>
         {unseen ? <span className="chip chip-accent">new result</span> : null}

@@ -80,8 +80,14 @@ field (`graph.py:602-614`, `:272`). All 88 files agree. Copy this behavior.
 | `lt_term` | string or null | no | `null` (D-VBE1) |
 | `program_items` | list of int (each above 0) | no | `[]` (D-VBE1) |
 | `area` | `numbers`, `models`, `geometry`, `data` or null | no | `null` (D-VBE1) |
+| `exam_part` | 1, 2 or null | no | `null` (D-VBE4) |
+| `paper_form` | `pools`, `whole` or null | no | `null` (D-VBE4) |
 
 New in 2.0 (D-VBE1): `lt_term` is the Lithuanian program term of the topic. The teach page shows it as the line "Lithuanian exam term: ..." and the topic read page shows it under the title. `program_items` lists the row numbers of the program registry that the topic covers. `area` is the exam area of the topic. The three fields are presentation and lint input only. They are not in the canonical dump and not in `review_context_digest`, so no hash moves.
+
+New in 2.0 (D-VBE4): `exam_part` is the part of the state exam that an exam set topic stands for: 1 (40 points, one-point and two-point items) or 2 (60 points). A topic with no value is part I when its id ends in `-i`, and part II otherwise. The loader refuses any other value. The field is not in the canonical dump and not in `review_context_digest`, so no hash moves.
+
+New in 2.0 (D-VBE4): `paper_form` sets how the paper round of an exam set topic picks its items. `pools` (the default) takes the form of its part. `whole` takes every item of every knowledge point, in authored order, for a real public paper. The loader refuses any other value. The field is not in the canonical dump and not in `review_context_digest`.
 
 New in 2.0 (D-VBE3): `points` is the exam value of one item, a whole number from 1 to 11. An item with no `points` counts 1 point. The loader refuses a value outside the range. The field is not in the canonical dump and not in `review_context_digest`, so no hash moves. A quiz round scores the points of the correct items over the points of all items. A multipart item with `points` earns part of them for each named part it got right.
 
@@ -217,6 +223,8 @@ Probe rule (D-DG4, not in `lint_curriculum`; the CI binary `lint_curriculum` run
 18. `diagnostic_probe_allow_stale` — a line of the allow-list names an unknown topic, or a topic whose probe gives a verdict now.
 Reading-list rules (D-RL1, 2.0 full lint only, not in `lint_curriculum`): `reading_entry` — `course {id}: reading entry {n}: {problem}`: a title, author or note is empty, `access` is not `free` or `book`, `where` is empty or is a `http` text that is not an `https://` address without a space (any other text is a chapter note), or the note is longer than 159 characters. `reading_too_long` — `course {id}: reading list has {n} entries; the limit is 6`.
 Program registry rules (D-VBE1, `lint_curriculum_program`, run by the `lint_curriculum` binary; not in `lint_curriculum` or `lint_curriculum_full`): a course may hold `curriculum/<course>/program.yaml` with the shape `program: [{row: 1, label: "...", excluded: "reason" | null}, ...]` (`lt_term` is an accepted alias of `label`). A course with no file gets no finding. `program_item_uncovered` — a row is in no `program_items` of a topic of the course and has no `excluded` reason. `program_item_unknown` — a topic of the course names a row that the registry lacks. `program_registry` — the file does not parse, a row number appears more than once, or a row number is 0.
+
+Name math rule (D-NM1, `lint_curriculum_names`, run by the `lint_curriculum` binary; not in `lint_curriculum` or `lint_curriculum_full`): `name_math_unmarked` — a topic name or a knowledge-point name holds a math-like token outside `$...$`: a `^`, a backslash, a `=`, a `_`, a `/` next to a one-letter run, a digit or a bracket, a Greek letter (or its name next to an operator or a bracket), a one-letter variable next to an operator or a tight bracket (`f(x)`, `x + a`), a function name with a variable (`ln x`) or a call (`sqrt(2)`), or an unpaired `$`. The fix is to wrap the math in `$...$` or to say it in words.
 The allow-list is `curriculum/diag-probe-allow.txt`: one topic id per line, `#` starts a comment, a blank line is ignored, an absent file is an empty list. The environment variable `CADUS_DIAG_PROBE_ALLOW` names another file. The loader does not read this file, so the tree hash does not change. A shipped probe removes its line.
 
 Not enforced by lint: kebab-case; KP id uniqueness; duplicate/self prerequisite

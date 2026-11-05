@@ -26,6 +26,7 @@
  * recurses until the stack goes. It is measured, not theoretical: the first draft of this
  * file died that way, and React reported it as "Do not call Hooks inside useEffect".
  */
+import { MathName } from '@/components/MathName';
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from 'react';
 import { useCall } from '@/hooks/useCall';
 import { LoadingBlock } from '@/components/primitives';
@@ -336,7 +337,7 @@ export function CurriculumMap({
 
         {selected && !listMode ? (
           <aside className="map-panel" aria-label="Topic detail">
-            <h2>{selected.name ?? selected.id}</h2>
+            <h2><MathName>{selected.name ?? selected.id}</MathName></h2>
             <p className="map-panel-id mono">{selected.id}</p>
             <p className="map-panel-state">
               <i className={`legend-dot ld-${selected.status}`} aria-hidden="true" />
@@ -390,7 +391,7 @@ function MapList({ nodes, query }: { nodes: GraphNode[]; query: string }) {
             <ul>
               {rows.map((node) => (
                 <li key={node.id}>
-                  <span>{node.name ?? node.id}</span>
+                  <span><MathName>{node.name ?? node.id}</MathName></span>
                   {/* Everything the sighted reader gets from the detail panel. A row of
                       name alone makes the canvas's promise of a screen-readable version
                       false. */}
@@ -430,7 +431,7 @@ function Neighbors({ title, ids, nodes, onPick }: {
         {named.map((n) => (
           <li key={n.id}>
             <button type="button" className="map-link" onClick={() => { onPick(n.id); }}>
-              {n.name ?? n.id}
+              <MathName>{n.name ?? n.id}</MathName>
             </button>
           </li>
         ))}

@@ -68,6 +68,8 @@ pub fn topic(id: &str, prereq: Option<&str>) -> Topic {
         lt_term: None,
         program_items: Vec::new(),
         area: None,
+        exam_part: None,
+        paper_form: None,
     }
 }
 

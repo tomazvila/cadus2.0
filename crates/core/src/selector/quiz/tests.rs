@@ -485,3 +485,173 @@ fn points_weigh_an_item_and_give_partial_credit_by_part() {
     assert!((round2(score_of(&items)) - 0.64).abs() < 1e-9);
     assert!(score_of(&[]).abs() < f64::EPSILON);
 }
+
+/// A part I set topic `id` with a pool of one-point items and a pool of
+/// two-point items.
+fn part_one_topic(id: &str, sizes: [usize; 2]) -> crate::curriculum::Topic {
+    let mut set = topic(id, &[]);
+    set.answer_kind = AnswerKind::MultiStep;
+    set.knowledge_points = sizes
+        .iter()
+        .enumerate()
+        .map(|(position, size)| {
+            let mut point = knowledge_point(&format!("kp{}", position + 1), &[]);
+            point.exemplars = (0..*size)
+                .map(|number| exemplar(&format!("p{position}-{number}"), false))
+                .collect();
+            point
+        })
+        .collect();
+    set
+}
+
+#[test]
+fn a_part_one_paper_takes_24_one_point_and_8_two_point_items() {
+    let tree = ladder_weighted(
+        &[(
+            "v",
+            &[],
+            vec![
+                part_one_topic("set-i", [30, 12]),
+                part_one_topic("set", [30, 12]),
+            ],
+        )],
+        Some(WEIGHTS),
+    );
+    assert_eq!(part_of(&tree, "set-i"), ExamPart::One);
+    assert_eq!(part_of(&tree, "set"), ExamPart::Two);
+    let form = paper_form(&tree, "set-i").expect("a part I paper");
+    assert_eq!(form.len(), 32);
+    assert_eq!(PAPER_FORM_I, [24, 8]);
+    assert_eq!(
+        form[23],
+        PaperItem {
+            kp: "kp1".into(),
+            index: 23
+        }
+    );
+    assert_eq!(
+        form[24],
+        PaperItem {
+            kp: "kp2".into(),
+            index: 0
+        }
+    );
+    assert_eq!(
+        form[31],
+        PaperItem {
+            kp: "kp2".into(),
+            index: 7
+        }
+    );
+    // The part II form is unchanged for the other topic: it needs four pools.
+    assert_eq!(exam_sets(&tree, "v"), ["set-i"]);
+    assert_eq!(sibling_set(&tree, "set-i").as_deref(), Some("set"));
+    assert_eq!(sibling_set(&tree, "set").as_deref(), Some("set-i"));
+    assert_eq!(form_key("set-i"), "set");
+}
+
+#[test]
+fn the_topic_field_exam_part_wins_over_the_id_suffix() {
+    let mut odd = part_one_topic("odd", [24, 8]);
+    odd.exam_part = Some(1);
+    let mut suffixed = part_one_topic("odd-i", [24, 8]);
+    suffixed.exam_part = Some(2);
+    let tree = ladder_weighted(&[("v", &[], vec![odd, suffixed])], Some(WEIGHTS));
+    assert_eq!(part_of(&tree, "odd"), ExamPart::One);
+    assert_eq!(part_of(&tree, "odd-i"), ExamPart::Two);
+}
+
+#[test]
+fn the_score_follows_the_sheet() {
+    assert_eq!(exam_score(24), ExamScore::NotPassed);
+    assert_eq!(exam_score(25), ExamScore::Score(30));
+    assert_eq!(exam_score(95), ExamScore::Score(100));
+    assert_eq!(exam_score(96), ExamScore::Score(100));
+    assert_eq!(exam_score(100), ExamScore::Score(100));
+    assert_eq!(exam_score(73), ExamScore::Score(78));
+    assert_eq!(exam_line(73), "Exam points 73 of 100. Score 78.");
+    assert_eq!(exam_line(93), "Exam points 93 of 100. Score 98.");
+    assert_eq!(exam_line(97), "Exam points 97 of 100. Score 100.");
+    assert_eq!(
+        exam_line(21),
+        "Exam points 21 of 100. Not passed (25 points pass)."
+    );
+}
+
+#[test]
+fn each_part_holds_its_share_of_the_top_score_line() {
+    assert_eq!(ExamPart::One.max_points() + ExamPart::Two.max_points(), 100);
+    assert_eq!(ExamPart::One.target_points(), 38);
+    assert_eq!(ExamPart::Two.target_points(), 57);
+    assert_eq!(
+        ExamPart::One.target_points() + ExamPart::Two.target_points(),
+        EXAM_TOP_POINTS
+    );
+    assert!((ExamPart::One.pass_share() - 0.95).abs() < 1e-12);
+    assert!((ExamPart::Two.pass_share() - 0.95).abs() < 1e-12);
+    assert_eq!(ExamPart::One.form().iter().sum::<usize>(), 32);
+}
+
+#[test]
+fn a_paper_quiz_id_names_its_set() {
+    assert_eq!(
+        paper_set_of("s1-round-paper-vbe-set1-main-i-3"),
+        Some("vbe-set1-main-i")
+    );
+    assert_eq!(
+        paper_set_of("s1-round-paper-vbe-set1-main-12"),
+        Some("vbe-set1-main")
+    );
+    assert_eq!(paper_set_of("s1-round-4"), None);
+    assert_eq!(paper_set_of("s1-round-paper-vbe-set1-main-i"), None);
+}
+
+#[test]
+fn a_whole_paper_serves_every_item_of_every_pool_in_authored_order() {
+    let mut whole = part_one_topic("real", [7, 9]);
+    whole.paper_form = Some("whole".to_owned());
+    // The same pools without the field give the part II form, which needs four pools.
+    let pools = part_one_topic("plain", [7, 9]);
+    let tree = ladder_weighted(&[("v", &[], vec![whole, pools])], Some(WEIGHTS));
+    assert!(is_whole_paper(&tree, "real"));
+    assert!(!is_whole_paper(&tree, "plain"));
+    let form = paper_form(&tree, "real").expect("a whole paper");
+    assert_eq!(form.len(), 16);
+    assert_eq!(
+        form[6],
+        PaperItem {
+            kp: "kp1".into(),
+            index: 6
+        }
+    );
+    assert_eq!(
+        form[7],
+        PaperItem {
+            kp: "kp2".into(),
+            index: 0
+        }
+    );
+    assert_eq!(
+        form[15],
+        PaperItem {
+            kp: "kp2".into(),
+            index: 8
+        }
+    );
+    assert_eq!(exam_sets(&tree, "v"), ["real"]);
+    // 16 one-point items: 95 percent rounded up is 16 of 16 points.
+    assert!((pass_share_of(&tree, "real") - 1.0).abs() < 1e-12);
+    // The form of a plain set is the form of its part.
+    assert!((pass_share_of(&tree, "plain") - 0.95).abs() < 1e-12);
+}
+
+#[test]
+fn the_whole_paper_line_is_the_top_share_of_the_sum_rounded_up() {
+    let mut big = part_one_topic("big", [30, 10]);
+    big.paper_form = Some("whole".to_owned());
+    let tree = ladder_weighted(&[("v", &[], vec![big])], Some(WEIGHTS));
+    // 40 points: 95 percent is 38.
+    assert!((pass_share_of(&tree, "big") - 0.95).abs() < 1e-12);
+    assert_eq!(paper_form(&tree, "big").expect("a paper").len(), 40);
+}

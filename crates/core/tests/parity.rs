@@ -14,7 +14,7 @@ use common::dump::tree;
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "88add6ec5c24ca5338ca2d840d1ee1b2c66e430b53000b23605040309506209b";
+const TREE_HASH: &str = "576d76a0a7991150615813982f3ad0d92dc91f875cbe832f0487b5330e37768b";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -35,7 +35,8 @@ const TREE_HASH: &str = "88add6ec5c24ca5338ca2d840d1ee1b2c66e430b53000b236050403
 // 2026-10-29, VBE wave 2b (the six exam sets): dump length 13,709,049 (was 13,565,575); hash 8c62ed82... (was 0d3ac571...).
 // 2026-10-30, the course fundamentals-of-mathematics (D-FOM1): dump length 15,210,810 (was 13,709,049); hash 96be18be... (was 8c62ed82...); topics 1183 (was 1133), courses 15 (was 14), units 105 (was 98), knowledge points 3516 (was 3327), exemplars 28373 (was 26374), prereq edges 4094 (was 3794), encompassing edges 4013 (was 3713).
 // 2026-11-03, explain sub-parts of the book exercises become written items (D-FOM1): dump length 15,225,855 (was 15,210,810), measured with `dump_curriculum curriculum`; hash re-pinned (was 96be18be...23a6).
-const DUMP_LEN: usize = 15_225_855;
+// 2026-11-05, 233 names carry their math inside $...$ (D-NM1): dump length 15,227,332 (was 15,225,855), measured with `dump_curriculum curriculum`; hash re-pinned (was 88add6ec...209b).
+const DUMP_LEN: usize = 15_227_332;
 
 /// The `counts` object of the dump, as the oracle writes it.
 // 2026-10-12, Foundations merge (D-C1): counts re-pinned to the merged tree.

@@ -117,6 +117,24 @@ pub fn lint_curriculum_program(root: &Path) -> Vec<Finding> {
     lint.findings
 }
 
+/// The name math rule: `name_math_unmarked`.
+///
+/// A topic name or a knowledge-point name that holds math outside `$...$` is a
+/// finding. The rule is not part of [`lint_curriculum`] or
+/// [`lint_curriculum_full`], so the parity tests stay as they are. The
+/// `lint_curriculum` binary runs it. A tree that does not parse gives no
+/// finding here; the other lints report it.
+pub fn lint_curriculum_names(root: &Path) -> Vec<Finding> {
+    let parsed = parse_curriculum(root);
+    if parsed.error.is_some() || parsed.catalog.is_none() {
+        return Vec::new();
+    }
+    let mut lint = Lint::new(&parsed.units, Vec::new());
+    lint.findings.clear();
+    rules::check_names(&mut lint);
+    lint.findings
+}
+
 fn lint_run(root: &Path, exemplars: bool) -> Vec<Finding> {
     let parsed = parse_curriculum(root);
     if parsed.error.is_some() {

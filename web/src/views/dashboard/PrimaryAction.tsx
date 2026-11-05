@@ -9,6 +9,7 @@
  * Every branch renders exactly one `.btn-primary`. A screen that ended the last branch with
  * prose alone is the dead end W-C3 exists to forbid.
  */
+import { MathName } from '@/components/MathName';
 import { num } from '@/lib/format';
 import { frontierWaitText } from '@/lib/reopen';
 import type { Busy } from '@/hooks/useBusy';
@@ -91,7 +92,7 @@ export function PrimaryAction({
         >
           <span aria-hidden="true">▶</span> Continue studying
         </button>
-        <p className="muted primary-sub">{sub}</p>
+        <p className="muted primary-sub"><MathName>{sub}</MathName></p>
         {minutes ? <p className="muted primary-sub">{minutes}</p> : null}
       </div>
     );
@@ -101,9 +102,11 @@ export function PrimaryAction({
   return (
     <div className="primary-action">
       <p className="caught-up">
-        {status.frontier_wait
-          ? frontierWaitText(status.frontier_wait)
-          : 'You are all caught up. Nice work.'}
+        <MathName>
+          {status.frontier_wait
+            ? frontierWaitText(status.frontier_wait)
+            : 'You are all caught up. Nice work.'}
+        </MathName>
       </p>
       {nextCourse ? (
         <>

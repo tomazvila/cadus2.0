@@ -16,8 +16,28 @@ export function paperScoreLine(earned: number, total: number, percent: number): 
   return `${earned} of ${total} points (${percent}%)`;
 }
 
-/** The label of the button that starts the paper of one exam set. */
-export function startSetLabel(name: string | null, id: string): string {
+/** The part of an exam, as words. */
+export function partWords(part: 1 | 2): string {
+  return part === 1 ? 'part I' : 'part II';
+}
+
+/** The name of an exam set with its part: "Exam set 1: 2025 main paper, part I". */
+export function setWithPart(name: string | null, id: string, part?: 1 | 2): string {
   const shown = name ?? id;
+  if (part === undefined) return shown;
+  return `${shown.replace(/,?\s*part\s+II?\s*$/i, '')}, ${partWords(part)}`;
+}
+
+/** What one exam set shows before its button: not started, the points so far, or done. */
+export function setStateLine(points: number | null | undefined, max?: number, target?: number): string {
+  if (points === null || points === undefined || max === undefined) return 'Not started yet.';
+  if (target !== undefined && points >= target) return `Last paper: ${points} of ${max} points. Done.`;
+  const aim = target === undefined ? '' : ` Aim for ${target} or more.`;
+  return `Last paper: ${points} of ${max} points.${aim}`;
+}
+
+/** The label of the button that starts the paper of one exam set. */
+export function startSetLabel(name: string | null, id: string, part?: 1 | 2): string {
+  const shown = setWithPart(name, id, part);
   return /^exam set/i.test(shown) ? `Start ${shown}` : `Start exam set ${shown}`;
 }

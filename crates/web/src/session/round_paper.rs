@@ -8,7 +8,9 @@ use sqlx::types::Json;
 use sqlx::types::chrono::NaiveDate;
 
 use cadus_core::event::Event;
-use cadus_core::selector::{PaperItem, QUIZ_RETAKE_DELAY_DAYS, paper_task, utc_date};
+use cadus_core::selector::{
+    PaperItem, QUIZ_RETAKE_DELAY_DAYS, paper_task, pass_share_of, utc_date,
+};
 
 use super::store::{Ready, Tx};
 use crate::error::ApiError;
@@ -53,35 +55,64 @@ pub(super) fn paper_round(
     }
 }
 
-/// The date an exam set becomes open again after a result under the retake
-/// line, or `None` when no such result waits (D-VBE3).
+/// The date an exam set becomes open again after a result under the pass line
+/// of its part, or `None` when no such result waits (D-VBE3, D-VBE4).
 ///
-/// The paper task id holds the set name, so the query reads the results whose
-/// `quiz_id` holds `-round-paper-<set>-`. Only the newest result counts.
+/// The paper task id ends in `-round-paper-<set>-<n>`, so the query reads the
+/// results whose `quiz_id` has that shape for this set. A set id is a prefix of
+/// the id of its part I set, so the match runs to the end of the id. Only the
+/// newest result counts.
 pub(super) async fn paper_wait(
     req: &Ready,
     tx: &mut Tx,
     set: &str,
 ) -> Result<Option<NaiveDate>, ApiError> {
-    let marker = format!("-round-paper-{set}-");
+    let pattern = format!("-round-paper-{set}-[0-9]+$");
     let rows: Vec<(Json<Event>,)> = sqlx::query_as(
         "SELECT payload FROM events \
          WHERE user_id = $1 AND payload->>'type' = 'quiz_result' \
-         AND strpos(payload->>'quiz_id', $2) > 0 \
+         AND payload->>'quiz_id' ~ $2 \
          ORDER BY seq DESC LIMIT 1",
     )
     .bind(req.user_id)
-    .bind(&marker)
+    .bind(&pattern)
     .fetch_all(&mut **tx)
     .await
     .map_err(|_| ApiError::internal("The paper history could not be read."))?;
     let Some((Json(Event::QuizResult(last)),)) = rows.into_iter().next() else {
         return Ok(None);
     };
-    if last.inconclusive || last.score >= req.content.cfg.quiz.retake_below {
+    let line = pass_share_of(req.graph(), set);
+    if last.inconclusive || last.score >= line {
         return Ok(None);
     }
     let days = u64::try_from(QUIZ_RETAKE_DELAY_DAYS).unwrap_or(0);
     Ok(utc_date(last.ts.micros())
         .and_then(|day| (0..days).try_fold(day, |date, _| date.succ_opt())))
+}
+
+/// Every paper result of the learner, oldest first.
+///
+/// The exam sets of the dashboard read their state from it (D-VBE4).
+pub(super) async fn paper_results(
+    req: &Ready,
+    tx: &mut Tx,
+) -> Result<Vec<cadus_core::event::QuizResult>, ApiError> {
+    let rows: Vec<(Json<Event>,)> = sqlx::query_as(
+        "SELECT payload FROM events \
+         WHERE user_id = $1 AND payload->>'type' = 'quiz_result' \
+         AND payload->>'quiz_id' ~ '-round-paper-.+-[0-9]+$' \
+         ORDER BY seq ASC",
+    )
+    .bind(req.user_id)
+    .fetch_all(&mut **tx)
+    .await
+    .map_err(|_| ApiError::internal("The paper history could not be read."))?;
+    Ok(rows
+        .into_iter()
+        .filter_map(|(Json(event),)| match event {
+            Event::QuizResult(result) => Some(result),
+            _ => None,
+        })
+        .collect())
 }

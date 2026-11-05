@@ -118,6 +118,9 @@ pub enum AnswerKind {
 /// The wire values of [`AnswerKind`], in declaration order.
 pub const ANSWER_KINDS: [&str; 4] = ["numeric", "expression", "multi-step", "proof"];
 
+/// The allowed values of the `paper_form` field of a topic (D-VBE4).
+pub const PAPER_FORMS: [&str; 2] = ["pools", "whole"];
+
 /// The allowed values of the `area` field of a topic (D-VBE1).
 pub const TOPIC_AREAS: [&str; 4] = ["numbers", "models", "geometry", "data"];
 
@@ -383,6 +386,16 @@ pub struct Topic {
     /// The exam area, one of [`TOPIC_AREAS`] (D-VBE1). Not serialized.
     #[serde(default, skip_serializing)]
     pub area: Option<String>,
+    /// The part of the state exam that an exam set topic stands for: 1 or 2
+    /// (D-VBE4). Not serialized. A topic with no value reads the part from its
+    /// id: the suffix `-i` is part I, any other id is part II.
+    #[serde(default, skip_serializing)]
+    pub exam_part: Option<u8>,
+    /// How a paper round of an exam set topic picks its items (D-VBE4):
+    /// `pools` (the default) takes the form of its part; `whole` takes every
+    /// item of every knowledge point, in authored order. Not serialized.
+    #[serde(default, skip_serializing)]
+    pub paper_form: Option<String>,
 }
 
 /// One unit file, `curriculum/<course>/<nn>-<unit>.yaml`.

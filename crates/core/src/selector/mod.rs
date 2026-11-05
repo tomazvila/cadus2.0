@@ -67,11 +67,13 @@ pub use mixed_review::{
 pub use multistep::{multistep_components, multistep_is_due, remediation_tasks};
 pub use plan::{BlockedTask, Constraints, SessionPlan};
 pub use quiz::{
-    ItemPoints, PAPER_ENTRY, PAPER_FORM, PaperItem, PaperRefusal, QuizPlan, QuizQuestion,
-    QuizRequest, QuizSampler, SeededSampler, area_map, area_quotas, exam_sets, item_points,
-    largest_area, paper_form, parse_paper_entry, quiz_budget, quiz_composer, quiz_composer_for,
-    quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, round2, score_of, sum_points,
-    utc_date,
+    EXAM_PASS_POINTS, EXAM_POINTS, EXAM_TOP_POINTS, ExamPart, ExamScore, ItemPoints, PAPER_ENTRY,
+    PAPER_FORM, PAPER_FORM_I, PaperItem, PaperRefusal, QuizPlan, QuizQuestion, QuizRequest,
+    QuizSampler, SeededSampler, area_map, area_quotas, exam_line, exam_score, exam_sets, form_key,
+    is_whole_paper, item_points, largest_area, newest_paper_results, paper_exam_points, paper_form,
+    paper_set_of, parse_paper_entry, part_of, pass_share_of, quiz_budget, quiz_composer,
+    quiz_composer_for, quiz_difficulty_target, quiz_is_due, quiz_retake_available_at, round2,
+    score_of, sibling_set, sum_points, utc_date, whole_points,
 };
 pub use reserve::{ValidityContext, reserve_open_plan, task_still_valid};
 pub use retention::retention_probe;

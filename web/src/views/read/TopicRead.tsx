@@ -6,6 +6,7 @@
  * course order and the prerequisite edges: the previous and next topic, "Learn first", and
  * "Opens next". The learner reads a neighbor without a return to a list.
  */
+import { MathName } from '@/components/MathName';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { ApiError } from '@/api';
 import { MathBlock } from '@/components/MathBlock';
@@ -107,7 +108,7 @@ function ReadBody({ page, onOpen }: { page: TopicTeachResponse; onOpen: (id: str
       <div className="task-header">
         <div className="task-meta">
           <Chip className="chip-lesson">lesson text</Chip>
-          <h1 className="h-screen topic-name">{page.name || page.topic}</h1>
+          <h1 className="h-screen topic-name"><MathName>{page.name || page.topic}</MathName></h1>
           {page.module ? <span className="topic-module">{page.module}</span> : null}
         </div>
       </div>
@@ -120,12 +121,12 @@ function ReadBody({ page, onOpen }: { page: TopicTeachResponse; onOpen: (id: str
         <div className="read-steps">
           {page.previous ? (
             <button type="button" className="btn btn-ghost" onClick={() => { onOpen(page.previous?.id ?? ''); }}>
-              {`← Previous: ${page.previous.name ?? page.previous.id}`}
+              <MathName>{`← Previous: ${page.previous.name ?? page.previous.id}`}</MathName>
             </button>
           ) : null}
           {page.next ? (
             <button type="button" className="btn btn-ghost" onClick={() => { onOpen(page.next?.id ?? ''); }}>
-              {`Next: ${page.next.name ?? page.next.id} →`}
+              <MathName>{`Next: ${page.next.name ?? page.next.id} →`}</MathName>
             </button>
           ) : null}
         </div>
@@ -136,7 +137,7 @@ function ReadBody({ page, onOpen }: { page: TopicTeachResponse; onOpen: (id: str
 
       {page.points.map((point) => (
         <div key={point.kp} className="card teach-card read-point">
-          <h2 className="read-point-name">{point.name}</h2>
+          <h2 className="read-point-name"><MathName>{point.name}</MathName></h2>
           {point.page ? (
             <>
               <PictureFold picture={point.page.picture} />
@@ -167,7 +168,7 @@ function LinkList({ title, links, onOpen }: { title: string; links: TopicLink[];
         {links.map((link) => (
           <li key={link.id}>
             <button type="button" className="map-link" onClick={() => { onOpen(link.id); }}>
-              {link.name ?? link.id}
+              <MathName>{link.name ?? link.id}</MathName>
             </button>
           </li>
         ))}

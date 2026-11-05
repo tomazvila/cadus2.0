@@ -32,6 +32,7 @@ export function QuizResults({ api, taskId, onUnauthorized, resumePractice = fals
   if (!result) return <button type="button" className="btn" disabled={phase === 'loading'} onClick={() => load(false)}>Review results</button>;
   return <div className="quiz-results">
     <h3>{result.round ? `Your quiz result: ${result.round.n} questions, ${roundPlace(result.round)}` : 'Your quiz result'}</h3>
+    {result.exam ? <p className="exam-line"><strong>{result.exam.line}</strong></p> : null}
     {result.round?.kind === 'paper' && result.points_total !== undefined
       ? <p>{paperScoreLine(result.points_earned ?? 0, result.points_total, result.percent ?? 0)}</p>
       : null}

@@ -20,7 +20,10 @@ use super::{
 };
 pub use area::{area_map, area_quotas, largest_area};
 pub use paper::{
-    PAPER_ENTRY, PAPER_FORM, PaperItem, PaperRefusal, exam_sets, paper_form, parse_paper_entry,
+    EXAM_PASS_POINTS, EXAM_POINTS, EXAM_TOP_POINTS, ExamPart, ExamScore, PAPER_ENTRY, PAPER_FORM,
+    PAPER_FORM_I, PaperItem, PaperRefusal, exam_line, exam_score, exam_sets, form_key,
+    is_whole_paper, newest_paper_results, paper_exam_points, paper_form, paper_set_of,
+    parse_paper_entry, part_of, pass_share_of, sibling_set, whole_points,
 };
 pub use points::{ItemPoints, item_points, round2, score_of, sum_points};
 

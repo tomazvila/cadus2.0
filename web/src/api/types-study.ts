@@ -759,6 +759,21 @@ export interface QuizRoundResponse {
   resumed?: boolean;
 }
 
+/**
+ * The result of a paper as part of the state exam (D-VBE4). `line` is the plain sentence.
+ * `exam_points`, `score` and `passed` are present once both parts are done; `open_part` is present before.
+ */
+export interface ExamView {
+  part: 1 | 2;
+  part_points: number;
+  part_of: number;
+  open_part?: 1 | 2 | undefined;
+  exam_points?: number | undefined;
+  score?: number | null | undefined;
+  passed?: boolean | undefined;
+  line: string;
+}
+
 /** Evidence released after every original quiz answer is recorded. */
 export interface QuizResultResponse {
   /** The round the quiz was; null for a quiz that came from the plan. */
@@ -770,6 +785,8 @@ export interface QuizResultResponse {
   points_earned?: number | undefined;
   points_total?: number | undefined;
   percent?: number | undefined;
+  /** The exam line of a paper whose form has two parts (D-VBE4). Null for any other round. */
+  exam?: ExamView | null | undefined;
   practice_pending: boolean;
   practice_available: boolean;
   answers: {

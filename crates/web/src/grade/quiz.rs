@@ -3,7 +3,11 @@ use super::*;
 use cadus_core::answer::multipart_credit;
 use cadus_core::curriculum::{Curriculum, Exemplar};
 use cadus_core::event::{QuizResult, QuizTopicResult, Secs};
-use cadus_core::selector::{ItemPoints, item_points, parse_paper_entry, score_of};
+use cadus_core::selector::{
+    ExamScore, ItemPoints, exam_line, exam_score, item_points, newest_paper_results,
+    paper_exam_points, parse_paper_entry, part_of, pass_share_of, score_of, sibling_set,
+    whole_points,
+};
 
 /// The authored item that the learner saw in `attempt`, found by its topic and text.
 fn exemplar_of<'g>(graph: &'g Curriculum, attempt: &Attempt) -> Option<&'g Exemplar> {
@@ -95,7 +99,7 @@ pub(super) fn close_quiz(
             quiz_id: task.task_id.clone(),
             score,
             xp,
-            per_topic: per_topic(task, &decided, score, cfg),
+            per_topic: per_topic(task, &decided, score, graph),
         })),
         xp: Some(round2(xp)),
         ..Advance::carry_on()
@@ -105,13 +109,20 @@ pub(super) fn close_quiz(
 /// The topic rows of a quiz result.
 ///
 /// A paper round asks many items of one set topic. It writes one row for that
-/// topic: right when the paper reaches the retake line (D-VBE3).
-fn per_topic(task: &Task, decided: &[&&Attempt], score: f64, cfg: &Config) -> Vec<QuizTopicResult> {
-    let paper = task
+/// topic: right when the points of the paper reach the share of its part
+/// that stands for the score 100 (D-VBE4).
+fn per_topic(
+    task: &Task,
+    decided: &[&&Attempt],
+    score: f64,
+    graph: &Curriculum,
+) -> Vec<QuizTopicResult> {
+    let paper_set = task
         .mix
         .first()
-        .is_some_and(|entry| parse_paper_entry(entry).is_some());
-    if !paper {
+        .and_then(|entry| parse_paper_entry(entry))
+        .map(|(set, _, _)| set);
+    let Some(paper_set) = paper_set else {
         return decided
             .iter()
             .map(|item| QuizTopicResult {
@@ -120,14 +131,14 @@ fn per_topic(task: &Task, decided: &[&&Attempt], score: f64, cfg: &Config) -> Ve
                 secs: item.secs,
             })
             .collect();
-    }
+    };
     let Some(first) = decided.first() else {
         return Vec::new();
     };
     let secs: i64 = decided.iter().map(|item| item.secs.get()).sum();
     vec![QuizTopicResult {
         topic: first.topic.clone(),
-        correct: score >= cfg.quiz.retake_below,
+        correct: score >= pass_share_of(graph, paper_set),
         secs: Secs::new(secs).unwrap_or(first.secs),
     }]
 }
@@ -223,7 +234,12 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
                 .and_then(|idx| content.curriculum.topic(idx)).map(|topic| topic.name.clone())})
     });
     let sum = round_points(&state, &mut tx, &answers).await?;
-    let response = json!({"score": result.score, "round": round, "xp": result.xp, "inconclusive": result.inconclusive, "answers": shown,
+    let exam = scratch
+        .rounds
+        .get(&task_id)
+        .and_then(|recorded| recorded.set.as_deref())
+        .and_then(|set| exam_view(&content.curriculum, set, &events, sum, result.inconclusive));
+    let response = json!({"score": result.score, "round": round, "exam": exam, "xp": result.xp, "inconclusive": result.inconclusive, "answers": shown,
         "points_earned": round2(sum.earned), "points_total": sum.total,
         "percent": percent_of(sum),
         "practice_pending": scratch.feedback_practice.contains_key(&task_id),
@@ -232,6 +248,74 @@ pub async fn result(request: TaskWithBody) -> Result<Json<Value>, ApiError> {
     write_state(&state.db, &mut tx, user_id, &scratch).await?;
     tx.commit().await.map_err(db_failed)?;
     Ok(Json(response))
+}
+
+/// The exam line of a paper result (D-VBE4), or `None` when the set has no
+/// other part, or the paper has answers that are not marked yet.
+///
+/// `sum` is the exact points of this paper, scaled to the points of its part. When the other part of the
+/// same form has a finished result, the view holds the exam points of both
+/// parts and the score by the sheet. Else it holds the points of this part and
+/// names the part that is still open.
+fn exam_view(
+    graph: &Curriculum,
+    set: &str,
+    events: &[EventRow],
+    sum: ItemPoints,
+    inconclusive: bool,
+) -> Option<Value> {
+    let other = sibling_set(graph, set)?;
+    if inconclusive {
+        return None;
+    }
+    let part = part_of(graph, set);
+    let share = if sum.total > 0.0 {
+        sum.earned / sum.total
+    } else {
+        0.0
+    };
+    let mine = whole_points(share * f64::from(part.max_points()), part.max_points());
+    let newest = newest_paper_results(events.iter().filter_map(|row| match &row.event {
+        Event::QuizResult(result) => Some(result),
+        _ => None,
+    }));
+    let theirs = newest
+        .get(&other)
+        .and_then(|result| paper_exam_points(graph, &other, result));
+    let other_part = part_of(graph, &other);
+    let part_view =
+        json!({"part": part.number(), "part_points": mine, "part_of": part.max_points()});
+    let Some(theirs) = theirs else {
+        let mut view = part_view;
+        view["open_part"] = json!(other_part.number());
+        view["line"] = json!(format!(
+            "{}: {mine} of {} points. {} is still open.",
+            capital(part.label()),
+            part.max_points(),
+            capital(other_part.label()),
+        ));
+        return Some(view);
+    };
+    let total = mine + theirs;
+    let mut view = part_view;
+    view["exam_points"] = json!(total);
+    view["exam_of"] = json!(cadus_core::selector::EXAM_POINTS);
+    view["score"] = match exam_score(total) {
+        ExamScore::Score(score) => json!(score),
+        ExamScore::NotPassed => Value::Null,
+    };
+    view["passed"] = json!(matches!(exam_score(total), ExamScore::Score(_)));
+    view["line"] = json!(exam_line(total));
+    Some(view)
+}
+
+/// A label with a capital first letter.
+fn capital(text: &str) -> String {
+    let mut chars = text.chars();
+    chars
+        .next()
+        .map(|first| first.to_uppercase().chain(chars).collect())
+        .unwrap_or_default()
 }
 
 /// The percent of the points of a round, rounded to 2 decimals.
