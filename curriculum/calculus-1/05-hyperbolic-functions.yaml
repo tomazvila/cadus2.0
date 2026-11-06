@@ -78,10 +78,10 @@ topics:
             answer: '3/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The identity gives $\sinh^2 x = \cosh^2 x - 1 = \frac{25}{16} - 1 = \frac{9}{16}$. Since $x > 0$, $\sinh x$ is positive, so $\sinh x = \frac{3}{4}$.'
-          - problem: 'Substitute the definitions of $\cosh x$ and $\sinh x$ into $\cosh^2 x - \sinh^2 x$ and simplify.'
+          - problem: 'Find the value of $\cosh^2 x - \sinh^2 x$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The difference of squares gives $\frac{(e^x + e^{-x})^2 - (e^x - e^{-x})^2}{4} = \frac{4e^x e^{-x}}{4}$. Since $e^x e^{-x} = 1$, the result is $1$.'
+            solution_sketch: 'Write both functions with $e^x$ and $e^{-x}$. Then $\frac{(e^x + e^{-x})^2 - (e^x - e^{-x})^2}{4} = \frac{4e^x e^{-x}}{4}$. Since $e^x e^{-x} = 1$, the result is $1$.'
           - problem: 'Is $\cosh$ an even function, an odd function, or neither?'
             answer: 'even'
             answer_contract: {"kind": "label", "options": [["even", "even function", "it is even"], ["odd", "odd function", "it is odd"], ["neither", "neither even nor odd", "it is neither"]]}
@@ -157,9 +157,9 @@ topics:
             solution_sketch: 'Since $\cosh$ is even, the height at $x = -\ln 4$ equals the height at $x = \ln 4$. With $e^{\ln 4} = 4$ and $e^{-\ln 4} = \frac{1}{4}$, $\cosh(\ln 4) = \frac{4 + \frac{1}{4}}{2} = \frac{17}{8}$ metres.'
         constraints: "heights at ± ln k for exact fractions; cable models a cosh(x/a) with the argument x = a ln k; calculator estimates state the rounding; no shifts, only y = cosh x, y = sinh x and the cable form a cosh(x/a)"
     diagnostic_exemplar:
-      problem: 'Evaluate $\sinh(\ln 3)$ exactly from the definition $\sinh x = \frac{e^x - e^{-x}}{2}$, and confirm with $\cosh^2 x - \sinh^2 x = 1$ that $\cosh(\ln 3) = \frac{5}{3}$.'
-      answer: '4/3'
-      solution_sketch: '$\sinh(\ln 3) = \frac{3 - 1/3}{2} = \frac{4}{3}$; then $\cosh^2 = 1 + \frac{16}{9} = \frac{25}{9}$ and $\cosh > 0$, so $\cosh(\ln 3) = \frac{5}{3}$.'
+      problem: 'Find the exact value of $\sinh(\ln 3)\cdot\cosh(\ln 3)$.'
+      answer: '20/9'
+      solution_sketch: 'Use the definitions: $\sinh(\ln 3) = \frac{3 - 1/3}{2} = \frac{4}{3}$ and $\cosh(\ln 3) = \frac{3 + 1/3}{2} = \frac{5}{3}$. The product is $\frac{20}{9}$.'
     anki_seeds:
       - front: "sinh x = ? (in terms of e^x)"
         back: "(e^x − e^(−x))/2"
@@ -203,10 +203,10 @@ topics:
             answer: '3sinh(x) + 2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The derivative of $\cosh x$ is $\sinh x$, so the constant multiple gives $3\sinh x$. The power rule gives $2x$ for $x^2$, so $f''(x) = 3\sinh x + 2x$.'
-          - problem: 'Differentiate $\frac{e^x - e^{-x}}{2}$ term by term.'
+          - problem: 'Differentiate $\frac{e^x - e^{-x}}{2}$.'
             answer: 'cosh(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The derivative of $e^x$ is $e^x$, and the derivative of $-e^{-x}$ is $+e^{-x}$. The sum is $\frac{e^x + e^{-x}}{2}$, which is $\cosh x$.'
+            solution_sketch: 'Split the fraction into $\frac{1}{2}e^x - \frac{1}{2}e^{-x}$. The derivative of $e^x$ is $e^x$, and the derivative of $-e^{-x}$ is $+e^{-x}$. The sum is $\frac{e^x + e^{-x}}{2}$, which is $\cosh x$.'
           - problem: 'Find the derivative of $f(x) = 5\sinh x - 2\cosh x + 7x^3$.'
             answer: '5cosh(x) - 2sinh(x) + 21x^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
@@ -256,10 +256,10 @@ topics:
             answer: '(1/5)cosh(x/5)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The inner function is $\frac{x}{5}$ and its derivative is $\frac{1}{5}$. So $f''(x) = \frac{1}{5}\cosh\frac{x}{5}$.'
-          - problem: 'Use the quotient rule on $\tanh x = \frac{\sinh x}{\cosh x}$ and the identity $\cosh^2 x - \sinh^2 x = 1$ to differentiate $\tanh x$.'
+          - problem: 'Differentiate $\tanh x$.'
             answer: '1/cosh(x)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The quotient rule gives $\frac{\cosh x\cosh x - \sinh x\sinh x}{\cosh^2 x}$. The identity turns the numerator into $1$, so the derivative is $\frac{1}{\cosh^2 x}$.'
+            solution_sketch: 'Write $\tanh x = \frac{\sinh x}{\cosh x}$. The quotient rule gives $\frac{\cosh x\cosh x - \sinh x\sinh x}{\cosh^2 x}$. The identity $\cosh^2 x - \sinh^2 x = 1$ turns the numerator into $1$, so the derivative is $\frac{1}{\cosh^2 x}$.'
           - problem: 'A cable hangs in the shape $h(x) = 10\cosh\frac{x}{10}$ metres, where $x$ is the distance in metres from the point below its lowest part. Find the slope of the cable at $x = 10\ln 2$.'
             answer: '3/4'
             answer_contract: {"kind": "exact"}

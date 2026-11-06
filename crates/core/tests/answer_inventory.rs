@@ -89,16 +89,16 @@ const LIVE_WITHOUT_SKETCH: usize = 0;
 const LIVE_SHAPE_COUNTS: [(&str, usize); 16] = [
     ("coordinates", 224), // 2026-10-28, VBE skill wave 1: was 218.
     ("decimal", 229),
-    ("equation_or_inequality", 438), // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: was 442; 2026-10-28, VBE skill wave 1: was 433.
+    ("equation_or_inequality", 439), // 2026-11-06, no handed steps (D-AP1): was 438; // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: was 442; 2026-10-28, VBE skill wave 1: was 433.
     // 2026-10-08, story framing removed (about 1,980 items, 7 duplicates renumbered): expression 1,074 (was 1,073).
     ("expression", 1_059), // 2026-10-28, VBE skill wave 1: was 1,035.
-    ("fraction", 479),     // 2026-10-28, VBE skill wave 1: was 453.
-    ("integer", 2_683),    // 2026-10-28, VBE skill wave 1: was 2,512.
+    ("fraction", 480), // 2026-11-06, no handed steps (D-AP1): was 479; 2026-10-28, VBE skill wave 1: was 453.
+    ("integer", 2_683), // 2026-10-28, VBE skill wave 1: was 2,512.
     ("interval", 30),
     ("mixed_number", 21),
     ("ordered_list", 286), // 2026-10-28, VBE skill wave 1: was 276.
     ("other", 12),
-    ("prose", 222), // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: was 224; 2026-10-28, VBE skill wave 1: was 222.
+    ("prose", 220), // 2026-11-06, no handed steps (D-AP1): was 222; 2026-10-29, VBE skill wave 1: six written items left two Foundations points: was 224; 2026-10-28, VBE skill wave 1: was 222.
     ("quotient_remainder", 32),
     ("radical", 213),          // 2026-10-28, VBE skill wave 1: was 208.
     ("rational_exponent", 19), // 2026-10-28, VBE skill wave 1: was 14.
@@ -114,8 +114,9 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
     (4, 61),
     (5, 50),
     (6, 127), // 2026-10-28, VBE skill wave 1: was 85.
-    (7, 271),
-    (8, 244),
+    // 2026-11-06, no handed steps (D-AP1): (7, 270) (was 271), (8, 245) (was 244).
+    (7, 270),
+    (8, 245),
     (9, 44),
     (10, 9),
     (11, 1),
@@ -124,7 +125,8 @@ const LIVE_DISTINCT_DECIDABLE: [(usize, usize); 12] = [
 // new verdict "a point with no digit after it" 4.
 const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
     // 2026-10-08, story framing removed: decided 5,526 (was 5,520); "a name that is not a function or variable" 229 (was 235); integer 2,604 (was 2,599); prose 226 (was 232).
-    ("decided", 5_619),
+    // 2026-11-06, no handed steps (D-AP1): decided 5,620 (was 5,619); a disjunction requires finite scalar solutions 37 (was 36); a name that is not a function or variable 223 (was 225).
+    ("decided", 5_620),
     (
         "undecidable(a chained inequality needs one variable in the middle)",
         4,
@@ -133,11 +135,11 @@ const LIVE_VERDICT_COUNTS: [(&str, usize); 8] = [
     ("undecidable(a character outside the grammar)", 50), // 2026-10-29, VBE skill wave 1: six written items left two Foundations points: was 52; the verdict "a point with no digit after it" (4) is gone.
     (
         "undecidable(a disjunction requires finite scalar solutions)",
-        36,
+        37,
     ),
     (
         "undecidable(a name that is not a function or variable)",
-        225,
+        223,
     ),
     ("undecidable(a symbol where a value belongs)", 2),
     ("undecidable(an inequality with no bare variable)", 12),

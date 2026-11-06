@@ -200,10 +200,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "they are equivalent", "equivalent", "it is", "yes they are"], ["no", "they are not equivalent", "not equivalent", "it is not", "no they are not"]]}
             solution_sketch: 'Here $a = 4$, $b = 6$, $c = 10$ and $d = 15$. Then $ad = 4 \cdot 15 = 60$ and $bc = 6 \cdot 10 = 60$. The products are equal, so the pairs are equivalent.'
-          - problem: 'Fractions over a ring are added by $(a, b) + (c, d) = (ad + bc, bd)$, which needs $bd \neq 0$. In the ring $\mathbb{Z}_6$, which nonzero $d$ make $3d = 0$, so that the denominator of $(1, 3) + (1, d)$ would be zero?'
+          - problem: 'Fractions over a ring are added by $(a, b) + (c, d) = (ad + bc, bd)$, which needs $bd \neq 0$. In the ring $\mathbb{Z}_6$, for which nonzero $d$ does the sum $(1, 3) + (1, d)$ fail to be a fraction?'
             answer: '2, 4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Compute $3d$ for each nonzero $d$: $3 \cdot 1 = 3$, $3 \cdot 2 = 6 = 0$, $3 \cdot 3 = 9 = 3$, $3 \cdot 4 = 12 = 0$ and $3 \cdot 5 = 15 = 3$. So $d = 2$ and $d = 4$. These zero divisors are why the construction needs an integral domain.'
+            solution_sketch: 'The denominator of the sum is $3d$. Compute $3d$ for each nonzero $d$: $3 \cdot 1 = 3$, $3 \cdot 2 = 6 = 0$, $3 \cdot 3 = 9 = 3$, $3 \cdot 4 = 12 = 0$ and $3 \cdot 5 = 15 = 3$. So $d = 2$ and $d = 4$. These zero divisors are why the construction needs an integral domain.'
           - problem: 'Fractions are added by $(a, b) + (c, d) = (ad + bc, bd)$. Compute $(1, 2) + (1, 3)$.'
             answer: '(5, 6)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -625,10 +625,10 @@ topics:
             answer: 'x^4 - 14x^2 + 9'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
             solution_sketch: 'Write $x = \sqrt2 + \sqrt5$, so $x^2 = 7 + 2\sqrt{10}$ and $(x^2 - 7)^2 = 40$. This gives $x^4 - 14x^2 + 9 = 0$. This quartic has no rational root and no factorization into two rational quadratics, so it is irreducible and is the minimal polynomial.'
-          - problem: 'Find the minimal polynomial of $1 + \sqrt3$ over $\mathbb{Q}$. Start from $(x - 1)^2 = 3$.'
+          - problem: 'Find the minimal polynomial of $1 + \sqrt3$ over $\mathbb{Q}$.'
             answer: 'x^2 - 2x - 2'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
-            solution_sketch: 'Expanding $(x - 1)^2 = 3$ gives $x^2 - 2x + 1 = 3$, that is $x^2 - 2x - 2 = 0$. The roots $1 \pm \sqrt3$ are irrational, so $x^2 - 2x - 2$ is irreducible and is the minimal polynomial.'
+            solution_sketch: 'From $x = 1 + \sqrt3$ we get $(x - 1)^2 = 3$, that is $x^2 - 2x - 2 = 0$. The roots $1 \pm \sqrt3$ are irrational, so $x^2 - 2x - 2$ is irreducible and is the minimal polynomial.'
           - problem: 'Find the minimal polynomial of $\frac73$ over $\mathbb{Q}$.'
             answer: 'x - 7/3'
             answer_contract: {"kind": "required_form", "form": "expanded_polynomial"}
@@ -678,10 +678,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The side length is $s = \sqrt{12} = 2\sqrt3$, a root of $x^2 - 12$. This polynomial is irreducible over $\mathbb{Q}$ because $12$ is not a perfect square. So the degree is $2$.'
-          - problem: 'We have $(\sqrt[4]{2})^2 = \sqrt2$, and $\sqrt2$ has degree $2$ over $\mathbb{Q}$. What is the degree of $\sqrt[4]{2}$ over $\mathbb{Q}$?'
+          - problem: 'What is the degree of $\sqrt[4]{3}$ over $\mathbb{Q}$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The number $\sqrt[4]{2}$ is a root of $x^2 - \sqrt2$, but this polynomial does not have rational coefficients. Over $\mathbb{Q}$ the minimal polynomial is $x^4 - 2$, which is irreducible by Eisenstein''s criterion at $2$. So the degree is $4$.'
+            solution_sketch: 'The number $\sqrt[4]{3}$ is a root of $x^4 - 3$. This polynomial is irreducible over $\mathbb{Q}$ by Eisenstein''s criterion at $3$. So it is the minimal polynomial and the degree is $4$.'
         constraints: 'degrees 1-4; base field always stated; towers of square roots and cube roots; geometry contexts'
     diagnostic_exemplar:
       problem: 'Find the minimal polynomial of $\sqrt{3} - 1$ over $\mathbb{Q}$.'
@@ -783,10 +783,10 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The number $\sqrt[3]{11}$ is a root of $x^3-11$, which is irreducible by Eisenstein at $11$. So the degree is $3$.'
-          - problem: 'A real number $\alpha$ is a root of $x^5 - 6x + 3$. Eisenstein''s criterion at the prime $3$ shows that this polynomial is irreducible over $\mathbb{Q}$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
+          - problem: 'A real number $\alpha$ is a root of $x^5 - 6x + 3$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
             answer: '5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An irreducible monic polynomial with root $\alpha$ is the minimal polynomial of $\alpha$. Its degree is $5$, so $[\mathbb{Q}(\alpha):\mathbb{Q}]=5$.'
+            solution_sketch: 'Eisenstein''s criterion at the prime $3$ shows that the polynomial is irreducible over $\mathbb{Q}$. An irreducible monic polynomial with root $\alpha$ is the minimal polynomial of $\alpha$. Its degree is $5$, so $[\mathbb{Q}(\alpha):\mathbb{Q}]=5$.'
           - problem: 'Find $[\mathbb{Q}(\sqrt[4]{2}):\mathbb{Q}]$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -799,10 +799,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Squaring twice gives the polynomial $x^4-20x^2+16$ with root $\sqrt3+\sqrt7$. This polynomial is irreducible over $\mathbb{Q}$, so the degree is $4$.'
-          - problem: 'Adjoin a real root $\beta$ of the polynomial $x^3-3x+1$ to $\mathbb{Q}$. This polynomial has no rational root, so it is irreducible. What is the dimension of $\mathbb{Q}(\beta)$ as a vector space over $\mathbb{Q}$?'
+          - problem: 'Adjoin a real root $\beta$ of the polynomial $x^3-3x+1$ to $\mathbb{Q}$. What is the dimension of $\mathbb{Q}(\beta)$ as a vector space over $\mathbb{Q}$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A cubic with no rational root is irreducible, so it is the minimal polynomial of $\beta$. The dimension is its degree, $3$, with basis $1,\beta,\beta^2$.'
+            solution_sketch: 'The only possible rational roots are $\pm1$, and neither is a root. A cubic with no rational root is irreducible, so it is the minimal polynomial of $\beta$. The dimension is its degree, $3$, with basis $1,\beta,\beta^2$.'
           - problem: 'Find $[\mathbb{C}:\mathbb{R}]$.'
             answer: '2'
             answer_contract: {"kind":"exact"}
@@ -908,10 +908,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the tower law, the degrees of the three steps multiply. So $[F_3:\mathbb{Q}]=2\cdot2\cdot2=8$.'
-          - problem: 'The length $\alpha=\sqrt[4]{3}$ is obtained by adjoining $\sqrt3$ to $\mathbb{Q}$ and then adjoining a square root of $\sqrt3$. The polynomial $x^4-3$ is irreducible over $\mathbb{Q}$ by Eisenstein at the prime $3$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
+          - problem: 'The length $\alpha=\sqrt[4]{3}$ is obtained by adjoining $\sqrt3$ to $\mathbb{Q}$ and then adjoining a square root of $\sqrt3$. Find $[\mathbb{Q}(\alpha):\mathbb{Q}]$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The number $\alpha$ is a root of the irreducible polynomial $x^4-3$. So the degree is $4=2\cdot2$, a power of $2$, as the two square-root steps predict.'
+            solution_sketch: 'The number $\alpha$ is a root of $x^4-3$. This polynomial is irreducible over $\mathbb{Q}$ by Eisenstein at the prime $3$. So the degree is $4=2\cdot2$, as the two square-root steps predict.'
           - problem: 'The real number $\alpha = \sqrt[3]{3}$ has minimal polynomial $x^3 - 3$ over $\mathbb{Q}$. Is $\alpha$ constructible with straightedge and compass?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is constructible","constructible","possible"],["no","it is not constructible","not constructible","impossible","not possible","it cannot be constructed","cannot be constructed"]]}
@@ -932,10 +932,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The lengths are $\sqrt2$, $\sqrt3$ and $\sqrt5$. Each is not in the field before it, so each step has degree $2$. The tower law gives $2\cdot2\cdot2=8$.'
-          - problem: 'The real number $\sqrt[3]{3}$ has minimal polynomial $x^3-3$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\sqrt[3]{3}):\mathbb{Q}]$.'
+          - problem: 'Find the degree $[\mathbb{Q}(\sqrt[3]{3}):\mathbb{Q}]$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The degree of the extension equals the degree of the minimal polynomial. The minimal polynomial is $x^3-3$, so the degree is $3$.'
+            solution_sketch: 'The number $\sqrt[3]{3}$ is a root of $x^3-3$, which is irreducible over $\mathbb{Q}$ by Eisenstein at $3$. So $x^3-3$ is the minimal polynomial. The degree of the extension is $3$.'
           - problem: 'Write the full proof that if a length $\alpha$ is constructible by straightedge and compass, then $[\mathbb{Q}(\alpha):\mathbb{Q}]$ is a power of $2$.'
             answer: '[Q(alpha):Q] is a power of 2'
             answer_contract: {"kind":"none"}
@@ -949,14 +949,14 @@ topics:
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The number $\sqrt[3]{2}$ is a root of $x^3-2$, which is irreducible by Eisenstein at $2$. So the degree is $3$. This is not a power of $2$, so the cube cannot be doubled.'
-          - problem: 'Let $c=\cos20^\circ$. The triple-angle identity $\cos3t=4\cos^3t-3\cos t$ with $t=20^\circ$ gives $4c^3-3c=\frac12$. Put $y=2c$ and write the monic polynomial in $y$ with integer coefficients that $y$ satisfies.'
+          - problem: 'Find the monic polynomial of least degree with integer coefficients that has $2\cos20^\circ$ as a root. Write it in the variable $y$.'
             answer: 'y^3 - 3y - 1'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
-            solution_sketch: 'Replace $c$ by $y/2$ to get $\frac{y^3}{2}-\frac{3y}{2}=\frac12$. Multiply by $2$ and collect terms: $y^3-3y-1=0$.'
-          - problem: 'The cubic $y^3-3y-1$ has no rational root. Find $[\mathbb{Q}(2\cos20^\circ):\mathbb{Q}]$.'
+            solution_sketch: 'Put $c=\cos20^\circ$. The triple-angle identity gives $4c^3-3c=\cos60^\circ=\frac12$. Replace $c$ by $y/2$, multiply by $2$ and collect terms: $y^3-3y-1=0$.'
+          - problem: 'Find $[\mathbb{Q}(2\cos20^\circ):\mathbb{Q}]$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The only possible rational roots are $1$ and $-1$, and neither is a root. A cubic with no rational root is irreducible, so it is the minimal polynomial of $2\cos20^\circ$. The degree is $3$.'
+            solution_sketch: 'The triple-angle identity shows that $y=2\cos20^\circ$ is a root of $y^3-3y-1$. The only possible rational roots are $1$ and $-1$, and neither is a root. So the cubic is irreducible and the degree is $3$.'
           - problem: 'Can an angle of $60^\circ$ be trisected with straightedge and compass?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it can","possible","it can be trisected"],["no","it cannot","it can not","impossible","not possible","it cannot be trisected","cannot be trisected"]]}
@@ -1002,14 +1002,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is possible","possible"],["no","it is not possible","not possible","impossible"]]}
             solution_sketch: 'A square with the area of the unit circle needs the length $\sqrt\pi$. The number $\pi$ is transcendental, so $\sqrt\pi$ is not algebraic and has no degree. A constructible number is algebraic, so it is impossible.'
-          - problem: 'A designer wants to draw a regular $15$-gon. The number $\cos(2\pi/15)$ has degree $\varphi(15)/2$ over $\mathbb{Q}$, and $\varphi(15)=8$. Find $[\mathbb{Q}(\cos(2\pi/15)):\mathbb{Q}]$.'
+          - problem: 'A designer wants to draw a regular $15$-gon. Find $[\mathbb{Q}(\cos(2\pi/15)):\mathbb{Q}]$.'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The degree is $\varphi(15)/2=8/2=4$. Since $4$ is a power of $2$, the regular $15$-gon is constructible.'
-          - problem: 'The side $s$ of a square with the area of the unit circle satisfies $s^2 = \pi$. The polynomial $x^2 - c$ has the root $s$. Find $c$.'
-            answer: 'pi'
+            solution_sketch: 'The number $\cos(2\pi/15)$ has degree $\varphi(15)/2$ over $\mathbb{Q}$. Here $\varphi(15)=\varphi(3)\varphi(5)=2\cdot4=8$, so the degree is $4$. Since $4$ is a power of $2$, the regular $15$-gon is constructible.'
+          - problem: 'Find the exact side length of a square that has the same area as the unit circle.'
+            answer: '\sqrt{\pi}'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'From $s^2 = \pi$ we get $s^2 - \pi = 0$, so $c = \pi$. This polynomial has a coefficient that is not rational, because $\pi$ is transcendental. So $s$ has no degree over $\mathbb{Q}$, so the claim of degree $2$ is wrong.'
+            solution_sketch: 'The unit circle has area $\pi$, so the side $s$ satisfies $s^2=\pi$ and $s=\sqrt{\pi}$. This number is not algebraic over $\mathbb{Q}$, because $\pi$ is transcendental. So the side is not constructible.'
           - problem: 'The number $\cos(2\pi/17)$ has degree $\varphi(17)/2$ over $\mathbb{Q}$. Find $[\mathbb{Q}(\cos(2\pi/17)):\mathbb{Q}]$.'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -1024,10 +1024,10 @@ topics:
             solution_sketch: 'A constructible heptagon needs the constructible number $\cos(2\pi/7)$. Its minimal polynomial over $\mathbb{Q}$ is $8x^3+4x^2-4x-1$, so its degree is $3$. The degree $3$ is not a power of $2$, which contradicts the criterion.'
         constraints: 'quotable transcendence of pi; positive examples (pentagon, 15-gon, 17-gon) vs impossible ones (heptagon: degree 3)'
     diagnostic_exemplar:
-      problem: 'The polynomial $x^8-2$ is irreducible over $\mathbb{Q}$ by Eisenstein at $2$. Find $[\mathbb{Q}(\sqrt[8]{2}):\mathbb{Q}]$.'
+      problem: 'Find $[\mathbb{Q}(\sqrt[8]{2}):\mathbb{Q}]$.'
       answer_contract: {"kind":"exact"}
       answer: '8'
-      solution_sketch: 'The degree of a field generated by one root equals the degree of its irreducible polynomial. Here that degree is $8$, a power of $2$.'
+      solution_sketch: 'The number $\sqrt[8]{2}$ is a root of $x^8-2$. This polynomial is irreducible over $\mathbb{Q}$ by Eisenstein at $2$. So the degree of the field is $8$.'
     anki_seeds:
       - front: "Necessary condition for a number to be straightedge-compass constructible?"
         back: "It is algebraic and $[\\mathbb{Q}(\\alpha) : \\mathbb{Q}]$ is a power of $2$."
@@ -1168,10 +1168,10 @@ topics:
             answer: '12'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The splitting field of $x^3-2$ is $\mathbb{Q}(\sqrt[3]{2},\omega)$, of degree $6$. Since $\sqrt2$ is not in it, $x^2-2$ adds degree $2$, and $[E:\mathbb{Q}]=6\cdot2=12$.'
-          - problem: 'The polynomial $x^3-3x+1$ is irreducible over $\mathbb{Q}$. If $\alpha$ is a root, then so are $\alpha^2-2$ and $(\alpha^2-2)^2-2$. Find the degree over $\mathbb{Q}$ of the splitting field of $x^3-3x+1$.'
+          - problem: 'The polynomial $x^3-3x+1$ is irreducible over $\mathbb{Q}$. Find the degree over $\mathbb{Q}$ of its splitting field.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The three roots are all polynomials in $\alpha$, so they lie in $\mathbb{Q}(\alpha)$. This field has degree $3$, so the splitting field equals $\mathbb{Q}(\alpha)$ and has degree $3$, not $6$.'
+            solution_sketch: 'Let $\alpha$ be a root. Then $\alpha^2-2$ and $(\alpha^2-2)^2-2$ are also roots, and both lie in $\mathbb{Q}(\alpha)$. So the splitting field equals $\mathbb{Q}(\alpha)$, which has degree $3$, not $6$.'
           - problem: 'Let $E$ be the splitting field of $x^4 - 2$ over $\mathbb{Q}$. Find $[E : \mathbb{Q}]$.'
             answer: '8'
             answer_contract: {"kind":"exact"}

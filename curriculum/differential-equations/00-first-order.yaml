@@ -115,14 +115,14 @@ topics:
             answer: '0.03B'
             answer_contract: {"kind":"function","vars":["B"]}
             solution_sketch: 'The balance grows by $3\%$ of $B$ each year, and $3\% = 0.03$. So the rate of change is $0.03B$, and the equation is $\frac{dB}{dt} = 0.03B$.'
-          - problem: 'A culture holds $400$ cells, and at this moment it grows at $60$ cells per hour. Its growth rate is proportional to its size, $\frac{dp}{dt} = kp$. Find $k$.'
+          - problem: 'A culture holds $400$ cells, and at this moment it grows at $60$ cells per hour. Its growth rate is proportional to its size, with constant $k$ per hour. Find $k$.'
             answer: '3/20'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Put the numbers into the equation: $60 = k \cdot 400$. Divide by $400$ to get $k = 60/400 = 3/20$, which is $0.15$ per hour.'
-          - problem: 'A cup of tea at $85$ °C stands in a $25$ °C room and obeys $\frac{dT}{dt} = -k(T - 25)$. At this moment its temperature falls at $3$ °C per minute. Find $k$.'
+            solution_sketch: 'Write the model $\frac{dp}{dt}=kp$. Put the numbers into it: $60 = k \cdot 400$. Divide by $400$ to get $k = 60/400 = 3/20$.'
+          - problem: 'A cup of tea at $85$ °C stands in a $25$ °C room. It cools at a rate proportional to the difference between its temperature and the room temperature, with constant $k$ per minute. At this moment its temperature falls at $3$ °C per minute. Find $k$.'
             answer: '1/20'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Put the numbers into the equation: $-3 = -k(85 - 25) = -60k$. Divide by $-60$ to get $k = 3/60 = 1/20$, which is $0.05$ per minute.'
+            solution_sketch: 'Write the model $\frac{dT}{dt}=-k(T-25)$. Put the numbers into it: $-3 = -k(85 - 25) = -60k$. Divide by $-60$ to get $k = 3/60 = 1/20$.'
           - problem: 'A population $p$ grows at a rate proportional to the square root of its size, with a positive constant $k$. Complete the differential equation $\frac{dp}{dt} = \square$.'
             answer: 'k sqrt(p)'
             answer_contract: {"kind":"function","vars":["k","p"]}
@@ -522,10 +522,10 @@ topics:
             answer: '2x'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'The marks are horizontal where $y - 2x = 0$. Solving for $y$ gives the line $y = 2x$.'
-          - problem: 'For $y'' = x + y$, the slope marks are horizontal along a line through the origin. What is the slope of this line?'
+          - problem: 'The slope marks of $y'' = x + y$ are horizontal along one straight line. Find the slope of this line.'
             answer: '-1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The marks are horizontal where $x + y = 0$, that is $y = -x$. This line has slope $-1$.'
+            solution_sketch: 'The marks are horizontal where $y'' = 0$, that is where $x + y = 0$. This gives $y = -x$. The line has slope $-1$.'
           - problem: 'For $y'' = y^2 - 4$, at which values of $y$ are the slope marks horizontal?'
             answer: '-2, 2'
             answer_contract: {"kind":"exact"}
@@ -780,7 +780,7 @@ topics:
             answer: '1.8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The slope at the starting point is $f(1, 2) = 1 - 2 = -1$. Euler''s method gives $y(1.2) \approx 2 + 0.2(-1) = 1.8$.'
-          - problem: 'For $y'' = 2x + y$ with $y(0) = 1$, one Euler step of size $h$ gives the estimate $y(h) \approx 1.2$. Find $h$.'
+          - problem: 'For $y'' = 2x + y$ with $y(0) = 1$, one Euler step of size $h$ gives the estimate $y(h) = 1.2$. Find $h$.'
             answer: '0.2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The slope at $(0, 1)$ is $f(0, 1) = 2 \cdot 0 + 1 = 1$, so the estimate is $1 + h \cdot 1$. Setting $1 + h = 1.2$ gives $h = 0.2$.'
@@ -933,7 +933,7 @@ topics:
         name: 'Recognizing separable equations'
         key_prerequisites: [ode-classification-verification]
         exemplars:
-          - problem: 'Factor the right side of $y'' = xy + 3x$.'
+          - problem: 'Write the right side of $y'' = xy + 3x$ as a product of a function of $x$ and a function of $y$.'
             answer: 'x(y + 3)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'Both terms contain the factor $x$. Taking it out gives $xy + 3x = x(y + 3)$, a function of $x$ times a function of $y$, so the equation is separable.'
@@ -941,11 +941,11 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it is separable", "separable", "yes, it is", "yes it is", "true"], ["no", "it is not", "it is not separable", "not separable", "no, it is not", "no it is not", "false"]]}
             solution_sketch: 'By the exponent rule $e^{x+y} = e^x e^y$, which is a function of $x$ times a function of $y$. So the equation is separable and the answer is yes.'
-          - problem: 'Factor the right side of $y'' = 6xy - 4x$.'
+          - problem: 'Write the right side of $y'' = 6xy - 4x$ as a product of a function of $x$ and a function of $y$.'
             answer: '2x(3y - 2)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'Both terms contain the factor $2x$. Taking it out gives $6xy - 4x = 2x(3y - 2)$.'
-          - problem: 'The concentration $C$ of a drug (in mg/L) after $t$ hours is modelled by $\frac{dC}{dt} = 4Ct - 12t$. Factor the right side.'
+          - problem: 'The concentration $C$ of a drug (in mg/L) after $t$ hours is modelled by $\frac{dC}{dt} = 4Ct - 12t$. Write the right side as a product of a function of $t$ and a function of $C$.'
             answer: '4t(C - 3)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'Both terms contain the factor $4t$. Taking it out gives $4Ct - 12t = 4t(C - 3)$, so the model is separable in $t$ and $C$.'
@@ -953,11 +953,11 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is separable","separable","it is"],["no","it is not separable","not separable","it is not"]]}
             solution_sketch: 'A separable equation needs a right side that is a product of a function of $t$ and a function of $P$. The sum $0.03P + 2t$ cannot be factored that way, so the equation is not separable.'
-          - problem: 'Factor the right side of $y'' = x^2y^2 - x^2$.'
+          - problem: 'Write the right side of $y'' = x^2y^2 - x^2$ as a product of a function of $x$ and factors in $y$.'
             answer: 'x^2(y - 1)(y + 1)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'Take out the common factor $x^2$ to get $x^2(y^2 - 1)$. Then $y^2 - 1 = (y - 1)(y + 1)$, so the right side is $x^2(y - 1)(y + 1)$.'
-          - problem: 'Factor the right side of $y'' = xy^2 + 5xy$.'
+          - problem: 'Write the right side of $y'' = xy^2 + 5xy$ as a product of a function of $x$ and a function of $y$.'
             answer: 'xy(y + 5)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'Both terms contain the factors $x$ and $y$. Taking them out gives $xy^2 + 5xy = xy(y + 5)$, which is separable.'
@@ -986,10 +986,10 @@ topics:
             answer: '2/(2t + 1)'
             answer_contract: {"kind":"function","vars":["t"]}
             solution_sketch: 'Separate: $\frac{dv}{v^2} = -dt$. Integrating gives $-\frac{1}{v} = -t + C$, and $v(0) = 2$ gives $C = -\frac{1}{2}$. So $\frac{1}{v} = t + \frac{1}{2}$ and $v = \frac{2}{2t + 1}$.'
-          - problem: 'Separating the variables in $\frac{dy}{dx} = 3x^2y^2$ and integrating gives $-\frac{1}{y} = x^3 + C$. Find $C$ if $y(0) = 2$.'
-            answer: '-1/2'
+          - problem: 'The function $y$ solves $\frac{dy}{dx} = 3x^2y^2$ with $y(0) = 2$. Find $y\left(\frac{1}{2}\right)$.'
+            answer: '8/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Put $x = 0$ and $y = 2$ into $-\frac{1}{y} = x^3 + C$. This gives $-\frac{1}{2} = 0 + C$, so $C = -\frac{1}{2}$.'
+            solution_sketch: 'Divide by $y^2$ and integrate both sides. This gives $-\frac{1}{y} = x^3 + C$. The condition $y(0) = 2$ gives $C = -\frac{1}{2}$. At $x = \frac{1}{2}$, $\frac{1}{y} = \frac{1}{2} - \frac{1}{8} = \frac{3}{8}$, so $y = \frac{8}{3}$.'
           - problem: 'Water drains from a tank so that its depth $h$ (in metres) satisfies $\frac{dh}{dt} = -0.5\sqrt{h}$, where $t$ is in hours. The depth at $t = 0$ is $9$ m. How many hours pass until the tank is empty?'
             answer: '12'
             answer_contract: {"kind":"unit","quantity":"time","unit":"hour","allow_omitted":true}
@@ -1559,14 +1559,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it is a bernoulli equation", "bernoulli", "correct"], ["no", "it is not", "it is not a bernoulli equation", "not bernoulli", "incorrect"]]}
             solution_sketch: 'The right side $y^2 + x$ has two terms, so it is not a single term $Q(x)y^n$. So the equation is not a Bernoulli equation.'
-          - problem: 'A population $N$ (in thousands) obeys $N'' = 0.3N - 0.06N^2$. The substitution $u = \frac{1}{N}$ gives a linear equation $u'' + Au = B$. What is $B$?'
+          - problem: 'A population $N$ (in thousands) obeys $N'' = 0.3N - 0.06N^2$. A substitution $u=N^k$ gives a linear equation $u'' + Au = B$. What is $B$?'
             answer: '0.06'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'From $u = N^{-1}$ we get $u'' = -N^{-2}N'' = -\frac{0.3}{N} + 0.06 = -0.3u + 0.06$. So $u'' + 0.3u = 0.06$ and $B = 0.06$.'
-          - problem: 'The mass $m$ of a growing cell obeys $m'' = 3m^{2/3} - m$. The substitution $u = m^{1/3}$ gives a linear equation $u'' + Au = B$. What is $A$?'
+            solution_sketch: 'The power $k=-1$ makes the equation linear, so $u = N^{-1}$. Then $u'' = -N^{-2}N'' = -\frac{0.3}{N} + 0.06 = -0.3u + 0.06$. So $u'' + 0.3u = 0.06$ and $B = 0.06$.'
+          - problem: 'The mass $m$ of a growing cell obeys $m'' = 3m^{2/3} - m$. A substitution $u=m^k$ gives a linear equation $u'' + Au = B$. What is $A$?'
             answer: '1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'From $u = m^{1/3}$ we get $u'' = \frac13 m^{-2/3}m'' = \frac13(3 - m^{1/3}) = 1 - \frac{u}{3}$. So $u'' + \frac13 u = 1$ and $A = \frac13$.'
+            solution_sketch: 'The power $k=\frac13$ removes $m$ from the exponent of the first term, so $u = m^{1/3}$. Then $u'' = \frac13 m^{-2/3}m'' = \frac13(3 - m^{1/3}) = 1 - \frac{u}{3}$. So $u'' + \frac13 u = 1$ and $A = \frac13$.'
         constraints: "n in {2, 3, 1/2}; the transformed equation must be stated in standard linear form"
       - id: kp2
         name: Complete solutions
@@ -1643,10 +1643,10 @@ topics:
             solution_sketch: 'Put $u = m^{1/3}$, so $u'' + \frac13 u = 1$ and $u = 3 + Ce^{-t/3}$. The condition $u(0) = 1$ gives $C = -2$, so $m = (3 - 2e^{-t/3})^3$.'
         constraints: "initial data keeps v positive near x0; state the solution explicitly"
     diagnostic_exemplar:
-      problem: 'The Bernoulli equation $y''+2y=xy^3$ becomes the linear equation $v''+pv=q$ under $v=y^{-2}$. Find $p$.'
+      problem: 'A substitution $v=y^k$ turns the equation $y''+2y=xy^3$ into a linear equation $v''+pv=q$. Find $p$.'
       answer_contract: {"kind":"exact"}
       answer: '-4'
-      solution_sketch: 'With $v=y^{-2}$ we get $v''=-2y^{-3}y''$. Dividing the equation by $y^3$ gives $-\frac{v''}{2}+2v=x$, so $v''-4v=-2x$ and $p=-4$.'
+      solution_sketch: 'The power that makes the equation linear is $k=-2$, so $v=y^{-2}$ and $v''=-2y^{-3}y''$. Dividing the equation by $y^3$ gives $-\frac{v''}{2}+2v=x$, so $v''-4v=-2x$ and $p=-4$.'
     anki_seeds:
       - front: "A Bernoulli equation has the form..."
         back: "$y' + P(x)y = Q(x)y^n$ with $n \\neq 0, 1$."
@@ -1926,10 +1926,10 @@ topics:
             answer: '6 + 2pi/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation is exact with $F = y\sin x + x$. From $y(\pi/2) = 3$ we get $C = 3 + \pi/2$. At $x = \pi/6$ we have $\frac{y}{2} + \frac{\pi}{6} = 3 + \frac{\pi}{2}$, so $y = 6 + 2\pi/3$.'
-          - problem: 'Solve $(2xy + 3x^2)\,dx + (x^2 + 4y)\,dy = 0$ with $y(1) = 2$. A potential function is $F = x^2y + x^3 + 2y^2$. What is the value of $C$ in $F = C$?'
+          - problem: 'Solve $(2xy + 3x^2)\,dx + (x^2 + 4y)\,dy = 0$ with $y(1) = 2$. Write the solution as $F(x, y) = C$, where $F$ has no constant term. What is the value of $C$?'
             answer: '11'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The initial condition $y(1) = 2$ means $x = 1$ and $y = 2$. Then $C = F(1, 2) = 2 + 1 + 8 = 11$.'
+            solution_sketch: 'The equation is exact, so $F_x = 2xy + 3x^2$ gives $F = x^2y + x^3 + g(y)$. Then $F_y = x^2 + g''(y) = x^2 + 4y$, so $g = 2y^2$. The initial condition gives $C = F(1, 2) = 2 + 1 + 8 = 11$.'
           - problem: 'The exact equation $(ye^x + 2x)\,dx + (e^x + 2y)\,dy = 0$ has solutions $F(x, y) = C$. Find $C$ for the solution with $y(0) = 1$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1979,14 +1979,14 @@ topics:
             answer: 'x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $M_y = 3x + 2y$ and $N_x = 2x + y$, so $M_y - N_x = x + y$. Then $\frac{M_y - N_x}{N} = \frac{x + y}{x(x + y)} = \frac{1}{x}$, which depends on $x$ alone. So $\mu = e^{\int dx/x} = x$.'
-          - problem: 'For $2y\,dx + x\,dy = 0$, compute $\dfrac{M_y - N_x}{N}$.'
-            answer: '1/x'
+          - problem: 'Find an integrating factor $\mu(x)$ for $2y\,dx + x\,dy = 0$, taking the constant of integration to be $0$.'
+            answer: 'x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Here $M = 2y$ and $N = x$, so $M_y = 2$ and $N_x = 1$. Then $\frac{M_y - N_x}{N} = \frac{2 - 1}{x} = \frac{1}{x}$.'
-          - problem: 'Is $\dfrac{M_y - N_x}{N}$ a function of $x$ alone for $(5y + x^2)\,dx + x\,dy = 0$?'
+            solution_sketch: 'Here $M = 2y$ and $N = x$, so $M_y = 2$ and $N_x = 1$. Then $\frac{M_y - N_x}{N} = \frac{1}{x}$, which depends on $x$ alone. So $\mu = e^{\int 1/x\,dx} = x$.'
+          - problem: 'Does $(5y + x^2)\,dx + x\,dy = 0$ have an integrating factor that depends on $x$ alone?'
             answer: 'yes'
-            answer_contract: {"kind": "label", "options": [["yes", "it is", "a function of x alone"], ["no", "it is not", "not a function of x alone"]]}
-            solution_sketch: 'Here $M_y = 5$, $N_x = 1$ and $N = x$. So $\frac{M_y - N_x}{N} = \frac{4}{x}$. This depends on $x$ alone.'
+            answer_contract: {"kind":"label","options":[["yes","it does","has an integrating factor that depends on x alone"],["no","it does not","has no integrating factor that depends on x alone"]]}
+            solution_sketch: 'Here $M_y = 5$, $N_x = 1$ and $N = x$. A factor $\mu(x)$ exists if $\frac{M_y - N_x}{N}$ depends on $x$ alone. Here it is $\frac{4}{x}$, so a factor exists.'
           - problem: 'The equation $(3y + x)\,dx + x\,dy = 0$ is not exact. Find the integrating factor $\mu(x)$, taking the constant of integration to be $0$.'
             answer: 'x^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
@@ -1995,26 +1995,26 @@ topics:
             answer: 'e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $M_y = 3$ and $N_x = 0$, and $N = 1$. So $\frac{M_y - N_x}{N} = 3$. Then $\mu = e^{\int 3\,dx} = e^{3x}$.'
-          - problem: 'For $(4y + x)\,dx + x\,dy = 0$ the quotient $\dfrac{M_y - N_x}{N}$ equals $\dfrac{3}{x}$. What is the integrating factor $\mu(x)$?'
+          - problem: 'Find an integrating factor $\mu(x)$ for $(4y + x)\,dx + x\,dy = 0$, taking the constant of integration to be $0$.'
             answer: 'x^3'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Here $M_y = 4$ and $N_x = 1$, so $\frac{M_y - N_x}{N} = \frac{3}{x}$. The integrating factor is $e^{\int p\,dx}$, so we integrate $\frac{3}{x}$. Then $\mu = e^{3\ln x} = x^3$.'
+            solution_sketch: 'Here $M_y = 4$ and $N_x = 1$, so $\frac{M_y - N_x}{N} = \frac{3}{x}$. The integrating factor is $e^{\int 3/x\,dx}$. Then $\mu = e^{3\ln x} = x^3$.'
           - problem: 'In suitable units, the heat added to a gas is $\delta Q = dT + \dfrac{T}{V}\,dV$, which is not exact. Find an integrating factor $\mu(T)$, taking the constant of integration to be $0$.'
             answer: '1/T'
             answer_contract: {"kind": "function", "vars": ["T"]}
             solution_sketch: 'Here $M = 1$ and $N = \frac{T}{V}$, so $M_V = 0$ and $N_T = \frac{1}{V}$. Then $\frac{M_V - N_T}{N} = \frac{-1/V}{T/V} = -\frac{1}{T}$. So $\mu = e^{-\ln T} = \frac{1}{T}$.'
-          - problem: 'For a differential equation, $\dfrac{M_y - N_x}{N} = \dfrac{4}{x}$. Find the integrating factor $\mu(x)$, taking the constant of integration to be $0$.'
+          - problem: 'Find an integrating factor $\mu(x)$ for $(5y + x)\,dx + x\,dy = 0$, taking the constant of integration to be $0$.'
             answer: 'x^4'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The integrating factor is $\mu = e^{\int 4/x\,dx}$. The integral is $4\ln x$, so $\mu = e^{4\ln x} = x^4$.'
+            solution_sketch: 'Here $M_y = 5$ and $N_x = 1$, so $\frac{M_y - N_x}{N} = \frac{4}{x}$. The integrating factor is $\mu = e^{\int 4/x\,dx}$. The integral is $4\ln x$, so $\mu = e^{4\ln x} = x^4$.'
           - problem: 'The equation $(2y + x)\,dx + dy = 0$ is not exact. Find the integrating factor $\mu(x)$, taking the constant of integration to be $0$.'
             answer: 'e^(2x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $M_y = 2$, $N_x = 0$ and $N = 1$. So $\frac{M_y - N_x}{N} = 2$. Then $\mu = e^{\int 2\,dx} = e^{2x}$.'
-          - problem: 'Is $\dfrac{M_y - N_x}{N}$ a function of $x$ alone for $y\,dx + (2x + y^2)\,dy = 0$?'
+          - problem: 'Does $y\,dx + (2x + y^2)\,dy = 0$ have an integrating factor that depends on $x$ alone?'
             answer: 'no'
-            answer_contract: {"kind": "label", "options": [["yes", "it is", "a function of x alone"], ["no", "it is not", "not a function of x alone"]]}
-            solution_sketch: 'Here $M = y$ and $N = 2x + y^2$, so $M_y = 1$ and $N_x = 2$. Then $\frac{M_y - N_x}{N} = \frac{-1}{2x + y^2}$. This still contains $y$, so it is not a function of $x$ alone.'
+            answer_contract: {"kind":"label","options":[["yes","it does","has an integrating factor that depends on x alone"],["no","it does not","has no integrating factor that depends on x alone"]]}
+            solution_sketch: 'Here $M = y$ and $N = 2x + y^2$, so $M_y = 1$ and $N_x = 2$. A factor $\mu(x)$ exists only if $\frac{M_y - N_x}{N}$ is a function of $x$ alone. Here it is $\frac{-1}{2x + y^2}$, which contains $y$, so there is none.'
           - problem: 'The equation $(x - y)\,dx + dy = 0$ is not exact. Find the integrating factor $\mu(x)$, taking the constant of integration to be $0$.'
             answer: 'e^(-x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
@@ -2044,10 +2044,10 @@ topics:
             answer: 'y^5'
             answer_contract: {"kind": "function", "vars": ["y"]}
             solution_sketch: 'Here $M_y = 2$ and $N_x = 12$, so $\frac{N_x - M_y}{M} = \frac{10}{2y} = \frac{5}{y}$. Then $\mu = e^{5\ln y} = y^5$.'
-          - problem: 'For $2y\,dx + (5x + y)\,dy = 0$ the quotient $\dfrac{N_x - M_y}{M}$ equals $\dfrac{3}{2y}$. What is the integrating factor $\mu(y)$?'
+          - problem: 'Find an integrating factor $\mu(y)$ for $2y\,dx + (5x + y)\,dy = 0$, taking the constant of integration to be $0$.'
             answer: 'y^(3/2)'
             answer_contract: {"kind": "function", "vars": ["y"]}
-            solution_sketch: 'Here $M_y = 2$ and $N_x = 5$, so $\frac{N_x - M_y}{M} = \frac{3}{2y}$. The integrating factor is $e^{\int p\,dy}$, so we integrate $\frac{3}{2y}$. This gives $\mu = e^{\frac{3}{2}\ln y} = y^{3/2}$.'
+            solution_sketch: 'Here $M_y = 2$ and $N_x = 5$, so $\frac{N_x - M_y}{M} = \frac{3}{2y}$. The integrating factor is $e^{\int 3/(2y)\,dy}$. This gives $\mu = e^{\frac{3}{2}\ln y} = y^{3/2}$.'
           - problem: 'In suitable units, the heat added to a gas is $\delta Q = \dfrac{2T}{V}\,dV + 3\,dT$, which is not exact. Find an integrating factor $\mu(T)$, taking the constant of integration to be $0$.'
             answer: '1/T'
             answer_contract: {"kind": "function", "vars": ["T"]}
@@ -2318,14 +2318,14 @@ topics:
             answer: '-18 + 22e^(-kt)'
             answer_contract: {"kind": "function", "vars": ["t", "k"]}
             solution_sketch: 'The temperature has the form $T = -18 + Ce^{-kt}$. At $t = 0$ we have $4 = -18 + C$, so $C = 22$. Hence $T(t) = -18 + 22e^{-kt}$.'
-          - problem: 'A metal bar at $90^\circ$C is placed in a room at $10^\circ$C. Let $u(t) = T(t) - 10$ be the difference between the bar temperature and the room temperature. Newton''s law gives $\dfrac{du}{dt} = -ku$. Find $u(t)$ in terms of $k$.'
-            answer: '80e^(-kt)'
+          - problem: 'A metal bar at $90^\circ$C is placed in a room at $10^\circ$C. The constant $k>0$ is the cooling constant of Newton''s law. Find the bar temperature $T(t)$ in terms of $k$.'
+            answer: '10+80e^(-kt)'
             answer_contract: {"kind": "function", "vars": ["t", "k"]}
-            solution_sketch: 'The equation $\frac{du}{dt} = -ku$ has solutions $u = Ce^{-kt}$. At $t = 0$ we have $u(0) = 90 - 10 = 80$. Hence $u(t) = 80e^{-kt}$.'
-          - problem: 'A roast at $25^\circ$C is placed in an oven at $180^\circ$C. Its temperature satisfies $\dfrac{dT}{dt} = -k(T - 180)$ with $k > 0$, and $T(0) = 25$. Find $T(t)$ in terms of $k$.'
+            solution_sketch: 'Let $u=T-10$. Newton''s law gives $\frac{du}{dt}=-ku$, so $u=Ce^{-kt}$. At $t=0$, $u(0)=90-10=80$. Hence $T(t)=10+80e^{-kt}$.'
+          - problem: 'A roast at $25^\circ$C is placed in an oven at $180^\circ$C. The constant $k>0$ is the cooling constant of Newton''s law. Find the roast temperature $T(t)$ in terms of $k$.'
             answer: '180 - 155e^(-kt)'
             answer_contract: {"kind": "function", "vars": ["t", "k"]}
-            solution_sketch: 'The solution has the form $T = 180 + Ce^{-kt}$. At $t = 0$ we have $25 = 180 + C$, so $C = -155$. Hence $T(t) = 180 - 155e^{-kt}$.'
+            solution_sketch: 'Newton''s law gives $\frac{dT}{dt}=-k(T-180)$ with $T(0)=25$. The solution has the form $T=180+Ce^{-kt}$. At $t=0$, $25=180+C$, so $C=-155$. Hence $T(t)=180-155e^{-kt}$.'
           - problem: 'A glass of water at $8^\circ$C is brought into a room at $22^\circ$C. Write its temperature $T(t)$ in terms of the cooling constant $k$.'
             answer: '22 - 14e^(-kt)'
             answer_contract: {"kind": "function", "vars": ["t", "k"]}

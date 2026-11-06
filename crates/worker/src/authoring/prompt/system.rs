@@ -90,7 +90,14 @@ Braces: single braces are placeholders, so every LITERAL brace must be doubled. 
 not $7^{2}$. A stray single brace is refused.
 
 The problem statement NEVER contains the answer or the method (Hard Rule 1). The method belongs \
-in 'solution_sketch', which the learner reads only after committing an attempt.";
+in 'solution_sketch', which the learner reads only after committing an attempt.
+
+NO HANDED VALUE. A question never hands the learner a value that the question exists to make them \
+produce. State the rounding it wants (\"to the nearest whole number\", \"to two decimal places\") \
+and nothing else. The learner finds e^x, logarithms, trigonometric values, roots and powers with \
+their own calculator, or keeps the exact form. Never write \"using e^{{0.3}} ≈ 1.34986\", \
+\"take sin 30° = 0.5\", \"given ln 2 ≈ 0.693\" or \"use π ≈ 3.14\". A statement with such a value is \
+refused.";
 
 /// The three rules 2.0 adds to the nine above (spec section 2.2, step 1).
 ///

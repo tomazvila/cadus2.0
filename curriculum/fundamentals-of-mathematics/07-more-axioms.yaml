@@ -164,15 +164,15 @@ topics:
             answer: 'Two points of the union lie in two chains. These chains are nested, so both points lie in the larger one, where they are comparable.'
             solution_sketch: 'Let $x,y\in\bigcup\mathcal C$, so $x\in C_1$ and $y\in C_2$ for chains $C_1,C_2\in\mathcal C$. Since $\mathcal C$ is a chain, one of $C_1,C_2$ contains the other. Rename them so that $C_1\subseteq C_2$, which gives $x,y\in C_2$. Since $C_2$ is a chain, $x$ and $y$ are comparable. So the union is totally ordered, as Definition 7.4 asks.'
           # source: FoM exercise 7.1-7-7
-          - problem: 'Prove that every vector space has a basis. Apply Zorn''s Lemma to the linearly independent subsets.'
+          - problem: 'Prove that every vector space has a basis.'
             answer_contract: {"kind":"written"}
             answer: 'Order the independent subsets by inclusion. The union of a chain is independent, so a maximal one exists, and it spans the space.'
-            solution_sketch: 'Let $P$ be the set of linearly independent subsets of the space $V$, ordered by inclusion. The empty set is in $P$. The union of a chain in $P$ is independent, because a finite dependence uses finitely many vectors that lie in one member. Zorn''s Lemma gives a maximal independent set $B$. If a vector $v$ lies outside the span of $B$, then $B\cup\{v\}$ is independent. That contradicts maximality, so $B$ spans $V$.'
+            solution_sketch: 'Let $P$ be the set of linearly independent subsets of $V$, ordered by inclusion. The union of a chain in $P$ is independent, because a finite dependence lies in one member. Zorn''s Lemma gives a maximal independent set $B$. A vector outside the span of $B$ would extend $B$, so $B$ spans $V$.'
           # source: FoM exercise 7.1-7-8
-          - problem: 'Let $\mathbb E$ be an extension field of a field $\mathbb F$. Prove that $\mathbb E$ has a basis over $\mathbb F$, using Zorn''s Lemma.'
+          - problem: 'Let $\mathbb E$ be an extension field of a field $\mathbb F$. Prove that $\mathbb E$ has a basis over $\mathbb F$.'
             answer_contract: {"kind":"written"}
             answer: 'View E as a vector space over F. A maximal F-independent subset exists by Zorn''s Lemma, and it spans E.'
-            solution_sketch: 'The field $\mathbb E$ is a vector space over $\mathbb F$ when we multiply by elements of $\mathbb F$. Order the $\mathbb F$-independent subsets by inclusion. A chain of such sets has an independent union, because a finite dependence lives in one member. Zorn''s Lemma gives a maximal independent set $B$. A vector outside the span of $B$ extends $B$ to a larger independent set. So $B$ spans $\mathbb E$.'
+            solution_sketch: 'The field $\mathbb E$ is a vector space over $\mathbb F$. Order the $\mathbb F$-independent subsets by inclusion. A chain has an independent union, so Zorn''s Lemma gives a maximal independent set $B$. A vector outside the span of $B$ would extend $B$, so $B$ spans $\mathbb E$.'
         constraints: 'Chains, maximal elements, the tower argument and Zorn''s Lemma.'
       - id: kp4
         name: 'Theorem 7.7 and Definition 7.8: doubling an infinite set and well-orders'
@@ -362,10 +362,10 @@ topics:
             answer: 'Induct on n. The element n is inside n'', and each element of n is inside n, so n is a strict subset of n''.'
             solution_sketch: 'For $n=0$, the set $0''=\{0\}$ holds only the element $0=\varnothing$, which is a strict subset of $\{0\}$. Assume the statement for $n$. An element $m$ of $n''$ is either in $n$ or equal to $n$. If $m\in n$, the hypothesis makes $m$ a strict subset of $n$, and so of $n''$. If $m=n$, then $n\subseteq n''$ and $n\in n''$ but $n\notin n$, so the inclusion is strict. Theorem 2.64 provides the construction.'
           # source: FoM exercise 7.2-7-12
-          - problem: 'Let $\alpha$ and $\beta$ be ordinal numbers. Prove that $\alpha\subseteq\beta$ or $\beta\subseteq\alpha$. Assume $\alpha\not\subseteq\beta$ and look at the smallest element of $\alpha$ outside $\beta$.'
+          - problem: 'Let $\alpha$ and $\beta$ be ordinal numbers. Prove that $\alpha\subseteq\beta$ or $\beta\subseteq\alpha$.'
             answer_contract: {"kind":"written"}
             answer: 'Take the smallest element x of alpha not in beta. Then x equals the set of its predecessors, which lie in beta, so x is in beta or beta is in alpha.'
-            solution_sketch: 'Assume $\alpha\not\subseteq\beta$. Let $x$ be the smallest element of $\alpha$ with $x\notin\beta$. By Definition 7.12, each $\gamma\in x$ is smaller than $x$, so $\gamma\in\beta$ and $x\subseteq\beta$. If $\beta\setminus x$ is nonempty, let $z$ be its smallest element. Then $z\subsetneq x$, and the smallest $w\in x\setminus z$ gives $z=w\in x$, a contradiction. So $\beta\subseteq x$, hence $x=\beta\in\alpha$ and $\beta\subseteq\alpha$.'
+            solution_sketch: 'Assume $\alpha\not\subseteq\beta$. Let $x$ be the smallest element of $\alpha$ with $x\notin\beta$. Each $\gamma\in x$ is smaller than $x$, so $\gamma\in\beta$ and $x\subseteq\beta$. If $\beta\setminus x$ has a smallest element $z$, then $z=x$-predecessors give a contradiction, so $\beta\subseteq x$ and $x=\beta\in\alpha$, hence $\beta\subseteq\alpha$.'
           # source: FoM exercise 7.2-7-14
           - problem: 'Let $C(x)=x\cup\{x\}$ and let $C^n$ mean $n$ steps of $C$. Prove that $2\omega=\omega\cup\{C^n(\omega):n\in\mathbb N_0\}$ is an ordinal number.'
             answer_contract: {"kind":"written"}
@@ -410,7 +410,7 @@ topics:
             answer: 'Show that alpha'' is well-ordered by inclusion with alpha on top. Each element of alpha'' is the set of the smaller elements, by Definition 7.12.'
             solution_sketch: 'Each $\beta\in\alpha$ is a strict subset of $\alpha$. So $\alpha$ is the largest element of $\alpha''$ under inclusion. A nonempty subset of $\alpha''$ either lies in $\alpha$, which is well-ordered, or is $\{\alpha\}$. So inclusion well-orders $\alpha''$. For $\beta\in\alpha$ the identity of Definition 7.12 holds in $\alpha$. For $\beta=\alpha$ it holds because $\alpha=\{\gamma\in\alpha'':\gamma\subset\alpha\}$.'
           # source: FoM exercise 7.2-7-13
-          - problem: 'Show that $\alpha\cup\{\alpha\}$ is an ordinal number for each ordinal number $\alpha$. Start with the step that each member of $\alpha$ is a strict subset of $\alpha$.'
+          - problem: 'Prove that $\alpha\cup\{\alpha\}$ is an ordinal number for each ordinal number $\alpha$.'
             answer_contract: {"kind":"written"}
             answer: 'An element beta of alpha is the set of smaller elements of alpha, so it is a strict subset of alpha. Then alpha on top keeps the order.'
             solution_sketch: 'Let $\beta\in\alpha$. By Definition 7.12, $\beta=\{\gamma\in\alpha:\gamma\subset\beta\}$, so $\beta\subseteq\alpha$. Also $\beta\notin\beta$, so $\beta\ne\alpha$ is clear and the inclusion is strict. Then $\alpha\cup\{\alpha\}$ is well-ordered by inclusion with $\alpha$ on top. The identity of Definition 7.12 holds for old elements and for $\alpha$, as Proposition 7.13 states.'
@@ -430,17 +430,17 @@ topics:
             answer: 'Each set of the model lies in a level V_n. The superstructure holds all levels, so it lies in no level and is not part of the model.'
             solution_sketch: 'Each set of the model comes from some level $V_n$ of Definition 2.62. The superstructure is the union of all levels. A set in level $V_n$ is a subset of $V_n$ or an element of $V_{n+1}$, so it has a finite height. The superstructure contains sets of every height, so it lies in no level. Hence it is not in the model.'
           # source: FoM exercise 7.2-7-16
-          - problem: 'Take a set $W$ with a well-order. Show that an ordinal number $\alpha$ and a bijection $\varphi:W\to\alpha$ exist with this property: $x\le y$ exactly when $\varphi(x)\subseteq\varphi(y)$. Use Zorn''s Lemma on functions defined on down-sets of $W$.'
+          - problem: 'Take a set $W$ with a well-order. Prove that an ordinal number $\alpha$ and a bijection $\varphi:W\to\alpha$ exist with this property: $x\le y$ exactly when $\varphi(x)\subseteq\varphi(y)$.'
             answer_contract: {"kind":"written"}
             answer: 'Order the partial order-isomorphisms from down-sets of W onto ordinals by inclusion. A maximal one is defined on all of W.'
-            solution_sketch: 'Let $P$ be the set of order-preserving bijections from a down-set of $W$ onto an ordinal number. The empty map is in $P$. The union of a chain in $P$ is in $P$, because the images nest and form an ordinal number. Zorn''s Lemma gives a maximal $\varphi$. If its domain missed a point, let $w$ be the smallest missing point. Extending $\varphi$ by $w\mapsto\varphi[\text{down-set}]$ gives a larger member of $P$ by Proposition 7.13, which contradicts maximality.'
+            solution_sketch: 'Let $P$ be the set of order-preserving bijections from a down-set of $W$ onto an ordinal number. The union of a chain in $P$ is in $P$, so Zorn''s Lemma gives a maximal $\varphi$. If its domain missed a point, extend $\varphi$ at the smallest missing point $w$ by the image of the down-set of $w$. That gives a larger member of $P$ and contradicts maximality.'
           # source: FoM exercise 7.2-7-17
           - problem: 'Axiom of Replacement: let $A$ be a set and let $S(a,b)$ be a sentence. If each $a\in A$ has an element $b$ with $S(a,b)$, then a set holds these elements $b$. Axiom of Substitution: let $A$ be a set and let $S(a,b)$ be a sentence such that $\{b:S(a,b)\}$ is a set for each $a\in A$. Then there is a function $F$ on $A$ with $F(a)=\{b:S(a,b)\}$ for each $a\in A$. Prove that Replacement and Substitution are equivalent axioms.'
             answer_contract: {"kind":"written"}
             answer: 'Substitution gives the sets F(a), and the union of the range is the collected set. Replacement gives a set that holds all b, which cuts out each F(a).'
             solution_sketch: 'From Substitution to Replacement: the function $F$ exists, and the union of its range is the set of all $b$ with $S(a,b)$ for some $a$. From Replacement to Substitution: first collect all pairs $(a,b)$ with $S(a,b)$ by applying Replacement to the sentence on $A$ and on the sets involved. Then for each $a$, the set $\{b:S(a,b)\}$ is a subset of a set that Replacement gives. Collect the pairs $(a,\{b:S(a,b)\})$ with Replacement again. This set is the function $F$.'
           # source: FoM exercise 7.2-7-18
-          - problem: 'The Axiom of Regularity reads: every nonempty set $A$ holds an element $B$ with $B\cap A=\varnothing$. Prove that no set is a member of itself. Apply the axiom to $A=\{C\}$.'
+          - problem: 'The Axiom of Regularity reads: every nonempty set $A$ holds an element $B$ with $B\cap A=\varnothing$. Prove that no set is a member of itself.'
             answer_contract: {"kind":"written"}
             answer: 'Suppose C is in C. The set A of C alone has only the element C, and C meets A in C, so no element of A is disjoint from A.'
             solution_sketch: 'Suppose $C\in C$ and let $A=\{C\}$. The only element of $A$ is $C$, so the axiom gives $C\cap A=\varnothing$. But $C\in C$ and $C\in A$ give $C\in C\cap A$. This is a contradiction, so $C\notin C$. Theorem 2.64 shows the same fact for natural numbers.'
@@ -532,10 +532,10 @@ topics:
             answer: 'Split the product into |B| disjoint copies of A. For functions use induction on |B|, since one new element of B multiplies the count by |A|.'
             solution_sketch: 'The product A times B is the disjoint union of the sets A times one point b, over all b in B. Each of these sets has |A| elements by the bijection a to (a,b). So the union has |B| blocks of size |A|, by induction with the first step. For functions, an empty B gives exactly one function. A function on B plus a new point t is a function on B plus a value in A for t. So the count is multiplied by |A|.'
           # source: FoM exercise 7.3-7-19
-          - problem: 'Prove three parts of the counting rules for finite sets $A$ and $B$. (a) If $A\cap B=\emptyset$, then $|A\cup B|=|A|+|B|$. Build a bijection. (b) $|A\times B|=|A|\cdot|B|$. (c) The set of functions from $B$ to $A$ has $|A|^{|B|}$ elements.'
+          - problem: 'Prove three counting rules for finite sets $A$ and $B$. First, if $A\cap B=\emptyset$, then $|A\cup B|=|A|+|B|$. Second, $|A\times B|=|A|\cdot|B|$. Third, the set of functions from $B$ to $A$ has $|A|^{|B|}$ elements.'
             answer_contract: {"kind":"written"}
             answer: 'Use a bijection onto an initial block of numbers for (a). Use disjoint blocks for (b) and induction on |B| for (c).'
-            solution_sketch: 'For (a) number A by 1 to |A| and B by |A|+1 to |A|+|B|. The numbering is a bijection from the union. For (b) the product is a disjoint union of |B| copies of A, as in Theorem 7.15. For (c) induct on |B|. One function on the empty set exists. Each new point of B multiplies the count by |A|.'
+            solution_sketch: 'For the first rule number A by 1 to |A| and B by |A|+1 to |A|+|B|, which is a bijection from the union. For the second rule the product is a disjoint union of |B| copies of A. For the third rule induct on |B|: one function on the empty set exists, and each new point of B multiplies the count by |A|.'
           # source: FoM exercise 7.3-7-20
           - problem: 'Prove the Principle of Inclusion and Exclusion: for finite sets $A_1,\dots,A_n$, the size of their union equals the sum over $k$ from $1$ to $n$ of $(-1)^{k-1}$ times the sum of the sizes of all intersections of $k$ different sets $A_j$.'
             answer_contract: {"kind":"written"}
@@ -629,10 +629,10 @@ topics:
             answer: 'From C=F(C) the inverse of g is a bijection from the outside of C onto B minus f of C. Together with f on C this gives a bijection.'
             solution_sketch: 'From C=F(C) we get g[B minus f[C]] equal to A minus C. So every x outside C equals g(y) for exactly one y outside f[C], and g inverse is a bijection from A minus C onto B minus f[C]. The map f is a bijection from C onto f[C]. The two pieces have disjoint images that fill B, so h is surjective. For x and y that differ, the cases with both in C or both outside C use injectivity of f or of g. If x is in C and y is not, then h(x) is in f[C] and h(y) is not.'
           # source: FoM exercise 7.3-7-21
-          - problem: 'Prove: for any two sets $A$ and $B$, there is an injective function from $A$ to $B$ or an injective function from $B$ to $A$. Use Zorn''s Lemma on the injective functions defined on subsets of $A$.'
+          - problem: 'Prove: for any two sets $A$ and $B$, there is an injective function from $A$ to $B$ or an injective function from $B$ to $A$.'
             answer_contract: {"kind":"written"}
             answer: 'Order injective partial maps from A to B by extension. A maximal map is defined on all of A, or its image is all of B, and then its inverse is an injection.'
-            solution_sketch: 'Let P be the set of injective functions from a subset of A into B, ordered by extension. A chain has the union as an upper bound, so Zorn''s Lemma in Theorem 7.7 gives a maximal element m. If some a in A is outside the domain and some b in B is outside the image, then m extended by a to b is larger. So the domain is A or the image is B. In the first case m is an injection from A to B. In the second case the inverse of m is an injection from B to A.'
+            solution_sketch: 'Let P be the set of injective functions from a subset of A into B, ordered by extension. Every chain has its union as an upper bound, so Zorn''s Lemma gives a maximal element m. If a point of A lay outside the domain and a point of B outside the image, m could extend. So the domain is A, or the image is B and the inverse of m injects B into A.'
           # source: FoM exercise 7.3-7-26
           - problem: 'Prove: if there are surjective functions $f:A\to B$ and $g:B\to A$, then there is a bijective function from $A$ to $B$. You may use the Axiom of Choice.'
             answer_contract: {"kind":"written"}
@@ -737,10 +737,10 @@ topics:
             answer: 'For (a) pair the two functions into one function with pair values. For (b) turn a function with function values into a function of two variables.'
             solution_sketch: 'Take sets A, B and C of sizes alpha, beta and gamma. For (a) send a pair (f,g) of functions on C to the function c to (f(c),g(c)). This is a bijection onto the functions from C to the product of A and B. For (b) send a function F on C with function values to the function (b,c) to F(c)(b). This is a bijection onto the functions on B times C. Theorem 7.23 covers the first law in the same way.'
           # source: FoM exercise 7.3-7-30
-          - problem: 'Prove: the set $\mathbb{R}$ of real numbers has the same cardinality as the power set of $\mathbb{N}$. Hint: map $(0,1)$ into the set of sequences of zeros and ones, and compare sizes.'
+          - problem: 'Prove: the set $\mathbb{R}$ of real numbers has the same cardinality as the power set of $\mathbb{N}$.'
             answer_contract: {"kind":"written"}
             answer: 'Binary expansions inject (0,1) into the sequences of zeros and ones. The sequences outside the image are few, so Cantor-Schroeder-Bernstein applies.'
-            solution_sketch: 'The power set of N is equivalent to the set S of sequences of zeros and ones. Send a number of (0,1) to its binary expansion that does not end in all ones. This is an injection into S. The sequences outside the image are the ones that end in all ones, a countable set, so they number at most the image. Theorem 5.50 style counting and Theorem 7.22 give that S is equivalent to the image, so to (0,1). The map tan(pi(x-1/2)) sends (0,1) onto R.'
+            solution_sketch: 'The power set of N is equivalent to the set S of sequences of zeros and ones. Send a number of (0,1) to its binary expansion that does not end in all ones, which injects (0,1) into S. The sequences outside the image end in all ones and form a countable set, so S is equivalent to (0,1) by Cantor-Schroeder-Bernstein. The map tan(pi(x-1/2)) sends (0,1) onto R.'
         constraints: 'Apply the exponent laws to finite and infinite cardinals and read the Continuum Hypothesis.'
     diagnostic_exemplar:
       problem: 'Let $|A|=8$ and $|B|=5$. (a) Give $|A\cup B|$ when $A\cap B=\emptyset$. (b) Give $|A\cup B|$ when $|A\cap B|=3$.'

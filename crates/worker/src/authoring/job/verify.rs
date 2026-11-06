@@ -212,11 +212,31 @@ pub fn verify(spec: &AuthoringSpec, arguments: &Value) -> Result<String, Rejecti
     // Spec section 5.3, and row R7: an error_tag outside the vocabulary is
     // dropped, on this document and on the diagnosis document alike, and the
     // drop runs before the gate reads the body.
+    refuse_handed_value(arguments)?;
     let body = assemble_kept(Kind::Template, spec, arguments)?;
     let gate_spec = template_gate_spec(spec)?;
     let (doc, verified) = gate_body(&body, &gate_spec)?;
     let filled = with_space_size(&doc, &verified);
     to_body(&filled).map_err(unwritable)
+}
+
+/// Refuse a template statement that hands the learner a value the question
+/// exists to make them produce (D-AP1). The test is the one of the
+/// `handed_value` lint, so the lint and the admission check cannot disagree.
+fn refuse_handed_value(arguments: &Value) -> Result<(), Rejection> {
+    let Some(statement) = arguments.get("statement").and_then(Value::as_str) else {
+        return Ok(());
+    };
+    match cadus_core::curriculum::handed_value(statement) {
+        Some(value) => Err(Rejection {
+            code: "handed-value",
+            message: format!(
+                "the statement hands the value \"{value}\". {}",
+                cadus_core::curriculum::HANDED_FIX
+            ),
+        }),
+        None => Ok(()),
+    }
 }
 
 /// The tool arguments of an instruction document, as the text its gate reads.

@@ -512,17 +512,17 @@ topics:
         name: 'Irrational equation with the root check'
         key_prerequisites: [irrational-equations-extended, radical-equations-basic]
         exemplars:
-          - problem: 'Consider the equation $\sqrt{x+6}=x$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
-            answer: 'squared = {-2, 3}; orig = 3'
+          - problem: 'Solve the equation $\sqrt{x+6}=x$ in the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
             solution_sketch: 'Squaring gives $x+6=x^2$, so $x^2-x-6=0$ and $x=-2$ or $x=3$. For $x=-2$ the left side is $2$ and the right side is $-2$, so reject it. For $x=3$ both sides equal $3$.'
-          - problem: 'Consider the equation $\sqrt{2x+3}=x$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
-            answer: 'squared = {-1, 3}; orig = 3'
-            solution_sketch: 'Squaring gives $x^2-2x-3=0$, so $x=-1$ or $x=3$. For $x=-1$ the left side is $1$ and the right side is $-1$, so reject it. For $x=3$ both sides equal $3$.'
-          - problem: 'Consider the equation $\sqrt{3x+1}=x-1$. (a) Square both sides and solve the new equation. (b) Find the solution of the original equation.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"squared","contract":{"kind":"set"}},{"name":"orig","contract":{"kind":"exact"}}]}
-            answer: 'squared = {0, 5}; orig = 5'
+          - problem: 'Solve the equation $\sqrt{2x+3}=x$ in the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Squaring gives $2x+3=x^2$, so $x^2-2x-3=0$ and $x=-1$ or $x=3$. For $x=-1$ the left side is $1$ and the right side is $-1$, so reject it. For $x=3$ both sides equal $3$.'
+          - problem: 'Solve the equation $\sqrt{3x+1}=x-1$ in the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '5'
             solution_sketch: 'Squaring gives $3x+1=x^2-2x+1$, so $x^2-5x=0$ and $x=0$ or $x=5$. For $x=0$ the left side is $1$ and the right side is $-1$, so reject it. For $x=5$ both sides equal $4$.'
           - problem: 'Consider the equation $\sqrt{x+5}=x-1$. (a) Find the domain of the left side. Write it as an inequality in $x$. (b) Find the solution of the equation.'
             answer_contract: {"kind":"multipart","parts":[{"name":"dom","contract":{"kind":"inequality_union"}},{"name":"sol","contract":{"kind":"exact"}}]}
@@ -545,26 +545,26 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 3/2'
             solution_sketch: '(a) We have $2^{x+1}=2^5$, so $x=4$. (b) We have $3^{2x}=3^3$, so $2x=3$ and $x=3/2$.'
-          - problem: 'Consider $4^x-6\cdot2^x+8=0$. (a) Put $t=2^x$ and find the values of $t$. (b) Find the values of $x$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
-            answer: 't = {2, 4}; x = {1, 2}'
-            solution_sketch: 'The equation becomes $t^2-6t+8=0$, so $t=2$ or $t=4$. Both are positive. From $2^x=2$ and $2^x=4$ we get $x=1$ and $x=2$.'
+          - problem: 'Solve the equation $4^x-6\cdot2^x+8=0$.'
+            answer_contract: {"kind":"set"}
+            answer: '{1, 2}'
+            solution_sketch: 'Write $4^x=(2^x)^2$ and put $t=2^x$. Then $t^2-6t+8=0$, so $t=2$ or $t=4$. Both are positive. From $2^x=2$ and $2^x=4$ we get $x=1$ and $x=2$.'
           - problem: '(a) Solve $\log_3(x+2)=\log_3(2x-1)$. (b) Solve $\log_2(x-1)=3$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 3; b = 9'
             solution_sketch: '(a) Set the arguments equal: $x+2=2x-1$, so $x=3$. Both arguments equal $5$. (b) We have $x-1=2^3=8$, so $x=9$.'
-          - problem: 'Consider $2^{2x}-5\cdot2^x-24=0$. (a) Put $t=2^x$. Find the roots of the quadratic equation in $t$. (b) Find the solution $x$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"exact"}}]}
-            answer: 't = {-3, 8}; x = 3'
-            solution_sketch: 'The equation becomes $t^2-5t-24=0$, so $t=8$ or $t=-3$. A power of $2$ is positive, so reject $t=-3$. From $2^x=8$ we get $x=3$.'
-          - problem: 'Consider $(\log_2 x)^2-3\log_2 x+2=0$. (a) Put $u=\log_2 x$ and find the values of $u$. (b) Find the values of $x$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"u","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
-            answer: 'u = {1, 2}; x = {2, 4}'
-            solution_sketch: 'The equation becomes $u^2-3u+2=0$, so $u=1$ or $u=2$. Then $x=2^1=2$ or $x=2^2=4$.'
-          - problem: '(a) Solve $\log_x 49=2$ with $x>0$ and $x\ne1$. (b) Write $\log_2 x+\log_2(x-2)=3$ as a quadratic equation in $x$. Give its roots. (c) Give the solution of the logarithmic equation.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"quad","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"exact"}}]}
-            answer: 'a = 7; quad = {-2, 4}; sol = 4'
-            solution_sketch: '(a) We have $x^2=49$ and $x>0$, so $x=7$. (b) The equation gives $x(x-2)=8$, so $x^2-2x-8=0$ and $x=-2$ or $x=4$. The domain needs $x>2$, so only $x=4$ stays.'
+          - problem: 'Solve the equation $2^{2x}-5\cdot2^x-24=0$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Write $2^{2x}=(2^x)^2$ and put $t=2^x$. Then $t^2-5t-24=0$, so $t=8$ or $t=-3$. A power of $2$ is positive, so reject $t=-3$. From $2^x=8$ we get $x=3$.'
+          - problem: 'Solve the equation $(\log_2 x)^2-3\log_2 x+2=0$.'
+            answer_contract: {"kind":"set"}
+            answer: '{2, 4}'
+            solution_sketch: 'Put $u=\log_2 x$. Then $u^2-3u+2=0$, so $u=1$ or $u=2$. Then $x=2^1=2$ or $x=2^2=4$.'
+          - problem: 'Solve $\log_x 49=2$ with $x>0$ and $x\ne1$. Then solve $\log_2 x+\log_2(x-2)=3$.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"sol"}]}
+            answer: 'a = 7; sol = 4'
+            solution_sketch: '(a) We have $x^2=49$ and $x>0$, so $x=7$. (b) The sum of logarithms gives $\log_2\big(x(x-2)\big)=3$, so $x(x-2)=8$ and $x^2-2x-8=0$. The roots are $-2$ and $4$. The domain needs $x>2$, so only $x=4$ stays.'
         constraints: 'two- or three-part items; common base or a substitution t=a^x or u=log x; the domain removes a root'
       - id: kp3
         name: 'Higher-degree and biquadratic equations in a multi-part item'
@@ -578,14 +578,14 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"set"}},{"name":"b","contract":{"kind":"set"}}]}
             answer: 'a = {-2, 0, 2}; b = {-2, 1, 2}'
             solution_sketch: '(a) We have $x(x-2)(x+2)=0$. (b) Group the terms: $x^2(x-1)-4(x-1)=(x-1)(x-2)(x+2)$.'
-          - problem: 'Consider $x^4-5x^2+4=0$. (a) Put $t=x^2$ and find the values of $t$. (b) Find all real solutions $x$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}}]}
-            answer: 't = {1, 4}; x = {-2, -1, 1, 2}'
-            solution_sketch: 'The equation becomes $t^2-5t+4=0$, so $t=1$ or $t=4$. Then $x=\pm1$ or $x=\pm2$.'
-          - problem: 'Consider $x^4+x^2-6=0$. (a) Put $t=x^2$. Find the roots of the quadratic equation in $t$. (b) Find all real solutions $x$. (c) Find the sum of the squares of the real solutions.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"t","contract":{"kind":"set"}},{"name":"x","contract":{"kind":"set"}},{"name":"sq","contract":{"kind":"exact"}}]}
-            answer: 't = {-3, 2}; x = {-sqrt(2), sqrt(2)}; sq = 4'
-            solution_sketch: 'The equation becomes $t^2+t-6=0$, so $t=2$ or $t=-3$. A square is not negative, so only $t=2$ stays. Then $x=\pm\sqrt2$, and the squares add to $2+2=4$.'
+          - problem: 'Find all real solutions of $x^4-5x^2+4=0$.'
+            answer_contract: {"kind":"set"}
+            answer: '{-2, -1, 1, 2}'
+            solution_sketch: 'Put $t=x^2$. Then $t^2-5t+4=0$, so $t=1$ or $t=4$. Then $x=\pm1$ or $x=\pm2$.'
+          - problem: 'Consider $x^4+x^2-6=0$. Find all real solutions $x$. Then find the sum of the squares of the real solutions.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"set"},"name":"x"},{"contract":{"kind":"exact"},"name":"sq"}]}
+            answer: 'x = {-sqrt(2), sqrt(2)}; sq = 4'
+            solution_sketch: 'Put $t=x^2$. Then $t^2+t-6=0$, so $t=2$ or $t=-3$. A square is not negative, so only $t=2$ stays. Then $x=\pm\sqrt2$, and the squares add to $2+2=4$.'
           - problem: 'The number $2$ is a root of $P(x)=x^3-3x^2-4x+12$. (a) Find $P(2)$. (b) Find all real roots of $P$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"val","contract":{"kind":"exact"}},{"name":"roots","contract":{"kind":"set"}}]}
             answer: 'val = 0; roots = {-2, 2, 3}'
@@ -653,10 +653,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"set"}},{"name":"b","contract":{"kind":"set"}}]}
             answer: 'a = {-2, 8}; b = {-4, 3}'
             solution_sketch: '(a) We have $x-3=5$ or $x-3=-5$, so $x=8$ or $x=-2$. (b) We have $2x+1=7$ or $2x+1=-7$, so $x=3$ or $x=-4$.'
-          - problem: 'Consider $|x-1|=2x-5$. (a) Solve the equation for the case $x\ge1$ and the equation for the case $x<1$. Give both numbers you find. (b) Find the solution of the original equation.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"cand","contract":{"kind":"set"}},{"name":"sol","contract":{"kind":"exact"}}]}
-            answer: 'cand = {2, 4}; sol = 4'
-            solution_sketch: 'For $x\ge1$ we have $x-1=2x-5$, so $x=4$. For $x<1$ we have $1-x=2x-5$, so $x=2$. The value $2$ is not less than $1$, and the right side is negative there, so reject it. The value $4$ gives $3=3$.'
+          - problem: 'Solve the equation $|x-1|=2x-5$ in the real numbers.'
+            answer_contract: {"kind":"exact"}
+            answer: '4'
+            solution_sketch: 'For $x\ge1$ we have $x-1=2x-5$, so $x=4$. For $x<1$ we have $1-x=2x-5$, so $x=2$. The value $2$ is not less than $1$, so reject it. The value $4$ gives $3=3$.'
           - problem: 'Consider $|2x-1|=x+4$. (a) Find all solutions. (b) Find the sum of the solutions.'
             answer_contract: {"kind":"multipart","parts":[{"name":"sols","contract":{"kind":"set"}},{"name":"sum","contract":{"kind":"exact"}}]}
             answer: 'sols = {-1, 5}; sum = 4'

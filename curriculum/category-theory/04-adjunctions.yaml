@@ -74,10 +74,10 @@ topics:
         key_prerequisites: [natural-isomorphisms]
         constraints: 'Recover the adjunction direction and the two hom-sets from the raw constructions. Test the correspondence, construct the missing adjoint, or use the bijection to compute a value or the size of a hom-set; items may name the adjoint pair but never say which side each functor is on.'
         exemplars:
-          - problem: 'Let $i\colon(\mathbb{Z},\le)\to(\mathbb{R},\le)$ be the inclusion of posets, each regarded as a category. For every integer $n$ and real number $x$ we have $n\le x$ if and only if $n\le\lfloor x\rfloor$. Since each hom-set in a poset has at most one element, this equivalence is a bijection $\mathrm{Hom}(i(n),x)\cong\mathrm{Hom}(n,\lfloor x\rfloor)$. Is $i$ the left adjoint or the right adjoint of the floor function?'
+          - problem: 'Let $i\colon(\mathbb{Z},\le)\to(\mathbb{R},\le)$ be the inclusion of posets, each regarded as a category, and let $\lfloor\cdot\rfloor\colon\mathbb{R}\to\mathbb{Z}$ be the floor function. These two functors are adjoint. Is $i$ the left adjoint or the right adjoint of the floor function?'
             answer: 'left'
             answer_contract: {"kind": "label", "options": [["left", "left adjoint", "the left adjoint", "i is the left adjoint"], ["right", "right adjoint", "the right adjoint", "i is the right adjoint"]]}
-            solution_sketch: 'In a poset each hom-set has at most one element, so the equivalence $n\le x\iff n\le\lfloor x\rfloor$ is a bijection $\mathrm{Hom}(i(n),x)\cong\mathrm{Hom}(n,\lfloor x\rfloor)$. The functor applied to the first argument on the left of the bijection is the left adjoint, and here that is $i$. So $i$ is the left adjoint and the floor function is the right adjoint.'
+            solution_sketch: 'For an integer $n$ and a real number $x$, we have $n\le x$ if and only if $n\le\lfloor x\rfloor$. Each hom-set of a poset has at most one element, so this is a bijection $\mathrm{Hom}(i(n),x)\cong\mathrm{Hom}(n,\lfloor x\rfloor)$. The functor in the first argument on the left is the left adjoint, so $i$ is the left adjoint.'
           - problem: 'The inclusion $i\colon(\mathbb{Z},\le)\to(\mathbb{R},\le)$ also has a left adjoint $L\colon\mathbb{R}\to\mathbb{Z}$, so that $\mathrm{Hom}(L(x),n)\cong\mathrm{Hom}(x,i(n))$ for every real $x$ and integer $n$. What is $L(7/3)$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -86,22 +86,22 @@ topics:
             answer: '64'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The bijection $\mathrm{Hom}(FS,V)\cong\mathrm{Hom}(S,UV)$ shows that a linear map is the same as a function from the basis $\{s,t\}$ to the underlying set of $\mathbb{F}_2^3$. This set has $2^3=8$ elements, so there are $8^2=64$ such functions and $64$ linear maps.'
-          - problem: 'Let $t\colon\mathbb{R}\to\mathbb{Z}$ truncate toward zero (so $t(-3/2)=-1$) and let $i\colon\mathbb{Z}\to\mathbb{R}$ be the inclusion. If $t$ were a right adjoint of $i$, then $n\le x$ if and only if $n\le t(x)$ for every integer $n$ and real number $x$. At $x=-3/2$, for which integer $n$ do the two sides disagree?'
+          - problem: 'Let $t\colon\mathbb{R}\to\mathbb{Z}$ truncate toward zero (so $t(-3/2)=-1$) and let $i\colon\mathbb{Z}\to\mathbb{R}$ be the inclusion. Test whether $t$ is a right adjoint of $i$ at $x=-3/2$. For which integer $n$ does the test fail?'
             answer: '-1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At $x=-3/2$ we have $t(x)=-1$. For $n=-1$ the left side $-1\le-3/2$ is false, while the right side $-1\le-1$ is true, so the sides disagree. Every other integer makes both sides true or both false, so $n=-1$ is the only one, and $t$ is not a right adjoint.'
+            solution_sketch: 'If $t$ is a right adjoint of $i$, then $n\le x$ if and only if $n\le t(x)$. At $x=-3/2$ we have $t(x)=-1$. For $n=-1$ the left side $-1\le-3/2$ is false, while the right side $-1\le-1$ is true. Every other integer gives two equal truth values, so $n=-1$ is the only one.'
           - problem: 'Let $U\colon\mathbf{Preord}\to\mathbf{Set}$ forget the order. Let $D(S)$ be the set $S$ with only the relations $x\le x$, and let $I(S)$ be the set $S$ with $x\le y$ for all $x,y$. One of $D$, $I$ is a left adjoint of $U$ and the other is a right adjoint of $U$. Which one is the right adjoint?'
             answer: 'I'
             answer_contract: {"kind": "label", "options": [["I", "I(S)", "the indiscrete preorder", "indiscrete"], ["D", "D(S)", "the discrete preorder", "discrete"]]}
             solution_sketch: 'A monotone map $P\to I(S)$ has no condition to meet, because every pair is ordered in $I(S)$. So $\mathrm{Hom}(P,I(S))\cong\mathrm{Hom}(UP,S)$ is a bijection, and $I$ sits on the right of $U$. The other functor $D$ is the left adjoint, because $\mathrm{Hom}(D(S),P)\cong\mathrm{Hom}(S,UP)$.'
-          - problem: 'Let $D(S)$ be the discrete preorder on $S$, with only the relations $x\le x$, and let $P$ be the chain $0<1$. If $U$ were a left adjoint of $D$, the monotone maps $P\to D(S)$ would correspond bijectively to the functions $UP\to S$. How many monotone maps $P\to D(\{a,b\})$ are there?'
+          - problem: 'Let $D(S)$ be the discrete preorder on $S$, with only the relations $x\le x$, and let $P$ be the chain $0<1$. A functor $U$ from preorders to sets is a candidate for a left adjoint of $D$. How many monotone maps $P\to D(\{a,b\})$ are there?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A monotone map $f\colon P\to D(\{a,b\})$ needs $f(0)\le f(1)$, and in a discrete preorder this forces $f(0)=f(1)$. So there are $2$ monotone maps, the two constant ones. There are $4$ functions $UP\to\{a,b\}$, so no bijection exists and $U$ is not left adjoint to $D$.'
-          - problem: 'A shop sells pens only in boxes of $6$. Let $G(m)=6m$ be the number of pens in $m$ boxes, an order-preserving map $(\mathbb{N},\le)\to(\mathbb{N},\le)$. It has a left adjoint $L$, where $L(n)\le m$ exactly when $n\le G(m)$. How many boxes must a customer buy to get at least $40$ pens?'
+            solution_sketch: 'A monotone map $f\colon P\to D(\{a,b\})$ needs $f(0)\le f(1)$, and in a discrete preorder this forces $f(0)=f(1)$. So there are $2$ monotone maps, the two constant ones. A left adjoint $U$ gives a bijection with the functions $UP\to\{a,b\}$, and there are $4$ such functions, so no such $U$ exists.'
+          - problem: 'A shop sells pens only in boxes of $6$. Let $G(m)=6m$ be the number of pens in $m$ boxes, an order-preserving map $(\mathbb{N},\le)\to(\mathbb{N},\le)$. The map $G$ has a left adjoint $L$. What is $L(40)$?'
             answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The number of boxes needed is $L(40)$, the smallest $m$ with $40\le6m$. Since $6\cdot6=36<40$ and $6\cdot7=42\ge40$, we get $L(40)=7$.'
+            solution_sketch: 'The adjunction gives $L(n)\le m$ exactly when $n\le G(m)=6m$. So $L(40)$ is the smallest $m$ with $40\le6m$. Since $6\cdot6=36<40$ and $6\cdot7=42\ge40$, we get $L(40)=7$.'
           - problem: 'A keyboard has the three keys $a,b,c$. Typing a word gives a total cost in $\mathbb{Z}/5$, and the cost of a word is the sum of the costs of its letters. How many different cost systems, that is monoid homomorphisms $\{a,b,c\}^*\to(\mathbb{Z}/5,+)$, are there?'
             answer: '125'
             answer_contract: {"kind": "exact"}
@@ -256,10 +256,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An arrow $130\to G(d)$ exists exactly when $130\le24d$, and the universal arrow ends at the least such $d$. Since $24\cdot5=120<130$ and $24\cdot6=144\ge130$, we get $d=6$.'
-          - problem: 'Let $\mathcal C$ be the chain $0<1<2$ and $\mathcal D$ the chain $0<1<2<3$, regarded as categories, and let $G\colon\mathcal D\to\mathcal C$ be the order-preserving map with $G(0),G(1),G(2),G(3)=0,1,2,2$. The universal arrow from $1$ to $G$ ends at an object $d$ with $1\le G(d)$. What is $d$?'
+          - problem: 'Let $\mathcal C$ be the chain $0<1<2$ and $\mathcal D$ the chain $0<1<2<3$, regarded as categories, and let $G\colon\mathcal D\to\mathcal C$ be the order-preserving map with $G(0),G(1),G(2),G(3)=0,1,2,2$. The universal arrow from $1$ to $G$ ends at an object $d$ of $\mathcal D$. What is $d$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The universal arrow ends at the least $d$ with $1\le G(d)$, not at the largest one, because every other arrow must factor through it. Since $G(0)=0<1$ and $G(1)=1$, the correct object is $d=1$.'
+            solution_sketch: 'An arrow $1\to G(d)$ exists exactly when $1\le G(d)$. The universal arrow ends at the least such $d$, because every other arrow must factor through it. Since $G(0)=0<1$ and $G(1)=1$, the object is $d=1$.'
           - problem: 'Let $\mathcal C$ be the chain $0<1<2$ and $\mathcal D$ the chain $0<1<2<3$, regarded as categories, and let $G\colon\mathcal D\to\mathcal C$ be the order-preserving map with $G(0),G(1),G(2),G(3)=0,0,0,2$. A universal arrow from $2$ to $G$ is an arrow $2\to G(d)$ through which every arrow $2\to G(e)$ factors. Which object $d$ does it end at?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -281,14 +281,14 @@ topics:
         key_prerequisites: [hom-set-adjunction-definition]
         constraints: 'Construct the composite and the comparison hom-set correspondences for composed or repeated adjoints, deriving the order from their variances. Uniqueness follows by Yoneda applied to the composite natural correspondence, not by evaluating one adjoint object; in posets, items evaluate the unique adjoint or the composite adjoint at an object.'
         exemplars:
-          - problem: 'Eggs are packed $3$ to a box and boxes are packed $2$ to a crate. On the poset $(\mathbb{Z},\le)$ the functors $F(c)=2c$ (boxes in $c$ crates) and $H(b)=3b$ (eggs in $b$ boxes) have right adjoints $G$ and $K$, and the composite $HF$ has the right adjoint $GK$. How many full crates can be made from $20$ eggs?'
+          - problem: 'Eggs are packed $3$ to a box and boxes are packed $2$ to a crate. On the poset $(\mathbb{Z},\le)$ the functors $F(c)=2c$ (boxes in $c$ crates) and $H(b)=3b$ (eggs in $b$ boxes) have right adjoints $G$ and $K$. Let $R$ be the right adjoint of the composite $HF$. What is $R(20)$, the number of full crates that $20$ eggs make?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The right adjoint of $HF$ is $GK$, and $HF(c)=6c$ is the number of eggs in $c$ crates. So $GK(20)$ is the largest $c$ with $6c\le20$. Since $6\cdot3=18\le20$ and $6\cdot4=24>20$, the answer is $3$.'
-          - problem: 'The functor $F(c)=2c$ on $(\mathbb{Z},\le)$ has a right adjoint $G$. A right adjoint is unique up to isomorphism, and isomorphic objects of a poset are equal, so $G(d)$ is determined by $F$. What is $G(11)$?'
+            solution_sketch: 'The right adjoint of $HF$ is $GK$, and $HF(c)=6c$ is the number of eggs in $c$ crates. So $R(20)$ is the largest $c$ with $6c\le20$. Since $6\cdot3=18\le20$ and $6\cdot4=24>20$, the answer is $3$.'
+          - problem: 'The functor $F(c)=2c$ on $(\mathbb{Z},\le)$ has a right adjoint $G$. What is $G(11)$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The adjunction $F\dashv G$ says that $2c\le d$ exactly when $c\le G(d)$. So $G(11)$ is the largest $c$ with $2c\le11$. Since $2\cdot5=10\le11$ and $2\cdot6=12>11$, we get $G(11)=5$.'
+            solution_sketch: 'A right adjoint is unique up to isomorphism, and isomorphic objects of a poset are equal. So $G$ is fixed by $F$. The adjunction $F\dashv G$ says that $2c\le d$ exactly when $c\le G(d)$. So $G(11)$ is the largest $c$ with $2c\le11$, and $2\cdot5=10\le11<12$ gives $G(11)=5$.'
           - problem: 'On $(\mathbb{Z},\le)$ the functor $G(d)=\lfloor d/3\rfloor$ has a left adjoint $F''$, and a left adjoint is unique up to isomorphism. What is $F''(5)$?'
             answer: '15'
             answer_contract: {"kind": "exact"}
@@ -297,14 +297,14 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The composite is $JHF(c)=30c$, the number of eggs in $c$ crates, and the number of full crates is its right adjoint at $130$. This is the largest $c$ with $30c\le130$. Since $30\cdot4=120\le130$ and $30\cdot5=150>130$, the answer is $4$.'
-          - problem: 'In $\mathbf{Set}$ we have $(-\times A)\dashv(-)^A$ and $(-\times B)\dashv(-)^B$. The composite $(-\times A)\times B$ has the right adjoint $E\mapsto(E^B)^A$. If $E$ has $2$ elements, $A$ has $2$ elements and $B$ has $3$ elements, how many elements does $(E^B)^A$ have?'
+          - problem: 'In $\mathbf{Set}$ we have $(-\times A)\dashv(-)^A$ and $(-\times B)\dashv(-)^B$. Let $R$ be the right adjoint of the composite $E\mapsto(E\times A)\times B$. If $E$ has $2$ elements, $A$ has $2$ elements and $B$ has $3$ elements, how many elements does $R(E)$ have?'
             answer: '64'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $E^B$ has $2^3=8$ elements. The set $(E^B)^A$ is the set of functions from $A$ to a set of $8$ elements, so it has $8^2=64$ elements.'
-          - problem: 'Let $F(c)=c+4$ and $H(d)=2d$ on $(\mathbb{Z},\le)$, with right adjoints $G$ and $K$. The right adjoint of $HF$ is $GK$. What is its value at $21$?'
+            solution_sketch: 'The right adjoint of a composite is the composite of the right adjoints in reverse order. So $R(E)=(E^B)^A$. The set $E^B$ has $2^3=8$ elements. Then $(E^B)^A$ has $8^2=64$ elements.'
+          - problem: 'Let $F(c)=c+4$ and $H(d)=2d$ on $(\mathbb{Z},\le)$, with right adjoints $G$ and $K$. What is the value at $21$ of the right adjoint of the composite $HF$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The right adjoint of a composite $HF$ is $GK$, which applies $K$ first and then $G$. Here $K(21)=\lfloor21/2\rfloor=10$ and $G(10)=10-4=6$. So $GK(21)=6$, while the order $K(G(21))$ gives $\lfloor17/2\rfloor=8$.'
+            solution_sketch: 'The right adjoint of a composite $HF$ is $GK$, which applies $K$ first and then $G$. Here $K(21)=\lfloor21/2\rfloor=10$ and $G(10)=10-4=6$. So the value is $6$, while the order $K(G(21))$ gives $\lfloor17/2\rfloor=8$.'
           - problem: 'Write the full proof that, if $F$ is left adjoint to $G$ between categories $\mathcal{C}$ and $\mathcal{D}$, and $H$ is left adjoint to $K$ between categories $\mathcal{D}$ and $\mathcal{E}$, then $HF$ is left adjoint to $GK$, and the hom-set bijection is natural in the objects of $\mathcal{C}$ and of $\mathcal{E}$. Then compare with the solution.'
             answer: 'HF is left adjoint to GK'
             answer_contract: {"kind": "none"}
@@ -353,10 +353,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The adjunction says $x\to R(4,6)$ exists exactly when $x\to4$ and $x\to6$ exist, that is, when $x$ divides both $4$ and $6$. So $R(4,6)$ is the greatest common divisor in the divisibility order. The common divisors are $1$ and $2$, and the greater one is $2$.'
-          - problem: 'For the diagonal functor $\Delta\colon\mathbf{Set}\to\mathbf{Set}\times\mathbf{Set}$ and its right adjoint $R$, the product, the unit at $X$ is an arrow $X\to R\Delta X$. For $X=\{1,2\}$, what does $\eta_X$ send $2$ to?'
+          - problem: 'For the diagonal functor $\Delta\colon\mathbf{Set}\to\mathbf{Set}\times\mathbf{Set}$ and its right adjoint $R$, the unit at $X$ is an arrow $X\to R\Delta X$. For $X=\{1,2\}$, what does $\eta_X$ send $2$ to?'
             answer: '(2, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The unit is the transpose of the identity of $\Delta X=(X,X)$, which is the pair $(1_X,1_X)$. By the product universal property this pair corresponds to the diagonal function $x\mapsto(x,x)$. So $\eta_X(2)=(2,2)$.'
+            solution_sketch: 'The right adjoint $R$ of $\Delta$ is the product. The unit is the transpose of the identity of $\Delta X=(X,X)$, which is the pair $(1_X,1_X)$. By the product universal property this pair is the diagonal function $x\mapsto(x,x)$. So $\eta_X(2)=(2,2)$.'
           - problem: 'In $\mathbf{Set}$, the coproduct (disjoint union) $S\colon\mathbf{Set}\times\mathbf{Set}\to\mathbf{Set}$ and the diagonal functor $\Delta$ are adjoint in one direction. Is the coproduct the left adjoint or the right adjoint of $\Delta$?'
             answer: 'left'
             answer_contract: {"kind": "label", "options": [["left", "left adjoint", "the left adjoint", "it is the left adjoint"], ["right", "right adjoint", "the right adjoint", "it is the right adjoint"]]}
@@ -415,10 +415,10 @@ topics:
             answer: '243'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A way of handing out prizes is a function from the set of $5$ students to the set of $3$ prizes. There are $3$ choices for each of the $5$ students, so there are $3^5=243$ ways.'
-          - problem: 'In $\mathbf{Set}$ the currying adjunction gives $C^{A\times B}\cong(C^B)^A$. If $A$ has $2$ elements, $B$ has $3$ elements and $C$ has $2$ elements, how many elements does $C^{A\times B}$ have?'
+          - problem: 'In $\mathbf{Set}$, let $A$ have $2$ elements, $B$ have $3$ elements and $C$ have $2$ elements. How many elements does the set $C^{A\times B}$ of functions $A\times B\to C$ have?'
             answer: '64'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $A\times B$ has $2\cdot3=6$ elements. A function $A\times B\to C$ chooses one of $2$ values for each of the $6$ elements, so there are $2^6=64$ functions.'
+            solution_sketch: 'Currying gives $C^{A\times B}\cong(C^B)^A$. The set $C^B$ has $2^3=8$ elements, so $(C^B)^A$ has $8^2=64$ elements. Directly, $A\times B$ has $6$ elements and each has $2$ values, so $2^6=64$.'
           - problem: 'Take the same sets $A=B=\{0,1\}$ and a five-point set $E''$ with evaluation rows $(0,0)$, $(0,1)$, $(1,0)$, $(1,1)$ and $(1,0)$. Is $E''$ with this evaluation an exponential object $B^A$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "it is an exponential object", "an exponential object"], ["no", "it is not", "false", "it is not an exponential object", "not an exponential object"]]}
@@ -523,10 +523,10 @@ topics:
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The inverse transpose is the homomorphism that agrees with $f$ on the letters, and it adds the values of the letters. So the value on $bab$ is $f(b)+f(a)+f(b)=-2+3-2=-1$.'
-          - problem: 'A clock has $12$ hours, and the monoid $M=(\mathbb{Z}/12,+)$ describes turning the hour hand. A word in the elements of $M$ lists successive turns, and the counit $\varepsilon_M$ of the free-monoid adjunction evaluates a word as one turn. What is $\varepsilon_M(5,9,8)$?'
+          - problem: 'A clock has $12$ hours, and the monoid $M=(\mathbb{Z}/12,+)$ describes turning the hour hand. A word in the elements of $M$ lists successive turns. What is the value of the counit $\varepsilon_M$ of the free-monoid adjunction on the word $(5,9,8)$?'
             answer: '10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The counit adds the turns in $M=\mathbb{Z}/12$. The sum is $5+9+8=22$. Since $22=12+10$, the remainder is $10$.'
+            solution_sketch: 'The counit evaluates the word in $M=\mathbb{Z}/12$, so it adds the turns. The sum is $5+9+8=22$. Since $22=12+10$, the remainder is $10$.'
           - problem: 'For the free-monoid adjunction, the counit at the free monoid $FX=\{a,b\}^*$ is a homomorphism $\varepsilon_{FX}\colon(UFX)^*\to FX$. How many letters does $\varepsilon_{FX}$ of the word of words $\big((b,a),(\,),(a,b,b)\big)$ have?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -539,10 +539,10 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The counit is a homomorphism, so it turns the word $(4,4)$ into the product of its letters. In $(\mathbb{Z},+)$ this product is the sum $4+4=8$, not the first letter $4$.'
-          - problem: 'A bank account is modeled by $M=(\mathbb{Z},+)$, in euros. A word in the elements of $M$ lists the deposits and withdrawals of a week, for example $(200,-80,50)$, and the counit $\varepsilon_M$ of the free-monoid adjunction evaluates a word as the total change. What is $\varepsilon_M(200,-80,50)$?'
+          - problem: 'A bank account is modeled by $M=(\mathbb{Z},+)$, in euros. A word in the elements of $M$ lists the deposits and withdrawals of a week, for example $(200,-80,50)$. What is $\varepsilon_M(200,-80,50)$ for the counit $\varepsilon_M$ of the free-monoid adjunction, in euros?'
             answer: '170'
             answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
-            solution_sketch: 'The counit adds the amounts in $(\mathbb{Z},+)$. The total is $200+(-80)+50=170$ euros.'
+            solution_sketch: 'The counit evaluates the word in $(\mathbb{Z},+)$, so it adds the amounts. The total is $200+(-80)+50=170$ euros.'
           - problem: 'Write the full proof that, in the free-monoid adjunction $F\dashv U$ with $F(X)=X^*$ and hom-set correspondence $\Phi$, the unit $\eta_X=\Phi_{X,X^*}(1_{X^*})$ sends every letter $x$ to the one-letter word $(x)$, the counit $\varepsilon_M=\Phi^{-1}_{UM,M}(1_{UM})$ sends every word $m_1\cdots m_k$ of elements of $M$ to the product $m_1\cdots m_k$ and the empty word to the identity element, and $\eta$ and $\varepsilon$ are natural transformations. Then compare with the solution.'
             answer: 'Unit inserts letters; counit multiplies'
             answer_contract: {"kind": "none"}
@@ -593,10 +593,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Step 1 (naturality of $\Phi$, second variable): apply naturality in $D$ to the map $h: FC \to D$ acting on $1_{FC}$: $\Phi(h) = \Phi(h \circ 1_{FC}) = Gh \circ \Phi(1_{FC}) = Gh \circ \eta_C$. Step 2 (naturality of $\Psi = \Phi^{-1}$, first variable): dually, naturality in $C$ applied to $k: C \to GD$ acting on $1_{GD}$ gives $\Psi(k) = \Psi(1_{GD} \circ k) = \Psi(1_{GD}) \circ Fk = \varepsilon_D \circ Fk$. Step 3 (first direction): $\Psi(\Phi(h)) = \varepsilon_D \circ FGh \circ F\eta_C = h \circ \varepsilon_{FC} \circ F\eta_C = h \circ 1_{FC} = h$, using the naturality square $\varepsilon_D \circ FGh = h \circ \varepsilon_{FC}$ and the triangle identity $\varepsilon_{FC} \circ F\eta_C = 1_{FC}$. Step 4 (second direction): $\Phi(\Psi(k)) = G\varepsilon_D \circ GFk \circ \eta_C = G\varepsilon_D \circ \eta_{GD} \circ k = 1_{GD} \circ k = k$, using the naturality square $GFk \circ \eta_C = \eta_{GD} \circ k$ and the triangle identity $G\varepsilon_D \circ \eta_{GD} = 1_{GD}$. Step 5 (conclusion): $\Phi$ and $\Psi$ are mutually inverse, so the unit and counit determine the whole adjunction bijection.'
     diagnostic_exemplar:
-      problem: 'Let $F\dashv U$ be the free-monoid adjunction with counit $\varepsilon$. The monoid $M=(\mathbb{Z}/3,+,0)$ gives the free monoid $FUM$ on the elements $0,1,2$. The counit $\varepsilon_M$ sends a word to the sum of its letters in $M$. Find $\varepsilon_M$ of the word $2,2,2,1$.'
+      problem: 'Let $F\dashv U$ be the free-monoid adjunction with counit $\varepsilon$. The monoid $M=(\mathbb{Z}/3,+,0)$ gives the free monoid $FUM$ on the elements $0,1,2$. Find $\varepsilon_M$ of the word $2,2,2,1$.'
       answer_contract: {"kind":"exact"}
       answer: '1'
-      solution_sketch: 'The counit multiplies out the word in $M$. The sum is $2+2+2+1=7$, and $7\equiv 1 \pmod 3$.'
+      solution_sketch: 'The counit multiplies out the word in $M$, which here means it adds the letters. The sum is $2+2+2+1=7$, and $7\equiv 1 \pmod 3$.'
     anki_seeds:
       - front: "Unit of $F\\dashv G$ (type and transpose)?"
         back: "$\\eta\\colon 1\\Rightarrow GF$, with $\\eta_C=\\Phi(1_{FC})$."
@@ -657,7 +657,7 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The unit $\eta^{\prime}_{UM}$ sends $3$ to the word $[3,3]$ of two generators of $F(UM)$. The counit $\varepsilon_M$ evaluates this word in $M$, which means adding, so $U\varepsilon_M$ gives $3+3=6$. Since $6\ne3$, the second triangle identity fails.'
-          - problem: 'In the free-monoid adjunction replace the unit by $\eta^{\prime}(x)=xx$ and keep the counit that multiplies a word of words out. Multiplying out the doubled letters undoes the doubling. Does the first triangle identity still hold?'
+          - problem: 'In the free-monoid adjunction replace the unit by $\eta^{\prime}(x)=xx$ and keep the counit that multiplies a word of words out. Does the first triangle identity still hold?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it holds", "it still holds", "yes it holds"], ["no", "it fails", "it does not hold", "no it fails"]]}
             solution_sketch: 'On the one-letter word $a$ the composite sends $a$ to the word $(aa)$ and then to $aa$. Since $aa\ne a$, the identity fails.'
@@ -728,10 +728,10 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $\Phi(3)=3+2=5\equiv0$, and then $\Psi(0)=1+0=1$ in $\mathbb{Z}/5$. If the triangle identities held, $\Psi\Phi$ would return $3$, so the result $1$ shows that they fail.'
-          - problem: 'A dial has $12$ positions. A unit turns the dial $5$ positions forward and a counit turns it $b$ positions forward. They satisfy the triangle identities exactly when one turn followed by the other leaves the dial where it started. What is $b$?'
+          - problem: 'A dial has $12$ positions. A unit turns the dial $5$ positions forward and a counit turns it $b$ positions forward. The unit and counit satisfy the triangle identities. What is $b$, with $0\le b<12$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The two turns must add up to a multiple of $12$. Solving $5+b=12$ with $0\le b<12$ gives $b=7$.'
+            solution_sketch: 'The triangle identities say that one turn followed by the other leaves the dial where it started, so the two turns add up to a multiple of $12$. Solving $5+b=12$ with $0\le b<12$ gives $b=7$.'
           - problem: 'On the one-object category of $(\mathbb{Z}/6,+)$ let $F=G=\mathrm{Id}$. How many pairs $(\eta,\varepsilon)$ of arrows are the unit and counit of an adjunction?'
             answer: '6'
             answer_contract: {"kind":"exact"}
@@ -740,10 +740,10 @@ topics:
             answer: 'εF∘Fη'
             answer_contract: {"kind":"label","options":[["εF∘Fη","εF ∘ Fη","εF after Fη","eps F o F eta","epsilon F o F eta","the first","Fη then εF","F eta then eps F"],["Fε∘ηF","Fε ∘ ηF","Fε after ηF","F eps o eta F","F epsilon o eta F","the second","ηF then Fε","eta F then F eps"]]}
             solution_sketch: 'The 2-cell $F\eta$ goes from $F$ to $FGF$, and $\varepsilon F$ goes from $FGF$ back to $F$. So $\varepsilon F\circ F\eta$ is a 2-cell from $F$ to $F$, as the identity requires. The other composite is not defined, because $\eta F$ does not have the right source.'
-          - problem: 'On the one-object category of $(\mathbb{Z},+)$ let $F=G=\mathrm{Id}$, with unit $\eta=-4$. Define $\Phi(h)=Gh\circ\eta$ and $\Psi(k)=\varepsilon\circ Fk$ on arrows. The maps $\Phi$ and $\Psi$ are inverse to each other exactly when $\eta$ and $\varepsilon$ satisfy the triangle identities. If they do, what is $\Psi(9)$?'
+          - problem: 'On the one-object category of $(\mathbb{Z},+)$ let $F=G=\mathrm{Id}$, with unit $\eta=-4$. Define $\Phi(h)=Gh\circ\eta$ and $\Psi(k)=\varepsilon\circ Fk$ on arrows. Let $\eta$ and $\varepsilon$ satisfy the triangle identities. What is $\Psi(9)$?'
             answer: '13'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The triangle identities force $\varepsilon+\eta=0$, so $\varepsilon=4$. Then $\Psi(9)=\varepsilon+9=13$. As a check, $\Phi(13)=13+\eta=9$, so $\Phi$ returns the arrow $9$.'
+            solution_sketch: 'The triangle identities make $\Phi$ and $\Psi$ inverse to each other, which forces $\varepsilon+\eta=0$, so $\varepsilon=4$. Then $\Psi(9)=\varepsilon+9=13$. As a check, $\Phi(13)=13+\eta=9$, so $\Phi$ returns the arrow $9$.'
     diagnostic_exemplar:
       problem: 'Let $F\dashv U$ be the free-monoid adjunction on $\mathbf{Set}$ with unit $\eta$ and counit $\varepsilon$. Let $X=\{a,b,c\}$ and let $w=cabbc$ be a word in $FX$. The first triangle identity is the equation $\varepsilon_{FX}\circ F\eta_X=1_{FX}$. Find the length of the word $\varepsilon_{FX}(F\eta_X(w))$.'
       answer_contract: {"kind":"exact"}
@@ -1082,10 +1082,10 @@ topics:
             answer: '96'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The reflector sends an order to the least multiple of $12$ that is at least the order. Since $7\cdot12=84<85$ and $8\cdot12=96\ge85$, we get $L(85)=96$.'
-          - problem: 'The quaternion group $Q_8$ has the presentation $\langle r,s\mid r^4=1,\ s^2=r^2,\ srs^{-1}=r^{-1}\rangle$. Its reflection into abelian groups is a quotient of the free abelian group on $r,s$. What are the invariant factors of the reflection of $Q_8$?'
+          - problem: 'The quaternion group $Q_8$ has the presentation $\langle r,s\mid r^4=1,\ s^2=r^2,\ srs^{-1}=r^{-1}\rangle$. What are the invariant factors of the reflection of $Q_8$ into abelian groups?'
             answer: '2, 2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Written additively, the relations are $4r=0$, $2s=2r$ and $2r=0$, the last from $srs^{-1}=r^{-1}$. So $2r=0$ and $2s=0$, and the reflection is $\mathbb{Z}/2\times\mathbb{Z}/2$, whose invariant factors are $2$ and $2$.'
+            solution_sketch: 'The reflection is the quotient of the free abelian group on $r,s$ by the relations. Written additively, the relations are $4r=0$, $2s=2r$ and $2r=0$, the last from $srs^{-1}=r^{-1}$. So $2r=0$ and $2s=0$, and the reflection is $\mathbb{Z}/2\times\mathbb{Z}/2$, whose invariant factors are $2$ and $2$.'
           - problem: 'Let $G=\mathbb{Z}/4\times S_3$, where $S_3=\langle r,s\mid r^3=1,\ s^2=1,\ srs=r^{-1}\rangle$. What are the invariant factors of the reflection of $G$ into abelian groups?'
             answer: '2, 4'
             answer_contract: {"kind":"exact"}
@@ -1269,22 +1269,22 @@ topics:
         key_prerequisites: [adjunctions]
         constraints: 'Preservation by the forgetful functor from Grp is tested on products, equalizers and pullbacks of small groups, in word problems with multiplication and division, and the failure of coproducts is a verdict. One full-proof exemplar is kept.'
         exemplars:
-          - problem: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ is a right adjoint, so it preserves products. Let $A$ have $6$ elements and $B$ have $7$ elements. How many elements does the underlying set $U(A\times B)$ have?'
+          - problem: 'Let $U\colon\mathbf{Grp}\to\mathbf{Set}$ be the forgetful functor. Let $A$ have $6$ elements and $B$ have $7$ elements. How many elements does the underlying set $U(A\times B)$ have, where $A\times B$ is the product in $\mathbf{Grp}$?'
             answer: '42'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Because $U$ preserves products, $U(A\times B)$ is the product $UA\times UB$ of the underlying sets. It has $6\cdot7=42$ elements.'
+            solution_sketch: 'The functor $U$ is a right adjoint, so it preserves products. Hence $U(A\times B)$ is the product $UA\times UB$ of the underlying sets. It has $6\cdot7=42$ elements.'
           - problem: 'Let $F$ be the free-group functor, left adjoint to $U\colon\mathbf{Grp}\to\mathbf{Set}$, and let $A$ and $B$ be groups. For a set $X$ the sets $\mathrm{Hom}_{\mathbf{Grp}}(FX,A)$ and $\mathrm{Hom}_{\mathbf{Grp}}(FX,B)$ have $m$ and $n$ elements. How many functions $X\to U(A\times B)$ are there?'
             answer: 'm*n'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The adjunction gives $\mathrm{Hom}_{\mathbf{Set}}(X,U(A\times B))\cong\mathrm{Hom}_{\mathbf{Grp}}(FX,A\times B)$. A homomorphism into a product is a pair of homomorphisms into the factors, so there are $m\cdot n=mn$ functions.'
-          - problem: 'Let $p,q\colon\mathbb{Z}/6\to\mathbb{Z}/6$ be the homomorphisms $p(x)=x$ and $q(x)=4x$. The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ preserves equalizers. How many elements does the equalizer of $p$ and $q$ in $\mathbf{Grp}$ have?'
+          - problem: 'Let $p,q\colon\mathbb{Z}/6\to\mathbb{Z}/6$ be the homomorphisms $p(x)=x$ and $q(x)=4x$. How many elements does the equalizer of $p$ and $q$ in $\mathbf{Grp}$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $U$ preserves equalizers, the equalizer in $\mathbf{Grp}$ has the same underlying set as the equalizer in $\mathbf{Set}$, namely $\{x:x=4x\}$. The condition $3x\equiv0\pmod 6$ gives $x\in\{0,2,4\}$, so there are $3$ elements.'
-          - problem: 'Let $A=B=\mathbb{Z}/6$ and $C=\mathbb{Z}/3$, with $p\colon A\to C$ and $q\colon B\to C$ both given by reduction modulo $3$. The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ preserves pullbacks. How many elements does the pullback $A\times_CB$ have in $\mathbf{Grp}$?'
+            solution_sketch: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ is a right adjoint, so it preserves equalizers. The equalizer in $\mathbf{Grp}$ has the same underlying set as the equalizer in $\mathbf{Set}$, namely $\{x:x=4x\}$. The condition $3x\equiv0\pmod 6$ gives $x\in\{0,2,4\}$, so there are $3$ elements.'
+          - problem: 'Let $A=B=\mathbb{Z}/6$ and $C=\mathbb{Z}/3$, with $p\colon A\to C$ and $q\colon B\to C$ both given by reduction modulo $3$. How many elements does the pullback $A\times_CB$ have in $\mathbf{Grp}$?'
             answer: '12'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The pullback has the underlying set $\{(a,b):p(a)=q(b)\}$, the pairs with $a\equiv b\pmod 3$. Each of the $6$ values of $a$ pairs with $2$ values of $b$, so there are $6\cdot2=12$ elements.'
+            solution_sketch: 'The forgetful functor to $\mathbf{Set}$ is a right adjoint, so it preserves pullbacks. The pullback has the underlying set $\{(a,b):p(a)=q(b)\}$, the pairs with $a\equiv b\pmod 3$. Each of the $6$ values of $a$ pairs with $2$ values of $b$, so there are $6\cdot2=12$ elements.'
           - problem: 'A tournament has $3$ teams, and every team is given one of $5$ colors and one of $2$ mascots. How many different ways are there to assign a color and a mascot to all $3$ teams?'
             answer: '1000'
             answer_contract: {"kind":"exact"}
@@ -1343,10 +1343,10 @@ topics:
             answer_contract: {"kind":"none"}
             solution_sketch: 'Step 1: let F be a left adjoint to G, with F from C to D. After passing to opposite categories, F read from C opposite to D opposite is a right adjoint, since the adjunction reverses. Step 2: a colimit of a diagram in C is a limit of the corresponding diagram in C opposite, and a colimiting cocone in C is a limiting cone in C opposite. Step 3: by RAPL, the right adjoint of Step 1 preserves this limiting cone in C opposite. Step 4: translating back along Step 2, F carries colimiting cocones in C to colimiting cocones in D, so F preserves every colimit that exists in C. Step 5: the free monoid functor M from Set to Mon is left adjoint to the forgetful functor, so by the preserved colimit just proved it preserves binary coproducts; the coproduct of two sets is their disjoint union, and M of a disjoint union is the coproduct in Mon of the two free monoids. This completes the proof; compare your write-up with the solution.'
     diagnostic_exemplar:
-      problem: 'For a set $A$ the functor $(-)^A\colon\mathbf{Set}\to\mathbf{Set}$ is a right adjoint, so it preserves products. Let $A$ have $2$ elements, $B$ have $3$ elements and $C$ have $4$ elements. How many elements does $B^A\times C^A$ have?'
+      problem: 'For a set $A$ the functor $(-)^A\colon\mathbf{Set}\to\mathbf{Set}$ sends a set $X$ to the set of functions $A\to X$. Let $A$ have $2$ elements, $B$ have $3$ elements and $C$ have $4$ elements. How many elements does $B^A\times C^A$ have?'
       answer_contract: {"kind":"exact"}
       answer: '144'
-      solution_sketch: '$B^A$ has $3^2=9$ elements and $C^A$ has $4^2=16$ elements. The product has $9\cdot16=144$ elements.'
+      solution_sketch: 'The functor $(-)^A$ is a right adjoint, so it preserves products. Hence $B^A\times C^A\cong(B\times C)^A$. This set has $(3\cdot4)^2=144$ elements. Directly, $B^A$ has $9$ and $C^A$ has $16$ elements, and $9\cdot16=144$.'
     anki_seeds:
       - front: "What does RAPL state about adjoints?"
         back: "Right Adjoints Preserve Limits."

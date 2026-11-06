@@ -50,10 +50,10 @@ topics:
             answer: '[[5], [6, 7], [8]]'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Right whiskering gives $(\mu T)_A=\mu_{T(A)}$, which concatenates the outer two levels of $L$. The lists $[[5],[6,7]]$ and $[[8]]$ join into $[[5],[6,7],[8]]$.'
-          - problem: 'Both $T\mu$ and $\mu T$ go from $T^3$ to $T^2$. Take the list monad and $L=[[[1],[2]],[[3]]]$. Is $(T\mu)_A(L)$ the same list as $(\mu T)_A(L)$?'
+          - problem: 'Take the list monad and $L=[[[1],[2]],[[3]]]$. Is $(T\mu)_A(L)$ the same list as $(\mu T)_A(L)$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "it is not", "not the same", "different", "they differ", "not equal", "they are not the same"], ["yes", "it is", "the same", "equal", "they are the same"]]}
-            solution_sketch: 'Here $(T\mu)_A(L)=T(\mu_A)(L)=[[1,2],[3]]$, because $T\mu$ concatenates inside each entry. But $(\mu T)_A(L)=\mu_{T(A)}(L)=[[1],[2],[3]]$. The two lists differ, so having equal types does not make two transformations equal and the answer is no.'
+            solution_sketch: 'Both $T\mu$ and $\mu T$ go from $T^3$ to $T^2$. Here $(T\mu)_A(L)=T(\mu_A)(L)=[[1,2],[3]]$, because $T\mu$ concatenates inside each entry. But $(\mu T)_A(L)=\mu_{T(A)}(L)=[[1],[2],[3]]$. The two lists differ, so equal types do not make two transformations equal and the answer is no.'
           - problem: 'In the list monad (with $T(f)$ applying $f$ to every entry and $\mu_A$ concatenating), what is $(T\mu)_A(L)$ for $L=[[[4],[5,6]],[[7,8],[9]]]$?'
             answer: '[[4, 5, 6], [7, 8, 9]]'
             answer_contract: {"kind": "exact"}
@@ -347,10 +347,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'At employee $2$ we get $g(6)=5$, a real extension. At $3$ and $5$ the first lookup already gives $\ast$, and $Tg$ fixes $\ast$, so the composite is $\ast$. At $4$ we get $g(7)=\ast$. So $\ast$ occurs for employees $3$, $4$ and $5$, which is $3$ employees.'
-          - problem: 'Let $T(A)=A\cup\{\ast\}$ be the maybe monad with unit the inclusion $\eta_A$, and let $A=\{1,2\}$. The set $T(T(A))$ has the elements $1$ and $2$ and two extra points, one adjoined by each copy of $T$. The two unit laws determine $\mu_A\colon T(T(A))\to T(A)$. How many elements of $T(T(A))$ must $\mu_A$ send to the extra point of $T(A)$?'
+          - problem: 'Let $T(A)=A\cup\{\ast\}$ be the maybe monad with unit the inclusion $\eta_A$, and let $A=\{1,2\}$. The set $T(T(A))$ has the elements $1$ and $2$ and two extra points, one adjoined by each copy of $T$. How many elements of $T(T(A))$ does $\mu_A\colon T(T(A))\to T(A)$ send to the extra point of $T(A)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The law $\mu\circ T\eta=1_T$ sends the extra point adjoined by the outer $T$ to the extra point of $T(A)$. The law $\mu\circ\eta T=1_T$ does the same for the extra point of the inner $T$. So both extra points go to $\ast$, which is $2$ elements.'
+            solution_sketch: 'The unit law $\mu\circ T\eta=1_T$ sends the extra point adjoined by the outer $T$ to the extra point of $T(A)$. The unit law $\mu\circ\eta T=1_T$ does the same for the extra point of the inner $T$. So both extra points go to $\ast$, which is $2$ elements.'
           - problem: 'Define $\nu\colon T(T(A))\to T(A)$ for the maybe monad on $A=\{1,2\}$ by $\nu(a)=a$ for $a\in A$, $\nu(\ast_{\mathrm{in}})=\ast$ for the extra point of the inner $T$, and $\nu(\ast_{\mathrm{out}})=1$ for the extra point adjoined by the outer $T$. The map $T(\eta_A)$ sends the extra point $\ast$ of $T(A)$ to $\ast_{\mathrm{out}}$. What is $\nu\big(T(\eta_A)(\ast)\big)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -637,10 +637,10 @@ topics:
             answer: '2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Each algebra is fixed by the value at $*$, so $a(*)\in\{4,5\}$ and $b(*)\in\{6,9\}$. The morphism law at $*$ reads $f(a(*))=b(*)$, which fixes $b(*)$ once $a(*)$ is chosen. So there are 2 pairs, with $(a(*),b(*))$ equal to $(4,9)$ or $(5,6)$.'
-          - problem: 'Shirt sizes S, M, L form a pointed set with default size M, and colours R, G, B form a pointed set with default colour G. These are $T$-algebras for the maybe monad. A rule from sizes to colours must send the default size to the default colour. How many such rules are there?'
+          - problem: 'Shirt sizes S, M, L have the default size M, and colors R, G, B have the default color G. The sizes and the colors are algebras for the maybe monad $T$. How many morphisms of $T$-algebras are there from the sizes to the colors?'
             answer: '9'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A rule is a morphism of $T$-algebras, so it must send the basepoint M to the basepoint G. The other two sizes, S and L, can each go to any of the 3 colours, which gives $3\times 3=9$ rules.'
+            solution_sketch: 'An algebra for the maybe monad is a pointed set, so the sizes and colors are pointed sets with basepoints M and G. A morphism of $T$-algebras must send the basepoint M to the basepoint G. The other two sizes, S and L, can each go to any of the 3 colors, which gives $3\times 3=9$ morphisms.'
           - problem: 'Let $A=\{1,2,3\}$ with $a(*)=2$ and $B=\{5,7\}$ with $b(*)=7$ be $T$-algebras for the maybe monad. Define $f\colon A\to B$ by $f(1)=5$, $f(3)=7$ and an unknown value $f(2)$, so that $f$ is a morphism of $T$-algebras. What value must $f(2)$ have?'
             answer: '7'
             answer_contract: {"kind":"exact"}
@@ -690,14 +690,14 @@ topics:
             answer: '11'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Join the two lists into $[5,9,4,7,10]$. The algebra law lets us evaluate the blocks first: $a([5,9])=14 \bmod 12=2$ and $a([4,7,10])=21 \bmod 12=9$. Then $a([2,9])=11$, so the hand ends at hour 11.'
-          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $A=\{0,1\}$ and let $a(w)$ be the number of entries of $w$ equal to $1$, taken mod 2. This is a $T$-algebra, and it gives a monoid with product $x\cdot y=a([x,y])$. What is $1\cdot 1$?'
+          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $A=\{0,1\}$ and let $a(w)$ be the number of entries of $w$ equal to $1$, taken mod 2. This is a $T$-algebra. What is the product $1\cdot 1$ in the monoid that it defines on $A$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The list $[1,1]$ has two entries equal to 1, and two mod 2 is 0. So $1\cdot 1=a([1,1])=0$.'
-          - problem: 'The algebras of the list monad on $\mathbf{Set}$ are the monoids: the identity is $a([\,])$ and the product is $x\cdot y=a([x,y])$. How many list-monad algebra structures are there on the set $A=\{0,1\}$?'
+            solution_sketch: 'A list-monad algebra gives a monoid with product $x\cdot y=a([x,y])$. The list $[1,1]$ has two entries equal to 1, and two mod 2 is 0. So $1\cdot 1=a([1,1])=0$.'
+          - problem: 'How many algebra structures for the list monad on $\mathbf{Set}$ are there on the set $A=\{0,1\}$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Choose the identity element, which can be 0 or 1. The other element $x$ then satisfies either $x\cdot x=e$ or $x\cdot x=x$, and the rest of the table is forced by the identity. That gives $2\times 2=4$ structures.'
+            solution_sketch: 'A list-monad algebra is a monoid: the identity is $a([\,])$ and the product is $x\cdot y=a([x,y])$. Pick the identity element, which is 0 or 1. The other element $x$ then satisfies either $x\cdot x=e$ or $x\cdot x=x$, and the rest of the table is forced by the identity. That gives $2\times 2=4$ structures.'
           - problem: 'A combination lock has a dial with the 10 positions $0,\dots,9$. A list $w$ of turns ends at the position $a(w)=(\text{sum of the entries}) \bmod 10$, so $a$ is a list-monad algebra with $a([\,])=0$. Which single turn $x$ undoes a turn of 3, that is, satisfies $a([3,x])=a([\,])$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
@@ -715,22 +715,22 @@ topics:
         key_prerequisites: [adjunctions]
         constraints: "Construct free algebra (TC,mu_C), match its laws to the monad laws, and recover the free-forgetful transpose maps. Do not supply the free object or hom-set bijection before asking only for an evaluation."
         exemplars:
-          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $(TC,\mu_C)$ be the free $T$-algebra on $C=\{x,y\}$, which is the set of all finite words in $x,y$ with concatenation. Let $\mathbb Z/2$ carry the $T$-algebra structure $a(w)=(\text{sum of the entries}) \bmod 2$. How many morphisms of $T$-algebras are there from $(TC,\mu_C)$ to $\mathbb Z/2$?'
+          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $C=\{x,y\}$. Let $\mathbb Z/2$ carry the $T$-algebra structure $a(w)=(\text{sum of the entries}) \bmod 2$. How many morphisms of $T$-algebras are there from the free $T$-algebra on $C$ to $\mathbb Z/2$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'By the free-forgetful adjunction a morphism out of the free algebra is fixed by its restriction along $\eta_C$, which can be any function from $C$ to the underlying set of $\mathbb Z/2$. Each of the 2 letters has 2 possible values, so there are $2\times 2=4$ morphisms.'
-          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. In the free algebra $(TC,\mu_C)$ on $C=\{x,y\}$ the structure map is $\mu_C$. How many entries has the word $\mu_C([[x,y],[\,],[y]])$?'
+            solution_sketch: 'The free algebra on $C$ is $(TC,\mu_C)$. By the free-forgetful adjunction a morphism out of it is fixed by its restriction along $\eta_C$, which is any function from $C$ to the underlying set of $\mathbb Z/2$. Each of the 2 letters has 2 possible values, so there are $2\times 2=4$ morphisms.'
+          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $C=\{x,y\}$. The free $T$-algebra on $C$ has a structure map that takes a list of words to a word. How many entries has the word that this map gives for $[[x,y],[\,],[y]]$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The structure map $\mu_C$ concatenates the inner lists. The inner lists have 2, 0 and 1 entries, so the word has $2+0+1=3$ entries.'
-          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $(\mathbb Z,a)$ be the $T$-algebra with $a(w)=$ the sum of the entries of $w$. Let $f\colon\{x,y\}\to\mathbb Z$ with $f(x)=2$ and $f(y)=-5$. The transpose of $f$ is the morphism of algebras $f^\#=a\circ Tf$ from the free algebra on $\{x,y\}$ to $(\mathbb Z,a)$. What is $f^\#([x,y,y,x])$?'
+            solution_sketch: 'The free algebra on $C$ is $(TC,\mu_C)$, so the structure map is $\mu_C$. It concatenates the inner lists. The inner lists have 2, 0 and 1 entries, so the word has $2+0+1=3$ entries.'
+          - problem: 'For the list monad $T$ on $\mathbf{Set}$, $TX=X^*$ is the set of finite lists, $\eta_X(x)=[x]$, and $\mu_X$ concatenates a list of lists. Let $(\mathbb Z,a)$ be the $T$-algebra with $a(w)=$ the sum of the entries of $w$. Let $f\colon\{x,y\}\to\mathbb Z$ with $f(x)=2$ and $f(y)=-5$. Let $f^\#$ be the morphism of $T$-algebras from the free algebra on $\{x,y\}$ to $(\mathbb Z,a)$ with $f^\#\circ\eta=f$. What is $f^\#([x,y,y,x])$?'
             answer: '-6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The map $Tf$ replaces each letter by its value, so $Tf([x,y,y,x])=[2,-5,-5,2]$. Applying $a$ adds the entries, so $f^\#([x,y,y,x])=2-5-5+2=-6$.'
-          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{x,y\}$ and let $(B,b)$ be the pointed set $B=\{0,1,2\}$ with $b(*)=0$. Let $f(x)=2$ and $f(y)=1$. The transpose $f^\#=b\circ Tf$ is a morphism from the free algebra $A+\{*\}$ to $(B,b)$. What is $f^\#(*)$?'
+            solution_sketch: 'The transpose is $f^\#=a\circ Tf$. The map $Tf$ replaces each letter by its value, so $Tf([x,y,y,x])=[2,-5,-5,2]$. Applying $a$ adds the entries, so $f^\#([x,y,y,x])=2-5-5+2=-6$.'
+          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{x,y\}$ and let $(B,b)$ be the pointed set $B=\{0,1,2\}$ with $b(*)=0$. Let $f(x)=2$ and $f(y)=1$. Let $f^\#$ be the morphism of $T$-algebras from the free $T$-algebra on $A$ to $(B,b)$ with $f^\#\circ\eta_A=f$. What does $f^\#$ send the extra point $*$ of $TA$ to?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The map $Tf$ fixes $*$, and then $b$ sends $*$ to the basepoint. So $f^\#(*)=b(*)=0$, as every morphism of algebras sends basepoint to basepoint.'
+            solution_sketch: 'The transpose is $f^\#=b\circ Tf$. The map $Tf$ fixes $*$, and then $b$ sends $*$ to the basepoint. So $f^\#(*)=b(*)=0$, as every morphism of algebras sends basepoint to basepoint.'
           - problem: 'Which law of the monad $T$, taken at the object $C$, is the equation $\mu_C\circ\mu_{TC}=\mu_C\circ T\mu_C$ that the free algebra $(TC,\mu_C)$ must satisfy?'
             answer: 'the associativity law'
             answer_contract: {"kind":"label","options":[["the unit law","unit law","unit","the monad unit law","monad unit law"],["the associativity law","associativity law","associativity","the monad associativity law","monad associativity","associative law"]]}
@@ -739,14 +739,14 @@ topics:
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'By the free-forgetful adjunction a morphism out of the free algebra is fixed by its restriction to $A$, which is any function $A\to B$. Each of the 2 elements of $A$ has 4 choices, so there are $4^2=16$ morphisms.'
-          - problem: 'A warehouse scanner records the items scanned as a list from the set $C=\{\text{box},\text{tube},\text{bag}\}$. The total weight of a list is the sum of the item weights modulo 5, which is a $T$-algebra structure on $\mathbb Z/5$ for the list monad. How many morphisms of $T$-algebras are there from the free algebra on $C$, the set of all scanned lists, to $\mathbb Z/5$?'
+          - problem: 'A warehouse scanner records the items scanned as a list from the set $C=\{\text{box},\text{tube},\text{bag}\}$. The total weight of a list is the sum of the item weights modulo 5, which is a $T$-algebra structure on $\mathbb Z/5$ for the list monad. How many morphisms of $T$-algebras are there from the $T$-algebra of all scanned lists to $\mathbb Z/5$?'
             answer: '125'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism out of the free algebra is fixed by the weights it gives to the 3 kinds of item, and any weights in $\mathbb Z/5$ are allowed. Each kind has 5 choices, so there are $5^3=125$ morphisms.'
-          - problem: 'A survey question is answered yes or no, or it is skipped. The possible entries form the free algebra $A+\{*\}$ for the maybe monad with $A=\{\text{yes},\text{no}\}$ and $*$ meaning skipped. A scoring is the pointed set $\{0,1,2\}$ in which a skipped entry scores 0. How many morphisms of $T$-algebras are there from the entries to the scoring?'
+            solution_sketch: 'The $T$-algebra of all scanned lists is the free algebra on $C$. A morphism out of it is fixed by the weights it gives to the 3 kinds of item, and any weights in $\mathbb Z/5$ are allowed. Each kind has 5 choices, so there are $5^3=125$ morphisms.'
+          - problem: 'A survey question has the answers yes and no, or it is skipped. The entries yes, no and skipped form a $T$-algebra for the maybe monad, with $*$ meaning skipped. A scoring is the pointed set $\{0,1,2\}$ in which a skipped entry scores 0. How many morphisms of $T$-algebras are there from the entries to the scoring?'
             answer: '9'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism must send $*$ to the score 0, and it is free on the two answers. Yes and no can each score 0, 1 or 2, so there are $3\times 3=9$ morphisms.'
+            solution_sketch: 'The entries form the free algebra $A+\{*\}$ with $A=\{\text{yes},\text{no}\}$. A morphism must send $*$ to the score 0, and it is fixed by the two answers. Yes and no can each score 0, 1 or 2, so there are $3\times 3=9$ morphisms.'
           - problem: 'Write the full proof that for every monad $(T,\eta,\mu)$ on a category $\mathcal C$ and every object $C$ the pair $(TC,\mu_C)$ is a $T$-algebra, and that $F^T\dashv U^T$ is an adjunction with unit $\eta$. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind":"none"}
@@ -810,14 +810,14 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Compute $T(p)=G(F(p))$ for $p=0,\dots,6$. It gives $2,2,2,5,5,5,6$. This is larger than $p$ for $p=0,1,3,4$ and equal to $p$ for $p=2,5,6$, so the count is 4.'
-          - problem: 'For the free-monoid and forgetful adjunction $F\dashv U$ between $\mathbf{Set}$ and $\mathbf{Mon}$, the monad $T=UF$ has $\mu_A=U\varepsilon_{FA}$, which multiplies a word of words inside the free monoid $FA$. For $A=\{1,2\}$, what is $\mu_A([[2,1],[1,2]])$?'
+          - problem: 'For the free-monoid and forgetful adjunction $F\dashv U$ between $\mathbf{Set}$ and $\mathbf{Mon}$, let $T=UF$ be the induced monad with multiplication $\mu$. For $A=\{1,2\}$, what is $\mu_A([[2,1],[1,2]])$?'
             answer: '2, 1, 1, 2'
             answer_contract: {"kind":"list","ordered":true,"member":{"kind":"exact"}}
-            solution_sketch: 'The counit at the free monoid $FA$ multiplies the inner words in order, that is, it concatenates them. The word $[2,1]$ followed by the word $[1,2]$ is the single word $[2,1,1,2]$.'
-          - problem: 'For the free-group and forgetful adjunction $F\dashv U$ between $\mathbf{Set}$ and $\mathbf{Grp}$, the monad $T=UF$ has $\mu_A=U\varepsilon_{FA}$, which multiplies a word of words inside the free group on $A$. For $A=\{a,b\}$, how many letters has the reduced word $\mu_A([[b,a],[a^{-1},b]])$?'
+            solution_sketch: 'The multiplication is $\mu_A=U\varepsilon_{FA}$. The counit at the free monoid $FA$ multiplies the inner words in order, that is, it concatenates them. The word $[2,1]$ followed by the word $[1,2]$ is the single word $[2,1,1,2]$.'
+          - problem: 'For the free-group and forgetful adjunction $F\dashv U$ between $\mathbf{Set}$ and $\mathbf{Grp}$, let $T=UF$ be the induced monad with multiplication $\mu$. For $A=\{a,b\}$, how many letters has the reduced word $\mu_A([[b,a],[a^{-1},b]])$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiply the inner words: the word $b\,a$ followed by $a^{-1}\,b$ is $b\,a\,a^{-1}\,b$. The adjacent pair $a\,a^{-1}$ cancels and leaves $b\,b$, a reduced word with 2 letters.'
+            solution_sketch: 'The multiplication is $\mu_A=U\varepsilon_{FA}$, which multiplies the inner words. The word $b\,a$ followed by $a^{-1}\,b$ is $b\,a\,a^{-1}\,b$. The adjacent pair $a\,a^{-1}$ cancels and leaves $b\,b$, a reduced word with 2 letters.'
           - problem: 'Let $F\dashv G$ have unit $\eta$ and counit $\varepsilon$, and let $T=GF$ and $\mu=G\varepsilon F$. The unit law $\mu\circ\eta T=1_T$ is proved with one of the two triangle identities, $G\varepsilon\circ\eta G=1_G$ or $\varepsilon F\circ F\eta=1_F$. Which one is it?'
             answer: 'the identity for G'
             answer_contract: {"kind":"label","options":[["the identity for G","G","1_G","the G identity","G epsilon after eta G","G epsilon composed with eta G"],["the identity for F","F","1_F","the F identity","epsilon F after F eta","epsilon F composed with F eta"]]}
@@ -839,22 +839,22 @@ topics:
         key_prerequisites: [monads]
         constraints: "Construct both resolution functors on objects and morphisms and verify their composite equals T. In Kleisli use a unit-law rewrite; in Eilenberg-Moore recover the free carrier, structure and arrow."
         exemplars:
-          - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$, with $F_T(f)=\eta_B\circ f$ and $U_T(g)=\mu_B\circ Tg$. Let $g\colon\{p\}\to T\{p\}$ be the Kleisli arrow with $g(p)=(p,3)$. $U_T(g)$ sends $(p,4)$ to a pair $(p,k)$. What is $k$?'
+          - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$. Let $g\colon\{p\}\to T\{p\}$ be the Kleisli arrow with $g(p)=(p,3)$. The forgetful functor $U_T$ of the Kleisli adjunction sends $g$ to a function that sends $(p,4)$ to a pair $(p,k)$. What is $k$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $U_T(g)(p,4)=\mu_B(Tg(p,4))=\mu_B((g(p),4))=\mu_B(((p,3),4))$. The multiplication adds the two logs, so the result is $(p,3+4)=(p,7)$ and $k=7$.'
+            solution_sketch: 'The functor $U_T$ sends $g$ to $\mu_B\circ Tg$. So $U_T(g)(p,4)=\mu_B(Tg(p,4))=\mu_B(((p,3),4))$. The multiplication adds the two numbers, so the result is $(p,3+4)=(p,7)$ and $k=7$.'
           - problem: 'Let $T$ be the monad on $\mathbf{Set}$ with $TA=A\times\mathbb N$, $\eta_A(a)=(a,0)$ and $\mu_A((a,m),n)=(a,m+n)$. The arrows $A\to B$ of the Kleisli category are the functions $A\to TB$, with $F_T(f)=\eta_B\circ f$ and $U_T(g)=\mu_B\circ Tg$. Let $f\colon\{1,2\}\to\{1,2\}$ swap the two elements. What is the value of $U_TF_T(f)(1,5)$?'
             answer: '(2, 5)'
             answer_contract: {"kind":"coordinates","arity":2}
             solution_sketch: 'Compute $U_TF_T(f)(1,5)=\mu_B(T(\eta_B\circ f)(1,5))=\mu_B(((f(1),0),5))=(f(1),0+5)=(2,5)$. The functor $U_TF_T$ is $T$, not the identity, so it applies $f$ and keeps the log 5.'
-          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. The free algebra $F^T(A)=(TA,\mu_A)$ has the structure map $\mu_A\colon T^2A\to TA$. For $A=\{1,2\}$ the set $T^2A$ has four points: $1$, $2$, the inner extra point and the outer extra point. How many points of $T^2A$ does $\mu_A$ send to the extra point of $TA$?'
+          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $a$ be the structure map of the free $T$-algebra on $A=\{1,2\}$. The set $T^2A$ has four points: $1$, $2$, the inner extra point and the outer extra point. How many points of $T^2A$ does $a$ send to the extra point of the codomain?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The map $\mu_A$ sends $1$ to $1$ and $2$ to $2$. It sends both extra points to the extra point $*$ of $TA$. So 2 points go to $*$.'
-          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,2,3,4\}$, $B=\{5,6\}$ and let $g\colon A\to TB$ be the Kleisli arrow with $g(1)=5$, $g(2)=*$, $g(3)=*$, $g(4)=6$. The functor $U_T$ sends $g$ to $\mu_B\circ Tg\colon TA\to TB$. How many of the five points of $TA$ does $U_T(g)$ send to the extra point of $TB$?'
+            solution_sketch: 'The free algebra on $A$ is $(TA,\mu_A)$, so the structure map is $\mu_A\colon T^2A\to TA$. It sends $1$ to $1$ and $2$ to $2$. It sends both extra points to the extra point $*$ of $TA$. So 2 points go to $*$.'
+          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A=\{1,2,3,4\}$, $B=\{5,6\}$ and let $g\colon A\to TB$ be the Kleisli arrow with $g(1)=5$, $g(2)=*$, $g(3)=*$, $g(4)=6$. Let $U_T$ be the forgetful functor of the Kleisli adjunction. How many of the five points of $TA$ does $U_T(g)$ send to the extra point of $TB$?'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The map $U_T(g)$ acts as $g$ on $A$ and fixes the extra point. So it sends $2$, $3$ and $*$ to the extra point of $TB$, and it sends $1$ and $4$ to $5$ and $6$. The count is 3.'
+            solution_sketch: 'The functor $U_T$ sends $g$ to $\mu_B\circ Tg\colon TA\to TB$. This map acts as $g$ on $A$ and fixes the extra point. So it sends $2$, $3$ and $*$ to the extra point of $TB$, and it sends $1$ and $4$ to $5$ and $6$. The count is 3.'
           - problem: 'Every monad $T$ has a Kleisli resolution and an Eilenberg-Moore resolution, and both are adjunctions that induce $T$. Which of the two is the terminal resolution of $T$?'
             answer: 'Eilenberg-Moore'
             answer_contract: {"kind":"label","options":[["Kleisli","the Kleisli resolution","Kleisli resolution"],["Eilenberg-Moore","the Eilenberg-Moore resolution","Eilenberg-Moore resolution","algebras","the category of algebras"]]}
@@ -929,10 +929,10 @@ topics:
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The Kleisli composite first applies $f$ and then $g$. Student 0 goes to class 2, and class 2 goes to room 5. So $(g\circ_T f)(0)=5$, and $K$ gives the same value on the generator 0.'
-          - problem: 'A machine keeps a counter modulo 5 next to each item. Stage $f$ passes item $p$ on and adds 2 to the counter. This is the Kleisli arrow $f(p)=(p,2)$ of the writer monad modulo 5, and its comparison image is $K(f)(p,m)=(p,m+2 \bmod 5)$. The counter shows 3 when $p$ enters the stage. What does it show when $p$ leaves?'
+          - problem: 'A machine keeps a counter modulo $5$ next to each item. Stage $f$ passes item $p$ on and adds $2$ to the counter. This is the Kleisli arrow $f(p)=(p,2)$ of the writer monad modulo $5$. The counter shows $3$ when $p$ enters the stage. What does it show when $p$ leaves?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The stage adds 2 to the counter value 3. We get $3+2=5$, and $5 \bmod 5=0$, so the counter shows 0.'
+            solution_sketch: 'The comparison image of $f$ sends $(p,m)$ to $(p,m+2 \bmod 5)$. With $m=3$ we get $3+2=5$, and $5 \bmod 5=0$. So the counter shows $0$.'
           - problem: 'Work with the writer monad modulo 5: $T(X)=X\times\mathbb Z/5$, $\eta(x)=(x,0)$ and $\mu((x,m),n)=(x,m+n)$. Let $A=B=\{p\}$ and $f(p)=(p,2)$, so that $K(f)(p,m)=(p,2+m)$. The morphism law is $K(f)\circ\mu_A=\mu_B\circ T(K(f))$. Evaluate both sides at the element $((p,1),1)$ of $T(TA)$. What is the second component of their common value?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -970,10 +970,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is","every pointed set is free","yes it is","yes every one"],["no","it is not","not every pointed set is free","no it is not","no not every one"]]}
             solution_sketch: 'A pointed set $(B,p)$ is isomorphic to the free algebra on $A=B\setminus\{p\}$, because $A+\{*\}$ matches $B$ with $*$ matched to $p$. So for the maybe monad the comparison functor is essentially surjective.'
-          - problem: 'A clinic keeps for each of 4 patients one of 2 treatments, or none. These records are the Kleisli arrows from a 4-element set to a 2-element set for the maybe monad. The comparison functor is fully faithful, so they match the algebra morphisms between the free algebras $A+\{*\}$ and $B+\{*\}$. How many such morphisms are there?'
+          - problem: 'A clinic keeps for each of $4$ patients one of $2$ treatments, or none. These records are the Kleisli arrows from a $4$-element set $A$ to a $2$-element set $B$ for the maybe monad. How many morphisms of algebras are there between the free algebras $A+\{*\}$ and $B+\{*\}$?'
             answer: '81'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism of free algebras is fixed by a function $A\to B+\{*\}$. The set $B+\{*\}$ has 3 elements, and each of the 4 patients has 3 choices, so there are $3^4=81$ morphisms.'
+            solution_sketch: 'The comparison functor is fully faithful, so Kleisli arrows match the algebra morphisms between the free algebras. A morphism of free algebras is fixed by a function $A\to B+\{*\}$. The set $B+\{*\}$ has $3$ elements and each of the $4$ patients has $3$ choices, so there are $3^4=81$ morphisms.'
           - problem: 'A till adds the prices of the products on a receipt modulo 5, which gives the list-monad algebra $\mathbb Z/5$. There are 3 products. How many morphisms of $T$-algebras are there from the free algebra on the 3 products, the set of all receipts, to $\mathbb Z/5$?'
             answer: '125'
             answer_contract: {"kind":"exact"}
@@ -1007,10 +1007,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is correct","correct","yes it is","right"],["no","it is not correct","not correct","incorrect","wrong","no it is not"]]}
             solution_sketch: 'A right adjoint need not be faithful. The functor $\mathrm{Ob}\colon\mathbf{Cat}\to\mathbf{Set}$ is right adjoint to the discrete-category functor, and it is not faithful, because it forgets the arrows. So the reason is wrong.'
-          - problem: 'Let $h\colon\mathbb Z/6\to\mathbb Z/3$ be the group homomorphism with $h(1)=1$. The comparison functor $R$ sends $h$ to the algebra morphism whose underlying function is $U(h)$, the same function on the underlying sets. What is $U(h)(5)$?'
+          - problem: 'Let $h\colon\mathbb Z/6\to\mathbb Z/3$ be the group homomorphism with $h(1)=1$. The comparison functor $R$ sends $h$ to a morphism of algebras. What is the value at $5$ of the underlying function of that morphism?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The comparison commutes with the forgetful right adjoint, so its underlying function is $U(h)$. We have $h(5)=5 \bmod 3=2$, so $U(h)(5)=2$.'
+            solution_sketch: 'The comparison commutes with the forgetful right adjoint, so the underlying function of the morphism is $U(h)$, the same function on the underlying sets. We have $h(5)=5 \bmod 3=2$. So the value at $5$ is $2$.'
           - problem: 'A school books a group of $x$ students into a booking for $y$ students exactly when $x\le T(y)$, where $T(y)=4\lceil y/4\rceil$ is the number of seats in the minibuses needed for $y$ students. These are the arrows of the Kleisli category of the monad $T$ on the poset of whole numbers. For how many $y$ in $\{1,\dots,12\}$ can a group of 11 students be booked into a booking for $y$ students?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1019,10 +1019,10 @@ topics:
             answer: '256'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A Kleisli arrow is a function from the 4 answers to $TB=B+\{*\}$, which has $3+1=4$ elements. Each answer has 4 choices, so there are $4^4=256$ steps.'
-          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. The comparison functor $K$ commutes with the left adjoints, so $KF_T(A)=F^T(A)=(TA,\mu_A)$. Let $A$ have 9 elements. How many elements has the underlying set $U^TKF_T(A)$?'
+          - problem: 'For the maybe monad $T$ on $\mathbf{Set}$, $TX=X+\{*\}$ is $X$ with one extra point $*$, the unit $\eta_X$ is the inclusion, $\mu_X$ sends both extra points of $T^2X$ to $*$, and $Tf$ fixes $*$. Let $A$ have $9$ elements. How many elements has the underlying set $U^TKF_T(A)$ of the comparison functor $K$ applied to the free Kleisli object?'
             answer: '10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $KF_T(A)=F^T(A)=(TA,\mu_A)$, and $U^T$ forgets the structure map. The underlying set is $TA=A+\{*\}$, which has $9+1=10$ elements.'
+            solution_sketch: 'The comparison functor $K$ commutes with the left adjoints, so $KF_T(A)=F^T(A)=(TA,\mu_A)$. The functor $U^T$ forgets the structure map. The underlying set is $TA=A+\{*\}$, which has $9+1=10$ elements.'
           - problem: 'Write the full proof that for a monad $T$ on $\mathcal C$ the Kleisli adjunction is the initial resolution of $T$, the Eilenberg-Moore adjunction is the terminal resolution, and the unique morphism between them is the comparison functor $K$. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind":"none"}
@@ -1178,10 +1178,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First $A\Rightarrow B$ is the largest $Z$ with $\min(Z,1)\le 0$, which is $0$. Next $0\Rightarrow A$ is the largest $Z$ with $\min(Z,0)\le 1$, which is $2$. Finally $2\Rightarrow A$ is the largest $Z$ with $\min(Z,2)\le 1$, which is $1$.'
-          - problem: 'In the chain $0\le1\le2$ the terminal object is $2$, and a closed term of a type is an arrow from $2$ to the object that interprets the type. With $A=1$ and $B=0$ the formula $((A\Rightarrow B)\Rightarrow A)\Rightarrow A$ is interpreted as the object $1$. Is there a closed term of this type in the model?'
+          - problem: 'In the chain $0\le1\le2$ the terminal object is $2$, and a closed term of a type is an arrow from $2$ to the object that interprets the type. Let $A=1$ and $B=0$. Is there a closed term of the type $((A\Rightarrow B)\Rightarrow A)\Rightarrow A$ in the model?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "it is not", "not", "there is none", "no closed term", "there is no closed term", "it has no closed term"], ["yes", "it is", "there is", "there is one", "a closed term exists", "it has a closed term"]]}
-            solution_sketch: 'A closed term would be an arrow from the terminal object $2$ to the object $1$. In the chain there is an arrow $2\to 1$ only if $2\le 1$, which is false, so there is no closed term in this model.'
+            solution_sketch: 'Compute the interpretation in the chain. $A\Rightarrow B=1\Rightarrow0=0$, then $0\Rightarrow1=2$, then $2\Rightarrow1=1$. A closed term would be an arrow $2\to 1$, which exists only if $2\le 1$. That is false, so there is no closed term in this model.'
           - problem: 'Which projection out of $A\times B$ interprets the open term $x\colon A,\,y\colon B\vdash x\colon A$?'
             answer: 'first projection'
             answer_contract: {"kind": "label", "options": [["first projection", "first", "pi1", "pi_1", "\u03c01", "the first projection", "\u03c0_1", "\\pi_1"], ["second projection", "second", "pi2", "pi_2", "\u03c02", "the second projection", "\u03c0_2", "\\pi_2"]]}
@@ -1294,10 +1294,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Restriction forgets the labels of Tuesday, so an element of the fibre is fixed on Monday and free on Tuesday. Tuesday has $2$ hot-or-cold choices and $3$ weather choices, so the fibre has $2\cdot 3=6$ elements.'
-          - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $m\colon a\to b$. Let $P(b)=\{u,v,t\}$ and $P(a)=\{w_1,w_2\}$, with restriction $u\mapsto w_1$, $v\mapsto w_1$, $t\mapsto w_2$. By the density theorem $P$ is the colimit of the representables $y_x$ with one copy for each pair $(x,p)$ with $p\in P(x)$, and an arrow from the copy at $(a,q)$ to the copy at $(b,p)$ whenever the restriction sends $p$ to $q$. How many points does this colimit have at $a$?'
+          - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $m\colon a\to b$. Let $P(b)=\{u,v,t\}$ and $P(a)=\{w_1,w_2\}$, with restriction $u\mapsto w_1$, $v\mapsto w_1$, $t\mapsto w_2$. Write $P$ as a colimit of representable presheaves $y_x$. How many points does this colimit have at $a$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The colimit is computed pointwise at $a$. The $5$ copies each contribute one point, because $\mathrm{Hom}(a,a)$ and $\mathrm{Hom}(a,b)$ have one element each. The arrows glue the copies at $w_1$, $u$ and $v$ into one point and those at $w_2$ and $t$ into another, leaving $2$ points, which is the size of $P(a)$.'
+            solution_sketch: 'By the density theorem $P$ is the colimit of the representables with one copy $y_x$ for each pair $(x,p)$ with $p\in P(x)$, and an arrow from the copy at $(a,q)$ to the copy at $(b,p)$ whenever the restriction sends $p$ to $q$. The colimit is computed pointwise at $a$, and the $5$ copies each give one point. The arrows glue $w_1,u,v$ into one point and $w_2,t$ into another, leaving $2$ points.'
           - problem: 'Let $\mathcal C$ have objects $a,b$ and one non-identity arrow $a\to b$. The presheaf $P$ has $P(b)=P(a)=\{0,1\}$ with restriction $0\mapsto1$, $1\mapsto0$, and $Q$ has $Q(b)=Q(a)=\{0,1\}$ with the identity as restriction. To which element of $(P\times Q)(a)$ does the restriction of $P\times Q$ send $(0,1)$?'
             answer: '(1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1350,10 +1350,10 @@ topics:
           answer: '8'
           reveal: 'Each element is either in the subset or not, which is a choice of one of $2$ values, so there are $2^3=8$ subsets. A subobject classifier packages this choice into one object, $\Omega=\{0,1\}$.'
         exemplars:
-          - problem: 'In $\mathbf{Set}$ a subobject classifier is an object $\Omega$ with a bijection $\mathrm{Hom}(X,\Omega)\cong\mathrm{Sub}(X)$ for every set $X$. A set $X$ with $4$ elements has $16$ subobjects, which are its subsets. How many elements does $\Omega$ have?'
+          - problem: 'In $\mathbf{Set}$ a subobject classifier is an object $\Omega$ with a bijection $\mathrm{Hom}(X,\Omega)\cong\mathrm{Sub}(X)$ for every set $X$. Let $X$ be a set with $4$ elements. How many elements does $\Omega$ have?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $\mathrm{Hom}(X,\Omega)$ has $|\Omega|^4$ elements, and it must have $16$ elements, the number of subobjects of $X$. Since $2^4=16$, the object $\Omega$ has $2$ elements.'
+            solution_sketch: 'The subobjects of $X$ are its subsets, so $\mathrm{Sub}(X)$ has $2^4=16$ elements. The set $\mathrm{Hom}(X,\Omega)$ has $|\Omega|^4$ elements, so $|\Omega|^4=16$. Since $2^4=16$, the object $\Omega$ has $2$ elements.'
           - problem: 'Let $\Omega=\{0,1,2\}$ with $\mathrm{true}(*)=0$. Every subset of every set is the pullback of $\mathrm{true}$ along some map. Take $X=\{*\}$ and the empty subset $S=\varnothing$. How many maps $\chi\colon X\to\Omega$ have $\varnothing$ as the pullback of $\mathrm{true}$ along $\chi$?'
             answer: '2'
             answer_contract: {"kind": "exact"}

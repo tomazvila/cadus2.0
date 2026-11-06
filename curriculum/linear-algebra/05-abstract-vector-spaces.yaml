@@ -139,10 +139,10 @@ topics:
             answer: '3v - 2u'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Add the additive inverse of $2\mathbf{u}$ to both sides. Associativity and the inverse axiom reduce the left side to $\mathbf{x}$, and the right side becomes $3\mathbf{v} - 2\mathbf{u}$. Hence $\mathbf{x} = 3\mathbf{v} - 2\mathbf{u}$.'
-          - problem: 'The complex numbers form a vector space over $\mathbb{R}$, and in every vector space $(-1)\mathbf{z} = -\mathbf{z}$. Compute $(-1)z$ for $z = 4 - 7i$.'
+          - problem: 'The complex numbers form a vector space over $\mathbb{R}$. Find the additive inverse of $z = 4 - 7i$ in this space.'
             answer: '-4+7i'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Multiplying by the scalar $-1$ gives the additive inverse. Negating the real part and the imaginary part of $4 - 7i$ gives $-4 + 7i$.'
+            solution_sketch: 'The additive inverse $w$ of $z$ satisfies $z + w = 0$. So $w = -4 + 7i$. This equals $(-1)z$, the scalar $-1$ times $z$.'
           - problem: 'Let $V$ be the set $\mathbb{R}$ with the operations $x \oplus y = x + y - 1$ and $c \odot x = cx - c + 1$. Compute $0 \odot 7$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -233,34 +233,34 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is a subspace","subspace","it is","yes it is a subspace","yes, it is a subspace","W is a subspace","yes, it is"],["no","it is not a subspace","not a subspace","it is not","no it is not a subspace","no, it is not a subspace","W is not a subspace","no, it is not"]]}
             solution_sketch: 'The zero polynomial has value $0$ at $1$, so it lies in $W$. If $p(1) = q(1) = 0$, then $(p + q)(1) = 0 + 0 = 0$ and $(cp)(1) = c \cdot 0 = 0$. Both closure laws hold, so $W$ is a subspace.'
-          - problem: 'A lab accepts a calibration curve $p$ in $P_2$ only when its reading at $x = 0$ is the reference value $2$. The curves $p(x) = x^2 + 2$ and $q(x) = 4x + 2$ are accepted. What reading does the combined curve $p + q$ give at $x = 0$?'
-            answer: '4'
+          - problem: 'A lab accepts a calibration curve $p$ in $P_2$ only when its reading at $x = 0$ is a reference value $r$. The accepted curves form a subspace of $P_2$. What is $r$?'
+            answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Curves are added value by value, so $(p + q)(0) = p(0) + q(0) = 2 + 2 = 4$. The reading $4$ is not the reference value $2$, so the sum of two accepted curves is not accepted.'
-          - problem: 'Let $W$ be the set of polynomials in $P_2$ of degree exactly $2$. The polynomials $p(x) = x^2 + 3$ and $q(x) = -x^2 + 2x$ both belong to $W$. What is the degree of $p + q$?'
+            solution_sketch: 'A subspace contains the zero polynomial, whose reading at $x = 0$ is $0$. So the reference value is $r = 0$. Then $(p + q)(0) = 0 + 0 = 0$ and $(cp)(0) = 0$, so the accepted curves are closed under both operations.'
+          - problem: 'Let $W$ be the set of polynomials in $P_2$ of degree exactly $2$. The polynomials $x^2 + 3$ and $-x^2 + x$ are in $W$. What is the degree of their sum?'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The sum is $p + q = (x^2 + 3) + (-x^2 + 2x) = 2x + 3$. Its degree is $1$, so $p + q$ is not in $W$ and $W$ is not closed under addition.'
+            solution_sketch: 'The sum is $(x^2 + 3) + (-x^2 + x) = x + 3$. It has degree $1$, so it is not in $W$. Hence $W$ is not closed under addition and is not a subspace.'
           - problem: 'Let $W$ be the set of $2 \times 2$ matrices with determinant $0$. Is $W$ a subspace of $M_{2 \times 2}$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is a subspace","subspace","it is","yes it is a subspace","yes, it is a subspace","W is a subspace","yes, it is"],["no","it is not a subspace","not a subspace","it is not","no it is not a subspace","no, it is not a subspace","W is not a subspace","no, it is not"]]}
             solution_sketch: 'The matrices $\begin{pmatrix}1&0\\0&0\end{pmatrix}$ and $\begin{pmatrix}0&0\\0&2\end{pmatrix}$ both have determinant $0$. Their sum is $\begin{pmatrix}1&0\\0&2\end{pmatrix}$, which has determinant $2$. So addition is not closed and $W$ is not a subspace.'
-          - problem: 'A tax schedule is a polynomial $T$ in $P_2$, where $T(x)$ is the tax on the income $x$ thousand dollars. A schedule is called balanced when $T(1) = 0$. The schedules $p(x) = x^2 - x$ and $q(x) = 3x - 3$ are balanced. What is $(2p - 5q)(1)$?'
+          - problem: 'A tax schedule is a polynomial $T$ in $P_2$, where $T(x)$ is the tax on the income $x$ thousand dollars. A schedule is called balanced when $T(1) - T(0) = r$. The balanced schedules form a subspace of $P_2$. What is $r$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Combinations are evaluated value by value, so $(2p - 5q)(1) = 2p(1) - 5q(1) = 2 \cdot 0 - 5 \cdot 0 = 0$. The new schedule is balanced again, which shows that balanced schedules are closed under linear combinations.'
-          - problem: 'The matrices $A = \begin{pmatrix}1&2\\2&3\end{pmatrix}$ and $B = \begin{pmatrix}0&4\\4&-1\end{pmatrix}$ are symmetric. Compute $3A - B$.'
-            answer: '[[3,2],[2,10]]'
-            answer_contract: {"kind":"matrix","rows":2,"cols":2}
-            solution_sketch: 'First $3A = \begin{pmatrix}3&6\\6&9\end{pmatrix}$. Subtracting $B$ entry by entry gives $\begin{pmatrix}3&2\\2&10\end{pmatrix}$. The result is symmetric again, as the identity $(3A - B)^T = 3A^T - B^T$ predicts.'
-          - problem: 'Let $W$ be the set of polynomials $p$ in $P_2$ with $p(0) = 5$. The polynomials $p(x) = 2x + 5$ and $q(x) = x^2 + 5$ both belong to $W$. Compute $(p + q)(0)$.'
-            answer: '10'
+            solution_sketch: 'A subspace contains the zero polynomial, and for it $T(1) - T(0) = 0 - 0 = 0$. So $r = 0$. Then for balanced $p$ and $q$, $(2p - 5q)(1) - (2p - 5q)(0) = 2 \cdot 0 - 5 \cdot 0 = 0$, so the set is closed under combinations.'
+          - problem: 'Let $W$ be the set of $2 \times 2$ matrices $\begin{pmatrix}a&b\\c&d\end{pmatrix}$ with $b = c + t$. $W$ is a subspace of the space of all $2 \times 2$ matrices. What is $t$?'
+            answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $(p + q)(0) = p(0) + q(0) = 5 + 5 = 10$. The value $10$ is not $5$, so $p + q$ is not in $W$ and $W$ is not a subspace. The zero polynomial also fails, since it has value $0$ at $0$.'
-          - problem: 'Let $A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ and $B = \begin{pmatrix}1&0\\0&0\end{pmatrix}$, two matrices of determinant $0$. Compute $\det(A + B)$.'
+            solution_sketch: 'A subspace contains the zero matrix, which has $b = 0$ and $c = 0$. So $0 = 0 + t$ and $t = 0$. Then $W$ is the set of symmetric matrices, and $(aA + bB)^T = aA^T + bB^T$ shows that it is closed.'
+          - problem: 'Let $W$ be the set of polynomials $p$ in $P_2$ with $p(0) = 5$. For which number $a$ is the polynomial $a\,p$ in $W$ for every $p$ in $W$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The sum is $A + B = \begin{pmatrix}2&1\\1&1\end{pmatrix}$. Its determinant is $2 \cdot 1 - 1 \cdot 1 = 1$, not $0$. So the matrices of determinant $0$ are not closed under addition.'
+            solution_sketch: 'For $p$ in $W$ we have $(ap)(0) = a \cdot 5$. This equals $5$ only when $a = 1$. So $W$ is not closed under scalar multiplication, and the zero polynomial, with $a = 0$, is not in $W$.'
+          - problem: 'Let $W$ be the set of $2 \times 2$ matrices of determinant $0$. The matrices $A = \begin{pmatrix}1&1\\1&1\end{pmatrix}$ and $B = \begin{pmatrix}1&0\\0&0\end{pmatrix}$ are in $W$. For which number $s$ is $A + sB$ in $W$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'We have $A + sB = \begin{pmatrix}1+s&1\\1&1\end{pmatrix}$ with determinant $(1 + s) - 1 = s$. This is $0$ only for $s = 0$. So for $s = 1$ the sum of two members of $W$ is not in $W$, and $W$ is not closed under addition.'
         constraints: "conditions on P_2 or 2x2 matrices; failures exhibited by one concrete counterexample; at most two verdict items"
       - id: kp3
         name: Linear combinations and span in abstract spaces
@@ -366,10 +366,10 @@ topics:
             answer: '3 - 4x^2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Coordinates $(c_1, c_2, c_3)$ mean the polynomial $c_1 + c_2 x + c_3 x^2$. Here that is $3 + 0 \cdot x + (-4)x^2 = 3 - 4x^2$.'
-          - problem: 'The standard basis of $P_n$ consists of the monomials $1, x, x^2, \dots, x^n$. A certain space $P_n$ has a standard basis with $4$ vectors. Find $n$.'
+          - problem: 'Let $P_n$ be the space of polynomials of degree at most $n$. Its standard basis has $4$ vectors. Find $n$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The basis $\{1, x, \dots, x^n\}$ contains $n + 1$ monomials. Setting $n + 1 = 4$ gives $n = 3$.'
+            solution_sketch: 'The standard basis of $P_n$ is $\{1, x, \dots, x^n\}$, which contains $n + 1$ monomials. Setting $n + 1 = 4$ gives $n = 3$.'
           - problem: 'A sensor stores every polynomial of degree at most $7$ as its list of coordinates relative to the standard basis. How many numbers does one stored polynomial need?'
             answer: '8'
             answer_contract: {"kind":"exact"}
@@ -681,10 +681,10 @@ topics:
             answer: '[[0,1],[-1,0]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":2}
             solution_sketch: 'We have $T(1, 1) = (-1, 1) = -b_2$, so the first column is $(0, -1)$. We have $T(1, -1) = (1, 1) = b_1$, so the second column is $(1, 0)$. The matrix is $\begin{pmatrix} 0 & 1 \\ -1 & 0 \end{pmatrix}$.'
-          - problem: 'A metal plate is stretched by the factor $3$ along the direction $(1, 1)$ and by the factor $2$ along the direction $(1, -1)$, so the stretch $T$ has the matrix $\begin{pmatrix} 3 & 0 \\ 0 & 2 \end{pmatrix}$ relative to $B = \{(1, 1), (1, -1)\}$. Where does $T$ send the point $(1, 0)$?'
+          - problem: 'A metal plate is stretched by the factor $3$ along the direction $(1, 1)$ and by the factor $2$ along the direction $(1, -1)$. The stretch is $T$. Where does $T$ send the point $(1, 0)$?'
             answer: '(5/2, 1/2)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Write $(1, 0) = \frac{1}{2}(1, 1) + \frac{1}{2}(1, -1)$. The stretch gives $T(1, 0) = \frac{3}{2}(1, 1) + \frac{2}{2}(1, -1) = \left(\frac{5}{2}, \frac{1}{2}\right)$.'
+            solution_sketch: 'The matrix of $T$ relative to $B = \{(1, 1), (1, -1)\}$ is $\begin{pmatrix} 3 & 0 \\ 0 & 2 \end{pmatrix}$. Write $(1, 0) = \frac{1}{2}(1, 1) + \frac{1}{2}(1, -1)$. Then $T(1, 0) = \frac{3}{2}(1, 1) + \frac{2}{2}(1, -1) = \left(\frac{5}{2}, \frac{1}{2}\right)$.'
         constraints: 'maps on R^2 given by a formula, a geometric description or the images of the standard basis; bases {(1,1),(1,-1)} or with 0/1 entries; each T(b_j) has B-coordinates found by inspection or a 2x2 solve'
       - id: kp2
         name: Two bases give similar matrices
@@ -739,10 +739,10 @@ topics:
             answer: '[[1,0,0],[0,2,0],[0,0,4]]'
             answer_contract: {"kind":"matrix","rows":3,"cols":3}
             solution_sketch: 'We have $T(1) = 1$, $T(x) = 2x$ and $T(x^2) = 4x^2$. Their coordinate vectors $(1, 0, 0)$, $(0, 2, 0)$ and $(0, 0, 4)$ are the columns, so the matrix is $\begin{pmatrix} 1 & 0 & 0 \\ 0 & 2 & 0 \\ 0 & 0 & 4 \end{pmatrix}$.'
-          - problem: 'The shift map $T(p)(x) = p(x + 1)$ on $P_1$ has the matrix $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$ relative to the basis $\{1, x\}$. Use the matrix to find $T(3 + 2x)$.'
-            answer: '5 + 2x'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'The polynomial $3 + 2x$ has the coordinate vector $(3, 2)$. Multiplying gives $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}\begin{pmatrix} 3 \\ 2 \end{pmatrix} = \begin{pmatrix} 5 \\ 2 \end{pmatrix}$, so $T(3 + 2x) = 5 + 2x$.'
+          - problem: 'The shift map $T(p)(x) = p(x + 1)$ acts on $P_1$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
+            answer: '[[1,1],[0,1]]'
+            answer_contract: {"kind":"matrix","rows":2,"cols":2}
+            solution_sketch: 'Compute the images of the basis: $T(1) = 1$ and $T(x) = x + 1$. In the basis $\{1, x\}$ these have the coordinate vectors $(1, 0)$ and $(1, 1)$. They are the columns, so the matrix is $\begin{pmatrix} 1 & 1 \\ 0 & 1 \end{pmatrix}$.'
           - problem: 'Let $T: P_1 \to P_1$ be the shift $T(p)(x) = p(x - 1)$. Find the matrix of $T$ relative to the basis $\{1, x\}$.'
             answer: '[[1,-1],[0,1]]'
             answer_contract: {"kind":"matrix","rows":2,"cols":2}
@@ -922,14 +922,14 @@ topics:
             answer: 'x^2 - x + 1/6'
             answer_contract: {"kind":"function","vars":["x"]}
             solution_sketch: 'We have $v_2 = x - 1/2$, $\langle x^2, 1 \rangle = 1/3$ and $\langle x^2, v_2 \rangle = 1/12$. Also $\langle v_2, v_2 \rangle = 1/12$. So $v_3 = x^2 - \frac{1}{3} - \left(x - \frac{1}{2}\right) = x^2 - x + \frac{1}{6}$.'
-          - problem: 'A voltage ramp is $f(t) = t$ volts for $0 \leq t \leq 2$ seconds, and $\langle f, g \rangle = \int_0^2 f(t)g(t)\,dt$. Subtract a multiple of the constant signal $1$ from $f$ so that the remainder is orthogonal to $1$. What is the remainder?'
+          - problem: 'A voltage ramp is $f(t) = t$ volts for $0 \leq t \leq 2$ seconds, and $\langle f, g \rangle = \int_0^2 f(t)g(t)\,dt$. Find the part of $f$ that is orthogonal to the constant signal $1$. Give it as a function of $t$.'
             answer: 't - 1'
             answer_contract: {"kind":"function","vars":["t"]}
-            solution_sketch: 'We have $\langle t, 1 \rangle = \int_0^2 t\,dt = 2$ and $\langle 1, 1 \rangle = 2$. The multiple of $1$ to subtract is $2 / 2 = 1$, so the remainder is $t - 1$.'
-          - problem: 'A drift signal is $g(t) = t$ for $0 \leq t \leq 3$ hours, and $\langle f, h \rangle = \int_0^3 f(t)h(t)\,dt$. A constant offset $c$ is subtracted so that $g - c$ is orthogonal to the constant signal $1$. Find $c$.'
-            answer: '3/2'
-            answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need $\langle t - c, 1 \rangle = \int_0^3 (t - c)\,dt = \frac{9}{2} - 3c = 0$. So $c = \frac{9/2}{3} = \frac{3}{2}$.'
+            solution_sketch: 'The part of $f$ orthogonal to $1$ is $f$ minus its projection on $1$. We have $\langle t, 1 \rangle = \int_0^2 t\,dt = 2$ and $\langle 1, 1 \rangle = 2$. The projection is $1$, so the remainder is $t - 1$.'
+          - problem: 'A drift signal is $g(t) = t$ for $0 \leq t \leq 3$ hours, and $\langle f, h \rangle = \int_0^3 f(t)h(t)\,dt$. Find the part of $g$ that is orthogonal to the constant signal $1$. Give it as a function of $t$.'
+            answer: 't - 3/2'
+            answer_contract: {"kind":"function","vars":["t"]}
+            solution_sketch: 'The part of $g$ orthogonal to $1$ is $g$ minus its projection on $1$. We have $\langle t, 1 \rangle = \int_0^3 t\,dt = \frac{9}{2}$ and $\langle 1, 1 \rangle = 3$. The projection is $\frac{9/2}{3} = \frac{3}{2}$, so the remainder is $t - \frac{3}{2}$.'
           - problem: 'Apply the Gram-Schmidt process to the basis $\{1, x\}$ of $P_1$ with $\langle f, g \rangle = \int_{-1}^{1} f(x)g(x)\,dx$. On the interval $[0, 1]$ the result would be $v_2 = x - 1/2$. What is $v_2$ here?'
             answer: 'x'
             answer_contract: {"kind":"function","vars":["x"]}

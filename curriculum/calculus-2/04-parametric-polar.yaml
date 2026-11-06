@@ -96,10 +96,10 @@ topics:
             answer: 'y = 1/x + 1'
             answer_contract: {"kind":"polynomial_relation"}
             solution_sketch: 'From $x = 1/t$ we get $t = 1/x$. Then $y = 1/x + 1$. The value $x = 0$ is never reached.'
-          - problem: 'The curve $x = \sqrt{t}$, $y = 4t - 5$ for $t \ge 0$ lies on the parabola $y = 4x^2 - 5$. Does the curve trace the whole parabola?'
+          - problem: 'Eliminate the parameter from $x = \sqrt{t}$, $y = 4t - 5$ for $t \ge 0$. Does the curve trace the whole graph of the resulting Cartesian equation?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","only half","only part","it does not"],["yes","the whole parabola","it does"]]}
-            solution_sketch: 'Since $x = \sqrt{t}$ is never negative, every point of the curve has $x \ge 0$. So only the right half of the parabola is traced, and the left half is missing.'
+            solution_sketch: 'Since $x = \sqrt{t}$, we have $t = x^2$, so $y = 4x^2 - 5$. The value $x = \sqrt{t}$ is never negative, so every point of the curve has $x \ge 0$. So only the right half of the parabola is traced, and the left half is missing.'
         constraints: "parameter eliminable by a direct solve; note domain restrictions from radicals"
       - id: kp3
         name: Trigonometric parametrizations
@@ -288,10 +288,10 @@ topics:
             answer: 't > 2'
             answer_contract: {"kind":"inequality_union"}
             solution_sketch: 'First $\frac{dy}{dx} = \frac{3t^2 - 12t + 9}{2}$. Differentiate with respect to $t$ to get $3t - 6$, then divide by $\frac{dx}{dt} = 2$. So $\frac{d^2y}{dx^2} = \frac{3t - 6}{2}$, which is positive for $t > 2$.'
-          - problem: 'What is $\frac{d^2y}{dx^2}$ for $x = t^2$, $y = t^5$, given $\frac{dy}{dx} = \frac{5}{2}t^3$?'
+          - problem: 'What is $\frac{d^2y}{dx^2}$ for $x = t^2$, $y = t^5$?'
             answer: '15t/4'
             answer_contract: {"kind":"function","vars":["t"]}
-            solution_sketch: 'The derivative of $\frac{dy}{dx}$ with respect to $t$ is $\frac{15}{2}t^2$, but the second derivative is with respect to $x$. Divide by $\frac{dx}{dt} = 2t$ to get $\frac{15}{4}t$.'
+            solution_sketch: 'First, $\frac{dy}{dx} = \frac{5t^4}{2t} = \frac{5}{2}t^3$. The derivative of this with respect to $t$ is $\frac{15}{2}t^2$. Divide by $\frac{dx}{dt} = 2t$ to get $\frac{15}{4}t$.'
           - problem: 'For $x = t^2$, $y = t^3 - 3t$, for which $t$ is the curve concave up?'
             answer: 't > 0'
             answer_contract: {"kind":"inequality_union"}
@@ -885,7 +885,7 @@ topics:
         name: Identifying curves from polar equations
         key_prerequisites: [plotting-polar-points, completing-the-square]
         exemplars:
-          - problem: 'The graph of $r=10\cos\theta$ is a circle through the origin. Find its center.'
+          - problem: 'Find the center of the graph of $r=10\cos\theta$.'
             answer: '(5, 0)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Multiply by $r$ to get $r^2=10r\cos\theta$, so $x^2+y^2=10x$. Complete the square: $(x-5)^2+y^2=25$. The center is $(5,0)$ and the radius is $5$.'
@@ -901,7 +901,7 @@ topics:
             answer: '-sqrt(3)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A constant angle gives a line through the origin with slope $\tan\theta$. Here $\tan\frac{2\pi}{3}=-\sqrt{3}$. The slope is $-\sqrt{3}$.'
-          - problem: 'The graph of $r=12\sin\theta$ is a circle through the origin. Find its center.'
+          - problem: 'Find the center of the graph of $r=12\sin\theta$.'
             answer: '(0, 6)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Multiply by $r$ to get $x^2+y^2=12y$. Complete the square: $x^2+(y-6)^2=36$. The center is $(0,6)$ and the radius is $6$.'
@@ -917,7 +917,7 @@ topics:
             answer: '6*sqrt(2)'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'On the ray, $x=r\cos\theta$, so $6=r\cos\frac{\pi}{4}=\frac{r\sqrt{2}}{2}$. Dividing by $\frac{\sqrt{2}}{2}$ gives $r=\frac{12}{\sqrt{2}}=6\sqrt{2}$. The beam has travelled $6\sqrt{2}$ m.'
-          - problem: 'The graph of $r=4\cos\theta+6\sin\theta$ is a circle. Find its center.'
+          - problem: 'Find the center of the graph of $r=4\cos\theta+6\sin\theta$.'
             answer: '(2, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Multiply by $r$ to get $x^2+y^2=4x+6y$. Complete the square: $(x-2)^2+(y-3)^2=13$. The center is $(2,3)$.'
@@ -1431,10 +1431,10 @@ topics:
             answer: 'pi/3, 5pi/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Equating the radii gives $3=6\cos\theta$, so $\cos\theta=\frac{1}{2}$ and $\theta=\frac{\pi}{3}$ or $\theta=\frac{5\pi}{3}$. The circle $r=3$ never reaches the pole, so the pole is not a shared point.'
-          - problem: 'The circles $r=2\sin\theta$ and $r=2\cos\theta$ meet at the pole and at one other point. Find the other point.'
-            answer: '(1, 1)'
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Equating the radii gives $\tan\theta=1$, so $\theta=\frac{\pi}{4}$ and $r=\sqrt{2}$. Then $x=\sqrt{2}\cos\frac{\pi}{4}=1$ and $y=\sqrt{2}\sin\frac{\pi}{4}=1$. The other point is $(1,1)$.'
+          - problem: 'Find all $x$-coordinates of the points where the circles $r=2\sin\theta$ and $r=2\cos\theta$ meet. Give the set.'
+            answer: '{0, 1}'
+            answer_contract: {"kind":"set"}
+            solution_sketch: 'Equating the radii gives $\tan\theta=1$, so $\theta=\frac{\pi}{4}$ and $r=\sqrt{2}$. This point is $(1,1)$. Both circles also pass through the pole $(0,0)$, at $\theta=0$ and $\theta=\frac{\pi}{2}$, so the $x$-coordinates are $0$ and $1$.'
           - problem: 'The circles $r=2$ and $r=4\sin\theta$ meet at two points. Find the one with positive $x$-coordinate.'
             answer: '(sqrt(3), 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1451,18 +1451,18 @@ topics:
             answer: '(1/2, -sqrt(3)/2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Equating the radii gives $2\cos\theta=1$, so $\cos\theta=\frac{1}{2}$ and $\theta=\frac{\pi}{3}$ or $\frac{5\pi}{3}$. For $\theta=\frac{5\pi}{3}$, $x=\cos\frac{5\pi}{3}=\frac{1}{2}$ and $y=\sin\frac{5\pi}{3}=-\frac{\sqrt{3}}{2}$.'
-          - problem: 'Two paths in a park, measured from the fountain at the origin with $x$ pointing east, are $r=6\cos\theta$ and $r=6\sin\theta$, in metres. They cross at the fountain and at one other place. How far east of the fountain is the other crossing?'
-            answer: '3'
-            answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
-            solution_sketch: 'Equating the radii gives $\tan\theta=1$, so $\theta=\frac{\pi}{4}$ and $r=3\sqrt{2}$. Then $x=3\sqrt{2}\cos\frac{\pi}{4}=3$. The other crossing is $3$ m east of the fountain.'
+          - problem: 'Two paths in a park, measured from the fountain at the origin with $x$ pointing east, are $r=6\cos\theta$ and $r=6\sin\theta$, in metres. Find all distances east of the fountain at which the paths cross. Give the set in metres.'
+            answer: '{0, 3}'
+            answer_contract: {"kind":"set"}
+            solution_sketch: 'Equating the radii gives $\tan\theta=1$, so $\theta=\frac{\pi}{4}$ and $r=3\sqrt{2}$. Then $x=3\sqrt{2}\cos\frac{\pi}{4}=3$. Both paths also pass through the fountain, at $\theta=\frac{\pi}{2}$ and $\theta=0$, where $x=0$.'
           - problem: 'A radar at the origin covers the disc $r\le 5$ km, and a second station covers the disc $r\le 10\sin\theta$ km. The boundaries cross at two points. Find the eastern one.'
             answer: '(5*sqrt(3)/2, 5/2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Equating the radii gives $10\sin\theta=5$, so $\sin\theta=\frac{1}{2}$ and $\theta=\frac{\pi}{6}$ or $\frac{5\pi}{6}$. The eastern point has $\theta=\frac{\pi}{6}$, so $x=5\cos\frac{\pi}{6}=\frac{5\sqrt{3}}{2}$ and $y=5\sin\frac{\pi}{6}=\frac{5}{2}$.'
-          - problem: 'Setting $1+\cos\theta=1-\cos\theta$ to find where the cardioids $r=1+\cos\theta$ and $r=1-\cos\theta$ meet gives two points, $(0,1)$ and $(0,-1)$. The cardioids also meet at a third point. Find it.'
-            answer: '(0, 0)'
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The first cardioid reaches the pole at $\theta=\pi$ and the second at $\theta=0$. The two radii are never both $0$ at the same angle, so solving $r_1=r_2$ misses the pole. The third point is the pole, $(0,0)$.'
+          - problem: 'Find all $y$-coordinates of the points where the cardioids $r=1+\cos\theta$ and $r=1-\cos\theta$ meet. Give the set.'
+            answer: '{-1, 0, 1}'
+            answer_contract: {"kind":"set"}
+            solution_sketch: 'Setting $1+\cos\theta=1-\cos\theta$ gives $\cos\theta=0$, so the points are $(0,1)$ and $(0,-1)$. The first cardioid reaches the pole at $\theta=\pi$ and the second at $\theta=0$, so this equation misses the pole $(0,0)$. The $y$-coordinates are $-1$, $0$ and $1$.'
         constraints: 'intersections at special angles; always check the pole separately; points are reported in rectangular form unless angles are asked'
       - id: kp2
         name: Area between polar curves

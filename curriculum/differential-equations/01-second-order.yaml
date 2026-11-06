@@ -29,7 +29,7 @@ topics:
           answer: '0'
           reveal: 'Each derivative of $e^{3x}$ is a multiple of $e^{3x}$, so the sum is $(9-6-3)e^{3x}=0$. That is why $y=e^{rx}$ turns a differential equation into algebra in $r$.'
         exemplars:
-          - problem: 'Substitute $y=e^{rx}$ into $y''''-y''-6y=0$ and cancel the factor $e^{rx}$. What polynomial in $r$ is left?'
+          - problem: 'What is the characteristic polynomial in $r$ of the equation $y''''-y''-6y=0$?'
             answer: 'r^2-r-6'
             answer_contract: {"kind": "function", "vars": ["r"]}
             solution_sketch: 'For $y=e^{rx}$ we have $y''=re^{rx}$ and $y''''=r^2e^{rx}$. Substituting gives $(r^2-r-6)e^{rx}=0$. The factor $e^{rx}$ is never zero, so the polynomial left is $r^2-r-6$.'
@@ -49,10 +49,10 @@ topics:
             answer: 'r^2+8r+12'
             answer_contract: {"kind": "function", "vars": ["r"]}
             solution_sketch: 'Move every term to the left side to get $y''''+8y''+12y=0$. Substituting $y=e^{rt}$ then gives the polynomial $r^2+8r+12$.'
-          - problem: 'Substitute $y=e^{rx}$ into $y''''-4y=0$. What is the resulting polynomial in $r$?'
+          - problem: 'What is the characteristic polynomial in $r$ of the equation $y''''-4y=0$?'
             answer: 'r^2-4'
             answer_contract: {"kind": "function", "vars": ["r"]}
-            solution_sketch: 'The function $y=e^{rx}$ gives the factor $1$ for $y$. The equation has no $y''$ term, so the polynomial is $r^2-4$.'
+            solution_sketch: 'The function $y=e^{rx}$ gives $y''''=r^2e^{rx}$ and the factor $1$ for $y$. The equation has no $y''$ term, so the polynomial is $r^2-4$.'
           - problem: 'What is the characteristic polynomial of $y''''+7y''=0$?'
             answer: 'r^2+7r'
             answer_contract: {"kind": "function", "vars": ["r"]}
@@ -337,10 +337,10 @@ topics:
             answer: 'e^(4x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Here $y_2''=(1+2x)e^{2x}$ and $y_1''=2e^{2x}$. Then $W=e^{2x}(1+2x)e^{2x}-2e^{2x}xe^{2x}=e^{4x}(1+2x-2x)=e^{4x}$. So the Wronskian is $e^{4x}$, which is never zero.'
-          - problem: 'Compute the Wronskian $W=y_1y_2''-y_1''y_2$ of $y_1=e^{4x}$ and $y_2=e^{-x}$.'
+          - problem: 'Compute the Wronskian of $y_1=e^{4x}$ and $y_2=e^{-x}$.'
             answer: '-5e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Here $y_1''=4e^{4x}$ and $y_2''=-e^{-x}$. Then $W=e^{4x}(-e^{-x})-4e^{4x}e^{-x}=-e^{3x}-4e^{3x}=-5e^{3x}$. So the Wronskian is a single exponential, and it is never zero.'
+            solution_sketch: 'The Wronskian is $W=y_1y_2''-y_1''y_2$. Here $y_1''=4e^{4x}$ and $y_2''=-e^{-x}$. Then $W=e^{4x}(-e^{-x})-4e^{4x}e^{-x}=-5e^{3x}$. It is never zero.'
           - problem: 'For $y_1=e^{5x}$ and $y_2=e^{kx}$ the Wronskian is $e^{11x}$. Find the constant $k$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -407,26 +407,26 @@ topics:
         name: Superposition and general solutions
         key_prerequisites: [homogeneous-constant-coefficients]
         exemplars:
-          - problem: 'Both $e^{3x}$ and $e^{-2x}$ solve $y''''-y''-6y=0$. Find the solution $y=Ae^{3x}+Be^{-2x}$ with $y(0)=5$ and $y''(0)=0$.'
+          - problem: 'Both $e^{3x}$ and $e^{-2x}$ solve $y''''-y''-6y=0$. Find the solution with $y(0)=5$ and $y''(0)=0$.'
             answer: '2e^(3x)+3e^(-2x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The conditions give $A+B=5$ and $3A-2B=0$, so $A=2$ and $B=3$. Hence $y=2e^{3x}+3e^{-2x}$ satisfies both conditions.'
+            solution_sketch: 'Write $y=Ae^{3x}+Be^{-2x}$. The conditions give $A+B=5$ and $3A-2B=0$, so $A=2$ and $B=3$. Hence $y=2e^{3x}+3e^{-2x}$.'
           - problem: 'The functions $y_1$ and $y_2$ both solve $y''''+y=4x$. For $y=y_1+y_2$, find $y''''+y$.'
             answer: '8x'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The equation is not homogeneous, so superposition fails. Each of $y_1$ and $y_2$ gives $4x$, so the sum gives $4x+4x=8x$.'
-          - problem: 'Both $e^{3x}$ and $e^{-x}$ solve $y''''-2y''-3y=0$. Find the solution $y=Ae^{3x}+Be^{-x}$ with $y(0)=5$ and $y''(0)=3$.'
+          - problem: 'Both $e^{3x}$ and $e^{-x}$ solve $y''''-2y''-3y=0$. Find the solution with $y(0)=5$ and $y''(0)=3$.'
             answer: '2e^(3x)+3e^(-x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The conditions give $A+B=5$ and $3A-B=3$. Adding the two equations gives $4A=8$, so $A=2$ and $B=3$.'
+            solution_sketch: 'Write $y=Ae^{3x}+Be^{-x}$. The conditions give $A+B=5$ and $3A-B=3$. Adding the two equations gives $4A=8$, so $A=2$ and $B=3$.'
           - problem: 'The functions $y_1=e^{4x}$ and $y_2=e^{-x}$ solve $y''''-3y''-4y=0$. For $y=5y_1-2y_2$, find $y''''-3y''-4y$.'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation is linear and homogeneous, so the combination $5y_1-2y_2$ is again a solution. The left side is $5\cdot0-2\cdot0=0$.'
-          - problem: 'Both $\cos 2x$ and $\sin 2x$ solve $y''''+4y=0$. Find the solution $y=A\cos 2x+B\sin 2x$ with $y(0)=3$ and $y''(0)=8$.'
+          - problem: 'Both $\cos 2x$ and $\sin 2x$ solve $y''''+4y=0$. Find the solution with $y(0)=3$ and $y''(0)=8$.'
             answer: '3cos(2x)+4sin(2x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The condition $y(0)=3$ gives $A=3$. Since $y''(0)=2B=8$, $B=4$. Hence $y=3\cos 2x+4\sin 2x$ satisfies both conditions.'
+            solution_sketch: 'Write $y=A\cos 2x+B\sin 2x$. The condition $y(0)=3$ gives $A=3$. Since $y''(0)=2B=8$, $B=4$. Hence $y=3\cos 2x+4\sin 2x$.'
           - problem: 'Both $e^{-x}$ and $xe^{-x}$ solve $y''''+2y''+y=0$. Find the solution with $y(0)=2$ and $y''(0)=1$.'
             answer: '2e^(-x)+3x e^(-x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
@@ -441,10 +441,10 @@ topics:
             solution_sketch: 'Each solution gives the value $10$ on the left side. Adding the two gives $10+10=20$, not $10$, so the sum is not a solution.'
         constraints: 'conceptual: superposition holds exactly for homogeneous linear equations; the constants are fixed by initial values'
     diagnostic_exemplar:
-      problem: 'Let $y_1=e^{2x}$ and $y_2=e^{5x}$. Compute the Wronskian $W=y_1y_2''-y_1''y_2$ at $x=0$.'
+      problem: 'Let $y_1=e^{2x}$ and $y_2=e^{5x}$. Compute the Wronskian of $y_1$ and $y_2$ at $x=0$.'
       answer_contract: {"kind":"exact"}
       answer: '3'
-      solution_sketch: '$W=e^{2x}\cdot 5e^{5x}-2e^{2x}\cdot e^{5x}=3e^{7x}$. At $x=0$ this is $3$.'
+      solution_sketch: 'The Wronskian is $W=y_1y_2''-y_1''y_2$. Here $W=e^{2x}\cdot 5e^{5x}-2e^{2x}\cdot e^{5x}=3e^{7x}$. At $x=0$ this is $3$.'
     anki_seeds:
       - front: "Wronskian of two solutions y_1, y_2?"
         back: "$W = y_1 y_2' - y_1' y_2$"
@@ -479,26 +479,26 @@ topics:
             answer: 'x e^(4x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'With $y=ve^{4x}$ we get $y''=(v''+4v)e^{4x}$ and $y''''=(v''''+8v''+16v)e^{4x}$. Substituting leaves $v''''e^{4x}=0$, so $v''''=0$ and $v=c_1+c_2x$. The conditions give $c_1=0$ and $c_2=1$, so the second solution is $xe^{4x}$.'
-          - problem: 'Substitute $y=ve^{-3x}$ into $y''''+6y''+cy=0$. The terms in $v''$ cancel, and the terms in $v$ cancel too, so the equation becomes $v''''=0$. Find $c$.'
+          - problem: 'Find $c$ so that the substitution $y=ve^{-3x}$ turns $y''''+6y''+cy=0$ into an equation in $v''''$ alone.'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $y=ve^{-3x}$ we get $y''=(v''-3v)e^{-3x}$ and $y''''=(v''''-6v''+9v)e^{-3x}$. The terms in $v$ have the coefficient $9-18+c$, which is zero only for $c=9$.'
+            solution_sketch: 'With $y=ve^{-3x}$ we get $y''=(v''-3v)e^{-3x}$ and $y''''=(v''''-6v''+9v)e^{-3x}$. The terms in $v''$ cancel. The terms in $v$ have the coefficient $9-18+c$, which is zero only for $c=9$.'
           - problem: 'A critically damped suspension obeys $y''''+6y''+9y=0$ ($y$ in metres, $t$ in seconds) and has the motion $y_1=e^{-3t}$. Substitute $y=ve^{-3t}$ to find the second motion $y_2$ for which $y_2(0)=0$ and $y_2''(0)=1$.'
             answer: 't e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
             solution_sketch: 'The substitution leaves $v''''e^{-3t}=0$, so $v''''=0$ and $v=c_1+c_2t$. Then $y_2(0)=c_1=0$, and $y_2''(0)=c_2-3c_1=1$ gives $c_2=1$, so the second motion is $te^{-3t}$.'
-          - problem: 'Substituting $y=ve^{2x}$ into $y''''-4y''+4y=0$ leaves $v''''=0$. Find $v$ when $y(0)=1$ and $y''(0)=3$.'
+          - problem: 'Substitute $y=ve^{2x}$ into $y''''-4y''+4y=0$ and solve for $v$ with $y(0)=1$ and $y''(0)=3$.'
             answer: '1 + x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Here $v=c_1+c_2x$, and $y(0)=v(0)=1$ gives $c_1=1$. Since $y''=(v''+2v)e^{2x}$, the condition $y''(0)=c_2+2=3$ gives $c_2=1$, so $v=1+x$.'
+            solution_sketch: 'We get $y''=(v''+2v)e^{2x}$ and $y''''=(v''''+4v''+4v)e^{2x}$. The equation becomes $v''''=0$, so $v=c_1+c_2x$. Then $y(0)=c_1=1$, and $y''(0)=c_2+2=3$ gives $c_2=1$. So $v=1+x$.'
           - problem: 'A constant-coefficient equation $y''''+by''+cy=0$ has the second solution $y_2=xe^{-2x}$, found by reduction of order from $y_1=e^{-2x}$. Find $b$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A second solution of the form $xe^{rx}$ appears only for a double root, so $r=-2$. The polynomial is $(r+2)^2=r^2+4r+4$, so $b=4$.'
-          - problem: 'Substitute $y=ve^{6x}$ into $y''''+by''+36y=0$. The terms in $v''$ and in $v$ cancel and leave $v''''=0$. Find $b$.'
+          - problem: 'Find $b$ so that the substitution $y=ve^{6x}$ turns $y''''+by''+36y=0$ into an equation in $v''''$ alone.'
             answer: '-12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $y=ve^{6x}$ we get $y''=(v''+6v)e^{6x}$ and $y''''=(v''''+12v''+36v)e^{6x}$. The terms in $v''$ have the coefficient $12+b$, which is zero for $b=-12$.'
+            solution_sketch: 'With $y=ve^{6x}$ we get $y''=(v''+6v)e^{6x}$ and $y''''=(v''''+12v''+36v)e^{6x}$. The terms in $v''$ have the coefficient $12+b$, which is zero for $b=-12$. Then the terms in $v$ also cancel.'
           - problem: 'A suspension obeys $y''''+8y''+16y=0$ ($y$ in metres, $t$ in seconds) and has the motion $e^{-4t}$. Use $y=ve^{-4t}$ to find the motion with $y(0)=1$ and $y''(0)=0$.'
             answer: '(1+4t)e^(-4t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
@@ -599,10 +599,10 @@ topics:
             solution_sketch: 'Here $p=4$, so $e^{-\int p\,dx}=e^{-4x}$. Also $y_1^2=e^{-4x}$, so the integrand is $1$.'
         constraints: 'divide to standard form before reading p; integrals reduce to powers or ln; single steps of the formula (p, the exponential factor, the integrand) are also asked'
     diagnostic_exemplar:
-      problem: 'The function $y_1=x$ solves $x^2y''''-4xy''+4y=0$ for $x>0$. A second independent solution has the form $y_2=x^n$. Find $n$.'
-      answer_contract: {"kind":"exact"}
-      answer: '4'
-      solution_sketch: 'Put $y=x^r$ to get $r(r-1)-4r+4=r^2-5r+4=(r-1)(r-4)=0$. The root $r=1$ gives $y_1$. The other root gives $n=4$.'
+      problem: 'The function $y_1=x$ solves $x^2y''''-4xy''+4y=0$ for $x>0$. Find the second solution $y_2$ that is independent of $y_1$ and has $y_2(1)=1$ and $y_2''(1)=4$.'
+      answer_contract: {"kind":"function","vars":["x"]}
+      answer: 'x^4'
+      solution_sketch: 'Put $y=x^r$ to get $r^2-5r+4=(r-1)(r-4)=0$. So $y=c_1x+c_2x^4$. The conditions give $c_1+c_2=1$ and $c_1+4c_2=4$, so $c_1=0$ and $c_2=1$.'
     anki_seeds:
       - front: "Reduction-of-order formula for a second solution of y'' + py' + qy = 0 given y_1?"
         back: '$y_2 = y_1 \int \dfrac{e^{-\int p\,dx}}{y_1^2}\,dx$'
@@ -725,10 +725,10 @@ topics:
             answer: '3e^(3x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The characteristic polynomial r^2 - r - 2 has the value 9 - 3 - 2 = 4 at r = 3. Trying y = Ae^(3x) gives 4Ae^(3x) = 12e^(3x), so A = 12/4 = 3. Hence y = 3e^(3x).'
-          - problem: 'Substitute $y_p=Ae^{x}$ into $y''''+y''-6y=10e^{x}$. What is the particular solution?'
+          - problem: 'Find a particular solution of $y''''+y''-6y=10e^{x}$.'
             answer: '-(5/2)e^x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'The characteristic polynomial r^2 + r - 6 has the value 1 + 1 - 6 = -4 at r = 1. So -4Ae^x = 10e^x, and A = 10/(-4) = -5/2. So the solution is y = -(5/2)e^x.'
+            solution_sketch: 'The forcing term is exponential, so try $y_p=Ae^{x}$. Then $y_p''''+y_p''-6y_p=(1+1-6)Ae^x=-4Ae^x$. So $-4A=10$ and $A=-\frac{5}{2}$. The solution is $y_p=-\frac{5}{2}e^x$.'
           - problem: 'A mass of $1$ kg on a spring of constant $2$ N/m, with damping coefficient $3$ N·s/m, is driven by the force $F(t)=12e^{-3t}$ newtons. Using $mx''''+cx''+kx=F$, find a particular solution $x_p(t)$.'
             answer: '6e^(-3t)'
             answer_contract: {"kind": "function", "vars": ["t"]}
@@ -1047,10 +1047,10 @@ topics:
             solution_sketch: 'The equation is x'''' + 2x'' + x = e^(-t)/t, with x1 = e^(-t), x2 = te^(-t) and W = e^(-2t). Then u1'' = -1 and u2'' = 1/t, so x = c1 e^(-t) + c2 te^(-t) + te^(-t) ln t. The conditions x(1) = 0 and x''(1) = 0 give c1 = 1 and c2 = -1, so x = (1 - t + t ln t)e^(-t).'
         constraints: 'forcing e^{kx}/x or duplicating exponentials; items are initial-value problems, so the answer is unique and homogeneous terms are fixed by the initial values'
     diagnostic_exemplar:
-      problem: 'Use variation of parameters for $y''''-3y''+2y=6e^{3x}$ with $y_1=e^{x}$ and $y_2=e^{2x}$. Find $u_2''(0)$, where $u_2''=y_1g/W$ and $g=6e^{3x}$.'
+      problem: 'Variation of parameters writes $y_p=u_1y_1+u_2y_2$ for $y''''-3y''+2y=6e^{3x}$ with $y_1=e^{x}$ and $y_2=e^{2x}$. Find $u_2''(0)$.'
       answer_contract: {"kind":"exact"}
       answer: '6'
-      solution_sketch: '$W=y_1y_2''-y_1''y_2=2e^{3x}-e^{3x}=e^{3x}$. So $u_2''=e^x\cdot6e^{3x}/e^{3x}=6e^x$. At $x=0$ this is $6$.'
+      solution_sketch: 'The forcing term is $g=6e^{3x}$. The Wronskian is $W=y_1y_2''-y_1''y_2=2e^{3x}-e^{3x}=e^{3x}$. So $u_2''=y_1g/W=e^x\cdot6e^{3x}/e^{3x}=6e^x$. At $x=0$ this is $6$.'
     anki_seeds:
       - front: "Variation of parameters formulas for y'' + py' + qy = g?"
         back: '$u_1'' = -\dfrac{y_2 g}{W}$, $u_2'' = \dfrac{y_1 g}{W}$; then $y_p = u_1 y_1 + u_2 y_2$.'
@@ -1128,7 +1128,7 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The indicial equation is r(r-1) - 11r + 36 = 0, that is r^2 - 12r + 36 = 0. This is (r - 6)^2 = 0, so the only root is the double root r = 6.'
-          - problem: 'One solution of $x^2y''''-7xy''+16y=0$ for $x>0$ is $y_1=x^4$. Find the solution that satisfies $y(1)=0$ and $y''(1)=1$.'
+          - problem: 'Find the solution of $x^2y''''-7xy''+16y=0$ for $x>0$ that satisfies $y(1)=0$ and $y''(1)=1$.'
             answer: 'x^4 ln(x)'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The indicial equation r^2 - 8r + 16 = (r - 4)^2 = 0 has the double root 4, so y = c1 x^4 + c2 x^4 ln x. The condition y(1) = c1 = 0. Then y''(1) = 4c1 + c2 = 1 gives c2 = 1, so y = x^4 ln x.'
@@ -1156,7 +1156,7 @@ topics:
             answer: 'x^(-2)(cos(2 ln(x)) + sin(2 ln(x)))'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The indicial equation r^2 + 4r + 8 = 0 has the roots -2 ± 2i, so A = x^(-2)(c1 cos(2 ln x) + c2 sin(2 ln x)). Then A(1) = c1 = 1. Also A''(1) = -2c1 + 2c2 = 0, so c2 = 1, and A = x^(-2)(cos(2 ln x) + sin(2 ln x)).'
-          - problem: 'Along another tapered rod the amplitude satisfies $x^2A''''+5xA''+4A=0$ for $x>0$, and $x^{-2}$ is one solution. Find the solution with $A(1)=0$ and $A''(1)=1$.'
+          - problem: 'Along a tapered rod the amplitude satisfies $x^2A''''+5xA''+4A=0$ for $x>0$. Find the solution with $A(1)=0$ and $A''(1)=1$.'
             answer: 'ln(x)/x^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The indicial equation r^2 + 4r + 4 = (r + 2)^2 = 0 has the double root -2, so A = c1 x^(-2) + c2 x^(-2) ln x. Then A(1) = c1 = 0. Also A''(1) = -2c1 + c2 = 1, so c2 = 1, and A = ln(x)/x^2.'
@@ -1547,38 +1547,38 @@ topics:
         name: 'The circuit equation and the mechanical analogy'
         key_prerequisites: [spring-mass-oscillations]
         exemplars:
-          - problem: 'A series circuit has inductance $L = 3$ H, resistance $R = 6\ \Omega$ and capacitance $C = \frac{1}{12}$ F, and it has no source. Its charge satisfies $LQ'''' + RQ'' + Q/C = 0$. After division by $L$, what is the coefficient of $Q''$?'
+          - problem: 'A series circuit has inductance $L = 3$ H, resistance $R = 6\ \Omega$ and capacitance $C = \frac{1}{12}$ F, and it has no source. Its charge $Q$ satisfies $Q'''' + pQ'' + qQ = 0$. Find $p$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Dividing $LQ'''' + RQ'' + Q/C = 0$ by $L$ gives $Q'''' + (R/L)Q'' + Q/(LC) = 0$. So the coefficient of $Q''$ is $R/L = 6/3 = 2$.'
-          - problem: 'A series circuit has $L = 4$ H, $R = 8\ \Omega$ and $C = \frac{1}{32}$ F, and it has no source. After the equation $LQ'''' + RQ'' + Q/C = 0$ is divided by $L$, what is the coefficient of $Q$?'
+            solution_sketch: 'The charge equation is $LQ'''' + RQ'' + Q/C = 0$. Divide by $L$ to get $Q'''' + (R/L)Q'' + Q/(LC) = 0$. So $p = R/L = 6/3 = 2$.'
+          - problem: 'A series circuit has $L = 4$ H, $R = 8\ \Omega$ and $C = \frac{1}{32}$ F, and it has no source. Its charge $Q$ satisfies $Q'''' + pQ'' + qQ = 0$. Find $q$.'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Dividing by $L$ gives the coefficient $\frac{1}{LC}$ for $Q$. So $\frac{1}{LC} = \frac{1}{4 \cdot \frac{1}{32}} = \frac{1}{1/8} = 8$.'
-          - problem: 'A series RLC circuit is compared with a mass-spring system in which $L$ corresponds to the mass, $R$ to the damping constant and $1/C$ to the stiffness. Which stiffness corresponds to a capacitor with $C = \frac{1}{25}$ F?'
+            solution_sketch: 'The charge equation is $LQ'''' + RQ'' + Q/C = 0$. Divide by $L$ to get $q=\frac{1}{LC}$. So $q = \frac{1}{4 \cdot \frac{1}{32}} = 8$.'
+          - problem: 'A series RLC circuit and a mass-spring system have the same equation. The capacitor has $C = \frac{1}{25}$ F. What is the stiffness of the spring?'
             answer: '25'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The stiffness corresponds to $1/C$. So the stiffness is $1 \div \frac{1}{25} = 25$.'
-          - problem: 'A series circuit has $L = 2$ H, $R = 8\ \Omega$ and $C = \frac{1}{8}$ F, and it has no source. What is the discriminant of the characteristic equation $Lr^2 + Rr + \frac{1}{C} = 0$?'
+            solution_sketch: 'The circuit equation is $LQ'''' + RQ'' + Q/C = 0$, and the spring equation is $mx'''' + cx'' + kx = 0$. So the stiffness is $k = 1/C = 1 \div \frac{1}{25} = 25$.'
+          - problem: 'A series circuit has $L = 2$ H, $R = 8\ \Omega$ and $C = \frac{1}{8}$ F, and it has no source. What is the discriminant of the characteristic equation of its charge?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The characteristic equation is $2r^2 + 8r + 8 = 0$. Its discriminant is $8^2 - 4 \cdot 2 \cdot 8 = 64 - 64 = 0$.'
+            solution_sketch: 'The charge equation is $LQ'''' + RQ'' + Q/C = 0$. The characteristic equation is $2r^2 + 8r + 8 = 0$. Its discriminant is $8^2 - 4 \cdot 2 \cdot 8 = 64 - 64 = 0$.'
           - problem: 'A series circuit with $L = 1$ H and no source has the charge equation $Q'''' + 3Q'' + 2Q = 0$. What is the capacitance $C$ in farads?'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With $L = 1$, the coefficient of $Q$ is $\frac{1}{LC} = \frac{1}{C}$. So $\frac{1}{C} = 2$ and $C = \frac{1}{2}$ F.'
-          - problem: 'A mass-spring system has mass $m = 2$, damping constant $c = 6$ and stiffness $k = 18$. A series circuit has the same equation with $L = m$, $R = c$ and $1/C = k$. What is the capacitance $C$ in farads?'
+          - problem: 'A mass-spring system has mass $m = 2$, damping constant $c = 6$ and stiffness $k = 18$. A series circuit with inductance $2$ H has the same equation. What is its capacitance $C$ in farads?'
             answer: '1/18'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The stiffness corresponds to $1/C$, so $\frac{1}{C} = 18$. Then $C = \frac{1}{18}$ F.'
+            solution_sketch: 'The circuit equation is $LQ'''' + RQ'' + Q/C = 0$. It matches $mx'''' + cx'' + kx = 0$ when $L = m$, $R = c$ and $1/C = k$. So $\frac{1}{C} = 18$ and $C = \frac{1}{18}$ F.'
           - problem: 'A series circuit has $L = 1$ H and $C = \frac{1}{9}$ F. For which resistance $R$, in ohms, is the free response critically damped?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The characteristic equation $r^2 + Rr + 9 = 0$ has the discriminant $R^2 - 36$. This is zero when $R^2 = 36$, so $R = 6\ \Omega$.'
-          - problem: 'A series circuit has $L = 2$ H and $C = \frac{1}{50}$ F, and no resistance. What is the natural frequency $\omega = \sqrt{1/(LC)}$ of its free oscillation, in rad/s?'
+          - problem: 'A series circuit has $L = 2$ H and $C = \frac{1}{50}$ F, and no resistance. What is the natural frequency of its free oscillation, in rad/s?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $R = 0$ the charge satisfies $Q'''' + \frac{1}{LC}Q = 0$. Here $\frac{1}{LC} = \frac{1}{2 \cdot \frac{1}{50}} = 25$, so $\omega = \sqrt{25} = 5$ rad/s.'
+            solution_sketch: 'With $R = 0$ the charge satisfies $LQ'''' + Q/C = 0$, so $Q'''' + \frac{1}{LC}Q = 0$. Here $\frac{1}{LC} = \frac{1}{2 \cdot \frac{1}{50}} = 25$, so $\omega = \sqrt{25} = 5$ rad/s.'
         constraints: 'L, R, 1/C chosen so the standard-form coefficients are small numbers; the analogy L = mass, R = damping, 1/C = stiffness is always stated or derivable from the equation'
       - id: kp2
         name: 'Free circuit response'

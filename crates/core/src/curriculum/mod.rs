@@ -24,9 +24,9 @@ pub use finding::Finding;
 pub use finite::{FiniteCaseRole, FiniteCaseVariant, FiniteObjectiveCase, FiniteObjectiveDomain};
 pub use graph::{Csr, EncCsr, EncEdge};
 pub use lint::{
-    DIAG_PROBE_ALLOW_ENV, DIAG_PROBE_ALLOW_FILE, lint_curriculum, lint_curriculum_full,
-    lint_curriculum_names, lint_curriculum_probes, lint_curriculum_probes_with,
-    lint_curriculum_program,
+    DIAG_PROBE_ALLOW_ENV, DIAG_PROBE_ALLOW_FILE, HANDED_FIX, handed_value, lint_curriculum,
+    lint_curriculum_full, lint_curriculum_handed, lint_curriculum_names, lint_curriculum_probes,
+    lint_curriculum_probes_with, lint_curriculum_program,
 };
 pub use load::{
     ParseError, Parsed, ParsedUnit, RawCurriculum, RawTopic, RawUnit, load_raw_curriculum,

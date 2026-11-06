@@ -78,14 +78,14 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An input that lies in both cases is given two outputs unless the two formulas agree there. Only $x = 2$ lies in both cases. The first case gives $2 + 3 = 5$ and the second gives $2 \cdot 2 = 4$, so $x = 2$ has two different outputs and the rule is not well defined.'
-          - problem: 'A rule on the rational numbers is defined by $f(a/b) = a + b$, where $a/b$ is any fraction with integers $a$ and $b$. The fraction $1/2$ gives $f(1/2) = 1 + 2 = 3$. The fraction $3/6$ equals $1/2$. What value does the rule give when it uses the fraction $3/6$?'
+          - problem: 'A rule on the rational numbers is defined by $f(a/b) = a + b$, where $a/b$ is any fraction with integers $a$ and $b$. What value does the rule give for $\frac{1}{2}$ written with denominator $6$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Using the fraction $3/6$, the rule gives $f(3/6) = 3 + 6 = 9$. But $3/6 = 1/2$ and the first computation gave $3$. One number has two outputs, $3$ and $9$, so the rule is not well defined.'
-          - problem: 'For an integer $m$ write $[n]_m$ for the class of the integer $n$ modulo $m$. The rule $f([n]_6) = [n]_4$ gives $f([1]_6) = [1]_4$. Since $7$ and $1$ are in the same class modulo $6$, the rule also says $f([1]_6) = [7]_4$. Which integer from $0$ to $3$ represents the class $[7]_4$?'
-            answer: '3'
+            solution_sketch: 'Write $\frac{1}{2} = \frac{3}{6}$. The rule gives $f(3/6) = 3 + 6 = 9$. But the fraction $1/2$ gives $1 + 2 = 3$, so one number has two outputs and the rule is not well defined.'
+          - problem: 'For an integer $m$ write $[n]_m$ for the class of the integer $n$ modulo $m$. A rule is $f([n]_6) = [n]_4$. Let $n$ run through all integers in the class $[1]_6$. How many different classes $[n]_4$ occur?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The integer $7$ leaves the remainder $3$ when divided by $4$, so $[7]_4 = [3]_4$. But $[1]_4$ is a different class, since $3$ and $1$ differ by $2$, which is not a multiple of $4$. So the class $f([1]_6)$ would have two values, and the rule is not well defined.'
+            solution_sketch: 'The integers in $[1]_6$ are $1, 7, 13, 19, \dots$. Modulo $4$ they leave the remainders $1, 3, 1, 3, \dots$. So two classes occur, $[1]_4$ and $[3]_4$, and the rule is not well defined.'
           - problem: 'Let $[n]_m$ be the class of $n$ modulo $m$. Is the rule $f([n]_{10}) = [n]_5$ a well-defined function from the classes modulo $10$ to the classes modulo $5$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is well defined", "well defined", "it is a function", "well-defined", "it is well-defined"], ["no", "it is not well defined", "not well defined", "it is not a function", "it's not well defined", "not well-defined", "it is not well-defined"]]}
@@ -119,14 +119,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
             solution_sketch: 'The two companies charge the same price when $3d + 4 = 5d - 2$. Subtracting $3d$ and adding $2$ gives $6 = 2d$, so $d = 3$. At $3$ kilometers both charge $13$ dollars; at every other distance the prices differ, which is why the functions are not equal.'
-          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$, $f(x) = \sqrt{x^2}$ and $g(x) = x$. The two functions agree at $x = 1, 2, 3$. What is the greatest integer $x$ at which $f(x) \ne g(x)$?'
+          - problem: 'Let $f, g : \mathbb{R} \to \mathbb{R}$, $f(x) = \sqrt{x^2}$ and $g(x) = x$. What is the greatest integer $x$ at which $f(x) \ne g(x)$?'
             answer: '-1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $\sqrt{x^2} = |x|$, the two functions agree exactly when $x \ge 0$. For every negative $x$ we have $|x| \ne x$. The greatest negative integer is $-1$, where $f(-1) = 1$ and $g(-1) = -1$.'
-          - problem: 'Let $f, g : \{1, 2, 3, 4\} \to \mathbb{Z}$ be given by $f(x) = x^3$ and $g(x) = 6x^2 - 11x + 6$. These two functions agree at $x = 1, 2, 3$. At which element of the domain do they differ?'
+          - problem: 'Let $f, g : \{1, 2, 3, 4\} \to \mathbb{Z}$ be given by $f(x) = x^3$ and $g(x) = 6x^2 - 11x + 6$. At which element of the domain do $f$ and $g$ differ?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At $x = 1, 2, 3$ the two rules give $1, 8, 27$, so the functions agree there. At $x = 4$ the first rule gives $f(4) = 64$ and the second gives $g(4) = 96 - 44 + 6 = 58$. So the functions differ at $4$, and agreement at three inputs does not make them equal.'
+            solution_sketch: 'Compute both rules at each element. At $x = 1, 2, 3$ they give $1, 8, 27$ for both. At $x = 4$ we have $f(4) = 64$ and $g(4) = 96 - 44 + 6 = 58$, so the functions differ at $4$.'
           - problem: 'A lab converts a Celsius reading $c$ to Fahrenheit with $f(c) = \frac{9}{5}c + 32$. An old table uses the rule $g(c) = 2c + 30$ instead. The two rules are different functions. At which Celsius temperature do they give the same Fahrenheit reading?'
             answer: '10'
             answer_contract: {"kind": "unit", "quantity": "temperature", "unit": "°C", "allow_omitted": true}
@@ -621,10 +621,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is surjective", "surjective", "onto"], ["no", "it is not surjective", "not surjective", "not onto", "it's not surjective"]]}
             solution_sketch: 'Let $y \in \mathbb{R}$ and take $x = (y - 5)/2$, which is a real number. Then $f(x) = 2 \cdot (y - 5)/2 + 5 = y$. So every real target has a preimage, and $f$ is surjective.'
-          - problem: 'To show that $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 3x - 6$, is surjective, solve $3x - 6 = y$ for $x$. What is the preimage of $y$?'
+          - problem: 'Let $f : \mathbb{R} \to \mathbb{R}$, $f(x) = 3x - 6$. For a real number $y$, find the preimage of $y$ under $f$.'
             answer: 'y/3 + 2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Adding $6$ to both sides gives $3x = y + 6$. Dividing by $3$ gives $x = y/3 + 2$, not $y/3 + 6$, because the $6$ must be divided as well. Check: $f(y/3 + 2) = y + 6 - 6 = y$.'
+            solution_sketch: 'A preimage is a real number $x$ with $f(x)=y$. Solve $3x-6=y$ to get $x=\frac{y+6}{3}=\frac y3+2$. Every $y$ has this preimage, so $f$ is surjective.'
           - problem: 'Write the full proof that $f : \mathbb{Z} \times \mathbb{Z} \to \mathbb{Z} \times \mathbb{Z}$ defined by $f(m, n) = (m + n, m + 2n)$ is surjective.'
             answer: 'f(m,n) = (m+n, m+2n) is surjective'
             answer_contract: {"kind": "none"}
@@ -646,10 +646,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is surjective", "surjective", "onto"], ["no", "it is not surjective", "not surjective", "not onto", "it's not surjective"]]}
             solution_sketch: 'For the target $y = -1$ we would need $x^2 = -1$, and no real number has a negative square. So $-1$ has no preimage, and $f$ is not surjective.'
-          - problem: 'Let $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2 + 3$. The number $x = \sqrt{y - 3}$ is a preimage of $y$ for $y = 3, 4, 7$. What is the largest integer $y$ for which $\sqrt{y - 3}$ is not a real number?'
+          - problem: 'Let $f : \mathbb{R} \to \mathbb{R}$, $f(x) = x^2 + 3$. What is the largest integer $y$ that has no real preimage under $f$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The number $\sqrt{y - 3}$ is real only when $y - 3 \ge 0$, that is, $y \ge 3$. So for every integer $y < 3$ there is no real preimage; in fact $x^2 + 3 \ge 3$ for all real $x$. The largest such integer is $2$.'
+            solution_sketch: 'A preimage of $y$ solves $x^2+3=y$, so $x^2=y-3$. A real solution needs $y-3\ge0$, so $y\ge3$. The largest integer below $3$ is $2$.'
           - problem: 'A cube-shaped tank must hold exactly $125$ cubic meters. The volume of a cube with side $s$ meters is $V(s) = s^3$. What side length does the tank need?'
             answer: '5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -753,10 +753,10 @@ topics:
         name: "Proving bijectivity"
         key_prerequisites: [proving-injectivity, proving-surjectivity]
         exemplars:
-          - problem: 'Let $f:\mathbb{R}\to\mathbb{R}$ be given by $f(x)=3x+5$. To prove that $f$ is surjective, take an arbitrary real number $y$. Find the real number $x$ with $f(x)=y$.'
+          - problem: 'Let $f:\mathbb{R}\to\mathbb{R}$ be given by $f(x)=3x+5$. For a real number $y$, find the real number $x$ with $f(x)=y$.'
             answer: '(y - 5)/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Set $3x+5=y$. Subtracting $5$ gives $3x=y-5$, and dividing by $3$ gives $x=(y-5)/3$. This is a real number for every real $y$, and $f\big((y-5)/3\big)=(y-5)+5=y$.'
+            solution_sketch: 'Set $3x+5=y$. Subtracting $5$ gives $3x=y-5$, and dividing by $3$ gives $x=(y-5)/3$. This is a real number for every real $y$, and $f\big((y-5)/3\big)=y$.'
           - problem: 'Is the function $f:\mathbb{R}\to\mathbb{R}$ given by $f(x)=x^3+1$ a bijection?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","yes, always","always","true","it is","it does","it must","must"],["no","no, not always","not always","false","it is not","it does not","need not","cannot"]]}
@@ -769,10 +769,10 @@ topics:
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Set $\tfrac95c+32=50$. Subtracting $32$ gives $\tfrac95c=18$, and multiplying both sides by $\tfrac59$ gives $c=10$. Since $F$ is a bijection of the real numbers, this is the only such temperature.'
-          - problem: 'To show that $f(x)=6x-3$ is surjective, set $6x-3=y$. What is the value of $x$?'
+          - problem: 'Let $f:\mathbb{R}\to\mathbb{R}$ be given by $f(x)=6x-3$. For a real number $y$, what is the value of $x$ with $f(x)=y$?'
             answer: '(y + 3)/6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Adding $3$ to both sides of $6x-3=y$ gives $6x=y+3$, so $x=(y+3)/6$. The $3$ is added to both sides, not subtracted. Check: $6\cdot\frac{y+3}{6}-3=y$.'
+            solution_sketch: 'Set $6x-3=y$. Adding $3$ to both sides gives $6x=y+3$, so $x=(y+3)/6$. The $3$ is added to both sides, not subtracted. Then $6\cdot\frac{y+3}{6}-3=y$.'
           - problem: 'A taxi charges a fixed fee of $4$ dollars plus $2.5$ dollars per kilometre, so a trip of $d$ kilometres costs $T(d)=2.5d+4$ dollars. A passenger pays $19$ dollars. How long was the trip?'
             answer: '6'
             answer_contract: {"kind":"unit","quantity":"length","unit":"km","allow_omitted":true}
@@ -1720,10 +1720,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'If $R$ has a pair $(x, y)$ with $x \neq y$, symmetry forces $(y, x)$ into $R$, and then antisymmetry fails. So $R$ has only pairs with equal entries, and there are $3$ of them. The largest possible relation is $\{(1,1), (2,2), (3,3)\}$, which has $3$ pairs.'
-          - problem: 'The pairs $(1,1)$ and $(4,4)$ of $R = \{(2,3), (3,2), (1,1), (1,4), (4,4)\}$ on $\{1, 2, 3, 4\}$ do not break antisymmetry. What is the smallest element $x$ that belongs to a pair showing that $R$ is not antisymmetric?'
+          - problem: 'The relation $R = \{(2,3), (3,2), (1,1), (1,4), (4,4)\}$ is on $\{1, 2, 3, 4\}$. What is the smallest element $x$ that belongs to a pair of $R$ showing that $R$ is not antisymmetric?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pairs $(2,3)$ and $(3,2)$ are both in $R$ and $2 \neq 3$, so antisymmetry fails. For $x = 1$ the pairs are $(1,1)$ and $(1,4)$, and $(4,1)$ is not in $R$, so $1$ does not show a failure. The smallest element in a failing pair is $2$.'
+            solution_sketch: 'Look for pairs $(x,y)$ and $(y,x)$ in $R$ with $x \neq y$. The pairs $(2,3)$ and $(3,2)$ are both in $R$, so antisymmetry fails. The pairs with $1$ have no reverse pair with a different entry, so the smallest element is $2$.'
           - problem: 'Let $R$ be the relation on $\{1, 2, 3, 4\}$ that contains every pair $(a, b)$ with $a \neq b$. What is the smallest number of pairs that must be removed from $R$ to make it antisymmetric?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1749,14 +1749,14 @@ topics:
         name: 'Proving a property holds'
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'On $\mathbb{Z}$ define $x \sim y$ to mean that $x - y$ is even. In a proof that $\sim$ is symmetric we suppose that $x - y = 2k$ for an integer $k$. Express $y - x$ in terms of $k$.'
+          - problem: 'On $\mathbb{Z}$ define $x \sim y$ to mean that $x - y$ is even. Let $x \sim y$ and let $k$ be half of $x - y$. Express $y - x$ in terms of $k$.'
             answer: '-2k'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $y - x = -(x - y)$. Substituting $x - y = 2k$ gives $y - x = -2k = 2(-k)$, which is twice the integer $-k$, so $y - x$ is even and $y \sim x$.'
-          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $2a + 3b$ is a multiple of $5$. In a proof that $\sim$ is symmetric we suppose that $2a + 3b = 5k$ for an integer $k$. Write $3a + 2b$ as $5m$, where $m$ is an expression in $a$, $b$ and $k$.'
+            solution_sketch: 'The relation says $x - y = 2k$. We have $y - x = -(x - y) = -2k = 2(-k)$. This is twice the integer $-k$, so $y - x$ is even and $y \sim x$.'
+          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $2a + 3b$ is a multiple of $5$. Let $a \sim b$ and let $k$ be $(2a + 3b)/5$. Write $3a + 2b$ as $5m$. What is $m$ in terms of $a$, $b$ and $k$?'
             answer: 'a + b - k'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $3a + 2b = 5a + 5b - (2a + 3b)$. Substituting $2a + 3b = 5k$ gives $3a + 2b = 5(a + b) - 5k = 5(a + b - k)$. Since $a + b - k$ is an integer, $3a + 2b$ is a multiple of $5$, so $b \sim a$.'
+            solution_sketch: 'The relation says $2a + 3b = 5k$. We have $3a + 2b = 5a + 5b - (2a + 3b) = 5(a + b) - 5k$. So $3a + 2b = 5(a + b - k)$ and $m = a + b - k$.'
           - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $3$ divides $a + b$. What is the smallest positive integer $a$ for which $a \sim a$ is false?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -1854,10 +1854,10 @@ topics:
             answer: 'transitive'
             answer_contract: {"kind": "label", "options": [["transitive", "transitivity", "not transitive", "it is not transitive", "the transitive property", "transitivity fails", "transitive fails"], ["symmetric", "symmetry", "not symmetric", "it is not symmetric", "the symmetric property", "symmetry fails", "symmetric fails"], ["reflexive", "reflexivity", "not reflexive", "it is not reflexive", "the reflexive property", "reflexivity fails", "reflexive fails"]]}
             solution_sketch: 'Reflexive: $|a - a| = 0 \le 1$. Symmetric: $|a - b| = |b - a|$. Transitive fails: $0 \sim 1$ and $1 \sim 2$, but $|0 - 2| = 2 > 1$, so $0 \not\sim 2$. The property that fails is transitivity.'
-          - problem: 'On the integers define $a \sim b$ exactly when $ab \ge 0$. Find the integer $b$ for which $-1 \sim b$ and $b \sim 1$ both hold, although $-1 \not\sim 1$.'
+          - problem: 'On the integers define $a \sim b$ exactly when $ab \ge 0$. Find the integer $b$ for which $-1 \sim b$ and $b \sim 1$ both hold.'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The condition $-1 \sim b$ means $-b \ge 0$, so $b \le 0$, and $b \sim 1$ means $b \ge 0$. Only $b = 0$ satisfies both, and $(-1)(1) = -1 < 0$ shows $-1 \not\sim 1$. So $b = 0$ is the link that breaks transitivity.'
+            solution_sketch: 'The condition $-1 \sim b$ means $-b \ge 0$, so $b \le 0$, and $b \sim 1$ means $b \ge 0$. Only $b = 0$ satisfies both. But $(-1)(1) = -1 < 0$, so $-1 \not\sim 1$ and transitivity fails.'
           - problem: 'Three towns lie on a straight road at the positions $0$ km, $8$ km and $16$ km. Two towns are called neighbours when they are at most $10$ km apart. Is the relation "is a neighbour of" transitive on these three towns?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "it is transitive", "transitive"], ["no", "it is not", "false", "it is not transitive", "not transitive", "is not transitive"]]}
@@ -1866,14 +1866,14 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Reflexivity needs $\gcd(a, a) = a > 1$ for every positive integer $a$. This holds for every $a \ge 2$, but $\gcd(1, 1) = 1$, so $1 \not\sim 1$. The only integer that is not related to itself is $1$.'
-          - problem: 'On the integers define $a \sim b$ exactly when $a \le b$. What is the smallest integer $b$ for which $3 \sim b$ but $b \not\sim 3$?'
-            answer: '4'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The condition $3 \sim b$ means $3 \le b$, and $b \not\sim 3$ means that $b \le 3$ is false, so $b > 3$. The smallest integer with $b \ge 3$ and $b > 3$ is $4$. The pair $3 \sim 4$ without $4 \sim 3$ shows that symmetry fails.'
-          - problem: 'For the relation $a \sim b \iff |a - b| \le 2$ on the integers, what is the smallest positive integer $c$ for which $0 \sim 2$ and $2 \sim c$ hold but $0 \not\sim c$?'
+          - problem: 'On the integers define $a \sim b$ exactly when $a \le b$. Take pairs $(a, b)$ with $a$ and $b$ from $1$ to $3$. For how many pairs does $a \sim b$ hold but $b \sim a$ fail?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We need $|2 - c| \le 2$ and $|0 - c| > 2$. The first condition gives $0 \le c \le 4$ and the second gives $c > 2$, so the smallest positive integer is $c = 3$.'
+            solution_sketch: 'The pairs with $a \le b$ and $b \le a$ false are the pairs with $a < b$. These are $(1,2)$, $(1,3)$ and $(2,3)$. So there are $3$ pairs, and symmetry fails for each.'
+          - problem: 'For the relation $a \sim b \iff |a - b| \le 2$ on the integers, what is the smallest positive integer $c$ for which $2 \sim c$ holds but $0 \sim c$ does not?'
+            answer: '3'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'We need $|2 - c| \le 2$ and $|0 - c| > 2$. The first condition gives $0 \le c \le 4$ and the second gives $c > 2$, so the smallest positive integer is $c = 3$. With $0 \sim 2$ this breaks transitivity.'
           - problem: 'On the integers define $a \sim b$ exactly when $3$ divides $a + b$. Exactly one of the integers $1, 2, 3$ is related to itself. Which one?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1997,14 +1997,14 @@ topics:
         name: 'Proving a relation is an equivalence relation'
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $a - b$ is a multiple of $4$. In a proof of transitivity we suppose $a - b = 4k$ and $b - c = 4m$ for integers $k$ and $m$. Write $a - c$ as $4n$, where $n$ is an expression in $k$ and $m$.'
+          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $a - b$ is a multiple of $4$. Let $a \sim b$ and $b \sim c$, with integers $k$ and $m$ the multipliers of $4$ in the two relations. Write $a - c$ as $4n$. What is $n$ in terms of $k$ and $m$?'
             answer: 'k + m'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Adding the two equations gives $(a - b) + (b - c) = 4k + 4m$, and the left side equals $a - c$ because $b$ cancels. So $a - c = 4(k + m)$, and $n = k + m$ is an integer, which shows that $a \sim c$.'
-          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $a + b$ is even. In a proof of transitivity we suppose $a + b = 2k$ and $b + c = 2m$ for integers $k$ and $m$. Write $a + c$ as $2n$, where $n$ is an expression in $k$, $m$ and $b$.'
+            solution_sketch: 'The relations say $a - b = 4k$ and $b - c = 4m$. Adding gives $a - c = 4k + 4m$, because $b$ cancels. So $a - c = 4(k + m)$ and $n = k + m$.'
+          - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $a + b$ is even. Let $a \sim b$ and $b \sim c$. Let $k$ be half of $a + b$ and $m$ be half of $b + c$. Write $a + c$ as $2n$. What is $n$ in terms of $k$, $m$ and $b$?'
             answer: 'k + m - b'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $a + c = (a + b) + (b + c) - 2b$, because the two terms $b$ and $b$ are added and then removed again. Substituting gives $a + c = 2k + 2m - 2b = 2(k + m - b)$. Since $k + m - b$ is an integer, $a + c$ is even, so $a \sim c$.'
+            solution_sketch: 'The relations say $a + b = 2k$ and $b + c = 2m$. Then $a + c = (a + b) + (b + c) - 2b = 2k + 2m - 2b$. So $a + c = 2(k + m - b)$ and $n = k + m - b$.'
           - problem: 'On $\mathbb{Z}$ define $a \sim b$ to mean that $a \le b$. Which of the properties reflexive, symmetric and transitive does $\sim$ fail to have?'
             answer: 'symmetric'
             answer_contract: {"kind": "label", "options": [["symmetric", "symmetry", "not symmetric", "it is not symmetric", "the symmetric property", "symmetry fails", "symmetric fails"], ["reflexive", "reflexivity", "not reflexive", "it is not reflexive", "the reflexive property", "reflexivity fails", "reflexive fails"], ["transitive", "transitivity", "not transitive", "it is not transitive", "the transitive property", "transitivity fails", "transitive fails"]]}
@@ -2058,10 +2058,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The last digit of a number is its remainder modulo $10$. We have $17 \equiv 7$, $43 \equiv 3$ and $21 \equiv 1 \pmod{10}$, so the product is congruent to $7 \cdot 3 \cdot 1 = 21 \equiv 1 \pmod{10}$. The last digit is $1$.'
-          - problem: 'Dividing both sides of $14 \equiv 2 \pmod{12}$ by $2$ gives $7 \equiv 1 \pmod{12}$, which is false. The statement becomes true when the modulus $12$ is divided by $2$ as well, which gives $7 \equiv 1 \pmod n$. What is $n$?'
+          - problem: 'Dividing both sides of $14 \equiv 2 \pmod{12}$ by $2$ gives $7 \equiv 1$. What is the largest modulus $n$ for which $7 \equiv 1 \pmod n$ holds?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'From $14 \equiv 2 \pmod{12}$ we have $14 - 2 = 12 \cdot 1$. Dividing the difference by $2$ gives $7 - 1 = 6$, which is a multiple of $6$ but not of $12$. So the modulus must be divided by $2$ too, and the correct statement is $7 \equiv 1 \pmod 6$.'
+            solution_sketch: 'The statement $7 \equiv 1 \pmod n$ holds when $n$ divides $7 - 1 = 6$. The largest such $n$ is $6$. So the modulus $12$ must be divided by $2$ as well.'
           - problem: 'Is $52 \equiv 19 \pmod 6$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "52 is congruent to 19", "congruent"], ["no", "it is not", "false", "52 is not congruent to 19", "not congruent"]]}
@@ -2480,7 +2480,7 @@ topics:
         name: "Transitivity via composition"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Let $R = \{(1,2), (2,3), (3,3)\}$ on $\{1, 2, 3\}$. Exactly one pair of $R \circ R$ is not in $R$, so $R$ is not transitive. Which pair is it?'
+          - problem: 'Let $R = \{(1,2), (2,3), (3,3)\}$ on $\{1, 2, 3\}$. Which pair is in $R \circ R$ but not in $R$?'
             answer: '(1,3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Chain the pairs of $R$: $(1,2)$ and $(2,3)$ give $(1,3)$; $(2,3)$ and $(3,3)$ give $(2,3)$; $(3,3)$ and $(3,3)$ give $(3,3)$. So $R \circ R = \{(1,3), (2,3), (3,3)\}$, and only $(1,3)$ is missing from $R$.'
@@ -2563,10 +2563,10 @@ topics:
             answer: '15'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The relation $a < b$ has $\binom{5}{2} = 10$ pairs, because each two different numbers give one pair, and it has no loops. The reflexive closure adds $5$ loops, so it has $10 + 5 = 15$ pairs. This closure is the relation $a \le b$.'
-          - problem: 'The reflexive closure of $R = \{(1,2), (2,1)\}$ on $\{1, 2, 3\}$ is $R \cup \{(1,1), (2,2)\}$ plus one more pair. Which pair is that?'
+          - problem: 'Find the reflexive closure of $R = \{(1,2), (2,1)\}$ on $\{1, 2, 3\}$. Which pair added to $R$ has the largest first entry?'
             answer: '(3,3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The reflexive closure needs a loop on every element of the set $\{1, 2, 3\}$, not only on the elements that occur in $R$. The loops $(1,1)$ and $(2,2)$ are not enough, and the loop on the element $3$ is also needed. The missing pair is $(3,3)$.'
+            solution_sketch: 'The reflexive closure needs a loop on every element of $\{1, 2, 3\}$. So it adds $(1,1)$, $(2,2)$ and $(3,3)$ to $R$. The added pair with the largest first entry is $(3,3)$.'
           - problem: 'Six players pass a ball. Let $R$ be the relation "$a$ has passed to $b$"; it contains $9$ pairs, and no player passed to themselves. How many pairs must be added to make $R$ reflexive?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -2642,10 +2642,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The chains $1 \to 3 \to 1$, $2 \to 3 \to 1$, $2 \to 1 \to 2$, $3 \to 1 \to 2$ and $3 \to 1 \to 3$ force $(1,1)$, $(2,1)$, $(2,2)$, $(3,2)$ and $(3,3)$. With these, $R$ holds all $9$ pairs of $\{1,2,3\} \times \{1,2,3\}$, and $4$ of them were already there. So $9 - 4 = 5$ pairs are added.'
-          - problem: 'The transitive closure of $R = \{(1,2), (2,3), (3,4)\}$ on $\{1, 2, 3, 4\}$ contains $(1,3)$ and $(2,4)$ as new pairs. Which other new pair does it contain?'
+          - problem: 'Find the transitive closure of $R = \{(1,2), (2,3), (3,4)\}$ on $\{1, 2, 3, 4\}$. Which pair in the closure, and not in $R$, has the largest difference between its entries?'
             answer: '(1,4)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'After $(1,3)$ and $(2,4)$ are added, the new pair $(1,3)$ chains with $(3,4)$, and $(1,2)$ chains with $(2,4)$. Both chains force $(1,4)$. The next round gives the last new pair, $(1,4)$.'
+            solution_sketch: 'Chains give the new pairs $(1,3)$, $(2,4)$ and then $(1,4)$ from $(1,3)$ and $(3,4)$. The differences of the entries are $2$, $2$ and $3$. The largest difference belongs to $(1,4)$.'
         constraints: "close small relations under chaining, count pairs of the closure, and use contexts such as roads and ancestors"
     diagnostic_exemplar:
       problem: 'Let $R=\{(1,2),(2,3),(3,4)\}$ on $\{1,2,3,4\}$. How many pairs does the transitive closure of $R$ hold?'
@@ -2692,10 +2692,10 @@ topics:
             answer: '18'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Count for each $a$ the elements of the set that are multiples of $a$. The number $1$ divides $6$ elements, $2$ divides $4$ ($2, 4, 6, 12$), $3$ divides $3$ ($3, 6, 12$), $4$ divides $2$ ($4, 12$), $6$ divides $2$ ($6, 12$) and $12$ divides $1$. The total is $6 + 4 + 3 + 2 + 2 + 1 = 18$.'
-          - problem: 'The relation $R = \{(0,0), (0,1), (1,0), (1,1), (2,2)\}$ on $\{0, 1, 2\}$ is reflexive and transitive. Which two different elements $a$ and $b$ satisfy $a \mathrel{R} b$ and $b \mathrel{R} a$, so that $R$ is not antisymmetric?'
+          - problem: 'Is the relation $R = \{(0,0), (0,1), (1,0), (1,1), (2,2)\}$ on $\{0, 1, 2\}$ a partial order? If not, give the two different elements that show it, in increasing order.'
             answer: '0, 1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Antisymmetry fails when $a \mathrel{R} b$ and $b \mathrel{R} a$ for some $a \neq b$. The pairs $(0,1)$ and $(1,0)$ are both in $R$ while $0 \neq 1$. The elements are $0$ and $1$.'
+            solution_sketch: 'Test the three axioms. Reflexivity and transitivity hold. Antisymmetry fails, because $0\,R\,1$ and $1\,R\,0$ with $0\neq1$. The elements are $0, 1$.'
           - problem: 'A project has three tasks. Let $R$ be the relation "task $a$ is finished no later than task $b$" on $\{1, 2, 3\}$, where task $1$ is finished no later than task $2$, task $2$ no later than task $3$, and every task is finished no later than itself. Suppose $R$ is a partial order and contains only the pairs that this forces. How many pairs does $R$ have?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -2713,14 +2713,14 @@ topics:
         name: "Proving a relation is a partial order"
         key_prerequisites: [relations-properties]
         exemplars:
-          - problem: 'Let $a$ and $b$ be positive integers with $a \mid b$ and $b \mid a$, say $b = ak$ and $a = bm$ for integers $k$ and $m$. What is the value of $km$?'
+          - problem: 'Let $a$ and $b$ be positive integers with $a \mid b$ and $b \mid a$. What is the value of $\frac{b}{a}$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Substituting gives $a = bm = (ak)m = a(km)$. Since $a$ is a positive integer, $a \neq 0$, so we may cancel $a$ and get $km = 1$. The value is $1$.'
-          - problem: 'Divisibility is not antisymmetric on the set of all integers. Find the integer $b \neq 3$ such that $3 \mid b$ and $b \mid 3$.'
+            solution_sketch: 'Write $b=ak$ and $a=bm$ for integers $k$ and $m$. Then $b=bkm$, so $km=1$. Both are positive integers, so $k=1$ and $\frac{b}{a}=1$.'
+          - problem: 'Test whether divisibility is antisymmetric on the set of all integers, with $a=3$. If it fails, give the integer $b \neq 3$ that shows it.'
             answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The integer $b$ must be a multiple of $3$ that divides $3$, so $|b|$ is at most $3$ and $b$ is $3$ or $-3$. Since $b \neq 3$, we get $b = -3$. Indeed $3 \mid -3$ and $-3 \mid 3$, which breaks antisymmetry.'
+            solution_sketch: 'Antisymmetry needs $3\mid b$ and $b\mid 3$ to force $b=3$. Take $b=-3$: $3\mid -3$ and $-3\mid 3$, but $-3\neq 3$. So $-3$ shows the failure.'
           - problem: 'Two different students in a class were born on the same day. On the set of students let $a \mathrel{R} b$ mean "$a$ was born no later than $b$". Which of reflexivity, antisymmetry and transitivity fails for $R$?'
             answer: 'antisymmetry'
             answer_contract: {"kind": "label", "options": [["antisymmetry", "antisymmetric", "it is not antisymmetric", "not antisymmetric", "antisymmetry fails", "it fails antisymmetry", "fails antisymmetry"], ["reflexivity", "reflexive", "it is not reflexive", "not reflexive", "reflexivity fails", "it fails reflexivity", "fails reflexivity"], ["transitivity", "transitive", "it is not transitive", "not transitive", "transitivity fails", "it fails transitivity", "fails transitivity"]]}
@@ -2729,14 +2729,14 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A photo fits when $a \le 3$ and $b \le 2$, which is the componentwise order $(a, b) \preceq (3, 2)$. The width $a$ can be $1, 2$ or $3$ and the height $b$ can be $1$ or $2$, and the two choices are independent. So there are $3 \cdot 2 = 6$ photo sizes.'
-          - problem: 'For $a \mathrel{R} b \iff |a| \le |b|$ on $\mathbb{Z}$, find the integer $b \neq 4$ such that $4 \mathrel{R} b$ and $b \mathrel{R} 4$.'
+          - problem: 'Define $a \mathrel{R} b \iff |a| \le |b|$ on $\mathbb{Z}$. Is $R$ a partial order? If not, give the integer $b \neq 4$ such that the pair $4$ and $b$ shows it.'
             answer: '-4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We need $|4| \le |b|$ and $|b| \le |4|$, so $|b| = 4$. Since $b \neq 4$, we get $b = -4$. Then $4 \mathrel{R} -4$ and $-4 \mathrel{R} 4$ although $4 \neq -4$, so antisymmetry fails, so $R$ is not a partial order.'
-          - problem: 'Let $a$, $b$ and $c$ be positive integers with $a \mid b$ and $b \mid c$. Suppose $b = 7a$ and $c = 3b$. Then $c = ka$ for an integer $k$. Find $k$.'
+            solution_sketch: 'Test the three axioms. Reflexivity and transitivity hold. Antisymmetry fails for $4$ and $-4$: $|4|\le|-4|$ and $|-4|\le|4|$, but $4\neq-4$. So $b=-4$.'
+          - problem: 'Let $a$ be a positive integer. Let $b=7a$ and $c=3b$. By what integer must $a$ be multiplied to give $c$?'
             answer: '21'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Substitute $b = 7a$ into $c = 3b$ to get $c = 3(7a) = 21a$. So $c = ka$ with $k = 21$, which shows $a \mid c$. This is the transitivity step of the divisibility relation.'
+            solution_sketch: 'Both $a\mid b$ and $b\mid c$ hold. Substitute: $c=3b=3\cdot7a=21a$. So $a$ must be multiplied by $21$.'
           - problem: 'Write the full proof that the relation $\preceq$ on $\mathbb{N} \times \mathbb{N}$, where $\mathbb{N} = \{0, 1, 2, \dots\}$, defined by $(a, b) \preceq (c, d)$ if and only if $a \le c$ and $b \le d$, is a partial order.'
             answer: 'componentwise order is a partial order'
             answer_contract: {"kind": "none"}
@@ -2865,7 +2865,7 @@ topics:
         name: "Reading a Hasse diagram"
         key_prerequisites: [partial-orders]
         exemplars:
-          - problem: 'The Hasse diagram of the divisors of $12$ ordered by divisibility has the upward edges $1\!-\!2$, $1\!-\!3$, $2\!-\!4$, $2\!-\!6$, $3\!-\!6$, $4\!-\!12$ and $6\!-\!12$, and $x \preceq y$ holds exactly when an upward path joins $x$ to $y$. How many elements $x$ satisfy $x \preceq 6$?'
+          - problem: 'The Hasse diagram of the divisors of $12$ ordered by divisibility has the upward edges $1\!-\!2$, $1\!-\!3$, $2\!-\!4$, $2\!-\!6$, $3\!-\!6$, $4\!-\!12$ and $6\!-\!12$. Let $\preceq$ be the order that this diagram shows. How many elements $x$ satisfy $x \preceq 6$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Walk down from $6$: the edges into $6$ come from $2$ and $3$, and the edges into $2$ and $3$ come from $1$. So $x \preceq 6$ holds for $1, 2, 3, 6$, while $4$ and $12$ have no upward path to $6$. There are $4$ such elements.'
@@ -2992,10 +2992,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "there is", "there is one", "yes, there is"], ["no", "there is not", "there is none", "no, there is not", "none"]]}
             solution_sketch: 'An order contained in every other order is a minimum of the poset. The set $\{\text{ham}\}$ is contained in each of the other three orders. So the poset has a minimum, and the answer is yes. Two orders such as the second and the third have no order between them, but that does not matter here.'
-          - problem: 'In $\{2, 3, 4, 6, 12\}$ under divisibility, nothing divides $2$ except $2$. Which element of the set is not a multiple of $2$?'
-            answer: '3'
+          - problem: 'The set $\{2, 3, 4, 6, 12\}$ has the order of divisibility. How many minimal elements does the set have?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Nothing below $2$ shows only that $2$ is minimal. A minimum must divide every element of the set. The multiples of $2$ in the set are $2$, $4$, $6$ and $12$, and the element $3$ is not one of them. So $2$ does not divide $3$, and $2$ is not a minimum.'
+            solution_sketch: 'An element is minimal if no other element of the set divides it. Nothing else divides $2$ or $3$. Both $4$, $6$ and $12$ have a divisor in the set, so the minimal elements are $2$ and $3$, and the count is $2$.'
           - problem: 'The positive divisors of $60$ are ordered by divisibility. Which element is the maximum?'
             answer: '60'
             answer_contract: {"kind": "exact"}
@@ -3183,10 +3183,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The holes are the two colours. With $2$ socks the colours may differ, so $2$ are not enough. With $3$ socks, more socks than colours, two have the same colour. The answer is $3$.'
-          - problem: 'The pairs $\{1, 10\}, \{2, 9\}, \{3, 8\}, \{4, 7\}, \{5, 6\}$ are the holes. What is the smallest number of numbers chosen from $\{1, 2, \dots, 10\}$ that guarantees two with sum $11$?'
+          - problem: 'What is the smallest number of numbers chosen from $\{1, 2, \dots, 10\}$ that guarantees two with sum $11$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'There are $5$ pairs, and five chosen numbers can take one from each pair, for example $1, 2, 3, 4, 5$, with no sum of $11$. So five numbers do not guarantee it. With $6$ chosen numbers, two lie in the same pair, and their sum is $11$. The answer is $6$.'
+            solution_sketch: 'Group the numbers into the $5$ pairs that sum to $11$: $\{1,10\},\{2,9\},\{3,8\},\{4,7\},\{5,6\}$. Five numbers can take one from each pair with no sum of $11$. With $6$ numbers, two lie in one pair, so the answer is $6$.'
           - problem: 'How many people must a group have to be certain that two of them share a birthday, if there are $366$ possible dates in a year?'
             answer: '367'
             answer_contract: {"kind": "exact"}

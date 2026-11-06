@@ -347,10 +347,10 @@ topics:
             answer: 'b'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The words "together imply" mean that the pair $P$ and $Q$ is the hypothesis. So the hypothesis is $P\land Q$ and the conclusion is $R$. The formula is $(P\land Q)\to R$.'
-          - problem: 'The statement "$P$ holds exactly when $Q$ holds" translates as $P\leftrightarrow Q$. In how many of the four rows of the truth table does $P\to Q$ have a different value from $P\leftrightarrow Q$?'
+          - problem: 'Let $P$ and $Q$ be statements. Write the sentence "$P$ holds exactly when $Q$ holds" in symbols. In how many of the four rows of the truth table does that formula have a different value from $P\to Q$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The correct translation is $P\leftrightarrow Q$. The two formulas differ only in the row where $P$ is false and $Q$ is true. There $P\to Q$ is true and $P\leftrightarrow Q$ is false. So they differ in $1$ row.'
+            solution_sketch: 'The symbolic form is $P\leftrightarrow Q$. It differs from $P\to Q$ only in the row where $P$ is false and $Q$ is true. There $P\to Q$ is true and $P\leftrightarrow Q$ is false, so the count is $1$.'
           - problem: 'Consider the statement "If it snows, the road is closed." On a day when it does not snow and the road is closed, is the statement true or false?'
             answer: 'true'
             answer_contract: {"kind": "label", "options": [["true", "t", "yes", "it is true", "is true", "1", "it's true"], ["false", "f", "no", "it is false", "is false", "0", "it's false"]]}
@@ -376,10 +376,10 @@ topics:
             answer: '3, 4, 8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula reads "if $n$ is even, then $n$ is divisible by $4$". For $n=3$ the hypothesis is false, so the statement is true. For $n=4$ and $n=8$ both parts are true. For $n=2$ and $n=6$ the hypothesis is true and the conclusion is false. So the statement is true for $3$, $4$ and $8$.'
-          - problem: 'The formula $(P\land Q)\lor R$ reads "either $P$ and $Q$ both hold, or $R$ holds". Is it true or false when $P$ is true, $Q$ is false and $R$ is true?'
+          - problem: 'Is the formula $(P\land Q)\lor R$ true when $P$ is true, $Q$ is false and $R$ is true?'
             answer: 'true'
             answer_contract: {"kind": "label", "options": [["true", "t", "yes", "it is true", "is true", "1", "it's true"], ["false", "f", "no", "it is false", "is false", "0", "it's false"]]}
-            solution_sketch: 'Here $P\land Q$ is false, because $Q$ is false. The part $R$ is true. A disjunction is true when one part is true, so the whole statement is true.'
+            solution_sketch: 'Here $P\land Q$ is false, because $Q$ is false. The disjunct $R$ is true. So the formula is true.'
           - problem: 'With $S$: "it snows", $C$: "the road is closed", $L$: "I am late", which sentence reads $L\leftrightarrow(S\lor C)$? (a) If I am late, then it snows and the road is closed. (b) If it snows, then I am late and the road is closed. (c) I am late if and only if it snows or the road is closed. (d) If it snows or the road is closed, then I am late and it snows.'
             answer: 'c'
             answer_contract: {"kind": "exact"}
@@ -392,10 +392,10 @@ topics:
             answer: 'a'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement is true when "I am late" and "it snows or the road is closed" have the same truth value. On day (a) I am late, but it neither snows nor is the road closed, so the two sides differ. On days (b), (c) and (d) the two sides agree. So the statement is false on day (a).'
-          - problem: 'The formula $P\land(Q\lor R)$ reads "$P$ holds, and $Q$ or $R$ holds". Is it true or false when $P$ is true, $Q$ is false and $R$ is false?'
+          - problem: 'Is the formula $P\land(Q\lor R)$ true when $P$ is true, $Q$ is false and $R$ is false?'
             answer: 'false'
             answer_contract: {"kind": "label", "options": [["true", "t", "yes", "it is true", "is true", "1", "it's true"], ["false", "f", "no", "it is false", "is false", "0", "it's false"]]}
-            solution_sketch: 'Here $Q\lor R$ is false, because both $Q$ and $R$ are false. A conjunction needs both parts true, and the second part fails. So the whole statement is false, although $P$ is true.'
+            solution_sketch: 'Here $Q\lor R$ is false, because both $Q$ and $R$ are false. So the conjunction with $P$ is false.'
         constraints: 'read symbolic formulas back into English, keeping the grouping; choose the matching sentence or decide the truth of the reading'
     diagnostic_exemplar:
       problem: 'Let $p$ be "$n$ is even" and $q$ be "$n>5$". For how many integers $n$ from $1$ to $10$ is $p\to q$ true?'
@@ -967,7 +967,7 @@ topics:
         name: "Converse, inverse, contrapositive"
         key_prerequisites: [propositional-logic]
         exemplars:
-          - problem: 'The statement "If $n$ is divisible by $6$, then $n$ is divisible by $3$" is true for every integer $n$. Its contrapositive lets you conclude that $n$ is not divisible by $6$ for every integer $n$ that satisfies its hypothesis. How many of the integers from $1$ to $12$ satisfy that hypothesis?'
+          - problem: 'The statement "If $n$ is divisible by $6$, then $n$ is divisible by $3$" is true for every integer $n$. For how many integers $n$ from $1$ to $12$ is the hypothesis of its contrapositive true?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The contrapositive is "if $n$ is not divisible by $3$, then $n$ is not divisible by $6$". Its hypothesis is that $n$ is not divisible by $3$. The multiples of $3$ from $1$ to $12$ are $3$, $6$, $9$ and $12$, so $12 - 4 = 8$ integers satisfy it.'
@@ -1110,14 +1110,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A sufficient condition must guarantee the result, so "if $n$ is a multiple of $3$, then $n$ is a multiple of $12$" would have to hold for every $n$. It fails for $n = 3$, because $3$ is a multiple of $3$ but not of $12$. No smaller positive integer is a multiple of $3$, so the answer is $3$.'
-          - problem: 'Being a multiple of $3$ is not a sufficient condition for being odd. What is the smallest positive integer that shows this?'
+          - problem: 'Is being a multiple of $3$ a sufficient condition for being odd? If not, give the smallest positive integer that proves it.'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A sufficient condition guarantees the other property for every case. To show that it does not, find a multiple of $3$ that is not odd. The multiples of $3$ are $3, 6, 9, \dots$, and the first even one is $6$. So $6$ is the smallest counterexample.'
-          - problem: 'For a real number $x$, the condition "$x^2 > 25$" is not sufficient for "$x > 5$". Find an integer $x$ that shows this.'
+            solution_sketch: 'A sufficient condition must make the result certain. The multiples of $3$ are $3, 6, 9, \dots$ and $3$ is odd. The number $6$ is a multiple of $3$ and is not odd, so the answer is $6$.'
+          - problem: 'For a real number $x$, is the condition "$x^2 > 25$" sufficient for "$x > 5$"? If not, give an integer $x$ that proves it.'
             answer: '-6'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": -6}}
-            solution_sketch: 'We need $x^2 > 25$ and $x \le 5$. Take $x = -6$: then $x^2 = 36 > 25$, but $x = -6$ is not greater than $5$. So $x = -6$ is a counterexample, and so is every integer below $-6$. The condition $x^2 > 25$ allows negative values of $x$.'
+            solution_sketch: 'A sufficient condition must make the result certain. Test $x=-6$: $x^2=36>25$, but $x>5$ is false. So the condition is not sufficient, and $-6$ proves it.'
           - problem: 'A club has the rule: "Being a member for at least $2$ years is sufficient for a discount." Rosa has been a member for $1$ year. Can we conclude that she gets no discount?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "no, it is not", "it is not", "false"], ["yes", "yes, it is", "it is", "true"]]}
@@ -1130,10 +1130,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A sufficient condition must work for every $x$. The number $4$ is a multiple of $4$, but $4$ is not a multiple of $8$. No smaller positive integer is a multiple of $4$, so $4$ is the smallest counterexample.'
-          - problem: 'Being a prime number is not a sufficient condition for being odd. Which prime number shows this?'
+          - problem: 'Is being a prime number a sufficient condition for being odd? If not, which prime number proves it?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A counterexample must be a prime number that is not odd. Every even number above $2$ has the divisor $2$ and is not prime. So $2$ is the only even prime, and it is the counterexample.'
+            solution_sketch: 'A sufficient condition must make the result certain. Most primes are odd. The prime $2$ is even, so it proves that the condition is not sufficient.'
         constraints: "translate sufficient-for statements into $A\\to B$; test them over a stated domain with a witness or a verdict; include word-problem rules"
       - id: kp2
         name: "Necessary conditions and only if"
@@ -1143,18 +1143,18 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A necessary condition must hold whenever the result holds, so "if $n$ is a multiple of $5$, then $n$ is a multiple of $10$" would have to be true. It fails for $n = 5$, which is a multiple of $5$ and not of $10$. No smaller positive integer is a multiple of $5$, so the answer is $5$.'
-          - problem: 'Being divisible by $4$ is not a necessary condition for being even. What is the smallest positive integer that shows this?'
+          - problem: 'Is being divisible by $4$ a necessary condition for being even? If not, give the smallest positive integer that proves it.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A necessary condition must hold in every case of the other statement. So we need an even integer that is not divisible by $4$. The smallest positive even integer is $2$, and $4$ does not divide $2$. So $2$ shows that the condition is not necessary.'
+            solution_sketch: 'A necessary condition must hold for every even number. The number $2$ is even and is not divisible by $4$. Nothing smaller is positive and even, so the answer is $2$.'
           - problem: 'A driving school has the rule: "Passing the theory test is necessary for taking the road test." Jo has not passed the theory test. Can Jo take the road test?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "no, it is not", "it is not", "false"], ["yes", "yes, it is", "it is", "true"]]}
             solution_sketch: 'The rule has the form "if you take the road test, then you have passed the theory test". Its contrapositive says that without a pass in the theory test, Jo cannot take the road test. Jo has not passed, so the answer is no.'
-          - problem: 'For a real number $x$, the statement "$x^2 = 9$ only if $x = 3$" is false. Find a value of $x$ that shows this.'
+          - problem: 'For a real number $x$, is the statement "$x^2 = 9$ only if $x = 3$" true? If not, give a value of $x$ that proves it false.'
             answer: '-3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The statement "$A$ only if $B$" means $A \to B$, here "if $x^2 = 9$, then $x = 3$". To show it false, find $x$ with $x^2 = 9$ and $x \ne 3$. The value $x = -3$ works, because $(-3)^2 = 9$.'
+            solution_sketch: 'The statement says that $x^2=9$ forces $x=3$. Test $x=-3$: $x^2=9$, but $x\neq 3$. So the statement is false, and $-3$ proves it.'
           - problem: 'To ride a roller coaster, a child must be at least $120$ cm tall. Four children are $118$, $120$, $125$ and $119$ cm tall. How many of the four children are certainly not allowed to ride?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1192,10 +1192,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "no, it is not", "it is not", "false"], ["yes", "yes, it is", "it is", "true"]]}
             solution_sketch: 'The statement means "if you do not order wine, then the meal is free". Ola orders wine, so the hypothesis is false. A conditional with a false hypothesis is true, so the statement is not broken. The coupon promises nothing about orders with wine.'
-          - problem: 'For a real number $x$, the statement "$x = 4$ is necessary and sufficient for $x^2 = 16$" is false. Find a value of $x$ that shows this.'
+          - problem: 'For a real number $x$, is the statement "$x = 4$ is necessary and sufficient for $x^2 = 16$" true? If not, give a value of $x$ that proves it false.'
             answer: '-4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The statement means "$x^2 = 16$ if and only if $x = 4$". One direction holds, because $x = 4$ gives $x^2 = 16$. The other fails for $x = -4$, since $(-4)^2 = 16$ and $-4 \ne 4$. So $x = -4$ is a counterexample.'
+            solution_sketch: 'The statement needs $x^2=16$ to hold exactly when $x=4$. Test $x=-4$: $x^2=16$, but $x\neq 4$. So the necessary part fails, and $-4$ proves it.'
           - problem: 'A library says: "You pay no fine if and only if you return the book within $14$ days." Five readers return their books after $10$, $14$, $15$, $20$ and $7$ days. How many of the five readers pay no fine?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1251,11 +1251,11 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The two negations cancel, so the statement says that the applicant is at least $18$ years old. The applicants aged $18$, $19$ and $20$ satisfy this. The applicants aged $16$ and $17$ do not. So the statement is true for $3$ applicants.'
-          - problem: 'Build the truth tables of $\neg\neg P \lor Q$ and of $P \lor Q$. In how many of the four rows do the two tables differ?'
+          - problem: 'In how many of the four rows of the truth table do $\neg\neg P \lor Q$ and $P \lor Q$ have different truth values?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Because $\neg\neg P$ has the same truth value as $P$ in every row, the column for $\neg\neg P \lor Q$ equals the column for $P \lor Q$. Both columns are T, T, T, F. So the tables differ in $0$ rows.'
-          - problem: 'Build the truth table of $\neg\neg P \land \neg\neg\neg Q$, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row is the formula true?'
+            solution_sketch: 'Because $\neg\neg P$ has the same truth value as $P$ in every row, the column for $\neg\neg P \lor Q$ equals the column for $P \lor Q$. Both columns are T, T, T, F. So the values differ in $0$ rows.'
+          - problem: 'Number the rows of a truth table $1$ to $4$ in the order TT, TF, FT, FF for $P$ and $Q$. In which row is $\neg\neg P \land \neg\neg\neg Q$ true?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula simplifies to $P \land \neg Q$, because $\neg\neg P$ is $P$ and $\neg\neg\neg Q$ is $\neg Q$. This is true only when $P$ is true and $Q$ is false. That is the row TF, which is row 2.'
@@ -1277,7 +1277,7 @@ topics:
           answer: 'yes'
           reveal: 'The second statement says that at least one of the two parts of the first statement fails. This is exactly what it means for "A and B" to be false, which is the law $\neg(A \land B) \equiv \neg A \lor \neg B$.'
         exemplars:
-          - problem: 'Build the truth table of $\neg(P \lor Q)$, numbering the rows 1 to 4 in the order TT, TF, FT, FF. In which row is the formula true?'
+          - problem: 'Number the rows of a truth table $1$ to $4$ in the order TT, TF, FT, FF for $P$ and $Q$. In which row is $\neg(P \lor Q)$ true?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The disjunction $P \lor Q$ is true in the rows 1, 2 and 3 and false in row 4. Its negation is true only in row 4, the row FF. This agrees with De Morgan''s law $\neg(P \lor Q) \equiv \neg P \land \neg Q$, because $\neg P \land \neg Q$ needs both letters false.'
@@ -1313,10 +1313,10 @@ topics:
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By De Morgan''s law the statement says that $n$ is odd and $n$ is not a multiple of $5$. There are $10$ odd integers from $1$ to $20$. The odd multiples of $5$ among them are $5$ and $15$. So the statement is true for $10 - 2 = 8$ integers.'
-          - problem: 'Is $\neg(P \lor Q)$ logically equivalent to $\neg P \land \neg Q$?'
+          - problem: 'Rewrite $\neg(P \lor Q)$ with the negation on single letters only. Is the result true in exactly one of the four rows TT, TF, FT, FF?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is", "it is", "true"], ["no", "no, it is not", "it is not", "false"]]}
-            solution_sketch: 'The disjunction $P \lor Q$ is false only when both $P$ and $Q$ are false. So $\neg(P \lor Q)$ is true only in the row FF. The formula $\neg P \land \neg Q$ is also true only in the row FF. The two columns are equal, so the answer is yes.'
+            solution_sketch: 'De Morgan''s law gives $\neg(P \lor Q) \equiv \neg P \land \neg Q$. The conjunction $\neg P \land \neg Q$ needs both $P$ and $Q$ false. So it is true only in the row FF, and the answer is yes.'
         constraints: "apply De Morgan and double negation to simplify"
       - id: kp3
         name: "Nested applications"
@@ -1326,10 +1326,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula $P \land (Q \lor R)$ is true in $3$ rows: TTT, TTF and TFT. Its negation is true in the other rows. The table has $8$ rows, so the negation is true in $8 - 3 = 5$ rows. De Morgan''s law gives $\neg P \lor (\neg Q \land \neg R)$, which is also true in $5$ rows.'
-          - problem: 'In how many of the eight rows of the truth table do $\neg(P \lor (Q \land R))$ and $\neg P \land (\neg Q \lor \neg R)$ have the same truth value?'
-            answer: '8'
+          - problem: 'Rewrite $\neg(P \lor (Q \land R))$ so that every negation sits on a single letter. In how many of the eight rows of the truth table is the result true?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Apply De Morgan''s law to the outer disjunction: $\neg(P \lor (Q \land R))$ becomes $\neg P \land \neg(Q \land R)$. Apply it again to the inner conjunction: $\neg(Q \land R)$ becomes $\neg Q \lor \neg R$. So the two formulas are equivalent and agree in all $8$ rows.'
+            solution_sketch: 'The outer De Morgan step gives $\neg P \land \neg(Q \land R)$. The inner step gives $\neg P \land (\neg Q \lor \neg R)$. This needs $P$ false, which is $4$ rows, and not both $Q$ and $R$ true, which is $3$ of the $4$ rows. So the result is true in $3$ rows.'
           - problem: 'In how many of the eight rows do $\neg(P \lor (Q \land R))$ and $\neg P \lor (\neg Q \lor \neg R)$ have different values?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1354,10 +1354,10 @@ topics:
             answer: 'Not R, and (not P or not Q).'
             answer_contract: {"kind": "written"}
             solution_sketch: 'De Morgan''s law for "or" gives $\neg((P \land Q) \lor R) \equiv \neg(P \land Q) \land \neg R$. De Morgan''s law for "and" then gives $\neg(P \land Q) \equiv \neg P \lor \neg Q$. So the negation is $(\neg P \lor \neg Q) \land \neg R$.'
-          - problem: 'Is $(\neg P \lor \neg Q) \lor \neg R$ logically equivalent to $\neg((P \land Q) \lor R)$?'
+          - problem: 'Rewrite $\neg((P \land Q) \lor R)$ so that every negation sits on a single letter. Is the result true in exactly four of the eight rows of the truth table?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["no", "no, it is not", "it is not", "not equivalent", "false"], ["yes", "yes, it is", "it is", "equivalent", "true"]]}
-            solution_sketch: 'The correct result of De Morgan''s law is $(\neg P \lor \neg Q) \land \neg R$, with $\land$ in the outer place. The given formula keeps $\lor$ there. Take $P$ false, $Q$ false and $R$ true: the original formula is false, but the given formula is true. So they are not equivalent.'
+            solution_sketch: 'The outer De Morgan step gives $\neg(P \land Q) \land \neg R$. The inner step gives $(\neg P \lor \neg Q) \land \neg R$. This needs $R$ false, which is $4$ rows, and not both $P$ and $Q$ true, which is $3$ of the $4$ rows. So the result is true in $3$ rows and the answer is no.'
         constraints: "two nested De Morgan steps; all negations end on atomic variables"
     diagnostic_exemplar:
       problem: 'For how many integers $n$ from $1$ to $20$ is the statement $\lnot(n \text{ is even}\lor n \text{ is a multiple of } 5)$ true?'
@@ -1466,7 +1466,7 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The formula is true exactly when $P \to \neg Q$ is false. That needs $P$ true and $\neg Q$ false, so $P$ and $Q$ are both true. Only the row TT does this, so the formula is true in $1$ of the $4$ rows.'
-          - problem: 'Write the statement "it is not true that if $P$ then not $Q$" as a statement with "and" and without "if".'
+          - problem: 'Write the statement "it is not true that if $P$ then not $Q$" without the word "if".'
             answer: 'P and Q.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'The negation of "if $A$ then $B$" is "$A$ and not $B$". Here $A$ is $P$ and $B$ is $\neg Q$, so the negation is $P \land \neg\neg Q$. The double negation cancels, which leaves $P \land Q$.'
@@ -1675,10 +1675,10 @@ topics:
             answer: 'true'
             answer_contract: {"kind": "label", "options": [["true", "yes", "it is true"], ["false", "no", "it is false"]]}
             solution_sketch: 'Rewrite the inequality as $n^2 - n = n(n - 1) \ge 0$. If $n \ge 1$ both factors are at least $0$, so the product is at least $0$. If $n \le 0$ both factors are at most $0$, since $n - 1 < 0$, so the product is again at least $0$. No integer fails, so the statement is true.'
-          - problem: 'Euler noticed that $n^2 + n + 41$ is prime for $n = 1, 2, 3, \dots$ for a long run. Show that "for every positive integer $n$, $n^2 + n + 41$ is prime" is false by giving a counterexample.'
+          - problem: 'Find the smallest positive integer $n$ that is a counterexample to the statement "for every positive integer $n$, $n^2 + n + 41$ is prime".'
             answer: '40'
-            answer_contract: {"kind": "property", "check": "prime_counterexample", "args": {"expr": "n^2 + n + 41", "var": "n", "min": 1}}
-            solution_sketch: 'One failure is enough to refute a universal statement. The values for $n = 1, \dots, 39$ are all prime, but at $n = 40$ the value is $40^2 + 40 + 41 = 1681 = 41^2$. This is not prime, so $n = 40$ is a counterexample. The number $n = 41$ works too, because $41^2 + 41 + 41 = 41 \cdot 43$.'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'A counterexample is a value of $n$ where $n^2+n+41$ is not prime. The values for $n = 1, \dots, 39$ are all prime, but $40^2 + 40 + 41 = 1681 = 41^2$. So the smallest counterexample is $n = 40$.'
           - problem: 'What is the smallest positive integer $n$ for which $2^n > n^2$ is false?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1708,18 +1708,18 @@ topics:
             answer: 'true'
             answer_contract: {"kind": "label", "options": [["true", "yes", "it is true"], ["false", "no", "it is false"]]}
             solution_sketch: 'To prove an existential statement, find one witness. Try $n = 7$: $7^2 + 7 = 49 + 7 = 56$. So a witness exists and the statement is true. The integer $n = -8$ is a second witness, since $64 - 8 = 56$.'
-          - problem: 'The statement "there is a positive integer $n$ with $3n^2 = 75$" is true. Find a witness.'
+          - problem: 'Find a positive integer $n$ with $3n^2 = 75$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide both sides by $3$ to get $n^2 = 25$. The positive integer with square $25$ is $n = 5$. Check: $3 \cdot 5^2 = 3 \cdot 25 = 75$. So $5$ is a witness.'
+            solution_sketch: 'Divide both sides by $3$ to get $n^2 = 25$. The positive integer with square $25$ is $n = 5$. Check: $3 \cdot 5^2 = 75$.'
           - problem: 'Mia buys exactly 18 pens, using packs of 4 pens and packs of 7 pens. How many packs of 7 pens does she buy?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We look for whole numbers $a$ and $b$ with $4a + 7b = 18$. Without any pack of $7$ we would need $18 = 4a$, which is impossible. With one pack of $7$ we would need $4a = 11$, which is impossible. With two packs of $7$ we need $4a = 4$, so $a = 1$. So she buys $2$ packs of $7$.'
-          - problem: 'Show that some multiple of $7$ lies between $100$ and $110$ by giving one.'
+          - problem: 'Give a multiple of $7$ that lies between $100$ and $110$.'
             answer: '105'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 7, "min": 100, "max": 110}}
-            solution_sketch: 'We need a witness: a number $n$ with $100 \le n \le 110$ and $7 \mid n$. Since $7 \cdot 14 = 98$ is too small and $7 \cdot 15 = 105$ is in range, $105$ works. The next multiple, $7 \cdot 16 = 112$, is already too big, so $105$ is the only witness.'
+            solution_sketch: 'We need a number $n$ with $100 \le n \le 110$ and $7 \mid n$. Since $7 \cdot 14 = 98$ is too small and $7 \cdot 15 = 105$ is in range, $105$ works. The next multiple, $112$, is too big.'
           - problem: 'No integer $n$ with $n^2 = 3n + 4$ is found among $n = 1, 2, 3$. What is the smallest positive integer $n$ with $n^2 = 3n + 4$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1741,7 +1741,7 @@ topics:
             answer: 'For every x, if D(x) holds then E(x) holds.'
             answer_contract: {"kind": "written"}
             solution_sketch: '"Every" gives the quantifier $\forall$. The claim is only about integers divisible by $6$, so the condition $D(x)$ must guard the claim as the hypothesis of an implication: $\forall x\,(D(x) \to E(x))$. A conjunction $D(x) \land E(x)$ would say that every integer is divisible by $6$, which is false for $x = 1$.'
-          - problem: 'Over the integers from 1 to 10, let $A(x)$ be "$x$ is even" and $B(x)$ be "$x > 4$". The statement "every $A$ is $B$", written $\forall x\,(A(x) \to B(x))$, is false. What is the smallest counterexample?'
+          - problem: 'Over the integers from 1 to 10, let $A(x)$ be "$x$ is even" and $B(x)$ be "$x > 4$". What is the smallest counterexample to the statement "every $A$ is $B$", written $\forall x\,(A(x) \to B(x))$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A counterexample to $\forall x\,(A(x) \to B(x))$ is an element where $A(x)$ is true and $B(x)$ is false. So we need an even number that is not greater than $4$. The even numbers in order are $2, 4, 6, \dots$, and $2$ is not greater than $4$. So the smallest counterexample is $2$.'
@@ -1749,22 +1749,22 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rule has the shape $\forall x\,(L(x) \to F(x))$, where $L(x)$ means that student $x$ stays for lunch and $F(x)$ means that the student brought a form. A student breaks it when $L$ is true and $F$ is false. Students $2$, $5$ and $8$ stay and brought a form. Student $4$ stays and brought no form, so student $4$ breaks the rule. Students $1$ and $9$ brought forms without staying, which breaks nothing.'
-          - problem: 'A car park has spaces numbered 1 to 20. A space is reserved when its number is a multiple of $6$, and covered when its number is greater than $10$. The statement "some reserved space is covered" is true. What is the smallest witness?'
+          - problem: 'A car park has spaces numbered 1 to 20. A space is reserved when its number is a multiple of $6$, and covered when its number is greater than $10$. What is the smallest witness to the statement "some reserved space is covered"?'
             answer: '12'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The statement has the shape $\exists x\,(R(x) \land C(x))$, so a witness must be both reserved and covered. The reserved spaces are $6, 12, 18$. The space $6$ is not covered, since $6 \le 10$. The space $12$ is reserved and covered, so the smallest witness is $12$.'
-          - problem: 'Over the integers from $1$ to $10$, let $P(x)$ mean "$x$ is a prime number" and $E(x)$ mean "$x$ is even". The formula $\exists x\,(P(x) \land E(x))$ says "some prime number is even". Which $x$ makes this formula true?'
+          - problem: 'Over the integers from $1$ to $10$, let $P(x)$ mean "$x$ is a prime number" and $E(x)$ mean "$x$ is even". Which $x$ is a witness to the statement "some prime number is even"?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The formula is true when some $x$ has both $P(x)$ and $E(x)$ true, so $x$ is a prime number and is even. The only even prime number is $2$. So $x = 2$ is the witness.'
+            solution_sketch: 'The statement is true when some $x$ has both $P(x)$ and $E(x)$ true, so $x$ is a prime number and is even. The only even prime number is $2$. So $x = 2$ is the witness.'
           - problem: 'Over the integers from 1 to 10, let $A(x)$ be "$x$ is even" and $B(x)$ be "$x > 4$". For how many elements $x$ is the implication $A(x) \to B(x)$ true?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An implication is false only when $A(x)$ is true and $B(x)$ is false, that is for an even $x$ with $x \le 4$. These are $x = 2$ and $x = 4$, so the implication is false for $2$ elements. It is true for the other $10 - 2 = 8$ elements, including every odd number, for which $A(x)$ is false.'
-          - problem: 'Over $\{1, 2, \dots, 9\}$, let $P(x)$ be "$x$ is prime" and $Q(x)$ be "$x$ is even". The formula $\exists x\,(P(x) \to Q(x))$ is offered for "some prime is even". What is the smallest $x$ that makes the implication true even though $x$ is not an even prime?'
+          - problem: 'Over $\{1, 2, \dots, 9\}$, let $P(x)$ be "$x$ is prime" and $Q(x)$ be "$x$ is even". What is the smallest $x$ for which $P(x) \to Q(x)$ is true although $x$ is not an even prime?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An implication is true whenever its hypothesis is false. The number $1$ is not prime, so $P(1)$ is false and $P(1) \to Q(1)$ is true, although $1$ is not an even prime. So the formula would be true even in a domain with no even prime. The correct translation is $\exists x\,(P(x) \land Q(x))$.'
+            solution_sketch: 'An implication is true whenever its hypothesis is false. The number $1$ is not prime, so $P(1)$ is false and $P(1) \to Q(1)$ is true, although $1$ is not an even prime. So $x = 1$ is the smallest such number. This shows that $\exists x\,(P(x) \to Q(x))$ does not say "some prime is even".'
         constraints: "Translate complete single-quantifier sentences into formulas, choosing between guarded universal implications and existential conjunctions; test a translation on a stated domain by finding the counterexample or witness."
     diagnostic_exemplar:
       problem: 'For how many integers $x$ from $-3$ to $3$ is the inequality $x^2\ge 2x$ true?'
@@ -1969,10 +1969,10 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The negation is "every $n$ in $\{1, 2, \dots, 10\}$ has $n^2 \le 90$", so it claims $n^2 \le 90$ for all $n$ from $1$ to $10$. We look for one $n$ where this fails. The squares $1, 4, \dots, 81$ are at most $90$, since $9^2 = 81$. But $10^2 = 100 > 90$, so $n = 10$ is the element that makes the negation false.'
-          - problem: 'The statement "every integer is odd" is offered as the negation of "every integer is even". What is the smallest positive integer that makes the correct negation, "some integer is not even", true?'
+          - problem: 'Write the negation of the statement "every integer is even". What is the smallest positive integer that makes the negation true?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The offered statement changes the predicate but not the quantifier. The correct negation changes "every" to "some" and negates the predicate: "some integer is not even". It is true as soon as one odd integer exists. The smallest positive one is $1$, which is odd and so not even.'
+            solution_sketch: 'The negation of "every integer is even" is "some integer is not even". The number $1$ is not even and is the smallest positive integer, so the answer is $1$.'
           - problem: 'The statement "every invoice total is a multiple of 5" is tested on the totals 45, 120, 85, 135, 70 and 62. Which total shows that the statement is false?'
             answer: '62'
             answer_contract: {"kind": "exact"}
@@ -2039,10 +2039,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The negation is "some ward has no nurse with at least $5$ years", that is, every nurse in that ward has fewer than $5$ years. Ward $1$ has a nurse with $7$ years, ward $3$ has one with $9$, and ward $4$ has one with exactly $5$. Ward $2$ has nurses with $3$, $4$ and $1$ years, all below $5$. So ward $2$ shows that the statement is false.'
-          - problem: 'Consider the claim that the sequence $a_n = \frac{1}{n}$ converges to $1$, that is, $\forall \varepsilon > 0\ \exists N\ \forall n \ge N,\ |a_n - 1| < \varepsilon$. The negation is: for some $\varepsilon > 0$ and for every $N$ there is an $n \ge N$ with $|a_n - 1| \ge \varepsilon$. For $\varepsilon = \frac{1}{2}$ and $N = 5$, give an integer $n \ge 5$ with $|a_n - 1| \ge \frac{1}{2}$.'
+          - problem: 'The statement that the sequence $a_n = \frac{1}{n}$ converges to $1$ is $\forall \varepsilon > 0\ \exists N\ \forall n \ge N,\ |a_n - 1| < \varepsilon$. Write the negation of the statement. For $\varepsilon = \frac{1}{2}$ and $N = 5$, give an integer $n$ that makes the inner statement of the negation true.'
             answer: '5'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"min": 5}}
-            solution_sketch: 'For $n \ge 5$ we have $|a_n - 1| = 1 - \frac{1}{n}$. For $n = 5$ this is $1 - \frac{1}{5} = \frac{4}{5}$, which is at least $\frac{1}{2}$. So $n = 5$ works, and so does every larger $n$, because $1 - \frac{1}{n}$ only grows. The same choice works for every $N$, which is why the negation holds.'
+            solution_sketch: 'The negation is: for some $\varepsilon>0$ and every $N$ there is an $n\ge N$ with $|a_n-1|\ge\varepsilon$. For $n=5$, $|a_5-1|=\frac45\ge\frac12$. Any integer $n\ge5$ works.'
           - problem: 'A café says: "On every day of the week, some pastry sold out." The table lists days 1 to 5 and the pastries that sold out: day 1: croissant; day 2: scone and croissant; day 3: none; day 4: muffin; day 5: scone. On which day is the statement false?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -2051,10 +2051,10 @@ topics:
             answer: 'There is an epsilon > 0 such that for every delta > 0 some x with |x - a| < delta has |f(x) - f(a)| >= epsilon.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'The negation passes through each quantifier in turn: "for every $\varepsilon$" becomes "there is an $\varepsilon$", "there is a $\delta$" becomes "for every $\delta$", and "for all $x$" becomes "some $x$". The last claim $|f(x) - f(a)| < \varepsilon$ becomes $|f(x) - f(a)| \ge \varepsilon$.'
-          - problem: 'Over the integers the statement $\exists y\ \forall x,\ y < x$ is false, and its negation is $\forall y\ \exists x,\ x \le y$. For $y = 7$ give an integer $x$ that works.'
+          - problem: 'Over the integers, the statement $\exists y\ \forall x,\ y < x$ is false. Write its negation. For $y = 7$, give an integer $x$ that makes the inner statement of the negation true.'
             answer: '7'
             answer_contract: {"kind": "property", "check": "integer_in_range", "args": {"max": 7}}
-            solution_sketch: 'The negation says that for each $y$ there is an $x$ with $x \le y$, and $x$ may depend on $y$. For $y = 7$ any integer at most $7$ works, for example $x = 7$ since $7 \le 7$. In general the choice $x = y$ works for every $y$.'
+            solution_sketch: 'The negation is $\forall y\ \exists x,\ x \le y$. For $y=7$ the inner statement is $x\le 7$. The integer $7$ satisfies it, and so does any smaller integer.'
         constraints: "push the negation inside nested quantifiers, flipping each quantifier in order and negating the matrix; test the negation on small domains or with a witness"
     diagnostic_exemplar:
       problem: 'The statement "for every $x\in\{1,2,\dots,10\}$, $x^2>3x$" is false. How many values of $x$ in $\{1,2,\dots,10\}$ are counterexamples to it?'
@@ -2405,18 +2405,18 @@ topics:
         name: "Generalization rules"
         key_prerequisites: [quantifiers]
         exemplars:
-          - problem: 'Show that there is an integer $n > 1$ with $n^2 + n = 56$ by finding one.'
+          - problem: 'Find an integer $n > 1$ with $n^2 + n = 56$.'
             answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An existential statement needs one witness. Try $n = 7$: then $n^2 + n = 49 + 7 = 56$. Since $7 > 1$, the integer $7$ is a witness, and existential generalization gives the statement. The only other solution of $n^2 + n = 56$ is $-8$, which is not greater than $1$.'
-          - problem: 'Show that some even integer is a multiple of $7$ by giving an example.'
+            solution_sketch: 'An existential statement needs one witness. Try $n = 7$: then $n^2 + n = 49 + 7 = 56$. Since $7 > 1$, the integer $7$ is a witness. The only other solution of $n^2 + n = 56$ is $-8$, which is not greater than $1$.'
+          - problem: 'Give one even integer that is also a multiple of $7$.'
             answer: '14'
             answer_contract: {"kind": "property", "check": "multiple_of", "args": {"k": 14}}
-            solution_sketch: 'We need an integer that is both even and a multiple of $7$. The number $14 = 2 \cdot 7$ is even and is a multiple of $7$. So $14$ is a witness, and existential generalization gives that some even integer is a multiple of $7$. Every multiple of $14$ works.'
-          - problem: 'To prove that the sum of any two odd integers is even, let $a$ and $b$ be arbitrary odd integers, so $a = 2k + 1$ and $b = 2m + 1$ for integers $k$ and $m$. Write $a + b$ in terms of $k$ and $m$.'
+            solution_sketch: 'We need an integer that is both even and a multiple of $7$. The number $14 = 2 \cdot 7$ is even and is a multiple of $7$. So $14$ is a witness. Every multiple of $14$ works.'
+          - problem: 'Let $a$ and $b$ be arbitrary odd integers. Let $k$ and $m$ be the integers that the definition of odd gives for $a$ and $b$. Write $a + b$ in terms of $k$ and $m$.'
             answer: '2k + 2m + 2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Add the two expressions: $a + b = (2k + 1) + (2m + 1) = 2k + 2m + 2$. This equals $2(k + m + 1)$, and $k + m + 1$ is an integer, so the sum is even. Since $a$ and $b$ were arbitrary odd integers, universal generalization gives the claim for all odd integers.'
+            answer_contract: {"kind":"function","vars":["k","m"]}
+            solution_sketch: 'The definition of odd gives $a = 2k + 1$ and $b = 2m + 1$. Add them: $a + b = 2k + 2m + 2 = 2(k + m + 1)$. Since $k + m + 1$ is an integer, the sum is even. Since $a$ and $b$ were arbitrary, this holds for all odd integers.'
           - problem: 'The statement that $n^2 + n$ is even holds for $n = 1, 2, 3$. Does this check prove that $n^2 + n$ is even for every integer $n$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it does", "yes, it does"], ["no", "it does not", "no, it does not"]]}
@@ -2425,10 +2425,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it follows", "yes, it follows", "it does"], ["no", "it does not follow", "no, it does not follow", "it does not"]]}
             solution_sketch: 'The proof covers a statement for every integer $n > 3$. The set of integers greater than $3$ is not empty, since $4$ belongs to it. So the statement holds for $4$ in particular, because $16 > 8$, and existential generalization gives the claim. The answer is yes.'
-          - problem: 'To prove that the square of every even integer is divisible by $4$, let $n$ be an arbitrary even integer, so $n = 2k$ for an integer $k$. Write $n^2$ in terms of $k$.'
+          - problem: 'Let $n$ be an arbitrary even integer. Let $k$ be the integer that the definition of even gives for $n$. Write $n^2$ in terms of $k$.'
             answer: '4k^2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'Square both sides of $n = 2k$: $n^2 = (2k)^2 = 4k^2$. So $n^2$ equals $4$ times $k^2$, written $4k^2$, where the exponent is $2$. Since $k^2$ is an integer, $n^2$ is divisible by $4$, and since $n$ was arbitrary, this holds for every even integer.'
+            answer_contract: {"kind":"function","vars":["k"]}
+            solution_sketch: 'The definition of even gives $n = 2k$. Square both sides: $n^2 = (2k)^2 = 4k^2$. Since $k^2$ is an integer, $n^2$ is divisible by $4$. Since $n$ was arbitrary, this holds for every even integer.'
           - problem: 'A bakery sells boxes of $4$ cookies and boxes of $9$ cookies. Ana buys exactly $35$ cookies, with at least one box of each kind. How many boxes of $9$ cookies does she buy?'
             answer: '3'
             answer_contract: {"kind": "exact"}

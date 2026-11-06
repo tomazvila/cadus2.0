@@ -408,10 +408,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'With one element, the only arrangement leaves that element in its own position. So no arrangement is a derangement, and the answer is $0$.'
-          - problem: 'Use the formula $D_n = n!\left(1 - \frac{1}{1!} + \frac{1}{2!} - \cdots + (-1)^n \frac{1}{n!}\right)$ to find $D_5$.'
+          - problem: 'How many permutations of $5$ objects leave no object in its original place?'
             answer: '44'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply $5! = 120$ by $1 - 1 + \tfrac12 - \tfrac16 + \tfrac1{24} - \tfrac1{120}$. Term by term this is $120 - 120 + 60 - 20 + 5 - 1 = 44$.'
+            solution_sketch: 'This is $D_5$. By the formula, $D_5 = 5!\left(1 - 1 + \tfrac12 - \tfrac16 + \tfrac1{24} - \tfrac1{120}\right) = 120 - 120 + 60 - 20 + 5 - 1 = 44$.'
           - problem: 'Six friends hold a gift exchange. Each friend gives one gift to a different friend, and each friend receives exactly one gift. In how many ways can the gifts be assigned?'
             answer: '265'
             answer_contract: {"kind": "exact"}
@@ -420,10 +420,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Subtracting $4 \cdot 3!$ removes an arrangement that keeps two objects in place twice. Inclusion-exclusion adds these back, giving $24 - 24 + 12 - 4 + 1 = 9$.'
-          - problem: 'Given $D_5 = 44$ and $D_6 = 265$, use the recurrence $D_n = (n-1)(D_{n-1} + D_{n-2})$ to find $D_7$.'
+          - problem: 'How many permutations of $7$ objects leave no object in its original place?'
             answer: '1854'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Put $n = 7$ in the recurrence. Then $D_7 = 6(265 + 44) = 6 \cdot 309 = 1854$.'
+            solution_sketch: 'This is $D_7$. Start with $D_1 = 0$ and $D_2 = 1$. The recurrence gives $D_3 = 2$, $D_4 = 9$, $D_5 = 44$, $D_6 = 265$, and then $D_7 = 6(265 + 44) = 1854$.'
           - problem: 'Four students are each handed one of four homework papers to grade, one paper per student. In how many ways can the papers be handed out so that nobody grades their own paper?'
             answer: '9'
             answer_contract: {"kind": "exact"}
@@ -562,10 +562,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In the worst case you take out all $8$ gloves of one hand first. The $9$th glove must be of the other hand, so the answer is $9$.'
-          - problem: 'The integers $1, 2, \dots, 16$ form $8$ pairs with sum $17$. What is the smallest number of integers chosen from $1, 2, \dots, 16$ that guarantees two of them add up to $17$?'
+          - problem: 'Pick integers from $1, 2, \dots, 16$. What is the smallest number of picked integers that guarantees two of them add up to $17$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Eight integers can be chosen one from each of the eight pairs, for example $1, 2, \dots, 8$, and no two of them add up to $17$. A $9$th integer must complete a pair, so the answer is $9$.'
+            solution_sketch: 'The integers form $8$ pairs with sum $17$: $(1,16), (2,15), \dots, (8,9)$. Eight integers can be picked one from each pair, for example $1, 2, \dots, 8$, and no two of them add up to $17$. A $9$th integer must complete a pair, so the answer is $9$.'
         constraints: "the solver must find the pigeonholes (pairs, colors, remainders, squares, chains); integers <= 20; the item must test THIS KP: Choosing the right pigeonholes"
     diagnostic_exemplar:
       problem: 'Take integers from $1, 2, \dots, 30$. What is the smallest number of integers to take so that two of them always have the same remainder when divided by $6$?'
@@ -607,7 +607,7 @@ topics:
           answer: '15'
           reveal: 'Choosing the $4$ who go is the same as choosing the $2$ who stay home, so there are $\binom{6}{2} = 15$ ways. One set of choices counted from two sides gives two expressions that are equal.'
         exemplars:
-          - problem: 'A club has $8$ members. Choosing $3$ members for a committee is the same as choosing the $5$ members to leave off. How many different $3$-member committees can be formed?'
+          - problem: 'A club has $8$ members. How many different $3$-member committees can be formed?'
             answer: '56'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each $3$-member committee matches exactly one group of $5$ members left off, so the two counts are equal. The number is $\binom{8}{3} = \binom{8}{5} = 56$.'
@@ -619,22 +619,22 @@ topics:
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Without Ana, all $3$ members come from the remaining $6$ members. So there are $\binom{6}{3} = 20$ committees.'
-          - problem: 'A pizza shop offers $10$ toppings. Choosing $7$ toppings for a pizza is the same as choosing the $3$ toppings to leave off. How many different $7$-topping pizzas are possible?'
+          - problem: 'A pizza shop offers $10$ toppings. How many different $7$-topping pizzas are possible?'
             answer: '120'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Each $7$-topping pizza matches exactly one set of $3$ toppings left off. So the number is $\binom{10}{3} = \binom{10}{7} = 120$.'
-          - problem: 'A proof of $\binom{n}{k} = \binom{n}{n-k}$ matches each $k$-subset of an $n$-set with its complement. Test whether two different $k$-subsets can have the same complement, with $n = 4$ and $k = 2$. How many $2$-subsets of $\{1, 2, 3, 4\}$ have the complement $\{3, 4\}$?'
+            solution_sketch: 'Each $7$-topping pizza matches exactly one set of $3$ toppings left off. So the number is $\binom{10}{7} = \binom{10}{3} = 120$.'
+          - problem: 'The complement of a subset of $\{1, 2, 3, 4\}$ is the set of the elements that are not in it. How many $2$-subsets of $\{1, 2, 3, 4\}$ have the complement $\{3, 4\}$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The complement of a subset is the set of the elements that it leaves out. Only the subset $\{1, 2\}$ leaves out exactly $\{3, 4\}$, so $1$ subset has this complement. So the matching is one-to-one.'
-          - problem: 'A club has $9$ members, and Ana is one of them. Counting the $4$-member committees by whether they include Ana gives $\binom{8}{3}$ that include her and $\binom{8}{4}$ that do not. How many $4$-member committees are there in all?'
+          - problem: 'A club has $9$ members. How many $4$-member committees are there?'
             answer: '126'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The two cases are disjoint and cover every committee, so the counts add. This gives $56 + 70 = 126$, which equals $\binom{9}{4}$.'
-          - problem: 'Pascal''s rule says that $\binom{10}{4} = \binom{9}{3} + \binom{9}{4}$. Given that $\binom{9}{3} = 84$ and $\binom{9}{4} = 126$, find $\binom{10}{4}$.'
+            solution_sketch: 'Fix one member, Ana. The committees that include her number $\binom{8}{3} = 56$, and the committees that do not include her number $\binom{8}{4} = 70$. The two cases are disjoint and cover every committee, so the total is $56 + 70 = 126$.'
+          - problem: 'A club has $10$ members. How many $4$-member committees are there?'
             answer: '210'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Pascal''s rule splits the $4$-subsets of a $10$-set by whether they contain a fixed element. Adding the two counts gives $84 + 126 = 210$.'
+            solution_sketch: 'Fix one member. The committees that include this member number $\binom{9}{3} = 84$, and the committees that do not include this member number $\binom{9}{4} = 126$. The two cases are disjoint, so the total is $84 + 126 = 210$.'
           - problem: 'Write the full proof that $\binom{n}{k} = \binom{n-1}{k-1} + \binom{n-1}{k}$ for $1 \le k \le n$ by counting the $k$-subsets of an $n$-set in two ways.'
             answer: 'C(n,k) = C(n-1,k-1) + C(n-1,k)'
             answer_contract: {"kind": "none"}
@@ -648,10 +648,10 @@ topics:
             answer: '252'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'First choose the committee in $\binom{9}{3} = 84$ ways. Then name its chair in $3$ ways, so there are $84 \cdot 3 = 252$ choices.'
-          - problem: 'A club has $10$ members. The chair is chosen first, and then $3$ other members are chosen to join the chair on a $4$-member committee. How many different (committee, chair) choices are there?'
+          - problem: 'A club has $10$ members. A $4$-member committee has one of its members as chair. How many different (committee, chair) choices are there?'
             answer: '840'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Choose the chair in $10$ ways. Then choose the $3$ other members from the remaining $9$ people in $\binom{9}{3} = 84$ ways, so there are $10 \cdot 84 = 840$ choices.'
+            solution_sketch: 'Pick the chair in $10$ ways. Then pick the $3$ other members from the remaining $9$ people in $\binom{9}{3} = 84$ ways, so there are $10 \cdot 84 = 840$ choices. The count $4 \cdot \binom{10}{4} = 840$ gives the same number.'
           - problem: 'A set has $6$ elements. How many subsets does it have, counting the empty set and the whole set?'
             answer: '64'
             answer_contract: {"kind": "exact"}
@@ -660,22 +660,22 @@ topics:
             answer: '32'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Each of the $5$ toppings has $2$ choices, and the choices are independent. So there are $2^5 = 32$ sundaes.'
-          - problem: 'A proof of $k\binom{n}{k} = n\binom{n-1}{k-1}$ counts the pairs (committee of $k$ people, chair on it) and chooses the chair first in $n$ ways. Find the number of ways to choose the other $k-1$ members when $n = 5$ and $k = 3$.'
-            answer: '6'
+          - problem: 'A club has $5$ members. How many different pairs (committee of $3$ members, chair on it) are there?'
+            answer: '30'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The chair is already on the committee, so the other $k-1 = 2$ members come from the remaining $n-1 = 4$ people. This gives $\binom{4}{2} = 6$ ways, and not $\binom{5}{2} = 10$ ways.'
+            solution_sketch: 'Count the committees first: $\binom{5}{3} = 10$, and each has $3$ possible chairs, so $3 \cdot 10 = 30$. Count the chair first: $5$ ways, then the other $2$ members from the remaining $4$ in $\binom{4}{2} = 6$ ways, so $5 \cdot 6 = 30$.'
           - problem: 'A club has $6$ members. In how many ways can a committee of any size, with at least one member, be formed and one of its members be named chair?'
             answer: '192'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Choose the chair in $6$ ways. Each of the other $5$ members is in or out of the committee, giving $2^5 = 32$ choices, so there are $6 \cdot 32 = 192$ ways.'
-          - problem: 'A club has $8$ members, and Ana is one of them. A committee is formed with Ana as chair, and each of the other $7$ members is independently in or out. How many different committees are possible?'
+          - problem: 'A club has $8$ members, and Ana is one of them. How many committees of any size have Ana as chair?'
             answer: '128'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Ana is the chair, so only the other $7$ members decide whether they join. Each has $2$ choices, so there are $2^7 = 128$ committees.'
-          - problem: 'A club has $12$ members. All $792$ possible $5$-member committees are formed, and each names one of its members as chair. Every member is chair of the same number of these committees. How many committees does Ana chair?'
+            solution_sketch: 'Ana is the chair, so only the other $7$ members decide whether they join. Each has $2$ options, so there are $2^7 = 128$ committees.'
+          - problem: 'A club has $12$ members, and Ana is one of them. How many different $5$-member committees have Ana as chair?'
             answer: '330'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Each of the $792$ committees has $5$ possible chairs, so there are $792 \cdot 5 = 3960$ (committee, chair) pairs. These are shared equally among $12$ members, so Ana chairs $3960 / 12 = 330$ committees.'
+            solution_sketch: 'Ana is the chair, so the other $4$ members come from the remaining $11$ people. This gives $\binom{11}{4} = 330$ committees. The count $792 \cdot 5 / 12 = 330$ gives the same number.'
           - problem: 'Write the full proof that $\sum_{k=1}^{n} k\binom{n}{k} = n \cdot 2^{n-1}$ by counting (committee, chair) pairs in two ways.'
             answer: 'sum of k*C(n,k) = n*2^(n-1)'
             answer_contract: {"kind": "none"}

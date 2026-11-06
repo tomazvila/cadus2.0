@@ -227,10 +227,10 @@ topics:
             answer: '11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Advancing by $7$ hours is advancing by $1$ hour seven times, so the output advances $7\cdot 5=35$ hours. On a 12-hour clock $35=24+11$, so the reading is $11$.'
-          - problem: 'A functor $F\colon B(\mathbb{Z}/4)\to B(\mathbb{Z}/6)$ is decided by the image of the morphism $1$. The category $B(\mathbb{Z}/6)$ has $6$ morphisms. How many functors are there from $B(\mathbb{Z}/4)$ to $B(\mathbb{Z}/6)$?'
+          - problem: 'Let $B(\mathbb{Z}/n)$ be the category with one object whose morphisms are the integers modulo $n$, composed by addition. How many functors are there from $B(\mathbb{Z}/4)$ to $B(\mathbb{Z}/6)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Going around the cycle in $B(\mathbb{Z}/4)$ four times gives the identity, so $4\cdot F(1)$ must be $0$ modulo $6$. This holds only for $F(1)=0$ and $F(1)=3$. So there are $2$ functors, not $6$.'
+            solution_sketch: 'A functor is fixed by the image $F(1)$ of the morphism $1$. Going around the cycle in $B(\mathbb{Z}/4)$ four times gives the identity, so $4\cdot F(1)$ must be $0$ modulo $6$. This holds only for $F(1)=0$ and $F(1)=3$. So there are $2$ functors.'
           - problem: 'A drum machine repeats its pattern every $6$ beats, so its beats form $\mathbb{Z}/6$. A light cycle repeats every $9$ steps, so its steps form $\mathbb{Z}/9$. A translation from beats to steps is a functor $B(\mathbb{Z}/6)\to B(\mathbb{Z}/9)$, so that $n$ beats followed by $m$ beats match $n+m$ beats. How many translations are there?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -293,10 +293,10 @@ topics:
         key_prerequisites: [functor-definition-laws]
         constraints: 'Isomorphisms and commuting diagrams are given fully in text with explicit images on small categories, one-object categories and sets. Items compute what the two laws force, count functors, or decide a verdict with the deciding fact. Preserve exactly one full-proof exemplar.'
         exemplars:
-          - problem: 'In $B(\mathbb{Z}/7)$ composition is addition modulo $7$, so the morphism $4$ is the inverse of the morphism $3$. A functor $F\colon B(\mathbb{Z}/7)\to B(\mathbb{Z}/7)$ sends $3$ to $2$. What does $F$ send $4$ to?'
+          - problem: 'In $B(\mathbb{Z}/7)$ composition is addition modulo $7$. A functor $F\colon B(\mathbb{Z}/7)\to B(\mathbb{Z}/7)$ sends the morphism $3$ to $2$. What does $F$ send the morphism $4$ to?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A functor sends an isomorphism to an isomorphism, and it sends the inverse to the inverse. The inverse of $2$ in $B(\mathbb{Z}/7)$ is $5$, because $2+5=7=0$. So $F(4)=5$.'
+            solution_sketch: 'Since $3+4=7=0$, the morphism $4$ is the inverse of the morphism $3$. A functor sends the inverse of a morphism to the inverse of its image. The inverse of $2$ in $B(\mathbb{Z}/7)$ is $5$, because $2+5=7=0$. So $F(4)=5$.'
           - problem: 'A category has objects $A$, $B$, $C$, $D$, morphisms $f\colon A\to B$, $g\colon B\to D$, $h\colon A\to C$, $k\colon C\to D$ and the identities, and $k\circ h=g\circ f$. A functor $F$ sends every object to the single object of $B(\mathbb{Z}/7)$, where composition is addition modulo $7$, with $F(f)=5$, $F(g)=6$, $F(h)=2$. What is the value of $F(k)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -334,10 +334,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Let $g$ be the inverse of $f\colon A\to B$, so $g\circ f=1_A$ and $f\circ g=1_B$. Applying $F$ and using both laws gives $Fg\circ Ff=F(g\circ f)=F(1_A)=1_{FA}$, and likewise $Ff\circ Fg=1_{FB}$. So $Fg$ is a two-sided inverse of $Ff$, and no injectivity of $F$ is used. A diagram commutes when composites are equal, and for each equation $h=g\circ f$ the composition law gives $Fh=Fg\circ Ff$. So the image diagram commutes.'
     diagnostic_exemplar:
-      problem: 'A functor between one-object categories $\mathbf{B}\mathbb{Z}_{12}\to\mathbf{B}\mathbb{Z}_{18}$ is the same as a monoid homomorphism $\mathbb{Z}_{12}\to\mathbb{Z}_{18}$. How many such functors are there?'
+      problem: 'Let $\mathbf{B}\mathbb{Z}_n$ be the category with one object whose morphisms are the integers modulo $n$, composed by addition. How many functors are there from $\mathbf{B}\mathbb{Z}_{12}$ to $\mathbf{B}\mathbb{Z}_{18}$?'
       answer_contract: {"kind":"exact"}
       answer: '6'
-      solution_sketch: 'A functor is fixed by the image $x$ of $1$, and it needs $12x\equiv 0 \pmod{18}$. This means $x\equiv 0 \pmod 3$, so $x\in\{0,3,6,9,12,15\}$.'
+      solution_sketch: 'A functor is fixed by the image $x$ of $1$, and it needs $12x\equiv 0 \pmod{18}$. This means $x\equiv 0 \pmod 3$, so $x\in\{0,3,6,9,12,15\}$. So there are $6$ functors.'
     anki_seeds:
       - front: "A functor between one-object categories $BM\\to BN$ is exactly a {{c1::monoid homomorphism}}."
         back: "monoid homomorphism"
@@ -1366,10 +1366,10 @@ topics:
             answer: 'g^*'
             answer_contract: {"kind": "label", "options": [["g^*", "g*", "g star", "g", "$g^*$", "g first"], ["f^*", "f*", "f star", "f", "$f^*$", "f first"]]}
             solution_sketch: 'The map $g^*$ takes $h\colon Z\to B$ to $h\circ g\colon Y\to B$, and then $f^*$ takes this to $h\circ g\circ f\colon X\to B$. So $g^*$ is applied first. This gives $(g\circ f)^*=f^*\circ g^*$, the reversed law.'
-          - problem: 'A school sorts $5$ pupils into the classes $A$, $B$ and $C$ by a function $f$: pupils $1$ and $2$ go to $A$, pupil $3$ goes to $B$, and pupils $4$ and $5$ go to $C$. A function $\chi$ marks the classes that go on a trip: $\chi(A)=0$, $\chi(B)=1$, $\chi(C)=1$. The function $f^*(\chi)=\chi\circ f$ tells for each pupil whether the pupil goes. How many pupils go on the trip?'
+          - problem: 'A school sorts $5$ pupils into the classes $A$, $B$ and $C$ by a function $f$: pupils $1$ and $2$ go to $A$, pupil $3$ goes to $B$, and pupils $4$ and $5$ go to $C$. A function $\chi$ marks the classes that go on a trip: $\chi(A)=0$, $\chi(B)=1$, $\chi(C)=1$. Let $f^*$ be the image of $f$ under the functor $\mathrm{Hom}(-,\{0,1\})$. For how many pupils $p$ is $f^*(\chi)(p)=1$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The value $f^*(\chi)(p)=\chi(f(p))$ is $1$ exactly when the class of pupil $p$ is $B$ or $C$. Pupil $3$ is in $B$, and pupils $4$ and $5$ are in $C$. So $3$ pupils go.'
+            solution_sketch: 'The functor $\mathrm{Hom}(-,\{0,1\})$ is contravariant, so $f^*(\chi)=\chi\circ f$. The value $\chi(f(p))$ is $1$ exactly when the class of pupil $p$ is $B$ or $C$. Pupil $3$ is in $B$, and pupils $4$ and $5$ are in $C$. So $3$ pupils have the value $1$.'
           - problem: 'In $\mathbf{Set}$ let $X=\{0,1\}$, $Y=\{0,1,2,3\}$ and $f\colon X\to Y$ with $f(0)=2$, $f(1)=0$. How many functions $\chi\colon Y\to\{0,1,2\}$ satisfy $f^*(\chi)(x)=1$ for every $x$ in $X$?'
             answer: '9'
             answer_contract: {"kind": "exact"}
@@ -1403,10 +1403,10 @@ topics:
             answer: 'f∘p'
             answer_contract: {"kind": "label", "options": [["f∘p", "f o p", "fp", "f p", "f after p"], ["p∘f", "p o f", "pf", "p f", "p after f"]]}
             solution_sketch: 'The composite $f\circ p$ means $p$ first and then $f$. The target of $p$ is $A''$, which is the source of $f$, so $f\circ p$ is defined. The composite $p\circ f$ would need the target $A$ of $f$ to be the source $A''''$ of $p$, which does not hold in general.'
-          - problem: 'Let $f$, $g$ and $h$ be functions from $\{0,1,2\}$ to itself, given by $f(0)=1$, $f(1)=2$, $f(2)=2$; $g(0)=0$, $g(1)=0$, $g(2)=1$; and $h(0)=2$, $h(1)=0$, $h(2)=1$. The image of $h$ under $\mathrm{Hom}(f,g)$ is $g\circ h\circ f$. What is the value of $g\circ h\circ f$ at $0$?'
+          - problem: 'Let $f$, $g$ and $h$ be functions from $\{0,1,2\}$ to itself, given by $f(0)=1$, $f(1)=2$, $f(2)=2$; $g(0)=0$, $g(1)=0$, $g(2)=1$; and $h(0)=2$, $h(1)=0$, $h(2)=1$. What is the value at $0$ of the image of $h$ under $\mathrm{Hom}(f,g)$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The functor sends $h$ to $g\circ h\circ f$, with $f$ applied first and $g$ last. At $0$ this is $g(h(f(0)))=g(h(1))=g(0)=0$. The opposite order gives $f(h(g(0)))=f(h(0))=f(2)=2$, which is a different composite.'
+            solution_sketch: 'The bifunctor is contravariant in the first argument, so $\mathrm{Hom}(f,g)$ sends $h$ to $g\circ h\circ f$, with $f$ applied first and $g$ last. At $0$ this is $g(h(f(0)))=g(h(1))=g(0)=0$. The opposite order gives $f(h(g(0)))=f(h(0))=f(2)=2$, which is a different value.'
           - problem: 'A teacher records the clubs of $3$ chosen pupils of a group, where each pupil of the group is assigned to one of $3$ clubs by a function $h$. For one fixed record, exactly $27$ assignments $h$ of the whole group give that record. How many pupils are in the group?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1421,10 +1421,10 @@ topics:
             solution_sketch: 'Each $\mathrm{Hom}(A,B)$ is a set because $\mathcal{C}$ is locally small. A morphism $(A,B)\to(A'',B'')$ of $\mathcal{C}^{op}\times\mathcal{C}$ is a pair $f\colon A''\to A$ and $g\colon B\to B''$ of morphisms of $\mathcal{C}$, and $g\circ h\circ f$ has source $A''$ and target $B''$ for $h\colon A\to B$, so the function is well defined. The identity $(1_A,1_B)$ acts by $h\mapsto1_B\circ h\circ1_A=h$. For composition, the composite of $(f,g)$ and $(f'',g'')$ in $\mathcal{C}^{op}\times\mathcal{C}$ is $(f\circ f'',g''\circ g)$, and it acts by $h\mapsto(g''\circ g)\circ h\circ(f\circ f'')=g''\circ(g\circ h\circ f)\circ f''$ by associativity. This is the action of $(f'',g'')$ after the action of $(f,g)$, so the rule is a functor.'
         constraints: 'Categories are Set with small finite sets given by value tables, divisibility on {1,...,12}, and school contexts that count assignments. Items compute the image g after h after f, count the functions sent to a given function, give the typing of a composite, or locate the first wrong order of composition. One full-proof exemplar closes the list.'
     diagnostic_exemplar:
-      problem: 'In $\mathbf{Set}$ let $A=\{0,1,2\}$, and let $F=\mathrm{Hom}(A,-)$. Let $f\colon\{p,q\}\to\mathbb{Z}$ be given by $f(p)=5$ and $f(q)=7$. Let $h\colon A\to\{p,q\}$ be given by $h(0)=p$, $h(1)=q$, $h(2)=p$. Then $F(f)(h)=f\circ h$. What is $(f\circ h)(0)+(f\circ h)(1)+(f\circ h)(2)$?'
+      problem: 'In $\mathbf{Set}$ let $A=\{0,1,2\}$, and let $F=\mathrm{Hom}(A,-)$. Let $f\colon\{p,q\}\to\mathbb{Z}$ be given by $f(p)=5$ and $f(q)=7$. Let $h\colon A\to\{p,q\}$ be given by $h(0)=p$, $h(1)=q$, $h(2)=p$. The image $F(f)(h)$ is a function on $A$. What is the sum of its values at $0$, $1$ and $2$?'
       answer_contract: {"kind":"exact"}
       answer: '17'
-      solution_sketch: '$F(f)$ is post-composition with $f$. The values are $f(p)=5$, $f(q)=7$, $f(p)=5$, and $5+7+5=17$.'
+      solution_sketch: '$F(f)$ is post-composition with $f$, so $F(f)(h)=f\circ h$. The values are $f(p)=5$, $f(q)=7$, $f(p)=5$, and $5+7+5=17$.'
     anki_seeds:
       - front: "$\\mathrm{Hom}(A,-)$: variance and action on a morphism $f$?"
         back: "covariant; post-composition $f_*=f\\circ(-)$."
@@ -1570,10 +1570,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'An object of $(1\downarrow G)$ needs $1\le G(d)$, which holds for $d=1$, $d=2$ and $d=3$. The initial object is the least such $d$. So the answer is $1$.'
-          - problem: 'A baker sells eggs only in boxes of $6$. Let $G\colon(\mathbb{N},\le)\to(\mathbb{N},\le)$ send $n$ boxes to $6n$ eggs. The initial object of the comma category $(20\downarrow G)$ gives the smallest number of boxes that covers an order of $20$ eggs. How many boxes is that?'
+          - problem: 'A baker sells eggs only in boxes of $6$. Let $G\colon(\mathbb{N},\le)\to(\mathbb{N},\le)$ send $n$ boxes to $6n$ eggs. The comma category $(20\downarrow G)$ has an initial object that is built on a number $n$. What is $n$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An object of $(20\downarrow G)$ is a number $n$ of boxes with a morphism $20\to6n$, so $20\le6n$. The initial object is the least such $n$. Since $6\cdot3=18<20$ and $6\cdot4=24\ge20$, it is $4$.'
+            solution_sketch: 'An object of $(20\downarrow G)$ is a number $n$ with a morphism $20\to6n$, so $20\le6n$. The initial object is the least such $n$, which is the smallest number of boxes that covers $20$ eggs. Since $6\cdot3=18<20$ and $6\cdot4=24\ge20$, it is $4$.'
           - problem: 'A square patio is laid from $n\cdot n$ square slabs, and the functor $G\colon(\mathbb{N},\le)\to(\mathbb{N},\le)$ sends $n$ to $n^2$. The patio must have at least $50$ slabs. Which $n$ underlies the initial object of $(50\downarrow G)$?'
             answer: '8'
             answer_contract: {"kind": "exact"}

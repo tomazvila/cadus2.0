@@ -607,10 +607,10 @@ topics:
             answer: '26'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Both sides must be doubled, so $P=2(9)+2(4)=18+8=26$.'
-          - problem: 'Use $A = \pi r^2$ with $\pi \approx 3.14$ to find the area of a circle with radius $10$ cm.'
+          - problem: 'Use $A = \pi r^2$ to find the area of a circle with radius $10$ cm, to the nearest square centimetre.'
             answer: '314'
             answer_contract: {"kind":"unit","quantity":"area","unit":"cm^2","allow_omitted":true}
-            solution_sketch: 'Square the radius first: $10^2=100$. Then $A=3.14(100)=314$ square centimetres.'
+            solution_sketch: 'Square the radius first: $10^2=100$. Then $A=\pi\cdot100=314.15\ldots$, which is $314$ square centimetres.'
         constraints: "whole-number inputs; area/perimeter formulas"
       - id: kp2
         name: "Rate and science formulas"
@@ -2665,20 +2665,11 @@ topics:
         answer_contract:
           kind: inequality_union
         solution_sketch: A distance greater than $4$ from $1$ gives $x-1>4$ or $x-1<-4$, so $x>5$ or $x<-3$.
-      - problem: Is $x=0$ a solution of $|2x-3|>2$?
-        answer: 'yes'
+      - problem: 'Solve $|2x-5|>3$.'
+        answer: 'x < 1 or x > 4'
         answer_contract:
-          kind: label
-          options:
-          - - 'yes'
-            - it is
-            - yes it is
-            - it is a solution
-          - - 'no'
-            - it is not
-            - no it is not
-            - not a solution
-        solution_sketch: At $x=0$ the value is $|-3|=3$, and $3>2$. So $0$ is a solution.
+          {"kind":"inequality_union"}
+        solution_sketch: 'Split into $2x-5>3$ and $2x-5<-3$. The first gives $x>4$ and the second gives $x<1$. The solution is the union of the two rays.'
       constraints: two-ray answers; keep the union
     - id: kp5
       name: Isolate the absolute value first

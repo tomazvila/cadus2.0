@@ -964,10 +964,10 @@ topics:
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Everyone owns at least one, so the union has all $80$ people. The rule gives $80 = 52 + 37 - |\text{both}|$. So $|\text{both}| = 89 - 80 = 9$.'
-          - problem: 'A class has $30$ students. Of them, $18$ play chess, $15$ play checkers and $6$ play both. The sum $18 + 15 = 33$ is more than the whole class. How many students play at least one of the two games?'
+          - problem: 'A class has $30$ students. Of them, $18$ play chess, $15$ play checkers and $6$ play both. How many students play at least one of the two games?'
             answer: '27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The $6$ students who play both games are counted twice in the sum $33$, which is why it is too large. The correct count is $18 + 15 - 6 = 27$. This is below the class size of $30$, as it must be.'
+            solution_sketch: 'The $6$ students who play both games are counted twice in $18 + 15$. So the number who play at least one game is $18 + 15 - 6 = 27$. This is below the class size of $30$, as it must be.'
           - problem: 'In a class of $30$ students, $20$ study French, $14$ study Spanish and $3$ study both languages. Is this possible?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
@@ -1044,10 +1044,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
             solution_sketch: 'A set is a subset of another set when every element of the first set lies in the second. The element $1$ lies in $\{1, 2, 3, 4\}$, but the element $5$ does not. So $\{1, 5\}$ is not a subset of $\{1, 2, 3, 4\}$.'
-          - problem: 'Which element of $\{2, 5, 8\}$ shows that $\{2, 5, 8\} \not\subseteq \{1, 2, 3, 4, 5\}$?'
+          - problem: 'Decide whether $\{2, 5, 8\} \subseteq \{1, 2, 3, 4, 5\}$. If it is false, give the element of $\{2, 5, 8\}$ that is not in $\{1, 2, 3, 4, 5\}$. If it is true, give none.'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Check each element of $\{2, 5, 8\}$ against $\{1, 2, 3, 4, 5\}$. The elements $2$ and $5$ appear there, but $8$ does not. So $8$ is the element that shows the first set is not a subset.'
+            solution_sketch: 'Compare each element of $\{2, 5, 8\}$ with $\{1, 2, 3, 4, 5\}$. The elements $2$ and $5$ appear there, but $8$ does not. So the statement is false, and $8$ is the element that is missing.'
           - problem: 'Find the least positive integer $n$ for which $\{1, 2, n\} \not\subseteq \{1, 2, 3, 4, 5\}$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1060,10 +1060,10 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Check each station of the second line against the first line. Stations $6$, $12$ and $15$ are on the first line. Station $14$ is not, so it is the station where only the second line stops.'
-          - problem: 'The statement $\{3, 6, 9, 12\} \subseteq \{3, 6\}$ is false. What is the least element of $\{3, 6, 9, 12\}$ that is missing from $\{3, 6\}$?'
+          - problem: 'Decide whether $\{3, 6, 9, 12\} \subseteq \{3, 6\}$. If it is false, give the least element of $\{3, 6, 9, 12\}$ that is missing from $\{3, 6\}$. If it is true, give none.'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For a subset statement, every element of $\{3, 6, 9, 12\}$ must be in $\{3, 6\}$. The sets share $3$ and $6$, but the elements $9$ and $12$ are missing, and the least of them is $9$.'
+            solution_sketch: 'Every element of $\{3, 6, 9, 12\}$ must be in $\{3, 6\}$. The sets share $3$ and $6$, but $9$ and $12$ are missing. So the statement is false, and the least missing element is $9$.'
           - problem: 'Is $\varnothing \subseteq \{4, 7\}$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
@@ -1205,10 +1205,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Picking $3$ sides to take is the same as picking the $1$ side to leave out. The menu has $4$ sides, so there are $4$ ways to leave one out. So there are $4$ different lunch deals.'
-          - problem: 'The power set $\mathcal{P}(\{a, b\})$ contains $\{a\}$, $\{b\}$ and $\{a, b\}$. How many other elements does it contain?'
-            answer: '1'
+          - problem: 'List the power set $\mathcal{P}(\{a, b\})$. How many elements does it contain?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $\{a, b\}$ has $2^2 = 4$ subsets: $\varnothing$, $\{a\}$, $\{b\}$ and $\{a, b\}$. Three of them are named, and the fourth is the empty set. So $1$ subset is not named.'
+            solution_sketch: 'The subsets of $\{a,b\}$ are $\varnothing$, $\{a\}$, $\{b\}$ and $\{a,b\}$. This gives $4$ elements, which equals $2^2$.'
         constraints: "enumerate all subsets of a set with at most 3 elements"
       - id: kp2
         name: "Counting subsets"
@@ -1327,22 +1327,22 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "true", "yes it is"], ["no", "it is not", "false", "no it is not"]]}
             solution_sketch: 'Take $x \in A$, so $x = 6k$ for some integer $k$. Then $x = 3(2k)$ with $2k$ an integer, so $3 \mid x$ and $x \in B$. This holds for every $x \in A$, so $A \subseteq B$.'
-          - problem: 'To prove that $\{12n : n \in \mathbb{Z}\} \subseteq \{3m : m \in \mathbb{Z}\}$, take an arbitrary element $x = 12n$ with $n \in \mathbb{Z}$. Write $x = 3m$. What is $m$ in terms of $n$?'
+          - problem: 'Let $A = \{12n : n \in \mathbb{Z}\}$ and $B = \{3m : m \in \mathbb{Z}\}$. For the element $x = 12n$ of $A$, find the integer $m$, in terms of $n$, for which $x$ is the element $3m$ of $B$.'
             answer: '4n'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $x = 12n = 3 \cdot 4n$, so $m = 4n$. Since $n$ is an integer, $4n$ is an integer, so $x$ has the form $3m$ with $m \in \mathbb{Z}$. This is the last step of the proof that $x \in \{3m : m \in \mathbb{Z}\}$.'
+            solution_sketch: 'We have $x = 12n = 3 \cdot 4n$, so $m = 4n$. Since $n$ is an integer, $4n$ is an integer, so $x$ has the form $3m$ with $m \in \mathbb{Z}$. So $x \in B$.'
           - problem: 'Let $A = \{n \in \mathbb{Z} : 3 \mid n\}$ and $B = \{n \in \mathbb{Z} : 6 \mid n\}$. What is the least positive integer in $A$ that is not in $B$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The least positive element of $A$ is $3$. It is not a multiple of $6$, so $3 \notin B$. Hence $3$ shows that $A \not\subseteq B$, and it is the least positive integer that does so.'
-          - problem: 'Let $A = \{1, 2\}$ and $B = \{2, 5\}$. Which element of $A \cup B$ shows that $A \cup B \not\subseteq A$?'
+          - problem: 'Let $A = \{1, 2\}$ and $B = \{2, 5\}$. Decide whether $A \cup B \subseteq A$. If it is false, give the element of $A \cup B$ that is not in $A$. If it is true, give none.'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The union is $A \cup B = \{1, 2, 5\}$. The elements $1$ and $2$ are in $A$, but $5$ is not in $A$. So $5$ is the element that shows $A \cup B \not\subseteq A$.'
-          - problem: 'For $A = \{1, 2\}$ and $B = \{2, 3\}$, the statement $A \not\subseteq B$ is true. Which element of $A$ is not in $B$?'
+            solution_sketch: 'The union is $A \cup B = \{1, 2, 5\}$. The elements $1$ and $2$ are in $A$, but $5$ is not in $A$. So the statement is false, and $5$ is the element that is missing.'
+          - problem: 'Let $A = \{1, 2\}$ and $B = \{2, 3\}$. Decide whether $A \subseteq B$. If it is false, give the element of $A$ that is not in $B$. If it is true, give none.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The statement $A \subseteq B$ says every element of $A$ is in $B$. Its negation $A \not\subseteq B$ says that some element of $A$ is not in $B$. Here $2$ is in both sets, and $1$ is in $A$ but not in $B$.'
+            solution_sketch: 'The statement $A \subseteq B$ says every element of $A$ is in $B$. Here $2$ is in both sets, but $1$ is in $A$ and not in $B$. So the statement is false, and $1$ is the element that is missing.'
           - problem: 'Suppose $A \subseteq B$, $|A| = 5$ and $|B| = 9$. How many elements does $B \setminus A$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}

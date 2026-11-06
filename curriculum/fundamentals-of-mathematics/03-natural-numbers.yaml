@@ -74,7 +74,7 @@ topics:
             answer: 'Fix n and m and induct on k. The case k = 1 follows from the sum rules, and the step adds one successor on both sides.'
             solution_sketch: 'Fix $n,m$ and let $S$ be the set of $k$ with $(n+m)+k=n+(m+k)$. For $k=1$, the rules of Definition 3.3 turn $(n+m)+1$ into $(n+m)''$ and then into $n+m''$ and $n+(m+1)$, so $1\in S$. Let $k\in S$. Then $(n+m)+k''=((n+m)+k)''=(n+(m+k))''=n+(m+k)''=n+(m+k'')$. Hence $k''\in S$ and Theorem 2.64 gives $S=\mathbb{N}$.'
           # argument: Proposition 3.6
-          - problem: 'Prove: addition on $\mathbb{N}$ is commutative. That is, $n+m=m+n$ for all $n,m\in\mathbb{N}$. Start with the lemma $1+n=n''$.'
+          - problem: 'Prove: addition on $\mathbb{N}$ is commutative. That is, $n+m=m+n$ for all $n,m\in\mathbb{N}$.'
             answer_contract: {"kind":"written"}
             answer: 'Prove 1 + n = n'' by induction. Then induct on m: the step uses associativity and the lemma.'
             solution_sketch: 'Let $T$ be the set of $n$ with $1+n=n''$. Then $1+1=1''$, and from $1+n=n''$ we get $1+n''=(1+n)''=n''''$, so $T=\mathbb{N}$ by Theorem 2.64. Fix $n$ and let $S$ be the set of $m$ with $n+m=m+n$. Then $n+1=n''=1+n$ gives $1\in S$. For $m\in S$ we get $n+m''=(n+m)''=(m+n)''=m+n''=m+(n+1)=(m+n)+1$, and also $m''+n=(m+1)+n=m+(1+n)$, which equals the same value by associativity and the lemma.'
@@ -124,7 +124,7 @@ topics:
             answer: 'Fix n and induct on m. The value for m'' is the single value for m plus n.'
             solution_sketch: 'Fix $n$ and let $S$ be the set of $m$ with exactly one product. The pair for $m=1$ holds only $n$, so $1\in S$. If $m\in S$ has the product $k$, then a product for $m''$ must be $k+n$ by the second rule. Proposition 3.4 states that the sum $k+n$ is single. Hence $m''\in S$ and $S=\mathbb{N}$.'
           # source: FoM exercise 3.1-3-3
-          - problem: 'Prove: the rules $n\cdot 1=n$ and $n\cdot m''=n\cdot m+n$ give exactly one natural number for each pair $n,m$. Follow the pattern of the proof for addition.'
+          - problem: 'Prove: the rules $n\cdot 1=n$ and $n\cdot m''=n\cdot m+n$ give exactly one natural number for each pair $n,m$.'
             answer_contract: {"kind":"written"}
             answer: 'Fix n and induct on m. Existence and a single value both follow from the sum being a binary operation.'
             solution_sketch: 'Fix $n$ and let $S$ be the set of $m$ for which exactly one value of $n\cdot m$ exists. The case $m=1$ gives only $n$. For the step, the value of $n\cdot m''$ must be $(n\cdot m)+n$, and Proposition 3.4 makes this sum exist and be single. The Principle of Induction gives $S=\mathbb{N}$. This is the content of Proposition 3.10.'
@@ -159,25 +159,25 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 6; c = 6'
             solution_sketch: 'Each summand of the first factor meets each summand of the second factor. In (a) that is $2\cdot 2=4$ products. In (b) it is $2\cdot 3=6$ products. In (c) it is $3\cdot 2=6$ products.'
-          - problem: 'Let $a=1$, $b=2$, $c=3$ and $d=4$. (a) Give $(a+b)(c+d)$. (b) Give $ac+ad$. (c) Give $bc+bd$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 21; b = 7; c = 14'
-            solution_sketch: 'First $a+b=3$ and $c+d=7$, so a = 21. Next $ac+ad=3+4=7$, so b = 7. Last $bc+bd=6+8=14$, so c = 14. The sum $7+14$ equals 21, as the expansion states.'
+          - problem: 'Let $a=1$, $b=2$, $c=3$ and $d=4$. Give $(a+b)(c+d)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '21'
+            solution_sketch: 'Split the product with distributivity: $(a+b)(c+d)=(ac+ad)+(bc+bd)$. Here $ac+ad=3+4=7$ and $bc+bd=6+8=14$. The sum is $7+14=21$. The direct product $3\cdot 7$ also gives 21.'
           - problem: 'Find the natural number $n$ in each equation. (a) $n\cdot(2+5)=35$. (b) $3\cdot(n+4)=27$. (c) $(n+1)\cdot 4=20$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 5; b = 5; c = 4'
             solution_sketch: 'In (a), $2+5=7$ and $5\cdot 7=35$, so n = 5. In (b), $27/3=9$ and $9-4=5$, so n = 5. In (c), $20/4=5$ and $5-1=4$, so n = 4.'
-          - problem: 'Let $a=1$, $b=2$, $c=3$, $d=4$ and $e=5$. (a) Give $(a+b)((c+d)+e)$. (b) Give $ac+ad+ae$. (c) Give $bc+bd+be$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 36; b = 12; c = 24'
-            solution_sketch: 'First $c+d+e=12$ and $3\cdot 12=36$, so a = 36. Next $3+4+5=12$, so b = 12. Last $6+8+10=24$, so c = 24. The sums 12 and 24 add to 36.'
+          - problem: 'Let $a=1$, $b=2$, $c=3$, $d=4$ and $e=5$. Give $(a+b)((c+d)+e)$.'
+            answer_contract: {"kind":"exact"}
+            answer: '36'
+            solution_sketch: 'Split the product with distributivity: the sum $ac+ad+ae$ is $3+4+5=12$. The sum $bc+bd+be$ is $6+8+10=24$. The total is $12+24=36$. The direct product $3\cdot 12$ also gives 36.'
           # argument: Proposition 3.12
           - problem: 'Prove: multiplication on $\mathbb{N}$ is associative. That is, $(n\cdot m)\cdot k=n\cdot(m\cdot k)$ for all $n,m,k\in\mathbb{N}$.'
             answer_contract: {"kind":"written"}
             answer: 'Induct on k with n and m fixed. The step needs right distributivity to split the product.'
             solution_sketch: 'Fix $n,m$ and let $S$ be the set of $k$ with $(n\cdot m)\cdot k=n\cdot(m\cdot k)$. For $k=1$ both sides equal $n\cdot m$. For the step, $(n\cdot m)\cdot k''=(n\cdot m)\cdot k+n\cdot m=n\cdot(m\cdot k)+n\cdot m$. Left distributivity makes this $n\cdot(m\cdot k+m)=n\cdot(m\cdot k'')$. This part uses Proposition 3.13 and Proposition 3.14.'
           # argument: Proposition 3.12
-          - problem: 'Prove: multiplication on $\mathbb{N}$ is commutative. That is, $n\cdot m=m\cdot n$ for all $n,m\in\mathbb{N}$. Start with the lemma $1\cdot n=n$.'
+          - problem: 'Prove: multiplication on $\mathbb{N}$ is commutative. That is, $n\cdot m=m\cdot n$ for all $n,m\in\mathbb{N}$.'
             answer_contract: {"kind":"written"}
             answer: 'Prove 1 times n equals n by induction. Then induct on m, with right distributivity for the step.'
             solution_sketch: 'Let $T$ be the set of $n$ with $1\cdot n=n$. Then $1\cdot 1=1$, and $1\cdot n''=1\cdot n+1=n+1=n''$, so $T=\mathbb{N}$. Fix $n$ and let $S$ be the set of $m$ with $n\cdot m=m\cdot n$. Then $n\cdot 1=n=1\cdot n$ gives $1\in S$. For the step, $n\cdot m''=n\cdot m+n=m\cdot n+1\cdot n=(m+1)\cdot n=m''\cdot n$ by right distributivity.'
@@ -197,7 +197,7 @@ topics:
             answer: 'Swap the factors with commutativity, use right distributivity, and swap back.'
             solution_sketch: 'Start with $n\cdot(m+k)=(m+k)\cdot n$ by commutativity of multiplication. Right distributivity gives $m\cdot n+k\cdot n$. Commutativity again gives $n\cdot m+n\cdot k$. This uses Proposition 3.12 and Proposition 3.13.'
           # argument: Proposition 3.15
-          - problem: 'Prove: for all $a,b,c,d\in\mathbb{N}$ we have $(a+b)(c+d)=(ac+ad)+(bc+bd)$. Start with left distributivity.'
+          - problem: 'Prove: for all $a,b,c,d\in\mathbb{N}$ we have $(a+b)(c+d)=(ac+ad)+(bc+bd)$.'
             answer_contract: {"kind":"written"}
             answer: 'Split the product with left distributivity, then right distributivity twice, then regroup the four terms.'
             solution_sketch: 'Left distributivity gives $(a+b)(c+d)=(a+b)c+(a+b)d$. Right distributivity gives $(ac+bc)+(ad+bd)$. Associativity and commutativity of addition regroup the four terms into $(ac+ad)+(bc+bd)$.'
@@ -207,7 +207,7 @@ topics:
             answer: 'Use induction for (a), (b) and (e). Parts (c) and (d) follow from (a) and (b) with swapped factors.'
             solution_sketch: 'Part (a) is induction on n. Part (b) is induction on k with associativity of addition. Part (c) is induction on m and uses (a) and (b). Part (d) follows from (b) and (c) by swapping factors. Part (e) is induction on k and uses (d). This order proves Proposition 3.12.'
           # source: FoM exercise 3.1-3-6
-          - problem: 'Prove the equation $(a+b)(c+d)=(ac+ad)+(bc+bd)$ in two steps for all $a,b,c,d\in\mathbb{N}$. Use right distributivity once and left distributivity twice.'
+          - problem: 'Prove that $(a+b)(c+d)$ equals $(ac+ad)+(bc+bd)$ for all $a,b,c,d\in\mathbb{N}$, and name each law of $\mathbb{N}$ that you use.'
             answer_contract: {"kind":"written"}
             answer: 'Right distributivity with k equal to c + d splits the first factor. Then left distributivity splits each part.'
             solution_sketch: 'Right distributivity with $k=c+d$ gives $(a+b)(c+d)=a(c+d)+b(c+d)$. Left distributivity on each part gives $(ac+ad)+(bc+bd)$. Proposition 3.13 and Proposition 3.14 give the two laws. They prove Proposition 3.15 again.'
@@ -270,7 +270,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 1; c = 9'
             solution_sketch: 'Exactly one condition holds for every pair, so the count in (a) and in (b) is 1. In (a), condition 1 holds. In (b), $6+9=15$, so condition 3 holds with $d=9$.'
-          - problem: 'In this item, $\mathbb{N}$ starts at 1. Cancel the common term. (a) Give $a$ when $7+a=7+12$. (b) Give $a$ when $a+9=15+9$. (c) Give $x$ when $(3+x)+2=11$.'
+          - problem: 'In this item, $\mathbb{N}$ starts at 1. Give $a$ when $7+a=7+12$. Give $b$ when $b+9=15+9$. Give $c$ when $(3+c)+2=11$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 12; b = 15; c = 6'
             solution_sketch: 'In (a), cancel the left term 7 to get $a=12$. In (b), cancel the right term 9 to get $a=15$. In (c), cancel 2 to get $3+x=9$, and then cancel 3 to get $x=6$.'
@@ -317,10 +317,10 @@ topics:
             answer: 'Substitute a = b + d. Then c + a = (c + a) + d, and Theorem 3.16 forbids that.'
             solution_sketch: 'Assume $b+d=a$ for some $d$ in $\mathbb{N}$. Then $c+a=c+(b+d)=(c+b)+d$. Since $c+b=c+a$, this reads $c+a=(c+a)+d$. Put $n=c+a$. Then $n=n+d$, which contradicts Theorem 3.16. This is the second case in the proof of Proposition 3.17.'
           # source: FoM exercise 3.2-3-10
-          - problem: 'Prove two cancellation rules for $a,b,c$ in $\mathbb{N}$. (a) If $ca=cb$, then $a=b$. Use induction on $a$. (b) If $ac=bc$, then $a=b$.'
+          - problem: 'Prove two cancellation rules for $a,b,c$ in $\mathbb{N}$. First, if $ca=cb$, then $a=b$. Second, if $ac=bc$, then $a=b$.'
             answer_contract: {"kind":"written"}
             answer: 'For part a, use induction on a and cancel a sum with Proposition 3.19. Part b follows from part a and commutativity of the product.'
-            solution_sketch: 'For part (a), induct on $a$. If $a=1$ and $b$ is a successor $e+1$, then $c=ce+c$, which contradicts Theorem 3.16. If $a+1$ replaces $a$ and $b=1$, the same contradiction appears. Otherwise write $b=e+1$ and get $ca+c=ce+c$. Proposition 3.19 gives $ca=ce$, the hypothesis gives $a=e$, and so $a+1=b$. Part (b) follows from part (a), because $ac=ca$ and $bc=cb$.'
+            solution_sketch: 'For the first rule, induct on $a$. If $a=1$ and $b=e+1$, then $c=ce+c$, which contradicts Theorem 3.16. The case $b=1$ is the same. Otherwise $b=e+1$ gives $ca+c=ce+c$, so $ca=ce$ by Proposition 3.19, $a=e$ by the hypothesis, and $a+1=b$. The second rule follows, because $ac=ca$ and $bc=cb$.'
         constraints: 'trichotomy of $n+d=m$; cancellation of a common term in a sum; decidable items use natural numbers from 1'
       - id: kp2
         name: 'Definition 3.20: the order less than and less than or equal on the natural numbers'
@@ -330,10 +330,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 0; d = 1'
             solution_sketch: 'In (a), $3+5=8$, so the value is 1. In (b), no $d$ gives $8+d=3$, so the value is 0. In (c), $5+d=5$ has no solution, so the value is 0. In (d), $5=5$, so the value is 1.'
-          - problem: 'In this item, $\mathbb{N}$ starts at 1. In each part, give the number $d$ in $\mathbb{N}$ that proves the order. (a) $6<14$ with $6+d=14$. (b) $1<100$ with $1+d=100$. (c) $25<26$ with $25+d=26$.'
+          - problem: 'In this item, $\mathbb{N}$ starts at 1. Give the number $a$ in $\mathbb{N}$ that proves $6<14$. Give the number $b$ in $\mathbb{N}$ that proves $1<100$. Give the number $c$ in $\mathbb{N}$ that proves $25<26$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 8; b = 99; c = 1'
-            solution_sketch: 'Subtract the smaller number from the larger number. In (a), $14-6=8$. In (b), $100-1=99$. In (c), $26-25=1$.'
+            solution_sketch: 'By the definition, $m<n$ means that $m+d=n$ for a number $d$ in $\mathbb{N}$. Subtract the smaller number from the larger number. So $a=14-6=8$, $b=100-1=99$ and $c=26-25=1$.'
           - problem: 'In this item, $\mathbb{N}$ starts at 1. Count the numbers $m$ in $\mathbb{N}$ with each property. (a) $m<6$. (b) $m\le 6$. (c) $3<m$ and $m<10$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 5; b = 6; c = 6'
@@ -406,10 +406,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 9; b = 1; c = 0'
             solution_sketch: 'The empty set lies in 4 sets, $\{1\}$ lies in 2, $\{2\}$ lies in 2 and $\{1,2\}$ lies in 1. The sum is 9. Only $\{1\}$ and $\{2\}$ are not comparable, so (b) is 1 and (c) is 0.'
-          - problem: 'In this item, $\mathbb{N}$ starts at 1. Check transitivity of $\le$ on $\mathbb{N}$ with $x=2$, $y=5$ and $z=11$. (a) Give the $d$ with $x+d=y$. (b) Give the $e$ with $y+e=z$. (c) Give the number $d+e$ with $x+(d+e)=z$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 3; b = 6; c = 9'
-            solution_sketch: 'In (a), $2+3=5$, so $d=3$. In (b), $5+6=11$, so $e=6$. In (c), $d+e=3+6=9$, and $2+9=11$, so $x<z$.'
+          - problem: 'In this item, $\mathbb{N}$ starts at 1. Take $x=2$, $y=5$ and $z=11$, so $x<y$ and $y<z$. Give the number $k$ in $\mathbb{N}$ with $x+k=z$ that proves $x<z$ from the two given orders.'
+            answer_contract: {"kind":"exact"}
+            answer: '9'
+            solution_sketch: 'Each given order has a number that proves it. For $x<y$ the number is $d=3$, because $2+3=5$. For $y<z$ the number is $e=6$, because $5+6=11$. Then $x+(d+e)=z$, so $k=d+e=9$.'
           - problem: 'Take $\le$ on $\mathbb{N}$ and the pairs $x,y$ in $\{1,2,3,4,5\}$. Count the pairs $(x,y)$ for each case. (a) $x\le y$. (b) $x<y$. (c) $x\le y$ and $y\le x$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 15; b = 10; c = 5'
@@ -449,10 +449,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 1; c = 0'
             solution_sketch: 'Statement (a) is part 1 of Theorem 3.24, so its value is 1. Statement (b) is the strict form of part 2, and $z\ge 1$ keeps the gap, so its value is 1. In (c), take $x=2$, $y=2$ and $z=3$. Then $xz=6$ and $6\le 2$ is false, so the value is 0.'
-          - problem: 'In this item, $\mathbb{N}$ starts at 1. Take $x=5$ and $y=12$. (a) Give the $d$ with $x+d=y$. (b) For $z=4$, compute $zd$. (c) For $z=4$, compute $yz$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 7; b = 28; c = 48'
-            solution_sketch: 'In (a), $5+7=12$, so $d=7$. In (b), $zd=4\cdot 7=28$. In (c), $yz=12\cdot 4=48$, and $xz+zd=20+28=48$, as the proof of part 2 requires.'
+          - problem: 'In this item, $\mathbb{N}$ starts at 1. Take $x=5$, $y=12$ and $z=4$. Give the number $k$ in $\mathbb{N}$ with $xz+k=yz$.'
+            answer_contract: {"kind":"exact"}
+            answer: '28'
+            solution_sketch: 'First find $d$ with $x+d=y$: $5+7=12$, so $d=7$. Then $yz=xz+zd$, so $k=zd=4\cdot 7=28$. Check: $xz=20$, $yz=48$ and $20+28=48$.'
           - problem: 'In this item, $\mathbb{N}$ starts at 1. Count the numbers $z$ in $\{1,\ldots,10\}$ with each property. (a) $3z\le 17$. (b) $5+z\le 9$. (c) $z+3\le 2z$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 5; b = 4; c = 8'
@@ -587,10 +587,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 23; b = 56; c = 0'
             solution_sketch: 'First, $4\cdot 5=20$ and $3+20=23$. Next, $3+4=7$, $3+5=8$ and $7\cdot 8=56$. The results 23 and 56 differ, so addition is not distributive over multiplication and (c) is 0.'
-          - problem: 'Let $x=1$, $y=2$, $z=3$ and $u=4$ be natural numbers. (a) Compute $(x+y)(z+u)$. (b) Compute $xz+xu$. (c) Compute $yz+yu$.'
+          - problem: 'Let $x=1$, $y=2$, $z=3$ and $u=4$ be natural numbers. Give the value of $(x+y)(z+u)$. Expand the product into terms. Give the sum of the terms that hold $x$ and the sum of the terms that hold $y$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 21; b = 7; c = 14'
-            solution_sketch: 'First, $(1+2)(3+4)=3\cdot 7=21$. Next, $xz+xu=3+4=7$. Then $yz+yu=6+8=14$. The sum $7+14=21$ agrees with (a).'
+            solution_sketch: 'First, $(1+2)(3+4)=3\cdot 7=21$. Next, the expanded terms with $x$ are $xz+xu=3+4=7$. Then the terms with $y$ are $yz+yu=6+8=14$. The sum $7+14=21$ agrees with the first value.'
           # source: FoM exercise 3.3-3-25
           - problem: 'For each pair of operations, count how many of the two operations are distributive over the other one. (a) Addition and multiplication of natural numbers. (b) Union and intersection on a power set $P(A)$. (c) AND and OR on propositions.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
@@ -641,7 +641,7 @@ topics:
         name: 'Definition 3.39 to Proposition 3.42: partial operations and subtraction'
         key_prerequisites: [fom-3-2-ordering-natural-numbers, fom-3-1-arithmetic-natural-numbers]
         exemplars:
-          - problem: 'The natural numbers start at 1. The difference $m-n$ exists only when $n<m$. (a) Compute $17-9$. (b) Give the number $d$ with $5+d=21$. (c) Give 1 if $6-9$ exists and 0 if it does not.'
+          - problem: 'The natural numbers start at 1. The difference $m-n$ exists only when $n<m$. Compute $17-9$. Compute $21-5$. Give 1 if $6-9$ exists and 0 if it does not.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 8; b = 16; c = 0'
             solution_sketch: 'For (a), $9+8=17$, so the difference is 8. For (b), $5+16=21$, so $d=16$. For (c), $6<9$ is true but the order is wrong: $9<6$ is false, so $6-9$ does not exist and (c) is 0.'
@@ -653,10 +653,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 2'
             solution_sketch: 'The pairs with sum 5 are $(1,4)$, $(2,3)$, $(3,2)$ and $(4,1)$, so (a) is 4. The pairs with product 12 are $(3,4)$ and $(4,3)$, so (b) is 2.'
-          - problem: 'Let $n=4$ and $m=11$. (a) Give the number $d$ with $n+d=m$. (b) Count the natural numbers $d$ with $n+d=m$. (c) Compute $(m-n)+n$.'
+          - problem: 'Let $n=4$ and $m=11$ be natural numbers. Compute $m-n$. Give 1 if $m-n$ is the only natural number that gives $m$ when you add it to $n$, and 0 if it is not. Compute $(m-n)+n$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 7; b = 1; c = 11'
-            solution_sketch: 'We have $4+7=11$, so $d=7$ and (a) is 7. Only one number works, so (b) is 1. Then $(m-n)+n=7+4=11$, so (c) is 11.'
+            solution_sketch: 'The difference $m-n=11-4=7$ is the number with $4+7=11$, so the first value is 7. Only one number works, so the second value is 1. Then $(m-n)+n=7+4=11$.'
           - problem: 'Let $m=10$, $n=3$, $x=9$ and $y=4$. (a) Compute $(m+x)-(n+y)$. (b) Compute $m-n$. (c) Compute $x-y$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 12; b = 7; c = 5'
@@ -911,7 +911,7 @@ topics:
             answer: 'a=295;b=159'
             solution_sketch: 'Put the payment $\frac{13}{12}P$ into the balance formula and find the first $n$ with $a_n\le 0$. For the 30-year loan this gives $n=295$. For the 15-year loan it gives $n=159$.'
           # source: FoM exercise 3.4-3-34 part (g)
-          - problem: 'Give a description of how to obtain the formula for $a_n$ by writing $a_n$ in terms of $a_{n-1}$, then $a_{n-2}$, and so on down to $a_0$, with $a_{n+1}=qa_n-P$ and $q=1+\frac{r}{k}$.'
+          - problem: 'A sequence has $a_{n+1}=qa_n-P$ with $q=1+\frac{r}{k}$. Give a description of how to obtain a formula for $a_n$ from $a_0$.'
             answer_contract: {"kind":"written"}
             answer: 'Unroll the recursion to get q^n a_0 minus P times the sum of q^j for j from 0 to n-1. Then apply the geometric sum formula.'
             solution_sketch: 'Write $a_n=qa_{n-1}-P=q(qa_{n-2}-P)-P=q^2a_{n-2}-P(q+1)$. After $n$ steps, $a_n=q^na_0-P(q^{n-1}+\dots+q+1)$. The pattern is clear from the first three steps. The geometric sum from Exercise 3-32 gives $q^{n-1}+\dots+1=\frac{q^n-1}{q-1}$. With $q-1=\frac{r}{k}$ this is the formula.'
@@ -1304,7 +1304,7 @@ topics:
             answer: 'Use induction on n. Commutativity moves one factor a past the block of n factors b.'
             solution_sketch: 'For $n=1$ both sides equal $a\cdot b$. Assume $(ab)^n=a^nb^n$. Then $(ab)^{n+1}=(ab)^n(ab)=a^nb^n\,a\,b$. First show by induction on $n$ that $b^n a=a\,b^n$. Then $a^nb^n\,a\,b=a^n a\,b^n b$, which is $a^{n+1}b^{n+1}$ by part 1 of Theorem 3.71.'
           # source: FoM exercise 3.5-3-47
-          - problem: 'Let $(S,\cdot)$ be a semigroup, let $a,b\in S$ and $m,n\in\mathbb{N}$. Use these product rules: a product of $m+n$ factors splits after the $m$-th factor into two products, a shift of the index range keeps the product, and in a commutative semigroup a product of pairs $a_jb_j$ regroups into the product of the $a_j$ times the product of the $b_j$. Prove: (a) $a^{m+n}=a^m\cdot a^n$. (b) If $a\cdot b=b\cdot a$, then $(a\cdot b)^n=a^n\cdot b^n$. (c) $(a^m)^n=a^{mn}$.'
+          - problem: 'Let $(S,\cdot)$ be a semigroup, let $a,b\in S$ and $m,n\in\mathbb{N}$. Prove three rules. First, $a^{m+n}=a^m\cdot a^n$. Second, if $a\cdot b=b\cdot a$, then $(a\cdot b)^n=a^n\cdot b^n$. Third, $(a^m)^n=a^{mn}$.'
             answer_contract: {"kind":"written"}
             answer: 'Use the splitting rule for (a) and induction on n for (b) and (c). In (c) the product of n blocks has mn factors.'
             solution_sketch: 'Part (a) splits the product of $m+n$ factors after the $m$-th factor, as in Theorem 3.71. Part (b) is an induction on $n$ that moves one factor with commutativity. Part (c) is an induction on $n$. The step uses $(a^m)^{n+1}=(a^m)^n\cdot a^m=a^{mn}\cdot a^m$. Then part (a) gives $a^{mn+m}=a^{m(n+1)}$.'
@@ -1560,10 +1560,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 2; c = 2'
             solution_sketch: 'We have $3600=36\cdot100$, with $36=2^2\cdot3^2$ and $100=2^2\cdot5^2$. Multiply the two forms and add the exponents of $2$. So $a=4$, $b=2$ and $c=2$.'
-          - problem: 'Run a sieve on the numbers $2$ to $100$. Test a number $k$ only against primes $p$ with $p^2\le k$. (a) Count the primes $p$ with $p^2\le100$. (b) Give the largest such prime. (c) Give 1 if $97$ is prime and 0 if it is not.'
+          - problem: 'Run a sieve on the numbers $2$ to $100$. Give the count of primes that you must test to decide if a number up to $100$ is prime. Give the largest such prime. Give 1 if $97$ is prime and 0 if it is not.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 7; c = 1'
-            solution_sketch: 'The primes with $p^2\le100$ are $2,3,5,7$, so (a) is 4 and (b) is 7. None of them divides $97$, so $97$ is prime and (c) is 1.'
+            solution_sketch: 'A number $k$ up to $100$ that is not prime has a prime factor $p$ with $p^2\le k\le 100$. So the primes to test are $2,3,5,7$, and the count is 4 and the largest is 7. None of them divides $97$, so $97$ is prime and the last value is 1.'
           - problem: 'Cross out the numbers from $2$ to $30$ in steps. (a) Cross out all proper multiples of $2$, then count the numbers left. (b) Also cross out the proper multiples of $3$, then count the numbers left. (c) Also cross out the proper multiples of $5$, then count the numbers left. A proper multiple of $p$ is a multiple that is larger than $p$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 15; b = 11; c = 10'
@@ -1742,7 +1742,7 @@ topics:
             answer: 'A number is divisible by 6 if and only if it is divisible by 2 and by 3. Use the tests for 2 and for 3.'
             solution_sketch: 'The test reads: $6\mid n$ if and only if the last digit of $n$ is even and the digit sum of $n$ is divisible by $3$. If $6\mid n$, then $2\mid n$ and $3\mid n$. If $2\mid n$ and $3\mid n$, write $n=2u$. Then $3$ shares only $1$ with $2$, so $3\mid u$ by the product rule, and $6\mid n$.'
           # source: FoM exercise 3.6-3-78
-          - problem: 'State and prove a test for divisibility by $4$. Use that $100$ is divisible by $4$.'
+          - problem: 'State and prove a test for divisibility by $4$ for a natural number in base ten.'
             answer_contract: {"kind":"written"}
             answer: 'Split the number into a multiple of 100 plus its last two digits. The test depends only on the last two digits.'
             solution_sketch: 'The test reads: $4\mid n$ if and only if $4$ divides the number formed by the last two digits of $n$. Write $n=100y+t$ with $t$ the last two digits. Since $4\mid100y$, the sum and difference rules give $4\mid n$ if and only if $4\mid t$.'
@@ -2302,10 +2302,10 @@ topics:
             answer: 'ea = 37; da = 2; eb = 57; db = 7'
             solution_sketch: 'Encrypt with $c=m^e$ modulo $n$, then decrypt with $c^d$ modulo $n$. In (a), $2^{31}$ modulo 91 is 37. In (b), $37^7$ modulo 91 is 2, the message. In (c), $7^{13}$ modulo 85 is 57. In (d), $57^5$ modulo 85 is 7, the message.'
           # source: FoM exercise 3.9-3-104
-          - problem: 'A message was encrypted with RSA to $c=54$ under the public key $(n,e)=(119,17)$. Note that $119=7\cdot 17$. (a) Give the private key $d$ with $de\equiv 1$ modulo $(7-1)(17-1)$ and $0<d<96$. (b) Give the message $m$ with $0\le m<119$.'
+          - problem: 'A message was encrypted with RSA to $c=54$ under the public key $(n,e)=(119,17)$. Give the smallest positive private key $d$. Give the message $m$ with $0\le m<119$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}}]}
             answer: 'd = 17; m = 3'
-            solution_sketch: 'Here $(7-1)(17-1)=96$. In (a), $17\cdot 17=289=3\cdot 96+1$, so d is 17. In (b), $m=54^{17}$ modulo 119, which is 3.'
+            solution_sketch: 'Factor $119=7\cdot 17$, so $(7-1)(17-1)=96$. The key $d$ solves $de\equiv 1$ modulo $96$. Here $17\cdot 17=289=3\cdot 96+1$, so $d=17$. Then $m=54^{17}$ modulo $119$, which is 3.'
           # source: FoM exercise 3.9-3-105
           - problem: 'Letters become numbers: space is $00$, A is $01$, B is $02$, up to Z as $26$. Two letters form a block of four digits, and RSA with the public key $(n,e)=(3233,17)$ and the private key $d=2753$ treats the block as one number. (a) Encrypt the block HI, which is the number $809$. (b) Encrypt the block GO, which is the number $715$. (c) Decrypt the number 449 and give the result without leading zeros. (d) Decrypt the number 2487 and give the result without leading zeros.'
             answer_contract: {"kind":"multipart","parts":[{"name":"ea","contract":{"kind":"exact"}},{"name":"eb","contract":{"kind":"exact"}},{"name":"dc","contract":{"kind":"exact"}},{"name":"dd","contract":{"kind":"exact"}}]}
@@ -2320,10 +2320,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"n","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'n = 77; f = 60; d = 37'
             solution_sketch: 'In (a), $7\cdot 11=77$. In (b), $6\cdot 10=60$. In (c), $13\cdot 37=481=8\cdot 60+1$, so d is 37.'
-          - problem: 'Take the primes $p=5$ and $q=11$ and the public exponent $e=3$. (a) Give the private key $d$ with $0<d<40$ and $de\equiv 1$ modulo $40$. (b) Give the encrypted message of $m=9$. (c) Decrypt the encrypted message of $m=9$ and give the result.'
+          - problem: 'Take the primes $p=5$ and $q=11$ and the public exponent $e=3$. Give the smallest positive private key $d$. Give the encrypted message of $m=9$. Decrypt the encrypted message of $m=9$ and give the result.'
             answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"m","contract":{"kind":"exact"}}]}
             answer: 'd = 27; c = 14; m = 9'
-            solution_sketch: 'Here $n=55$ and $(p-1)(q-1)=40$. In (a), $3\cdot 27=81=2\cdot 40+1$, so d is 27. In (b), $9^3=729$, which has remainder 14 modulo 55. In (c), $14^{27}$ modulo 55 is 9.'
+            solution_sketch: 'Here $n=55$ and $(p-1)(q-1)=40$. The key $d$ solves $3d\equiv 1$ modulo $40$. Since $3\cdot 27=81=2\cdot 40+1$, $d=27$. Then $9^3=729$ has remainder 14 modulo 55, and $14^{27}$ modulo 55 is 9.'
           - problem: 'Use RSA with $p=3$, $q=11$, $n=33$, public exponent $e=3$ and private exponent $d=7$. Give the encrypted message of (a) $m=2$, (b) $m=5$, (c) $m=10$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 8; b = 26; c = 10'

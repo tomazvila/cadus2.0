@@ -9,6 +9,7 @@ use super::super::model::{Catalog, Course, Topic};
 use super::{Lint, Table, node, py_list_repr, py_repr};
 
 mod exemplars;
+mod handed;
 mod names;
 mod probes;
 mod program;
@@ -17,6 +18,8 @@ mod visual_motion;
 mod visuals;
 
 pub(super) use exemplars::check_exemplars;
+pub(super) use handed::check_handed;
+pub use handed::{HANDED_FIX, handed_value};
 pub(super) use names::check_names;
 pub(super) use probes::{check_probes, parse_allow};
 pub(super) use program::check_program;

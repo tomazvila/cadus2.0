@@ -26,6 +26,7 @@
 //! order where 1.0 walks `catalog.courses`.
 
 mod rules;
+pub use rules::{HANDED_FIX, handed_value};
 
 use std::collections::HashMap;
 use std::path::Path;
@@ -132,6 +133,25 @@ pub fn lint_curriculum_names(root: &Path) -> Vec<Finding> {
     let mut lint = Lint::new(&parsed.units, Vec::new());
     lint.findings.clear();
     rules::check_names(&mut lint);
+    lint.findings
+}
+
+/// The handed value rule: `handed_value`.
+///
+/// An exemplar, a diagnostic or a try-first problem that gives the learner a
+/// value the question exists to make them produce is a finding. A `written`
+/// item and a teach text are not covered. The rule is not part of
+/// [`lint_curriculum`] or [`lint_curriculum_full`], so the parity tests stay
+/// as they are. The `lint_curriculum` binary runs it. A tree that does not
+/// parse gives no finding here; the other lints report it.
+pub fn lint_curriculum_handed(root: &Path) -> Vec<Finding> {
+    let parsed = parse_curriculum(root);
+    if parsed.error.is_some() || parsed.catalog.is_none() {
+        return Vec::new();
+    }
+    let mut lint = Lint::new(&parsed.units, Vec::new());
+    lint.findings.clear();
+    rules::check_handed(&mut lint);
     lint.findings
 }
 

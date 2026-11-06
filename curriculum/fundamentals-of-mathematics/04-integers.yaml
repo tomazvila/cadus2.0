@@ -51,10 +51,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 3; c = 4'
             solution_sketch: 'The relation means $c+2=d+4$, so $c=d+2$. The pairs are $(3,1)$, $(4,2)$, $(5,3)$ and $(6,4)$. That gives 4 pairs, the smallest $c$ is 3 and the largest $d$ is 4.'
-          - problem: 'For natural numbers, write $(a,b)\sim(c,d)$ when $a+d=b+c$. Take $(a,b)=(5,2)$, $(c,d)=(7,4)$ and $(e,f)=(10,7)$. Here $(a,b)\sim(c,d)$ and $(c,d)\sim(e,f)$. (a) Give the sum of the left sides $a+d$ and $c+f$. (b) Give the number $c+d$ that you cancel after you add the two equations. (c) Give $a+f$.'
+          - problem: 'For natural numbers, write $(a,b)\sim(c,d)$ when $a+d=b+c$. Take $(a,b)=(5,2)$, $(c,d)=(7,4)$ and $(e,f)=(10,7)$. Here $(a,b)\sim(c,d)$ and $(c,d)\sim(e,f)$. Give $a+f$. Give $b+e$. Give 1 if $(a,b)\sim(e,f)$ and 0 if not.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 23; b = 11; c = 12'
-            solution_sketch: 'The left sides are $a+d=9$ and $c+f=14$, and their sum is 23. The right sides $b+c=9$ and $d+e=14$ have the same sum. Cancel $c+d=11$ from both sides. Then $a+f=5+7=12$ and $b+e=2+10=12$.'
+            answer: 'a = 12; b = 12; c = 1'
+            solution_sketch: 'Add the two given equations $a+d=b+c$ and $c+f=d+e$ and cancel $c+d$ from both sides. This leaves $a+f=b+e$. Here $a+f=5+7=12$ and $b+e=2+10=12$, so the pairs are related and the last value is 1.'
           # argument: Proposition 4.1
           - problem: 'Prove: the relation $\sim$ on pairs of natural numbers, defined by $(a,b)\sim(c,d)$ when $a+d=b+c$, is reflexive, symmetric and transitive.'
             answer_contract: {"kind":"written"}
@@ -86,10 +86,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = -3; b = -28'
             solution_sketch: 'The sum is $[(9,12)]$ and $9-12=-3$. The product is $[(14+27,63+6)]=[(41,69)]$ and $41-69=-28$. These values agree with $4+(-7)=-3$ and $4\cdot(-7)=-28$.'
-          - problem: 'For natural numbers, write $(a,b)\sim(c,d)$ when $a+d=b+c$. Take $(5,2)\sim(7,4)$ and $(1,3)\sim(4,6)$. Name the pairs $(a,b)=(5,2)$, $(a'',b'')=(7,4)$, $(c,d)=(1,3)$ and $(c'',d'')=(4,6)$. (a) Give $a+c+b''+d''$. (b) Give $a''+c''+b+d$. (c) Give 1 when $(a+c,b+d)\sim(a''+c'',b''+d'')$ and 0 otherwise.'
+          - problem: 'For natural numbers, write $(a,b)\sim(c,d)$ when $a+d=b+c$. Take $(5,2)\sim(7,4)$ and $(1,3)\sim(4,6)$. Name the pairs $(a,b)=(5,2)$, $(a'',b'')=(7,4)$, $(c,d)=(1,3)$ and $(c'',d'')=(4,6)$. Add the pairs entry by entry. Give the integer value $x-y$ of the sum pair $(a+c,b+d)$. Give the integer value of the sum pair $(a''+c'',b''+d'')$. Give 1 if the two sum pairs are related and 0 otherwise.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 16; b = 16; c = 1'
-            solution_sketch: 'We get $a+c+b''+d''=5+1+4+6=16$ and $a''+c''+b+d=7+4+2+3=16$. The two sums are equal, so the sum pairs $(6,5)$ and $(11,10)$ are related and the value is 1.'
+            answer: 'a = 1; b = 1; c = 1'
+            solution_sketch: 'The sum pairs are $(5+1,2+3)=(6,5)$ and $(7+4,4+6)=(11,10)$. Their integer values are $6-5=1$ and $11-10=1$. The cross sums are $6+10=16$ and $5+11=16$. They are equal, so the pairs are related and the last value is 1.'
           - problem: 'For natural numbers, write $(a,b)\sim(c,d)$ when $a+d=b+c$. The symbol $[(a,b)]$ is the class of $(a,b)$ under $\sim$. Addition is $[(a,b)]+[(c,d)]=[(a+c,b+d)]$ and multiplication is $[(a,b)]\cdot[(c,d)]=[(ac+bd,ad+bc)]$. Take $(3,1)\sim(4,2)$ and $(2,5)\sim(3,6)$. (a) Give 1 when the sum pairs $(3+2,1+5)$ and $(4+3,2+6)$ are related and 0 otherwise. (b) Give 1 when the product pairs for $(3,1),(2,5)$ and for $(4,2),(3,6)$ are related and 0 otherwise. (c) Give the sum of the first entry of the product pair of $(3,1),(2,5)$ and the second entry of the product pair of $(4,2),(3,6)$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 1; c = 41'
@@ -662,14 +662,14 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 3; b = 1; c = -4'
             solution_sketch: 'The difference is $-2-(-5)=3$, so (a) is 3. It lies in the cone, so $x\le y$ and (b) is 1. The difference $y+4$ lies in the cone exactly when $y\ge-4$, so the least such $y$ is $-4$.'
-          - problem: 'Take the ring $\mathbb{Z}$ with the cone $\mathbb{N}_0$ and the order from the cone. Let $a=7$. (a) Give $a-a$. (b) Give 1 if $0$ lies in the cone and 0 if not. (c) Give 1 if $a\le a$ and 0 if not.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 0; b = 1; c = 1'
-            solution_sketch: 'The difference $7-7$ is $0$. The element $0$ lies in the cone by condition 2, so (b) is 1. Then $7\le7$ holds and (c) is 1. This is reflexivity.'
-          - problem: 'Use the order of $\mathbb{Z}$ from the cone $\mathbb{N}_0$. Let $x=2$, $y=9$ and $z=20$. (a) Give $y-x$. (b) Give $z-y$. (c) Give $z-x$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 7; b = 11; c = 18'
-            solution_sketch: 'The first difference is $9-2=7$ and the second is $20-9=11$. Their sum is $18$, and this equals $z-x=20-2$. Both differences lie in the cone, so the sum lies in it too. This is transitivity.'
+          - problem: 'Take the ring $\mathbb{Z}$ with the cone $\mathbb{N}_0$ and the order from the cone. Let $a=7$. Give the element of $\mathbb{Z}$ that must lie in the cone for $a\le a$ to hold. Give 1 if $a\le a$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 0; b = 1'
+            solution_sketch: 'By the definition, $a\le a$ holds when $a-a$ lies in the cone. The difference $7-7$ is $0$. The element $0$ lies in the cone by condition 2, so $7\le7$ holds and the last value is 1. This is reflexivity.'
+          - problem: 'Use the order of $\mathbb{Z}$ from the cone $\mathbb{N}_0$. Let $x=2$, $y=9$ and $z=20$, so $x\le y$ and $y\le z$. Give the element of the cone that proves $x\le z$.'
+            answer_contract: {"kind":"exact"}
+            answer: '18'
+            solution_sketch: 'The element $y-x=7$ proves $x\le y$, and $z-y=11$ proves $y\le z$. Both lie in the cone, so their sum $7+11=18$ lies in the cone. This sum equals $z-x=20-2$, so it proves $x\le z$.'
           - problem: 'Take the ring of functions from $\mathbb{Z}$ to $\mathbb{Z}$ with the cone of functions that have no negative value. Put $f\le g$ when $g-f$ lies in the cone. Let $f(x)=x$, $g(x)=x+3$ and $h(x)=2x$. For each pair, give 1 if the order holds and 0 if not. (a) $f\le g$. (b) $f\le h$. (c) $h\le f$. (d) $g\le h$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 0; d = 0'
@@ -727,10 +727,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 1'
             solution_sketch: 'The number $1$ is at least $0$, so (a) is 1. The number $-1$ is below $0$, so (b) is 0. The product $(-1)(-1)$ equals $1$. A cone with $-1$ holds $1=(-1)(-1)$ as well, and condition 3 then fails. So $-1<0$ and $1>0$.'
-          - problem: 'Let $C$ be a set of integers that is closed under multiplication and holds $-1$. (a) Give the product $(-1)(-1)$. (b) Give 1 if both $1$ and $-1$ lie in $C$ and 0 if not. (c) Give the sum $1+(-1)$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 1; b = 1; c = 0'
-            solution_sketch: 'The product $(-1)(-1)$ is $1$, and $C$ is closed under multiplication, so $1\in C$. So both $1$ and $-1$ lie in $C$ and (b) is 1. Their sum is $0$. A positive cone holds at most one of $x$ and $-x$ for nonzero $x$, so $C$ is not a positive cone.'
+          - problem: 'Let $C$ be a set of integers that is closed under multiplication and holds $-1$. Give the one integer other than $-1$ that $C$ must hold. Give 1 if $C$ can be a positive cone of $\mathbb{Z}$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 1; b = 0'
+            solution_sketch: 'Since $C$ is closed under multiplication and holds $-1$, it holds $(-1)(-1)=1$. So both $1$ and $-1$ lie in $C$. Their sum is $0$. A positive cone holds at most one of $x$ and $-x$ for nonzero $x$, so $C$ is not a positive cone and the last value is 0.'
           # argument: Theorem 4.28
           - problem: 'Prove the first direction of this statement. In an ordered ring with positive cone $R^+$, if the order $\le$ is total, then each nonzero $x$ has $x\in R^+$ or $-x\in R^+$.'
             answer_contract: {"kind":"written"}
@@ -768,10 +768,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 0; c = 2'
             solution_sketch: 'Adding $[0]$ does not change a class, so (a) and (b) are 0. The class $[a'']$ is $-8$, which is $2$ modulo $10$, so (c) is 2. Check: $8+2=10\equiv0$.'
-          - problem: 'In $\mathbb{Z}_9$, let $[a]=[4]$ and $[b]=[7]$. Give each answer as a number from $0$ to $8$. (a) Give $a''$ with $[4]+[a'']=[0]$. (b) Give $b''$ with $[7]+[b'']=[0]$. (c) Give $d=a''+b$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 5; b = 2; c = 3'
-            solution_sketch: 'The opposite of $4$ modulo $9$ is $5$, so (a) is 5. The opposite of $7$ is $2$, so (b) is 2. Then $d=5+7=12\equiv3$, so (c) is 3. Check: $4+3=7$.'
+          - problem: 'In $\mathbb{Z}_9$, let $[a]=[4]$ and $[b]=[7]$. Give the number $d$ from $0$ to $8$ with $[a]+[d]=[b]$.'
+            answer_contract: {"kind":"exact"}
+            answer: '3'
+            solution_sketch: 'Find the opposite of $4$ modulo $9$: it is $5$, because $4+5=9$. Add it to $7$ to get $d=5+7=12\equiv 3$. Check: $4+3=7$.'
           - problem: 'In $\mathbb{Z}_{15}$, let $[a]=[11]$ and $[b]=[2]$. Give each answer as a number from $0$ to $14$. (a) Give $d$ with $[11]+[d]=[2]$. (b) Give $f$ with $[2]+[f]=[11]$. (c) Give the class of $d+f$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 6; b = 9; c = 0'
@@ -795,18 +795,18 @@ topics:
         name: 'Theorem 4.33 and Proposition 4.34: order with sums and products'
         key_prerequisites: []
         exemplars:
-          - problem: 'In $\mathbb{Z}$, let $x=3$, $y=8$ and $z=-5$. Here $x\le y$. (a) Give $x+z$. (b) Give $y+z$. (c) Give $(y+z)-(x+z)$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = -2; b = 3; c = 5'
-            solution_sketch: 'The first sum is $3-5=-2$ and the second is $8-5=3$. Their difference is $3-(-2)=5$, which equals $y-x$. So adding $z$ keeps the difference and keeps the order.'
-          - problem: 'In $\mathbb{Z}$, let $x=2$, $y=7$ and $z=4$. Here $x\le y$ and $z$ lies in the cone. (a) Give $xz$. (b) Give $yz$. (c) Give $yz-xz$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 8; b = 28; c = 20'
-            solution_sketch: 'The products are $2\cdot4=8$ and $7\cdot4=28$. The difference is $28-8=20$. It equals $(y-x)z=5\cdot4$, which lies in the cone.'
-          - problem: 'In $\mathbb{Z}$, let $x=1\le y=4$ and $u=-3\le v=2$. (a) Give $x+u$. (b) Give $y+v$. (c) Give $(y+v)-(x+u)$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = -2; b = 6; c = 8'
-            solution_sketch: 'The first sum is $1-3=-2$ and the second is $4+2=6$. The difference is $6-(-2)=8$. It equals $(y-x)+(v-u)=3+5$, a sum of two elements of the cone.'
+          - problem: 'In $\mathbb{Z}$, let $x=3$, $y=8$ and $z=-5$. Here $x\le y$. Give the element of the cone that proves $x+z\le y+z$. Give 1 if $x+z\le y+z$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 5; b = 1'
+            solution_sketch: 'The sums are $x+z=-2$ and $y+z=3$. The proof needs the difference $(y+z)-(x+z)=3-(-2)=5$, which equals $y-x$. It lies in the cone, so the order holds and the last value is 1.'
+          - problem: 'In $\mathbb{Z}$, let $x=2$, $y=7$ and $z=4$. Here $x\le y$ and $z$ lies in the cone. Give the element of the cone that proves $xz\le yz$. Give 1 if $xz\le yz$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 20; b = 1'
+            solution_sketch: 'The products are $xz=8$ and $yz=28$. The proof needs the difference $yz-xz=20$, which equals $(y-x)z=5\cdot4$. A product of two cone elements lies in the cone, so the order holds and the last value is 1.'
+          - problem: 'In $\mathbb{Z}$, let $x=1\le y=4$ and $u=-3\le v=2$. Give the element of the cone that proves $x+u\le y+v$. Give 1 if $x+u\le y+v$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 8; b = 1'
+            solution_sketch: 'The sums are $x+u=-2$ and $y+v=6$. The proof needs the difference $6-(-2)=8$. It equals $(y-x)+(v-u)=3+5$, a sum of two elements of the cone, so the order holds and the last value is 1.'
           - problem: 'In $\mathbb{Z}$, let $x=1$, $y=5$ and $z=-2$. (a) Give $xz$. (b) Give $yz$. (c) Give 1 if $xz\le yz$ and 0 if not.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = -2; b = -10; c = 0'
@@ -815,10 +815,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 7; b = 4'
             solution_sketch: 'The sums satisfy $x+z\le y+z$ for every $z$, so (a) is 7. The products satisfy $-4z\le6z$ exactly when $10z\ge0$, that is $z\ge0$. The values $0$, $1$, $2$, $3$ give 4.'
-          - problem: 'Take the ring of functions from $\mathbb{Z}$ to $\mathbb{Z}$. Let $f(x)=x$, $g(x)=x+x^2$ and $z(x)=x^2+1$. Here $f\le g$ and $z$ lies in the cone. (a) Give $(g-f)(3)$. (b) Give $(gz-fz)(2)$. (c) Give 1 if $(g-f)z$ has no negative value and 0 if not.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 9; b = 20; c = 1'
-            solution_sketch: 'We have $g-f=x^2$, so $(g-f)(3)=9$. At $x=2$ the values are $g=6$, $f=2$ and $z=5$, so $gz-fz=30-10=20$. The function $(g-f)z=x^2(x^2+1)$ has no negative value, so (c) is 1.'
+          - problem: 'Take the ring of functions from $\mathbb{Z}$ to $\mathbb{Z}$. Let $f(x)=x$, $g(x)=x+x^2$ and $z(x)=x^2+1$. Here $f\le g$ and $z$ lies in the cone. Give the value at $x=2$ of the function $w$ in the cone with $fz+w=gz$. Give 1 if $fz\le gz$ and 0 if not.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 20; b = 1'
+            solution_sketch: 'The function is $w=gz-fz=(g-f)z$. We have $g-f=x^2$, so $w=x^2(x^2+1)$. At $x=2$ this is $4\cdot5=20$. The function $w$ has no negative value, so it lies in the cone, $fz\le gz$ holds and the last value is 1.'
           - problem: 'In $\mathbb{Z}$, look at the integers $x$ from $-3$ to $3$. (a) Give $(-4)^2$. (b) Count the $x$ with $x^2$ in the cone. (c) Give the least value of $x^2$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 16; b = 7; c = 0'
@@ -1022,7 +1022,7 @@ topics:
             answer: 'For reflexivity write a as 1 times a. For transitivity multiply the two witnesses of the divisions.'
             solution_sketch: 'Use Definition 4.39. For (a), a = 1 * a, so a divides a. For (b), let b = qa and c = rb. Then c = r(qa) = (rq)a by associativity. So a divides c.'
           # source: FoM exercise 4.5-4-36
-          - problem: 'Prove: two positive integers $c$ and $d$ that are both greatest common divisors of $m$ and $n$ must be equal. Start with the step that $c$ divides $d$.'
+          - problem: 'Prove: two positive integers $c$ and $d$ that are both greatest common divisors of $m$ and $n$ must be equal.'
             answer_contract: {"kind":"written"}
             answer: 'Mutual divisibility of c and d forces c = d for positive numbers.'
             solution_sketch: 'This is Proposition 4.43. Each of c and d is a common divisor of m and n. By the greatest property, d divides c and c divides d. Then c = dk and d = cl give kl = 1. So k = l = 1 and c = d.'
@@ -1060,10 +1060,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 3; c = 5'
             solution_sketch: 'For (a), 0 = 0 * (-4) + 0, so r = 0. For (b), 3 = 0 * 8 + 3, so r = 3. For (c), -3 = (-1) * 8 + 5, so r = 5.'
-          - problem: 'Follow the steps of the division method for $n=-23$ and $d=-6$. First divide $|n|=23$ by $|d|=6$ as $23=\tilde q\cdot 6+\tilde r$. (a) Give $\tilde q$. (b) Give $\tilde r$. Then give the final numbers with $n=qd+r$ and $0\le r<|d|$. (c) Give $q$. (d) Give $r$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
-            answer: 'a = 3; b = 5; c = 4; d = 1'
-            solution_sketch: 'We have 23 = 3 * 6 + 5, so the first two values are 3 and 5. The remainder 5 is positive, so use q = 3 + 1 = 4 and r = 6 - 5 = 1. Check: 4 * (-6) + 1 = -23.'
+          - problem: 'Take $n=-23$ and $d=-6$. Give the numbers $q$ and $r$ with $n=qd+r$ and $0\le r<|d|$.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"q"},{"contract":{"kind":"exact"},"name":"r"}]}
+            answer: 'q = 4; r = 1'
+            solution_sketch: 'Divide $|n|=23$ by $|d|=6$: $23=3\cdot 6+5$. The remainder 5 is positive and $n$ is negative, so use $q=3+1=4$ and $r=6-5=1$. Check: $4\cdot(-6)+1=-23$.'
           # argument: Theorem 4.45
           - problem: 'Prove the first step: for an integer $n$ and an integer $d\ne 0$, there are integers $q$ and $r$ with $n=qd+r$ and $0\le r<|d|$.'
             answer_contract: {"kind":"written"}
@@ -1155,10 +1155,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 18; b = 4'
             solution_sketch: 'We have 252 = 1 * 198 + 54, then 198 = 3 * 54 + 36, then 54 = 1 * 36 + 18, then 36 = 2 * 18 + 0. The last nonzero remainder is 18. The algorithm uses 4 steps.'
-          - problem: 'Euclid''s algorithm on $17$ and $5$ gives $17=3\cdot5+2$ and $5=2\cdot2+1$. Substitute backward to write $1=s\cdot17+t\cdot5$ with $0\le s<5$. (a) Give $s$. (b) Give $t$.'
+          - problem: 'Find the integers $s$ and $t$ with $1=s\cdot17+t\cdot5$ and $0\le s<5$. Give $s$ and $t$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 3; b = -10'
-            solution_sketch: 'From the second line, 1 = 5 - 2 * 2. From the first line, 2 = 17 - 3 * 5. So 1 = 5 - 2 * (17 - 3 * 5) = 7 * 5 - 2 * 17. Add 5 * 17 and subtract 17 * 5 to move s into the range: s = 3 and t = -10. Check: 3 * 17 - 10 * 5 = 1.'
+            solution_sketch: 'Run Euclid''s algorithm: $17=3\cdot5+2$ and $5=2\cdot2+1$. Then $1=5-2\cdot2=5-2\cdot(17-3\cdot5)=7\cdot5-2\cdot17$. Add $5\cdot17$ and subtract $17\cdot5$ to move $s$ into the range: $s=3$ and $t=-10$. Check: $3\cdot17-10\cdot5=1$.'
           - problem: 'Give 1 if the class has a multiplicative inverse and 0 if not. (a) $[6]$ in $\mathbb{Z}_{15}$. (b) $[7]$ in $\mathbb{Z}_{15}$. (c) $[10]$ in $\mathbb{Z}_{21}$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 1; c = 1'
@@ -1229,10 +1229,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = -4; c = 0'
             solution_sketch: 'Put each value in. We get p(1) = 1 - 2 - 5 + 6 = 0. We get p(2) = 8 - 8 - 10 + 6 = -4. We get p(3) = 27 - 18 - 15 + 6 = 0.'
-          - problem: 'Over the integers, $z=1$ is a zero of $p(x)=x^3-6x^2+11x-6$. Write $p(x)=(x-1)q(x)$. (a) Give $q(x)$. (b) Give the degree of $q$.'
+          - problem: 'Over the integers, $z=1$ is a zero of $p(x)=x^3-6x^2+11x-6$. Divide $p(x)$ by $x-1$. Give the quotient $q(x)$. Give the degree of $q$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"function","vars":["x"]}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = x^2-5x+6; b = 2'
-            solution_sketch: 'Synthetic division of 1, -6, 11, -6 by the root 1 gives 1, -5, 6 and remainder 0. So q(x) = x^2 - 5x + 6. Its degree is 2, which is one less than the degree of p.'
+            solution_sketch: 'Since $1$ is a zero, $x-1$ divides $p(x)$ and $p(x)=(x-1)q(x)$. Synthetic division of 1, -6, 11, -6 by the root 1 gives 1, -5, 6 and remainder 0. So $q(x)=x^2-5x+6$ and its degree is 2.'
           - problem: 'Take $p(x)=(x-2)^3(x+1)$ over the integers. (a) Give the multiplicity of the zero $2$. (b) Give the multiplicity of the zero $-1$. (c) Give the number of zeros of $p$ counted with multiplicity.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 3; b = 1; c = 4'
@@ -1441,7 +1441,7 @@ topics:
             answer: 'Write the pairs as a union of columns, one column for each n. Each column is countable, so the union is countable.'
             solution_sketch: 'For each natural number $n$ let $C_n$ be the set of pairs $(m,n)$ with $m$ in the naturals. The map $m\mapsto(m,n)$ is a bijection, so each $C_n$ is countable. The union of all $C_n$ is the set of all pairs. By Theorem 4.65 this union is countable. This gives Theorem 4.63.'
           # source: FoM exercise 4.6-4-55
-          - problem: 'Prove: for countable sets $C_1,\dots,C_n$, the product $C_1\times\dots\times C_n$ is countable. Start with two factors.'
+          - problem: 'Prove: for countable sets $C_1,\dots,C_n$, the product $C_1\times\dots\times C_n$ is countable.'
             answer_contract: {"kind":"written"}
             answer: 'First treat two factors. Then use induction on n, writing the product of n+1 sets as a product of two sets.'
             solution_sketch: 'For two sets, map a pair to a pair of naturals by two injections and use Theorem 4.63 and Theorem 4.62. Induction on $n$: the case $n=1$ is given. For the step, the product of $n+1$ sets is the product of the product of the first $n$ sets with $C_{n+1}$. The first factor is countable by the induction hypothesis. So the two-set case finishes the step.'
@@ -1480,10 +1480,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 1'
             solution_sketch: 'Theorem 4.65 gives (a), so (a) gets 1. A union of three finite sets is finite, so (b) gets 0. A finite set is countable, so Theorem 4.65 gives (c) and (c) gets 1.'
-          - problem: 'Let $P=p_1\cdots p_k$ be the product of the first $k$ primes. Compute (a) $2\cdot 3\cdot 5+1$. (b) $2\cdot 3\cdot 5\cdot 7+1$. (c) The least prime factor of $2\cdot 3\cdot 5\cdot 7\cdot 11\cdot 13+1$, which equals $30031$.'
+          - problem: 'Let $P=p_1\cdots p_k$ be the product of the first $k$ primes. Compute $2\cdot 3\cdot 5+1$. Compute $2\cdot 3\cdot 5\cdot 7+1$. Give the least prime factor of $2\cdot 3\cdot 5\cdot 7\cdot 11\cdot 13+1$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 31; b = 211; c = 59'
-            solution_sketch: 'Compute $30+1=31$ and $210+1=211$. The number 30031 has no factor among 2, 3, 5, 7, 11 and 13, because each leaves remainder 1. The next prime that divides it is 59, since $30031=59\cdot 509$.'
+            solution_sketch: 'Compute $30+1=31$ and $210+1=211$. The product plus one is $30031$. It has no factor among 2, 3, 5, 7, 11 and 13, because each leaves remainder 1. The next prime that divides it is 59, since $30031=59\cdot 509$.'
           # source: FoM exercise 4.6-4-58
           - problem: 'Let $F$ be a finite set and let $I$ be an infinite set. Prove: $I\setminus F$ is infinite.'
             answer_contract: {"kind":"written"}

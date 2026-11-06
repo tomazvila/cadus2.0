@@ -1173,10 +1173,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Pasting the triangle and the square gives r after m after n equals q after k. Then k(1)=0 and q(0)=3, so r(m(n(1)))=3.'
-          - problem: 'In $\mathbf{Vect}_{\mathbb{Q}}$ every arrow of two commuting squares is multiplication by a number. The outer rectangle gives $c\circ p\circ f=r\circ q\circ a$, where $c=6$, $p=5$, $f=8$, $r=4$ and $q=3$. What is $a$?'
+          - problem: 'In $\mathbf{Vect}_{\mathbb{Q}}$ every arrow of two commuting squares that share a side is multiplication by a number. The top route across both squares applies $f$, then $p$, then $c$, with $f=8$, $p=5$ and $c=6$. The bottom route applies $a$, then $q$, then $r$, with $q=3$ and $r=4$. What is $a$?'
             answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiplying along the top and right gives 6 times 5 times 8, which is 240. The other route multiplies 4 times 3 times a, so 12a=240 and a=20.'
+            solution_sketch: 'The squares commute, so pasting them makes the outer rectangle commute. Hence $c\circ p\circ f=r\circ q\circ a$. Multiplying along the top gives $6\cdot5\cdot8=240$. The bottom gives $4\cdot3\cdot a$, so $12a=240$ and $a=20$.'
           - problem: 'In $\mathbf{Set}$ two squares sit side by side, and the right square commutes: $c\circ p=r\circ b$. Here $f$ is the first arrow of the top row, $f(0)=1$, $b(1)=2$ and $r(2)=0$. What is $c(p(f(0)))$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -1434,10 +1434,10 @@ topics:
             answer: 'c'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The decoder must undo the table, so $g(f(x))=x$ for each letter $x$. The table sends $c$ to $2$, so $g(2)=c$. The table is a bijection, which is why a two-sided inverse exists.'
-          - problem: 'To show that an isomorphism $f$ is an epimorphism, start from $c\circ f=d\circ f$ and compose both sides with $f^{-1}$ to reach $c=d$. On which side of the equation must $f^{-1}$ be put?'
+          - problem: 'Let $f$ be an isomorphism and let $c\circ f=d\circ f$. To reach $c=d$, on which side of each composite is $f^{-1}$ placed?'
             answer: 'right'
             answer_contract: {"kind": "label", "options": [["right", "on the right", "the right", "right side", "on the right side", "the right side", "right-hand side"], ["left", "on the left", "the left", "left side", "on the left side", "the left side", "left-hand side"]]}
-            solution_sketch: 'In $c\circ f=d\circ f$ the map $f$ is the last factor in both composites. Composing with $f^{-1}$ on the right gives $(c\circ f)\circ f^{-1}=c\circ(f\circ f^{-1})=c$, and likewise $d$. Composing on the left would not meet $f$ at all.'
+            solution_sketch: 'In $c\circ f=d\circ f$ the map $f$ is the last factor in both composites. Composing with $f^{-1}$ on the right gives $(c\circ f)\circ f^{-1}=c\circ(f\circ f^{-1})=c$, and likewise $d$. Composing on the left does not meet $f$ at all.'
           - problem: 'Write the full proof that every isomorphism is both a monomorphism and an epimorphism, and that the inclusion of $\mathbb{Z}$ into $\mathbb{Q}$ in $\mathbf{Ring}$ is both but not an isomorphism.'
             answer: 'Isos are mono and epi; converse fails'
             answer_contract: {"kind": "none"}
@@ -1548,10 +1548,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $b=u\circ a\circ u^{-1}$. The inverse of $u$ sends $0$ to $1$ because $u(1)=0$. Then $a(1)=0$ and $u(0)=2$, so $b(0)=2$.'
-          - problem: 'In the groupoid of finite sets and bijections, let $u,h\colon\{0,1,2\}\to\{0,1,2\}$ be the isomorphisms with $u(0)=1$, $u(1)=2$, $u(2)=0$ and $h(0)=2$, $h(1)=1$, $h(2)=0$. The automorphism $a$ of $\{0,1,2\}$ with $u\circ a=h$ is $a=u^{-1}\circ h$. What is $a(0)$?'
+          - problem: 'In the groupoid of finite sets and bijections, let $u,h\colon\{0,1,2\}\to\{0,1,2\}$ be the isomorphisms with $u(0)=1$, $u(1)=2$, $u(2)=0$ and $h(0)=2$, $h(1)=1$, $h(2)=0$. The automorphism $a$ of $\{0,1,2\}$ satisfies $u\circ a=h$. What is $a(0)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We need $a(0)$ with $u(a(0))=h(0)=2$. The map $u$ sends $1$ to $2$, so $a(0)=1$. This agrees with $a=u^{-1}\circ h$.'
+            solution_sketch: 'We need $a(0)$ with $u(a(0))=h(0)=2$. The map $u$ sends $1$ to $2$, so $a(0)=1$. In general $a=u^{-1}\circ h$.'
           - problem: 'In the groupoid of finite sets and bijections, take the two objects $X=\{0,1,2,3\}$ and $Y=\{a,b,c,d\}$ only. How many morphisms does this groupoid have in total?'
             answer: '96'
             answer_contract: {"kind": "exact"}
@@ -1593,14 +1593,14 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'This category has $6$ morphisms, one for each pair $x\le y$. A morphism $x\to y$ with $x<y$ has no arrow back, so it is not an isomorphism. Only the $3$ identities are isomorphisms, so the category is thin but not a groupoid.'
-          - problem: 'For a thin groupoid, write $x\sim y$ when there is an arrow $x\to y$. Every arrow has an inverse arrow, which gives $y\sim x$ whenever $x\sim y$. Which property of the relation $\sim$ is that: reflexivity, symmetry or transitivity?'
+          - problem: 'For a thin groupoid, write $x\sim y$ when there is an arrow $x\to y$. What is the name of the property of the relation $\sim$ that comes from the inverse arrows?'
             answer: 'symmetry'
             answer_contract: {"kind": "label", "options": [["reflexivity", "reflexive", "it is reflexivity"], ["symmetry", "symmetric", "it is symmetry"], ["transitivity", "transitive", "it is transitivity"]]}
-            solution_sketch: 'Having an arrow $x\to y$ and its inverse $y\to x$ means $x\sim y$ and $y\sim x$ together. Reversing the pair of related objects is exactly symmetry. Reflexivity comes from identities and transitivity from composition.'
-          - problem: 'For a thin groupoid, write $x\sim y$ when there is an arrow $x\to y$. The identity arrow $1_x\colon x\to x$ exists for every object $x$ by the category axioms. Which property of $\sim$ does this give?'
+            solution_sketch: 'If $x\sim y$, there is an arrow $x\to y$, and its inverse is an arrow $y\to x$. So $y\sim x$ whenever $x\sim y$, and this is symmetry. Reflexivity comes from identities and transitivity from composition.'
+          - problem: 'For a thin groupoid, write $x\sim y$ when there is an arrow $x\to y$. What is the name of the property of $\sim$ that holds for the pair $(x,x)$ of every object $x$?'
             answer: 'reflexivity'
             answer_contract: {"kind": "label", "options": [["reflexivity", "reflexive", "it is reflexivity"], ["symmetry", "symmetric", "it is symmetry"], ["transitivity", "transitive", "it is transitivity"]]}
-            solution_sketch: 'The identity arrow $1_x$ shows that $x\sim x$ for every object $x$. A relation in which every element is related to itself is reflexive. Symmetry comes from inverses and transitivity from composition.'
+            solution_sketch: 'Every object $x$ has an identity arrow $1_x\colon x\to x$, so $x\sim x$. A relation in which every element is related to itself is reflexive. Symmetry comes from inverses and transitivity from composition.'
           - problem: 'Write the full proof that a groupoid in which every hom-set has at most one element is the same thing as an equivalence relation on its objects.'
             answer: 'Thin groupoids are equivalence relations'
             answer_contract: {"kind": "none"}
@@ -1703,10 +1703,10 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We need a residue $s$ with $as\equiv 1\pmod 9$. The residues $0,3,6$ are multiples of $3$, so no product with them is $1$. The six residues $1,2,4,5,7,8$ each have an inverse, so there are $6$ split epimorphisms.'
-          - problem: 'Let $r\circ m=1_A$. Form $(m\circ r)\circ m=m=1_B\circ m$ and cancel $m$ to conclude $m\circ r=1_B$. On which side of the two composites is $m$ cancelled?'
-            answer: 'right'
-            answer_contract: {"kind": "label", "options": [["right", "on the right", "the right", "right side", "on the right side"], ["left", "on the left", "the left", "left side", "on the left side"]]}
-            solution_sketch: 'In both $(m\circ r)\circ m$ and $1_B\circ m$ the map $m$ is the last factor applied first, so it stands on the right. Cancelling a map on the right is what an epimorphism allows. So this step needs $m$ to be an epimorphism.'
+          - problem: 'Let $m\colon A\to B$ and $r\colon B\to A$ be arrows with $m\circ r=1_B$, and let $m$ be a monomorphism. Express $r\circ m$ in terms of $1_A$, $1_B$, $m$ and $r$.'
+            answer: '1_A'
+            answer_contract: {"kind":"label","options":[["1_A","identity of A","the identity of A","id_A","r∘m = 1_A"],["1_B","identity of B","the identity of B","id_B"],["m"],["r"]]}
+            solution_sketch: 'Compose $r\circ m$ with $m$ on the left to get $m\circ(r\circ m)=(m\circ r)\circ m=1_B\circ m=m=m\circ 1_A$. The map $m$ is the first factor on both sides, so it cancels on the left because $m$ is a monomorphism. Hence $r\circ m=1_A$.'
           - problem: 'A compressor $m$ stores each of 7 files in its own slot. A decompressor $r$ returns each stored file from its slot, so $r\circ m=1$, and every slot holds a file, so $m$ is an epimorphism in $\mathbf{Set}$. How many slots are there?'
             answer: '7'
             answer_contract: {"kind": "exact"}
@@ -1768,14 +1768,14 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Because $e$ is surjective and $m$ is injective, the middle set is in bijection with the set of values of $f$. The values are $3,5,1,7$, which are $4$ different numbers. So the middle set has $4$ elements.'
-          - problem: 'Let $f\colon\{0,1,2,3,4\}\to\{0,1,\dots,5\}$ have $f(0)=4$, $f(1)=1$, $f(2)=4$, $f(3)=2$, $f(4)=4$. Factor $f=m\circ e$ through the middle set $\{0,1,2\}$ with $e$ surjective and $m$ strictly increasing. What is $e(3)$?'
+          - problem: 'Let $f\colon\{0,1,2,3,4\}\to\{0,1,\dots,5\}$ have $f(0)=4$, $f(1)=1$, $f(2)=4$, $f(3)=2$, $f(4)=4$. Factor $f=m\circ e$ with $e$ a surjection onto some set $\{0,1,\dots,k-1\}$ and $m$ strictly increasing. What is $e(3)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The image of $f$ is $\{1,2,4\}$. A strictly increasing $m$ from $\{0,1,2\}$ must send $0,1,2$ to $1,2,4$ in that order. Since $f(3)=2=m(1)$, we get $e(3)=1$.'
-          - problem: 'A function $f\colon\{0,1,2,3,4,5\}\to\{0,1,2,3\}$ has $f(0)=2$, $f(1)=2$, $f(2)=3$, $f(3)=2$, $f(4)=3$, $f(5)=3$. In its factorization through the image, the surjection $e$ gives the same value to two inputs exactly when $f$ does. How many unordered pairs of different inputs does $e$ identify?'
+            solution_sketch: 'The image of $f$ is $\{1,2,4\}$, so the middle set is $\{0,1,2\}$ and $k=3$. A strictly increasing $m$ must send $0,1,2$ to $1,2,4$ in that order. Since $f(3)=2=m(1)$, we get $e(3)=1$.'
+          - problem: 'A function $f\colon\{0,1,2,3,4,5\}\to\{0,1,2,3\}$ has $f(0)=2$, $f(1)=2$, $f(2)=3$, $f(3)=2$, $f(4)=3$, $f(5)=3$. In its factorization through the image, how many unordered pairs of different inputs does the surjection $e$ identify?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inputs $0,1,3$ share the value $2$, and the inputs $2,4,5$ share the value $3$. A group of $3$ inputs contains $3$ pairs. So there are $3+3=6$ pairs.'
+            solution_sketch: 'The surjection $e$ gives the same value to two inputs exactly when $f$ does. The inputs $0,1,3$ share the value $2$, and the inputs $2,4,5$ share the value $3$. A group of $3$ inputs contains $3$ pairs. So there are $3+3=6$ pairs.'
           - problem: 'A bakery sells 7 cakes with prices 10, 10, 15, 25, 10, 15 and 25 dollars. Let $f$ be the function from the cakes to the whole numbers that gives each cake its price. In the factorization of $f$ through its image, how many elements does the middle set (the list of different prices) have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -2118,18 +2118,18 @@ topics:
         key_prerequisites: [category-definition]
         constraints: 'Duality applied to definitions: the dual notion of initial object, monomorphism and product, and its reading in small posets, Set^op and finite categories stated in full; items ask for the dual notion, the object that qualifies or a count of morphisms, and one full-proof exemplar is kept.'
         exemplars:
-          - problem: 'Reversing every arrow in a definition gives the dual notion. An initial object has exactly one morphism from itself to each object. Which notion is dual to an initial object?'
+          - problem: 'An initial object has exactly one morphism from itself to each object. Which notion is dual to an initial object?'
             answer: "terminal object"
             answer_contract: {"kind":"label","options":[["terminal object","a terminal object","terminal","the terminal object"],["product","a product"],["coproduct","a coproduct"],["zero object","a zero object"]]}
-            solution_sketch: 'An initial object $I$ has exactly one morphism $I\to X$ for every object $X$. Reversing every arrow gives exactly one morphism $X\to I$ for every object $X$, which is the definition of a terminal object. A product and a coproduct are dual to each other, not to an initial object. A zero object is its own dual.'
-          - problem: 'A morphism $f$ is a monomorphism when $f\circ g=f\circ h$ implies $g=h$ for all morphisms $g,h$. Reverse every arrow, and the order of every composite, in this definition. Which notion results?'
+            solution_sketch: 'An initial object $I$ has exactly one morphism $I\to X$ for every object $X$. The dual definition has exactly one morphism $X\to I$ for every object $X$, which defines a terminal object. A product and a coproduct are dual to each other, not to an initial object. A zero object is its own dual.'
+          - problem: 'A morphism $f$ is a monomorphism when $f\circ g=f\circ h$ implies $g=h$ for all morphisms $g,h$. Which notion is dual to a monomorphism?'
             answer: "epimorphism"
             answer_contract: {"kind":"label","options":[["epimorphism","an epimorphism","epi","epic"],["isomorphism","an isomorphism","iso"],["section","a section"],["retraction","a retraction"]]}
-            solution_sketch: 'Reversing the arrows turns $f\circ g=f\circ h$ into $g\circ f=h\circ f$, and the condition becomes that $g\circ f=h\circ f$ implies $g=h$. This is right cancellation, which defines an epimorphism. An isomorphism needs a two-sided inverse, and a section or a retraction is a split condition that is stronger than cancellation.'
-          - problem: 'A product of $a$ and $b$ is an object $P$ with morphisms $P\to a$ and $P\to b$ such that every object $X$ with morphisms $X\to a$ and $X\to b$ has exactly one morphism $X\to P$ that commutes with them. Reverse every arrow in this definition to get the coproduct. In the poset category on $\{1,2,3,4,6,12\}$, with one morphism $a\to b$ when $a$ divides $b$, which object is the coproduct of $2$ and $3$?'
+            solution_sketch: 'The dual definition has all arrows reversed, so $f\circ g=f\circ h$ becomes $g\circ f=h\circ f$. The condition is that $g\circ f=h\circ f$ implies $g=h$. This is right cancellation, which defines an epimorphism. An isomorphism needs a two-sided inverse, and a section or a retraction is a split condition that is stronger than cancellation.'
+          - problem: 'A product of $a$ and $b$ is an object $P$ with morphisms $P\to a$ and $P\to b$ such that every object $X$ with morphisms $X\to a$ and $X\to b$ has exactly one morphism $X\to P$ that commutes with them. In the poset category on $\{1,2,3,4,6,12\}$, with one morphism $a\to b$ when $a$ divides $b$, which object satisfies the dual of this definition for $2$ and $3$?'
             answer: "6"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The dual definition asks for an object $Q$ with morphisms $2\to Q$ and $3\to Q$, so both $2$ and $3$ divide $Q$. Also every $X$ that both divide must receive exactly one morphism $Q\to X$, so $Q$ divides every common multiple. The common multiples in the set are $6$ and $12$, and only $6$ divides both. So the coproduct is $6$.'
+            solution_sketch: 'The dual definition asks for an object $Q$ with morphisms $2\to Q$ and $3\to Q$, so both $2$ and $3$ divide $Q$. Also every $X$ that both divide must receive exactly one morphism $Q\to X$, so $Q$ divides every common multiple. The common multiples in the set are $6$ and $12$, and only $6$ divides both. So the object is $6$.'
           - problem: 'Let $\mathcal{C}$ be the poset category on $\{1,2,3,4,6,12\}$, with one morphism $a\to b$ when $a$ divides $b$. Which object is initial in the opposite category $\mathcal{C}^{op}$?'
             answer: "12"
             answer_contract: {"kind":"exact"}
@@ -2163,7 +2163,7 @@ topics:
         key_prerequisites: [initial-terminal-objects]
         constraints: 'Using duality to transfer a known theorem, tested on epimorphisms and monomorphisms in Set and Set^op, sections and retractions, and unique isomorphisms; items ask for the translated statement, a count or a size, or the first invalid step of a duality argument, and one full-proof exemplar is kept.'
         exemplars:
-          - problem: 'Let $f\colon A\to B$ and $g\colon B\to C$ be epimorphisms of a category $\mathcal{C}$. You know that a composite of two monomorphisms is a monomorphism, in every category. Apply this to $\mathcal{C}^{op}$, where $f$ and $g$ become monomorphisms. Which statement about $\mathcal{C}$ do you obtain?'
+          - problem: 'Let $f\colon A\to B$ and $g\colon B\to C$ be epimorphisms of a category $\mathcal{C}$. You know that a composite of two monomorphisms is a monomorphism, in every category. What does the theorem give about $g\circ f$ in $\mathcal{C}$?'
             answer: "g∘f is an epimorphism"
             answer_contract: {"kind":"label","options":[["g∘f is an epimorphism","g f is an epimorphism","gf is an epimorphism","g∘f is epi","gf is epic","g∘f is an epic","g after f is an epimorphism","g∘f is epi in C"],["f∘g is an epimorphism","f g is an epimorphism","fg is an epimorphism"],["g∘f is a monomorphism","g f is a monomorphism","gf is monic"],["g∘f is an isomorphism","gf is an isomorphism"]]}
             solution_sketch: 'In $\mathcal{C}^{op}$ the morphisms $g^{op}$ and $f^{op}$ are monomorphisms and compose, so their composite is a monomorphism of $\mathcal{C}^{op}$. That composite is the opposite of $g\circ f$, and a monomorphism of $\mathcal{C}^{op}$ is an epimorphism of $\mathcal{C}$. So $g\circ f$ is an epimorphism. The composite $f\circ g$ is not even defined.'
@@ -2179,22 +2179,22 @@ topics:
             answer: "1"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'In $\mathcal{D}^{op}$ the objects $I$ and $J$ are terminal, so the property gives exactly $1$ isomorphism between them in $\mathcal{D}^{op}$. An isomorphism of $\mathcal{D}^{op}$ is an isomorphism of $\mathcal{D}$ with reversed direction. So $\mathcal{D}$ has exactly $1$ isomorphism $I\to J$.'
-          - problem: 'A theorem valid in every category says: if $g\circ f$ is a monomorphism, then $f$ is a monomorphism. By duality, if $g\circ f$ is an epimorphism, then $g$ is an epimorphism. In $\mathbf{Set}$, epimorphisms are the surjective functions. Let $f\colon X\to Y$ and $g\colon Y\to Z$ with $|X|=5$, $|Y|=4$ and $|Z|=3$, and suppose that $g\circ f$ is an epimorphism. How many elements does the image $g(Y)$ have?'
+          - problem: 'A theorem valid in every category states: if $g\circ f$ is a monomorphism, then $f$ is a monomorphism. In $\mathbf{Set}$, epimorphisms are the surjective functions. Let $f\colon X\to Y$ and $g\colon Y\to Z$ with $|X|=5$, $|Y|=4$ and $|Z|=3$, and suppose that $g\circ f$ is an epimorphism. How many elements does the image $g(Y)$ have?'
             answer: "3"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $g\circ f$ is an epimorphism, the dual theorem says that $g$ is an epimorphism, so $g$ is surjective onto $Z$. Then the image $g(Y)$ is all of $Z$, which has $3$ elements.'
+            solution_sketch: 'The dual of the theorem says: if $g\circ f$ is an epimorphism, then $g$ is an epimorphism. So $g$ is surjective onto $Z$. Then the image $g(Y)$ is all of $Z$, which has $3$ elements.'
           - problem: 'The work below uses only duality to prove that a composite of two epimorphisms is an epimorphism. Step 1: let $f\colon A\to B$ and $g\colon B\to C$ be epimorphisms of $\mathcal{C}$. Step 2: in $\mathcal{C}^{op}$, $f^{op}\colon B\to A$ and $g^{op}\colon C\to B$ are monomorphisms. Step 3: the known theorem shows that $f^{op}$ followed by $g^{op}$ is a monomorphism of $\mathcal{C}^{op}$. Step 4: reading back into $\mathcal{C}$, the composite of $f$ and $g$ is an epimorphism. Which step is the first that is not valid, and why?'
             answer: 'Step 3: f^op ends at A and g^op starts at C, so f^op followed by g^op is not defined; the composable order is g^op followed by f^op.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Step 1 only names two epimorphisms, and Step 2 is the correct dictionary from $\mathcal{C}$ to $\mathcal{C}^{op}$. In Step 3, $f^{op}\colon B\to A$ ends at $A$ and $g^{op}\colon C\to B$ starts at $C$, so $f^{op}$ followed by $g^{op}$ is not defined. The composable order is $g^{op}$ followed by $f^{op}$, and Step 4 is fine once the order is repaired.'
-          - problem: 'A shop chain has two shops, $1$ and $2$. Customers $c_1,c_2,c_3,c_4$ are registered at shop $1$, and customers $c_5,c_6$ at shop $2$. Let $f$ send each customer to the shop where the customer is registered. The manager wants a contact list that names one customer for each shop, and the named customer must be registered at that shop. By the dual of a known theorem, a morphism with a section is an epimorphism. How many sections does $f$ have in $\mathbf{Set}$?'
+          - problem: 'A shop chain has two shops, $1$ and $2$. Customers $c_1,c_2,c_3,c_4$ are registered at shop $1$, and customers $c_5,c_6$ at shop $2$. Let $f$ send each customer to the shop where the customer is registered. The manager wants a contact list that names one customer for each shop, and the named customer must be registered at that shop. A known theorem states that a morphism with a retraction is a monomorphism. How many sections does $f$ have in $\mathbf{Set}$?'
             answer: "8"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A section of $f$ is a function from the two shops to the customers that sends each shop to a customer registered there. Shop $1$ has $4$ choices and shop $2$ has $2$ choices, so there are $4\cdot 2=8$ sections. Since $f$ has a section, duality says that $f$ is an epimorphism.'
-          - problem: 'Four students $P$, $Q$, $R$, $S$ have heights $150$ cm, $150$ cm, $150$ cm and $170$ cm. In the category of students there is one morphism $x\to y$ when $x$ is at most as tall as $y$, and no other morphisms. By duality, a unique isomorphism joins any two terminal objects of the opposite category. How many isomorphisms from $P$ to $Q$ does the opposite category have?'
+            solution_sketch: 'A section of $f$ is a function from the two shops to the customers that sends each shop to a customer registered there. Shop $1$ has $4$ choices and shop $2$ has $2$ choices, so there are $4\cdot 2=8$ sections. The dual of the known theorem says that a morphism with a section is an epimorphism, so $f$ is an epimorphism.'
+          - problem: 'Four students $P$, $Q$, $R$, $S$ have heights $150$ cm, $150$ cm, $150$ cm and $170$ cm. In the category of students there is one morphism $x\to y$ when $x$ is at most as tall as $y$, and no other morphisms. A known theorem states that a unique isomorphism joins any two initial objects of a category. How many isomorphisms from $P$ to $Q$ does the opposite category have?'
             answer: "1"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'In the category of students there is exactly one morphism $P\to Q$ and exactly one $Q\to P$, and both are isomorphisms. The opposite category has the same objects with arrows reversed, so it has exactly $1$ morphism $P\to Q$, and it is an isomorphism. This matches the dual theorem, since $P$ and $Q$ are terminal there.'
+            solution_sketch: 'Dualizing the theorem gives: a unique isomorphism joins any two terminal objects. In the category of students $P$ and $Q$ are initial, so they are terminal in the opposite category. Hence the opposite category has exactly $1$ isomorphism from $P$ to $Q$.'
           - problem: 'Write the full proof that in any category terminal objects are unique up to a unique isomorphism, using only the result for initial objects and duality. Then compare with the solution.'
             answer: "Terminal objects are unique up to unique isomorphism."
             answer_contract: {"kind": "none"}
@@ -2285,14 +2285,14 @@ topics:
         key_prerequisites: [initial-terminal-objects]
         constraints: 'Terminal objects of slices and initial objects of coslices by duality, computed in Set and in a poset with every set and function stated in full; items ask for the value of the unique morphism, a count of morphisms or of objects, or the equation the identity forces, and one full-proof exemplar is kept.'
         exemplars:
-          - problem: 'The identity $1_C$ is a terminal object of the slice category $\mathbf{Set}/C$. Let $C=\{1,2,3,4\}$ and let $f\colon\{1,2\}\to C$ have $f(1)=1$ and $f(2)=3$. What is $h(2)$ for the unique morphism $h\colon f\to 1_C$?'
+          - problem: 'Let $C=\{1,2,3,4\}$ and let $f\colon\{1,2\}\to C$ have $f(1)=1$ and $f(2)=3$, so $f$ is an object of the slice category $\mathbf{Set}/C$. Let $h$ be the unique morphism from $f$ to the terminal object of $\mathbf{Set}/C$. What is $h(2)$?'
             answer: "3"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism $h\colon f\to 1_C$ is a function $h\colon\{1,2\}\to C$ with $1_C\circ h=f$. Since composing with the identity changes nothing, $h=f$. So $h(2)=f(2)=3$.'
-          - problem: 'The coslice category $C/\mathbf{Set}$ has as objects the functions $g\colon C\to Y$ out of $C$, and a morphism from $g\colon C\to Y$ to $g''\colon C\to Y''$ is a function $k\colon Y\to Y''$ with $k\circ g=g''$. The identity $1_C$ is an initial object of $C/\mathbf{Set}$. Let $C=\{1,2,3\}$ and let $g\colon C\to\{1,2,3,4\}$ have $g(1)=4$, $g(2)=2$ and $g(3)=1$. What is $k(1)$ for the unique morphism $k\colon 1_C\to g$?'
+            solution_sketch: 'The terminal object of $\mathbf{Set}/C$ is the identity $1_C$. A morphism $h\colon f\to 1_C$ is a function $h\colon\{1,2\}\to C$ with $1_C\circ h=f$. Since composing with the identity changes nothing, $h=f$. So $h(2)=f(2)=3$.'
+          - problem: 'The coslice category $C/\mathbf{Set}$ has as objects the functions $g\colon C\to Y$ out of $C$, and a morphism from $g\colon C\to Y$ to $g''\colon C\to Y''$ is a function $k\colon Y\to Y''$ with $k\circ g=g''$. Let $C=\{1,2,3\}$ and let $g\colon C\to\{1,2,3,4\}$ have $g(1)=4$, $g(2)=2$ and $g(3)=1$. Let $k$ be the unique morphism from the initial object of $C/\mathbf{Set}$ to $g$. What is $k(1)$?'
             answer: "4"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism $k\colon 1_C\to g$ is a function $k\colon C\to\{1,2,3,4\}$ with $k\circ 1_C=g$. Composing with the identity changes nothing, so $k=g$. Then $k(1)=g(1)=4$.'
+            solution_sketch: 'The initial object of $C/\mathbf{Set}$ is the identity $1_C$. A morphism $k\colon 1_C\to g$ is a function $k\colon C\to\{1,2,3,4\}$ with $k\circ 1_C=g$. Composing with the identity changes nothing, so $k=g$. Then $k(1)=g(1)=4$.'
           - problem: 'Let $B=\{0,1\}$ and let $f\colon X\to B$ have $X=\{a,b,c,d,e\}$, $f(a)=f(b)=0$ and $f(c)=f(d)=f(e)=1$. How many morphisms are there from $1_B$ to $f$ in $\mathbf{Set}/B$?'
             answer: "6"
             answer_contract: {"kind":"exact"}
@@ -2305,22 +2305,22 @@ topics:
             answer: "24"
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Every terminal object is isomorphic to $1_B$, the identity of $B=\{0,1,2,3\}$, and every object isomorphic to a terminal object is terminal. An isomorphism $h\colon f\to 1_B$ in the slice is a bijection with $h=f$. So $f$ is terminal exactly when $f$ is a bijection from a $4$-element set to $B$, and there are $4!=24$ of these.'
-          - problem: 'In the slice category $\mathcal{C}/C$ a morphism $h$ from an object $f\colon X\to C$ to the identity $1_C$ must satisfy $1_C\circ h=f$. What does this equation say about $h$?'
+          - problem: 'In the slice category $\mathcal{C}/C$, let $f\colon X\to C$ be an object and let $h$ be the unique morphism from $f$ to the terminal object. Express $h$ in terms of $f$ and $1_C$.'
             answer: "h = f"
             answer_contract: {"kind":"label","options":[["h = f","h=f","f = h","f=h","h equals f","h is equal to f","h is f","it is f"],["h = 1_C","h=1_C","h equals 1_C"],["f = 1_C","f=1_C","f equals 1_C"],["h∘f = 1_C","h f = 1_C","hf = 1_C"]]}
-            solution_sketch: 'Composing with the identity $1_C$ changes nothing, so $1_C\circ h=h$, and the equation reads $h=f$. The equation $h=1_C$ confuses the mediating map with the terminal object. The equation $f=1_C$ would say that every object is the identity. The equation $h\circ f=1_C$ composes in a wrong order, since $h$ starts at $X$.'
+            solution_sketch: 'The terminal object of $\mathcal{C}/C$ is $1_C$, so $h\colon f\to 1_C$ must satisfy $1_C\circ h=f$. Composing with the identity $1_C$ changes nothing, so $1_C\circ h=h$, and the equation reads $h=f$.'
           - problem: 'Which object of $\mathbf{Set}/\{0,1\}$ is initial: the identity function on $\{0,1\}$, the empty function into $\{0,1\}$, a function from a one-element set into $\{0,1\}$, or is there no initial object?'
             answer: "the empty function into {0,1}"
             answer_contract: {"kind":"label","options":[["the empty function into {0,1}","the empty function","empty function","the function from the empty set"],["the identity function on {0,1}","the identity","identity function","1_B"],["a function from a one-element set","a one-point function","a constant function"],["no object is initial","none","there is none","no initial object"]]}
             solution_sketch: 'For the empty function $e\colon\varnothing\to\{0,1\}$ and any object $g$, there is exactly one function $\varnothing\to Y$, and it satisfies $g\circ h=e$ trivially. So $e$ has exactly one morphism to every object and is initial. The identity of $\{0,1\}$ is terminal, and it has $4$ morphisms to the function $\{a,b,c,d\}\to\{0,1\}$ that sends $a,b$ to $0$ and $c,d$ to $1$, so it is not initial. A function from a one-element set has no morphism to the empty function, so it is not initial. An initial object exists, so the last option fails.'
-          - problem: 'Customers $c_1,c_2,c_3$ are registered at shops: $c_1$ and $c_2$ at shop $1$, and $c_3$ at shop $2$. Let $f$ send each customer to the shop where the customer is registered, so $f$ is an object of $\mathbf{Set}/\{1,2\}$. A morphism from $f$ to the terminal object $1_{\{1,2\}}$ sends each customer to a shop and must keep every customer at the customer''s own shop. How many such morphisms are there?'
+          - problem: 'Customers $c_1,c_2,c_3$ are registered at shops: $c_1$ and $c_2$ at shop $1$, and $c_3$ at shop $2$. Let $f$ send each customer to the shop where the customer is registered, so $f$ is an object of $\mathbf{Set}/\{1,2\}$. How many morphisms does $f$ have to the terminal object of $\mathbf{Set}/\{1,2\}$?'
             answer: "1"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A morphism $h$ from $f$ to the identity must satisfy $1_{\{1,2\}}\circ h=f$, so $h$ is $f$ itself and each customer goes to the registered shop. So there is exactly $1$ morphism, as terminality of the identity requires.'
-          - problem: 'In a family, the category $\mathcal{F}$ has the people Ann, Bob, Cy and Dee as objects, and there is one morphism $x\to y$ when $x$ is an ancestor of $y$ or $x=y$, and no other morphisms. Ann is a parent of Bob and of Cy, and Bob is a parent of Dee. The identity $1_{\mathrm{Dee}}$ is the terminal object of the slice $\mathcal{F}/\mathrm{Dee}$. How many morphisms of this slice have $1_{\mathrm{Dee}}$ as target?'
+            solution_sketch: 'The terminal object is $1_{\{1,2\}}$. A morphism $h$ from $f$ to it must satisfy $1_{\{1,2\}}\circ h=f$, so $h$ is $f$ itself and each customer goes to the registered shop. So there is exactly $1$ morphism, as terminality of the identity requires.'
+          - problem: 'In a family, the category $\mathcal{F}$ has the people Ann, Bob, Cy and Dee as objects, and there is one morphism $x\to y$ when $x$ is an ancestor of $y$ or $x=y$, and no other morphisms. Ann is a parent of Bob and of Cy, and Bob is a parent of Dee. How many morphisms of the slice $\mathcal{F}/\mathrm{Dee}$ have the terminal object of this slice as target?'
             answer: "3"
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The objects of the slice are the morphisms into Dee, from Ann, Bob and Dee. The terminal object receives exactly one morphism from every object, including itself. With $3$ objects that gives $3$ morphisms with target $1_{\mathrm{Dee}}$.'
+            solution_sketch: 'The terminal object of the slice is $1_{\mathrm{Dee}}$. The objects of the slice are the morphisms into Dee, from Ann, Bob and Dee. The terminal object receives exactly one morphism from every object, including itself. With $3$ objects that gives $3$ morphisms with target $1_{\mathrm{Dee}}$.'
           - problem: 'Write the full proof that the identity $1_C$ is terminal in the slice category $\mathcal{C}/C$, and dually that it is initial in the coslice category $C/\mathcal{C}$. Then compare with the solution.'
             answer: "1_C is terminal in the slice and initial in the coslice."
             answer_contract: {"kind": "none"}

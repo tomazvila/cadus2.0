@@ -56,7 +56,9 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
         // 2026-10-12, Foundations merge (D-C1): hash re-pinned (was c1ea8818...013c).
         // 2026-10-27, placement probes: the 39 Foundations multi-step probes gained a contract; hash re-pinned (was 91526de1...c71f).
         // 2026-10-28, VBE skill wave 1: 82 new statements (1751 live); hash re-pinned (was 7af15665...ef1d).
-        "effdc5dad9170e8576f450224fab98de4427066706c9a8df7333f4532973214e"
+        // 2026-11-06, no handed values (D-AP1): 112 statements rewritten; hash re-pinned (was effdc5da...214e).
+        // 2026-11-06, no handed steps (D-AP1): 1,219 statements rewritten; hash re-pinned (was 42697076...a3795f).
+        "613be03664e14f49f821a18a303e624f8cecb492d27e622f954e6a0a92bb649d"
     );
     let current_keys: BTreeSet<_> = current.iter().map(key).collect();
     assert_eq!(current_keys.len(), current.len());
@@ -84,12 +86,13 @@ fn historical_classification_and_all_live_statements_have_a_closed_boundary() {
             // the dropped twin steps.
             // 2026-10-27, placement probes: the 39 uncontracted rows gained a contract (4 coordinates, 28 exact, 1 inequality_union, 6 unit); no row is uncontracted.
             // 2026-10-28, VBE skill wave 1: 82 new rows (1,751 live): coordinates 128 (was 123), exact 743 (was 676), function 13 (was 12), list 47 (was 38).
+            // 2026-11-06, no handed steps (D-AP1): inequality_union 99 (was 98), label 90 (was 91).
             ("approx".to_owned(), 26),
             ("coordinates".to_owned(), 128),
             ("exact".to_owned(), 743),
             ("function".to_owned(), 13),
-            ("inequality_union".to_owned(), 98),
-            ("label".to_owned(), 91),
+            ("inequality_union".to_owned(), 99),
+            ("label".to_owned(), 90),
             ("list".to_owned(), 47),
             ("multipart".to_owned(), 30),
             ("polynomial_relation".to_owned(), 97),

@@ -379,10 +379,10 @@ topics:
             answer: '2/(5*pi)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $r = h$, the volume is $V = \frac{\pi}{3}h^3$ and $\frac{dV}{dt} = \pi h^2\,\frac{dh}{dt}$. At $h = 5$ we get $10 = 25\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{2}{5\pi}$.'
-          - problem: 'Water enters an inverted cone with $r = \frac{h}{2}$ at $9$ m$^3$/min, and the volume is $V = \frac{\pi}{3}r^2h$. What is the rate, in metres per minute, at which the depth is rising when $h = 6$ m?'
+          - problem: 'Water enters a tank shaped like an inverted cone, $12$ m deep with a top radius of $6$ m, at $9$ m$^3$/min. The volume of water is $V = \frac{\pi}{3}r^2h$, where $r$ is the radius of the water surface and $h$ is the depth. At what rate, in metres per minute, is the depth rising when $h = 6$ m?'
             answer: '1/pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The radius changes with the depth, so first write $V = \frac{\pi}{12}h^3$. Then $\frac{dV}{dt} = \frac{\pi}{4}h^2\,\frac{dh}{dt}$, and at $h = 6$ we get $9 = 9\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{1}{\pi}$.'
+            solution_sketch: 'Similar triangles give $\frac{r}{h} = \frac{6}{12}$, so $r = \frac{h}{2}$ and $V = \frac{\pi}{12}h^3$. Then $\frac{dV}{dt} = \frac{\pi}{4}h^2\,\frac{dh}{dt}$, and at $h = 6$ we get $9 = 9\pi\,\frac{dh}{dt}$, so $\frac{dh}{dt} = \frac{1}{\pi}$.'
         constraints: "cone dimensions give a simple ratio r = kh; eliminate r via similar triangles before differentiating"
       - id: kp3
         name: Shadows and multi-quantity setups
@@ -849,10 +849,10 @@ topics:
             answer: '7.071'
             answer_contract: {"kind":"approx","decimals":3}
             solution_sketch: 'Since $f''(s) = 2s$, the first step gives $s_1 = 7 - \frac{-1}{14} = \frac{99}{14} \approx 7.0714$. The second step gives $s_2 = s_1 - \frac{s_1^2 - 50}{2s_1} \approx 7.071$.'
-          - problem: 'Apply two Newton steps to $f(x) = x^2 - 5$ from $x_0 = 3$. The first step gives $x_1 = \frac{7}{3}$. What is $x_2$?'
+          - problem: 'Apply two Newton steps to $f(x) = x^2 - 5$ from $x_0 = 3$. What is $x_2$?'
             answer: '47/21'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The second step must start from $x_1 = \frac{7}{3}$, not from $x_0$. Then $f(\frac{7}{3}) = \frac{4}{9}$ and $f''(\frac{7}{3}) = \frac{14}{3}$, so $x_2 = \frac{7}{3} - \frac{2}{21} = \frac{47}{21}$.'
+            solution_sketch: 'First $f(3) = 4$ and $f''(3) = 6$, so $x_1 = 3 - \frac{4}{6} = \frac{7}{3}$. Then $f(\frac{7}{3}) = \frac{4}{9}$ and $f''(\frac{7}{3}) = \frac{14}{3}$, so $x_2 = \frac{7}{3} - \frac{2}{21} = \frac{47}{21}$.'
           - problem: 'Apply Newton''s method twice to $f(x) = x^3 + 2x - 5$, starting at $x_0 = 1.5$. What is $x_2$, to three decimal places?'
             answer: '1.328'
             answer_contract: {"kind":"approx","decimals":3}
@@ -870,10 +870,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","it cannot","no, it cannot","it fails","no step","it stalls"],["yes","it works","a step can be taken"]]}
             solution_sketch: 'Here $f''(x) = 2x$, so $f''(0) = 0$. The Newton step divides by $f''(0)$, and division by zero is undefined, so no step is possible.'
-          - problem: 'For $f(x) = x^2 + 4x + 7$, Newton''s method cannot start at one value $x_0$, because the tangent line there is horizontal. Find $x_0$.'
+          - problem: 'For $f(x) = x^2 + 4x + 7$, Newton''s method cannot take a first step from one value $x_0$. Find $x_0$.'
             answer: '-2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The derivative is $f''(x) = 2x + 4$. A horizontal tangent means $f''(x_0) = 0$, so $2x_0 + 4 = 0$ and $x_0 = -2$.'
+            solution_sketch: 'Newton''s method divides by $f''(x_0)$, so it fails where $f''(x_0) = 0$. The derivative is $f''(x) = 2x + 4$, so $2x_0 + 4 = 0$ and $x_0 = -2$.'
           - problem: 'A laser beam travels along the tangent line to the curve $y = x^3 - 8$ at the point $(3, 19)$, moving down toward the $x$-axis. At what value of $x$ does the beam meet the axis?'
             answer: '62/27'
             answer_contract: {"kind":"exact"}
@@ -886,10 +886,10 @@ topics:
             answer: 'tangent'
             answer_contract: {"kind":"label","options":[["tangent","tangent line","the tangent line","a tangent line"],["secant","secant line"],["normal","normal line"],["chord"]]}
             solution_sketch: 'Newton''s method replaces the curve near $x_n$ by its tangent line at $(x_n, f(x_n))$. The next estimate is the $x$-intercept of that tangent line.'
-          - problem: 'For $f(x) = x^3 - 3x + 1$, Newton''s method cannot start at a point of the interval $0 < x < 2$ where the tangent line is horizontal. Find that value of $x$.'
+          - problem: 'For $f(x) = x^3 - 3x + 1$, Newton''s method cannot take a first step from one point of the interval $0 < x < 2$. Find that value of $x$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The derivative is $f''(x) = 3x^2 - 3$. Setting $3x^2 - 3 = 0$ gives $x = \pm 1$, and only $x = 1$ lies in $0 < x < 2$.'
+            solution_sketch: 'Newton''s method divides by $f''(x_0)$, so it fails where $f''(x_0) = 0$. The derivative is $f''(x) = 3x^2 - 3$, which is zero at $x = \pm 1$. Only $x = 1$ lies in $0 < x < 2$.'
           - problem: 'At which value of $x$ does the tangent line to $y = x^2 - 3$ at $x_0 = 2$ meet the $x$-axis?'
             answer: '7/4'
             answer_contract: {"kind":"exact"}
@@ -1304,11 +1304,11 @@ topics:
         key_prerequisites: [continuity, rolles-theorem]
         constraints: 'corner or discontinuity inside the interval; name the failed hypothesis'
         exemplars:
-          - problem: 'The Mean Value Theorem does not apply to $f(x) = |x + 4|$ on $[-9, 1]$. At which value of $x$ does a hypothesis fail?'
+          - problem: 'At which value of $x$ in $[-9, 1]$ does a hypothesis of the Mean Value Theorem fail for $f(x) = |x + 4|$?'
             answer: '-4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The function $|x + 4|$ is continuous everywhere. At $x = -4$ the left slope is $-1$ and the right slope is $1$, so the graph has a corner and $f$ is not differentiable there. The point $-4$ lies inside $(-9, 1)$.'
-          - problem: 'The Mean Value Theorem does not apply to $f(x) = \frac{1}{x + 7}$ on $[-10, 3]$. At which value of $x$ does a hypothesis fail?'
+          - problem: 'At which value of $x$ in $[-10, 3]$ does a hypothesis of the Mean Value Theorem fail for $f(x) = \frac{1}{x + 7}$?'
             answer: '-7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The denominator is zero at $x = -7$, so $f$ has no value there and is not continuous there. The point $-7$ lies inside $(-10, 3)$, and no other point of the interval fails.'
@@ -1316,11 +1316,11 @@ topics:
             answer: 'not differentiable'
             answer_contract: {"kind":"label","options":[["not differentiable","differentiability fails","differentiability","not differentiable at an interior point","not differentiable at x = 1","differentiability fails at x = 1","it is not differentiable"],["not continuous","continuity fails","continuity","not continuous at an interior point","not continuous at x = 1"],["no hypothesis fails","both hold","the theorem applies","none"],["not continuous at an endpoint","continuity at an endpoint"]]}
             solution_sketch: 'At $x = 1$ the two pieces meet, because $1 = 3(1) - 2$, so $f$ is continuous on $[0, 3]$. The slope is $1$ on the left of $1$ and $3$ on the right, so there is a corner and $f$ is not differentiable at the interior point $x = 1$.'
-          - problem: 'The Mean Value Theorem does not apply to $f(x) = x^{2/3}$ on $[-1, 8]$. At which value of $x$ does a hypothesis fail?'
+          - problem: 'At which value of $x$ in $[-1, 8]$ does a hypothesis of the Mean Value Theorem fail for $f(x) = x^{2/3}$?'
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The function $x^{2/3}$ is continuous on $[-1, 8]$. Its derivative $\frac{2}{3}x^{-1/3}$ is not defined at $x = 0$, so $f$ is not differentiable at $0$, and $0$ lies inside $(-1, 8)$.'
-          - problem: 'The function $f(x) = \frac{x^2 - 25}{x - 5}$ is defined for every $x$ in $[0, 8]$ except one point. The Mean Value Theorem does not apply on $[0, 8]$. At which value of $x$ does a hypothesis fail?'
+          - problem: 'The function $f(x) = \frac{x^2 - 25}{x - 5}$ is defined for every $x$ in $[0, 8]$ except one point. At which value of $x$ does a hypothesis of the Mean Value Theorem fail on $[0, 8]$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The denominator $x - 5$ is zero at $x = 5$, so $f$ has no value there and is not continuous on $[0, 8]$. The point $5$ lies inside $(0, 8)$. The quotient equals $x + 5$ at every other point.'
@@ -1332,7 +1332,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it does","it applies","the theorem applies","yes, it applies","yes it applies","yes, it does"],["no","it does not","it does not apply","the theorem does not apply","no, it does not apply","no it does not apply","no, it does not"]]}
             solution_sketch: 'On $[1, 4]$ every $x$ is positive, so $|x| = x$ there. The function $x$ is continuous on $[1, 4]$ and differentiable on $(1, 4)$, so both hypotheses hold. The corner of $|x|$ at $x = 0$ is outside the interval.'
-          - problem: 'A shipping company charges $C(w) = 5w$ dollars for a parcel of $w$ kilograms when $0 \le w \le 10$, and $C(w) = 5w + 20$ dollars when $10 < w \le 20$. The Mean Value Theorem does not apply to $C$ on $[0, 20]$. At which weight, in kilograms, does a hypothesis fail?'
+          - problem: 'A shipping company charges $C(w) = 5w$ dollars for a parcel of $w$ kilograms when $0 \le w \le 10$, and $C(w) = 5w + 20$ dollars when $10 < w \le 20$. At which weight, in kilograms, does a hypothesis of the Mean Value Theorem fail for $C$ on $[0, 20]$?'
             answer: '10'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'At $w = 10$ the cost is $5(10) = 50$ dollars, but just above $10$ the cost approaches $5(10) + 20 = 70$ dollars. The jump means $C$ is not continuous at $w = 10$, which lies inside $(0, 20)$.'
@@ -1501,10 +1501,10 @@ topics:
             answer: '-4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative $f''(x) = 2x - 10$ is zero at $x = 5$. Compare $f(0) = 21$, $f(5) = -4$ and $f(7) = 0$. The least of these is $-4$.'
-          - problem: 'The function $f(x) = x^2 - 6x + 4$ has $f''(3) = 0$. What is the absolute maximum value of $f$ on $[-1, 5]$?'
+          - problem: 'What is the absolute maximum value of $f(x) = x^2 - 6x + 4$ on $[-1, 5]$?'
             answer: '11'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The critical point $x = 3$ here gives the minimum. Compare the endpoints too: $f(-1) = 11$, $f(3) = -5$ and $f(5) = -1$. The greatest value is $11$.'
+            solution_sketch: 'Solve $f''(x) = 2x - 6 = 0$ to get the critical point $x = 3$. Then $f(-1) = 11$, $f(3) = -5$ and $f(5) = -1$. The greatest value is $11$.'
       - id: kp3
         name: 'Closed-interval method with several critical points'
         key_prerequisites: [critical-points-extrema, evaluating-functions]
@@ -1639,10 +1639,10 @@ topics:
         key_prerequisites: [critical-points-extrema]
         constraints: 'include one no-sign-change trap; function values are integers'
         exemplars:
-          - problem: 'The function $f(x) = x^3 - 3x^2 - 9x + 5$ has derivative $f''(x) = 3(x + 1)(x - 3)$. Find the value of its local maximum.'
+          - problem: 'Find the value of the local maximum of $f(x) = x^3 - 3x^2 - 9x + 5$.'
             answer: '10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The derivative is positive for $x < -1$, negative for $-1 < x < 3$ and positive for $x > 3$. So $f$ has a local maximum at $x = -1$. Its value is $f(-1) = -1 - 3 + 9 + 5 = 10$.'
+            solution_sketch: 'The derivative is $f''(x) = 3x^2-6x-9 = 3(x+1)(x-3)$. It is positive for $x < -1$ and negative for $-1 < x < 3$. So the local maximum is at $x = -1$, with $f(-1) = 10$.'
           - problem: 'A function has derivative $f''(x) = (x + 1)^2(x - 3)$. At the critical number $x = -1$, does $f$ have a local maximum, a local minimum, or neither?'
             answer: 'neither'
             answer_contract: {"kind":"label","options":[["neither","no extremum","neither a maximum nor a minimum","neither a max nor a min","no local extremum","neither a local maximum nor a local minimum","it is neither"],["a local maximum","local maximum","maximum"],["a local minimum","local minimum","minimum"],["cannot be determined","unknown","it cannot be decided"]]}
@@ -1651,14 +1651,14 @@ topics:
             answer: '17'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The derivative is $f''(x) = 3(x - 2)(x + 2)$, which is positive before $x = -2$ and negative after it. So $f$ has a local maximum at $x = -2$. Its value is $f(-2) = -8 + 24 + 1 = 17$.'
-          - problem: 'The function $f(x) = 2x^3 + 3x^2 - 36x + 5$ has derivative $f''(x) = 6(x + 3)(x - 2)$. Find the value of its local maximum.'
+          - problem: 'Find the value of the local maximum of $f(x) = 2x^3 + 3x^2 - 36x + 5$.'
             answer: '86'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The derivative is positive before $x = -3$, negative between $-3$ and $2$, and positive after $2$. So $f$ has a local maximum at $x = -3$. Its value is $f(-3) = -54 + 27 + 108 + 5 = 86$.'
-          - problem: 'The function $f(x) = x^3 - 6x^2 - 15x + 8$ has derivative $f''(x) = 3(x - 5)(x + 1)$. Find the value of its local minimum.'
+            solution_sketch: 'The derivative is $f''(x) = 6x^2+6x-36 = 6(x+3)(x-2)$. It is positive before $x = -3$ and negative between $-3$ and $2$. So the local maximum is at $x = -3$, with $f(-3) = 86$.'
+          - problem: 'Find the value of the local minimum of $f(x) = x^3 - 6x^2 - 15x + 8$.'
             answer: '-92'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The derivative is positive, then negative, then positive, so $f$ has a local minimum at $x = 5$. Its value is $f(5) = 125 - 150 - 75 + 8 = -92$.'
+            solution_sketch: 'The derivative is $f''(x) = 3x^2-12x-15 = 3(x-5)(x+1)$. It is negative between $-1$ and $5$ and positive after $5$. So the local minimum is at $x = 5$, with $f(5) = -92$.'
           - problem: 'Find the value of the local minimum of $f(x) = 2x^3 - 3x^2 - 12x + 5$.'
             answer: '-15'
             answer_contract: {"kind":"exact"}
@@ -1959,10 +1959,10 @@ topics:
           answer: 'yes'
           reveal: 'Even though $f''''(0) = 0$, we have $x^4 \ge 0$, and $x^4 = 0$ only at $x = 0$, so the lowest value is at $0$. A zero second derivative gives no verdict, and the sign of $f''$ decides.'
         exemplars:
-          - problem: 'The function $f(x) = -x^4$ has a critical point at $x = 0$, and $f''''(0) = 0$. Is $x = 0$ a local maximum, a local minimum, or neither?'
+          - problem: 'The function $f(x) = -x^4$ has a critical point at $x = 0$. Is $x = 0$ a local maximum, a local minimum, or neither?'
             answer: 'local maximum'
             answer_contract: {"kind":"label","options":[["local maximum","maximum","max","a local maximum","local max","a local max","a maximum"],["local minimum","minimum","min","a local minimum","local min","a local min","a minimum"],["neither","no extremum","neither a maximum nor a minimum","not an extremum"]]}
-            solution_sketch: 'Since $f''''(0) = 0$, the second derivative test gives no answer, so we use the sign of $f''(x) = -4x^3$. For $x < 0$ the derivative is positive and for $x > 0$ it is negative, so $f$ rises and then falls, and $x = 0$ is a local maximum.'
+            solution_sketch: 'The derivative is $f''(x) = -4x^3$ and the second derivative is $f''''(x) = -12x^2$, so $f''''(0) = 0$ and the second derivative test gives no answer. For $x < 0$ the derivative is positive and for $x > 0$ it is negative, so $f$ rises and then falls, and $x = 0$ is a local maximum.'
           - problem: 'The function $f(x) = x^4 - 4x^3$ has critical points $x = 0$ and $x = 3$. At which values of $x$ does $f$ have a local extremum?'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -1971,22 +1971,22 @@ topics:
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $f''''(x) = 20x^3 - 60x^2$, so $f''''(4) = 320 > 0$ and $x = 4$ is a local minimum. At $x = 0$ we get $f''''(0) = 0$, so we use $f''(x) = 5x^3(x - 4)$: it is positive just left of $0$ and negative just right of $0$. So $x = 0$ is the local maximum, and $f(0) = 0$.'
-          - problem: 'A cable between two poles hangs at height $h(x) = 2 + (x - 3)^4$ metres above a road, where $x$ is the horizontal position in metres. We have $h''''(3) = 0$. Find the lowest point of the cable.'
+          - problem: 'A cable between two poles hangs at height $h(x) = 2 + (x - 3)^4$ metres above a road, where $x$ is the horizontal position in metres. Find the lowest point of the cable.'
             answer: '(3, 2)'
             answer_contract: {"kind":"coordinates","arity":2}
-            solution_sketch: 'Since $h''(x) = 4(x - 3)^3$, the only critical point is $x = 3$, and the second derivative test fails there because $h''''(3) = 0$. The derivative is negative for $x < 3$ and positive for $x > 3$, so $x = 3$ is a local minimum. The height there is $h(3) = 2$, so the lowest point is $(3, 2)$.'
-          - problem: 'The water level in a tank, in centimetres, is $W(t) = 20 + (t - 5)^3$ at time $t$ minutes, for $0 \le t \le 10$. At $t = 5$ we have $W''(5) = 0$ and $W''''(5) = 0$. Is the water level at a local minimum at $t = 5$?'
+            solution_sketch: 'Since $h''(x) = 4(x - 3)^3$, the only critical point is $x = 3$. Also $h''''(x) = 12(x - 3)^2$ gives $h''''(3) = 0$, so the second derivative test fails. The derivative is negative for $x < 3$ and positive for $x > 3$, so the lowest point is $(3, h(3)) = (3, 2)$.'
+          - problem: 'The water level in a tank, in centimetres, is $W(t) = 20 + (t - 5)^3$ at time $t$ minutes, for $0 \le t \le 10$. Is the water level at a local minimum at $t = 5$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it does","it is","yes it does","yes, it does","yes it is","yes, it is","it has"],["no","it does not","it is not","no it does not","no, it does not","no it is not","no, it is not","it doesn't"]]}
-            solution_sketch: 'The second derivative test gives no answer, so we look at $W''(t) = 3(t - 5)^2$. This is positive on both sides of $t = 5$, so $W$ keeps rising and the sign of $W''$ does not change. There is no local minimum at $t = 5$, so the answer is no.'
+            solution_sketch: 'We have $W''(t) = 3(t - 5)^2$ and $W''''(t) = 6(t - 5)$, so $W''(5) = 0$ and $W''''(5) = 0$. The second derivative test gives no answer, so we look at the sign of $W''$. It is positive on both sides of $t = 5$, so there is no local minimum and the answer is no.'
           - problem: 'What is the largest value of $f(x) = 5 - (x + 1)^4$?'
             answer: '5'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A zero second derivative only means the second derivative test fails, so it gives no conclusion. Since $f''(x) = -4(x + 1)^3$ is positive for $x < -1$ and negative for $x > -1$, $x = -1$ is a local maximum. There $f(-1) = 5$, and $(x + 1)^4 \ge 0$ shows that no value of $f$ is larger.'
-          - problem: 'The function $f(x) = x^6$ has a critical point at $x = 0$, and $f''''(0) = 0$. On which values of $x$ is $f$ decreasing?'
+          - problem: 'The function $f(x) = x^6$ has a critical point at $x = 0$. On which values of $x$ is $f$ decreasing?'
             answer: 'x < 0'
             answer_contract: {"kind":"inequality_union"}
-            solution_sketch: 'The derivative is $f''(x) = 6x^5$. It is negative when $x < 0$ and positive when $x > 0$, so $f$ is decreasing for $x < 0$. The sign of $f''$ changes from negative to positive at $0$, so $x = 0$ is a local minimum even though $f''''(0) = 0$.'
+            solution_sketch: 'The derivative is $f''(x) = 6x^5$ and $f''''(x) = 30x^4$, so $f''''(0) = 0$. The derivative is negative when $x < 0$ and positive when $x > 0$, so $f$ is decreasing for $x < 0$. Here $x = 0$ is a local minimum.'
           - problem: 'For which smallest positive integer $n$ does $f(x) = x^n$ have a local minimum at $x = 0$ even though $f''''(0) = 0$?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1999,18 +1999,18 @@ topics:
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $f''(x) = 4x^3 - 24x^2 = 4x^2(x - 6)$, so the critical points are $x = 0$ and $x = 6$. Since $f''''(x) = 12x^2 - 48x$, we get $f''''(6) = 144 > 0$, a local minimum. At $x = 0$ we get $f''''(0) = 0$, and $f''$ is negative on both sides of $0$, so $x = 0$ is not an extremum and the answer is $6$.'
-          - problem: 'The function $g(x) = x^3 - 3x^2 - 9x + 5$ has a critical point at $x = -1$. Use the second derivative test to decide whether $g$ has a local maximum or a local minimum there.'
+          - problem: 'The function $g(x) = x^3 - 3x^2 - 9x + 5$ has a critical point at $x = -1$. Does $g$ have a local maximum or a local minimum there?'
             answer: 'local maximum'
             answer_contract: {"kind":"label","options":[["local maximum","maximum","max","a local maximum","local max","a local max","a maximum"],["local minimum","minimum","min","a local minimum","local min","a local min","a minimum"]]}
-            solution_sketch: 'The second derivative is $g''''(x) = 6x - 6$. At $x = -1$ we get $g''''(-1) = -12 < 0$, so the graph is concave down there and $g$ has a local maximum at $x = -1$.'
+            solution_sketch: 'The second derivative is $g''''(x) = 6x - 6$, and $g''''(-1) = -12 < 0$. The second derivative test is conclusive here, so the graph is concave down and $g$ has a local maximum at $x = -1$.'
           - problem: 'Find the local minimum value of $h(x) = 3x^4 - 4x^3$.'
             answer: '-1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $h''(x) = 12x^3 - 12x^2 = 12x^2(x - 1)$, so the critical points are $x = 0$ and $x = 1$. Since $h''''(x) = 36x^2 - 24x$, we get $h''''(1) = 12 > 0$, a local minimum. At $x = 0$ the second derivative is $0$ and $h''$ is negative on both sides, so there is no extremum. The minimum value is $h(1) = 3 - 4 = -1$.'
-          - problem: 'The function $s(x) = x^4 - 8x^3 + 24x^2 - 32x + 16$ has a critical point at $x = 2$, and $s''''(2) = 0$. Is $x = 2$ a local maximum, a local minimum, or neither?'
+          - problem: 'The function $s(x) = x^4 - 8x^3 + 24x^2 - 32x + 16$ has a critical point at $x = 2$. Is $x = 2$ a local maximum, a local minimum, or neither?'
             answer: 'local minimum'
             answer_contract: {"kind":"label","options":[["local maximum","maximum","max","a local maximum","local max","a local max","a maximum"],["local minimum","minimum","min","a local minimum","local min","a local min","a minimum"],["neither","no extremum","neither a maximum nor a minimum","not an extremum"]]}
-            solution_sketch: 'The second derivative test gives no answer here because $s''''(2) = 0$. Since $s''(x) = 4(x - 2)^3$ is negative for $x < 2$ and positive for $x > 2$, the point $x = 2$ is a local minimum. In fact $s(x) = (x - 2)^4$.'
+            solution_sketch: 'We have $s''''(x) = 12x^2 - 48x + 48$, so $s''''(2) = 0$ and the second derivative test gives no answer. Since $s''(x) = 4(x - 2)^3$ is negative for $x < 2$ and positive for $x > 2$, the point $x = 2$ is a local minimum.'
           - problem: 'A company''s profit, in thousands of dollars, is $P(x) = 4x^3 - x^4$ when it sells $x$ hundred items, for $0 \le x \le 4$. What is the largest profit the company can make, in thousands of dollars?'
             answer: '27'
             answer_contract: {"kind":"exact"}
@@ -2131,10 +2131,10 @@ topics:
             answer: 'sqrt(6)/3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The second derivative is $y'''' = 8 - 12x^2$, which is zero when $x^2 = \frac{2}{3}$, so $x = \pm\frac{\sqrt{6}}{3}$. The sign of $y''''$ is positive for $|x| < \frac{\sqrt{6}}{3}$ and negative outside, so the concavity changes at the positive value $\frac{\sqrt{6}}{3}$ centimetres.'
-          - problem: 'The second derivative of $f(x) = x^4$ is zero at $x = 0$. Is $x = 0$ an inflection point of the graph?'
+          - problem: 'Is $x = 0$ an inflection point of the graph of $f(x) = x^4$?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","yes it is","it is","inflection point"],["no","no it is not","it is not","not an inflection point","no inflection point"]]}
-            solution_sketch: 'The second derivative is $f''''(x) = 12x^2$. It is zero at $x = 0$ but positive on both sides, so the concavity does not change. There is no inflection point at $x = 0$.'
+            solution_sketch: 'Find $f''''(x) = 12x^2$. It is zero at $x = 0$ but positive on both sides, so the concavity does not change. There is no inflection point at $x = 0$.'
           - problem: 'Find the local minimum value of $f(x) = x^4 - 5x^2 + 4$.'
             answer: '-9/4'
             answer_contract: {"kind":"exact"}
@@ -2375,34 +2375,34 @@ topics:
             answer: '4'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
             solution_sketch: 'If the squares have side $x$ cm, the box has base side $24 - 2x$ and height $x$, so $V(x) = x(24 - 2x)^2$ for $0 < x < 12$. Differentiating gives $V''(x) = (24 - 2x)^2 - 4x(24 - 2x) = (24 - 2x)(24 - 6x)$. The zeros are $x = 12$, which gives a box of volume $0$, and $x = 4$. Since $0 < x < 12$, the only choice is $x = 4$ cm, and then $V(4) = 4 \cdot 16^2 = 1024$ cubic centimetres.'
-          - problem: 'An open-top box has a square base of side $x$ metres and a volume of $108$ cubic metres. Its height is $h = \frac{108}{x^2}$, so its surface area is $S = x^2 + 4xh = x^2 + \frac{432}{x}$. What is the least surface area the box can have?'
+          - problem: 'An open-top box has a square base and a volume of $108$ cubic metres. What is the least surface area the box can have?'
             answer: '108'
             answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
-            solution_sketch: 'The derivative is $S''(x) = 2x - \frac{432}{x^2}$, which is zero when $x^3 = 216$, so $x = 6$. The second derivative $S''''(x) = 2 + \frac{864}{x^3}$ is positive, so this is a minimum. Then $S(6) = 36 + 72 = 108$ square metres.'
+            solution_sketch: 'Let the base side be $x$. Then the height is $h = \frac{108}{x^2}$ and $S = x^2 + 4xh = x^2 + \frac{432}{x}$. Then $S''(x) = 2x - \frac{432}{x^2} = 0$ gives $x = 6$, a minimum, and $S(6) = 36 + 72 = 108$ square metres.'
           - problem: 'A closed cylindrical can has volume $54\pi$ cm$^3$. What radius gives the least surface area?'
             answer: '3'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
             solution_sketch: 'For radius $r$ and height $h$, the volume $\pi r^2 h = 54\pi$ gives $h = \frac{54}{r^2}$, and the surface area is $S = 2\pi r^2 + 2\pi r h$, so $S(r) = 2\pi r^2 + \frac{108\pi}{r}$. Then $S''(r) = 4\pi r - \frac{108\pi}{r^2} = 0$ gives $r^3 = 27$, so $r = 3$. Since $S''''(r) > 0$ this is a minimum, and the height is $h = 6$ cm.'
-          - problem: 'An open-top box has a square base of side $x$ metres and a surface area of $48$ square metres. Its height is $h = \frac{48 - x^2}{4x}$, so its volume is $V = x^2 h = \frac{48x - x^3}{4}$. What is the greatest volume the box can have?'
+          - problem: 'An open-top box has a square base and a surface area of $48$ square metres. What is the greatest volume the box can have?'
             answer: '32'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"m^3","allow_omitted":true}
-            solution_sketch: 'The derivative is $V''(x) = \frac{48 - 3x^2}{4}$, which is zero when $x^2 = 16$, so $x = 4$. The second derivative $V''''(x) = -\frac{3x}{2}$ is negative, so this is a maximum. Then $V(4) = \frac{192 - 64}{4} = 32$ cubic metres.'
+            solution_sketch: 'Let the base side be $x$. Then $x^2 + 4xh = 48$ gives $h = \frac{48 - x^2}{4x}$, so $V = x^2 h = \frac{48x - x^3}{4}$. Then $V''(x) = 0$ gives $x = 4$, a maximum, and $V(4) = 32$ cubic metres.'
           - problem: 'A closed cylindrical can has surface area $54\pi$ cm$^2$. Its radius is $r$ and its height is $h$, with surface area $S = 2\pi r^2 + 2\pi r h$ and volume $V = \pi r^2 h$. What height gives the greatest volume?'
             answer: '6'
             answer_contract: {"kind":"unit","quantity":"length","unit":"cm","allow_omitted":true}
             solution_sketch: 'The surface area gives $h = \frac{27 - r^2}{r}$, so $V(r) = \pi r(27 - r^2) = \pi(27r - r^3)$. Then $V''(r) = \pi(27 - 3r^2) = 0$ gives $r = 3$, and $V''''(3) < 0$ shows a maximum. The height is $h = \frac{27 - 9}{3} = 6$ cm.'
-          - problem: 'An open-top box has a square base of side $x$ metres and a volume of $256$ cubic metres. Its height is $h = \frac{256}{x^2}$, so its surface area is $S = x^2 + 4xh = x^2 + \frac{1024}{x}$. What base side $x$ gives the least surface area?'
+          - problem: 'An open-top box has a square base and a volume of $256$ cubic metres. What base side gives the least surface area?'
             answer: '8'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The derivative is $S''(x) = 2x - \frac{1024}{x^2}$, which is zero when $x^3 = 512$, so $x = 8$. The second derivative $S''''(x) = 2 + \frac{2048}{x^3}$ is positive, so this is a minimum. The base side is $8$ metres.'
-          - problem: 'An open-top box has a square base of side $x$ metres and a volume of $500$ cubic metres. Its height is $h = \frac{500}{x^2}$, so its surface area is $S = x^2 + 4xh = x^2 + \frac{2000}{x}$. What is the height of the box with the least surface area?'
+            solution_sketch: 'Let the base side be $x$. Then $h = \frac{256}{x^2}$ and $S = x^2 + 4xh = x^2 + \frac{1024}{x}$. Then $S''(x) = 2x - \frac{1024}{x^2} = 0$ gives $x^3 = 512$, so $x = 8$ metres, a minimum.'
+          - problem: 'An open-top box has a square base and a volume of $500$ cubic metres. What is the height of the box with the least surface area?'
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The derivative is $S''(x) = 2x - \frac{2000}{x^2}$, which is zero when $x^3 = 1000$, so $x = 10$. The second derivative is positive, so this is a minimum. The height is $h = \frac{500}{10^2} = 5$ metres.'
-          - problem: 'Squares of side $x$ cm are cut from the corners of a $12$ cm by $12$ cm sheet, and the sides are folded up to make an open-top box. The volume is $V = x(12 - 2x)^2$. What is the greatest volume of such a box?'
+            solution_sketch: 'Let the base side be $x$. Then $h = \frac{500}{x^2}$ and $S = x^2 + \frac{2000}{x}$. Then $S''(x) = 0$ gives $x^3 = 1000$, so $x = 10$, a minimum. The height is $h = \frac{500}{100} = 5$ metres.'
+          - problem: 'Squares of side $x$ cm are cut from the corners of a $12$ cm by $12$ cm sheet, and the sides are folded up to make an open-top box. What is the greatest volume of such a box?'
             answer: '128'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
-            solution_sketch: 'Differentiating gives $V''(x) = (12 - 2x)(12 - 6x)$, which is zero at $x = 6$ and at $x = 2$. The value $x = 6$ gives volume $0$, so the greatest volume is at $x = 2$, where $V(2) = 2 \cdot 8^2 = 128$ cubic centimetres. A box with $x = 3$ has volume $3 \cdot 6^2 = 108$, which is smaller.'
+            solution_sketch: 'The base side is $12 - 2x$ and the height is $x$, so $V = x(12 - 2x)^2$ for $0 < x < 6$. Then $V''(x) = (12 - 2x)(12 - 6x) = 0$ gives $x = 2$ in the interval, and $V(2) = 2 \cdot 8^2 = 128$ cubic centimetres.'
       - id: kp2
         name: Cost and material problems
         key_prerequisites: [basic-optimization, volume-prisms-cylinders]
@@ -2529,13 +2529,13 @@ topics:
           unit: dollar
           allow_omitted: true
         solution_sketch: The marginal revenue is the derivative $R'(x) = 500 - x$. At $x = 200$ this is $500 - 200 = 300$, so the marginal revenue is $300$ dollars per item.
-      - problem: The cost of making $x$ helmets is $C(x) = 3x^2 + 20x + 500$ dollars. Find the marginal cost function $C'(x)$.
+      - problem: 'The cost of making $x$ helmets is $C(x) = 3x^2 + 20x + 500$ dollars. Find the marginal cost of making $x$ helmets as a function of $x$.'
         answer: 6x + 20
         answer_contract:
           kind: function
           vars:
           - x
-        solution_sketch: 'Differentiate term by term: the derivative of $3x^2$ is $6x$, of $20x$ is $20$, and of the constant $500$ is $0$. So $C''(x) = 6x + 20$.'
+        solution_sketch: 'The marginal cost is the derivative of the cost. Differentiate term by term: $3x^2$ gives $6x$, $20x$ gives $20$, and the constant $500$ gives $0$. So the marginal cost is $6x + 20$.'
       - problem: A shop sells $x$ scarves a week at the price $p = 60 - 0.2x$ dollars each, so the revenue is $R(x) = xp$. Find the marginal revenue at $x = 100$, in dollars per scarf.
         answer: '20'
         answer_contract:
@@ -2600,15 +2600,15 @@ topics:
         answer: '31'
         reveal: The slope of $C$ at $x = 10$ is $C'(10) = 30$, while the true step from $10$ to $11$ items is $31$. The two numbers are close but not equal, and this lesson explains why.
       exemplars:
-      - problem: The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 15x + 400$ dollars. Find the actual cost of the 41st item, $C(41) - C(40)$.
+      - problem: 'The cost of producing $x$ items is $C(x) = \frac{x^2}{20} + 15x + 400$ dollars. Find the actual cost of the 41st item.'
         answer: '19.05'
         answer_contract:
           kind: unit
           quantity: dollar
           unit: dollar
           allow_omitted: true
-        solution_sketch: 'Subtract the two costs: $C(41) - C(40) = \frac{1681 - 1600}{20} + 15 = 4.05 + 15 = 19.05$. The 41st item costs $19.05$ dollars, a little more than the marginal cost $C''(40) = 19$.'
-      - problem: The cost of making $x$ items is $C(x) = \frac{x^2}{2} + 5x + 100$ dollars. Is the actual cost of the 11th item, $C(11) - C(10)$, larger or smaller than the marginal cost $C'(10)$, and by how much?
+        solution_sketch: 'The cost of the 41st item is the difference of the total costs of 41 and 40 items. So $C(41) - C(40) = \frac{1681 - 1600}{20} + 15 = 19.05$ dollars, a little more than $C''(40) = 19$.'
+      - problem: 'The cost of making $x$ items is $C(x) = \frac{x^2}{2} + 5x + 100$ dollars. Is the actual cost of the 11th item larger or smaller than the marginal cost at $10$ items, and by how much?'
         answer: verdict = larger; amount = 1/2
         answer_contract:
           kind: multipart
@@ -2627,7 +2627,7 @@ topics:
           - contract:
               kind: exact
             name: amount
-        solution_sketch: The marginal cost is $C'(x) = x + 5$, so $C'(10) = 15$. The actual cost is $C(11) - C(10) = \frac{121 - 100}{2} + 5 = \frac{31}{2}$, which is larger by $\frac{31}{2} - 15 = \frac{1}{2}$ dollar.
+        solution_sketch: 'The marginal cost is $C''(x) = x + 5$, so $C''(10) = 15$. The actual cost of the 11th item is $C(11) - C(10) = \frac{121 - 100}{2} + 5 = \frac{31}{2}$. It is larger by $\frac{1}{2}$ dollar.'
       - problem: The revenue from selling $x$ units is $R(x) = 150x - \frac{x^2}{5}$ dollars. Use the marginal revenue $R'(30)$ to estimate the extra revenue from selling the 31st unit.
         answer: '138'
         answer_contract:
@@ -2641,14 +2641,14 @@ topics:
         answer_contract:
           kind: exact
         solution_sketch: The marginal cost is $C'(x) = \frac{x}{10} + 30$, so $C'(40) = 34$ dollars per item. The money pays for $170 \div 34 = 5$ more items.
-      - problem: The cost of making $x$ items is $C(x) = 0.01x^3 + 0.5x^2 + 20x + 100$ dollars. Find the actual cost of the 11th item, $C(11) - C(10)$.
+      - problem: 'The cost of making $x$ items is $C(x) = 0.01x^3 + 0.5x^2 + 20x + 100$ dollars. Find the actual cost of the 11th item.'
         answer: '33.81'
         answer_contract:
           kind: unit
           quantity: dollar
           unit: dollar
           allow_omitted: true
-        solution_sketch: 'Compute the two costs: $C(11) = 13.31 + 60.5 + 220 + 100 = 393.81$ and $C(10) = 10 + 50 + 200 + 100 = 360$. The difference is $393.81 - 360 = 33.81$ dollars.'
+        solution_sketch: 'The cost of the 11th item is the difference of the total costs of 11 and 10 items. $C(11) = 393.81$ and $C(10) = 360$. So the cost is $393.81 - 360 = 33.81$ dollars.'
       - problem: The profit from selling $x$ items is $P(x) = -0.03x^2 + 50x - 200$ dollars. Use the marginal profit $P'(100)$ to estimate the extra profit from the 101st item.
         answer: '44'
         answer_contract:
@@ -2657,14 +2657,14 @@ topics:
           unit: dollar
           allow_omitted: true
         solution_sketch: The marginal profit is $P'(x) = -0.06x + 50$. At $x = 100$ this is $-6 + 50 = 44$, so the 101st item adds about $44$ dollars of profit.
-      - problem: The cost of $x$ items is $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item, $C(26) - C(25)$?
+      - problem: 'The cost of $x$ items is $C(x) = \frac{x^2}{25} + 10x + 250$ dollars. What is the actual cost of the 26th item?'
         answer: '12.04'
         answer_contract:
           kind: unit
           quantity: dollar
           unit: dollar
           allow_omitted: true
-        solution_sketch: The marginal cost $C'(25) = 12$ is a slope. The actual cost is $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 2.04 + 10 = 12.04$ dollars, so the two values are not equal.
+        solution_sketch: 'The cost of the 26th item is the difference of the total costs of 26 and 25 items. So $C(26) - C(25) = \frac{676 - 625}{25} + 10 = 12.04$ dollars. This is not equal to the marginal cost $C''(25) = 12$.'
       - problem: For $R(x) = 150x - \frac{x^2}{5}$ dollars, is the estimate $R'(30)$ of the revenue from the 31st unit too high or too low?
         answer: too high
         answer_contract:
@@ -2703,11 +2703,11 @@ topics:
           unit: dollar
           allow_omitted: true
         solution_sketch: The profit is $P(x) = -x^2 + 140x - 900$, and $P'(x) = -2x + 140 = 0$ gives $x = 70$. The maximum profit is $P(70) = -4900 + 9800 - 900 = 4000$ dollars.
-      - problem: A firm has revenue $R(x) = 500x$ and cost $C(x) = x^2 + 80x + 2000$, both in dollars. At what quantity $x$ is the marginal revenue equal to the marginal cost?
+      - problem: 'A firm has revenue $R(x) = 500x$ and cost $C(x) = x^2 + 80x + 2000$, both in dollars. At what quantity $x$ is the profit largest?'
         answer: '210'
         answer_contract:
           kind: exact
-        solution_sketch: The marginal revenue is $R'(x) = 500$ and the marginal cost is $C'(x) = 2x + 80$. Set $500 = 2x + 80$, so $2x = 420$ and $x = 210$.
+        solution_sketch: 'The profit is largest where the marginal revenue equals the marginal cost. Here $R''(x) = 500$ and $C''(x) = 2x + 80$. Set $500 = 2x + 80$, so $2x = 420$ and $x = 210$.'
       - problem: The profit from selling $x$ lamps is $P(x) = -2x^2 + 200x - 1800$ dollars. What is the maximum profit?
         answer: '3200'
         answer_contract:

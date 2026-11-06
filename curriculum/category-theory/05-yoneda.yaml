@@ -53,10 +53,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The functor $\mathrm{Hom}(-,\{0,1\})$ reverses arrows, so $P(k)$ takes a map $t$ out of $\{1,2\}$ to the map $t\circ k$ out of $\{1,2,3\}$. Then $(t\circ k)(3)=t(k(3))=t(1)=1$. So the value at $3$ is 1.'
-          - problem: 'Test whether the identity functor $\mathrm{Id}$ on $\mathbf{Set}$ is represented by the two-point set $\{u,v\}$ by comparing the number of elements of $\mathrm{Hom}(\{u,v\},X)$ with the number of elements of $X$. What is the smallest number of elements of a set $X$ for which these two counts differ?'
+          - problem: 'The identity functor $\mathrm{Id}$ on $\mathbf{Set}$ sends a set $X$ to $X$. Find the smallest number of elements of a set $X$ for which no bijection $\mathrm{Hom}(\{u,v\},X)\cong X$ exists.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A function from $\{u,v\}$ to $X$ chooses an image for $u$ and an image for $v$, so $\mathrm{Hom}(\{u,v\},X)$ has $|X|^2$ elements. For $|X|=0$ the counts are 0 and 0, and for $|X|=1$ they are 1 and 1, so they agree. For $|X|=2$ the counts are 4 and 2, so they differ. The smallest size is 2.'
+            solution_sketch: 'A function from $\{u,v\}$ to $X$ gives an image for $u$ and an image for $v$, so $\mathrm{Hom}(\{u,v\},X)$ has $|X|^2$ elements. For $|X|=0$ the counts are 0 and 0, and for $|X|=1$ they are 1 and 1, so they agree. For $|X|=2$ the counts are 4 and 2, so no bijection exists. The smallest size is 2, so $\{u,v\}$ does not represent $\mathrm{Id}$.'
           - problem: 'Let $\mathcal C$ be the chain $1\le 2\le 3$ viewed as a category, with one morphism $a\to b$ when $a\le b$ and no morphism otherwise. The functor $\mathrm{Hom}(2,-)\colon\mathcal C\to\mathbf{Set}$ sends each object $X$ to the set of morphisms $2\to X$. For which objects $X$ is this set nonempty?'
             answer: '2, 3'
             answer_contract: {"kind": "exact"}
@@ -86,22 +86,22 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The forgetful functor $\mathbf{Grp}\to\mathbf{Set}$ is represented by $\mathbb{Z}$, so $\mathrm{Hom}(\mathbb{Z},S_3)$ is in bijection with the underlying set of $S_3$. A homomorphism is fixed by the image of $1$, which may be any permutation. The group $S_3$ has $3!=6$ elements, so there are 6 homomorphisms.'
-          - problem: 'The functor $F\colon\mathbf{Ab}\to\mathbf{Set}$ sends an abelian group $A$ to $A\times A$. It is represented by $\mathbb{Z}\oplus\mathbb{Z}$, so $\mathrm{Hom}(\mathbb{Z}\oplus\mathbb{Z},A)\cong A\times A$. How many group homomorphisms are there from $\mathbb{Z}\oplus\mathbb{Z}$ to $\mathbb{Z}/4$?'
+          - problem: 'The functor $F\colon\mathbf{Ab}\to\mathbf{Set}$ sends an abelian group $A$ to $A\times A$. How many group homomorphisms are there from $\mathbb{Z}\oplus\mathbb{Z}$ to $\mathbb{Z}/4$?'
             answer: '16'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A homomorphism from $\mathbb{Z}\oplus\mathbb{Z}$ is fixed by the images of the two generators $(1,0)$ and $(0,1)$, and these images may be any two elements of the target. Hence $\mathrm{Hom}(\mathbb{Z}\oplus\mathbb{Z},\mathbb{Z}/4)\cong\mathbb{Z}/4\times\mathbb{Z}/4$. That set has $4\cdot 4=16$ elements.'
-          - problem: 'Test whether the forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ is represented by the cyclic group $\mathbb{Z}/3$, through $\varphi\mapsto\varphi(1)$, by counting the group homomorphisms $\mathbb{Z}/3\to\mathbb{Z}/2$. How many are there?'
-            answer: '1'
+            solution_sketch: 'A homomorphism from $\mathbb{Z}\oplus\mathbb{Z}$ is fixed by the images of the two generators $(1,0)$ and $(0,1)$, and these images are any two elements of the target. Hence $\mathrm{Hom}(\mathbb{Z}\oplus\mathbb{Z},A)\cong A\times A$, so $\mathbb{Z}\oplus\mathbb{Z}$ represents $F$. For $A=\mathbb{Z}/4$ that set has $4\cdot 4=16$ elements.'
+          - problem: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ sends a group to its underlying set. Find the smallest order of a group $G$ for which $\mathrm{Hom}(\mathbb{Z}/3,G)$ and $U(G)$ have different numbers of elements.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A homomorphism $\varphi\colon\mathbb{Z}/3\to\mathbb{Z}/2$ needs $3\varphi(1)=0$ in $\mathbb{Z}/2$, which forces $\varphi(1)=0$. So there is 1 homomorphism, the zero map, while $\mathbb{Z}/2$ has 2 elements. The map $\varphi\mapsto\varphi(1)$ is not onto, so $\mathbb{Z}/3$ does not represent $U$.'
+            solution_sketch: 'A homomorphism $\varphi\colon\mathbb{Z}/3\to G$ is fixed by $\varphi(1)$, which needs $3\varphi(1)=0$. For the trivial group both counts are 1. For $G=\mathbb{Z}/2$ the condition forces $\varphi(1)=0$, so there is 1 homomorphism, while $\mathbb{Z}/2$ has 2 elements. The smallest order is 2, so $\mathbb{Z}/3$ does not represent $U$.'
           - problem: 'The forgetful functor $V\colon\mathbf{Vect}_{\mathbb{F}_2}\to\mathbf{Set}$ from vector spaces over the field $\mathbb{F}_2=\{0,1\}$ is represented by the one-dimensional space $\mathbb{F}_2$. How many linear maps are there from $\mathbb{F}_2$ to $\mathbb{F}_2^3$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A linear map out of $\mathbb{F}_2$ is determined by the image of $1$, and that image may be any vector of the target. So the linear maps correspond to the vectors of $\mathbb{F}_2^3$. This space has $2^3=8$ vectors, so there are 8 linear maps.'
-          - problem: 'To test whether the abelian group $\mathbb{Z}\times\mathbb{Z}$ could represent the forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$, count the group homomorphisms $\mathbb{Z}\times\mathbb{Z}\to S_3$. How many are there?'
-            answer: '18'
+          - problem: 'The forgetful functor $U\colon\mathbf{Grp}\to\mathbf{Set}$ sends a group to its underlying set. Let $G=S_3$. How many more group homomorphisms $\mathbb{Z}\times\mathbb{Z}\to G$ are there than elements of $G$?'
+            answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A homomorphism $\mathbb{Z}\times\mathbb{Z}\to S_3$ is fixed by the images $a$ and $b$ of the two generators, and these two images must commute. The identity commutes with all 6 elements, each of the 3 transpositions commutes with 2 elements, and each of the 2 three-cycles commutes with 3 elements. So there are $6+3\cdot 2+2\cdot 3=18$ pairs, hence 18 homomorphisms. This is more than the 6 elements of $S_3$, so $\mathbb{Z}\times\mathbb{Z}$ does not represent $U$.'
+            solution_sketch: 'A homomorphism $\mathbb{Z}\times\mathbb{Z}\to S_3$ is fixed by the images $a$ and $b$ of the two generators, and these two images must commute. The identity commutes with all 6 elements, each of the 3 transpositions commutes with 2 elements, and each of the 2 three-cycles commutes with 3 elements. So there are $6+3\cdot 2+2\cdot 3=18$ homomorphisms, which is $18-6=12$ more than the 6 elements. So $\mathbb{Z}\times\mathbb{Z}$ does not represent $U$.'
           - problem: 'Let $F\colon\mathbf{Mon}\to\mathbf{Set}$ send a monoid $M$ to $UM\times UM$, the set of ordered pairs of its elements, and a homomorphism $h$ to $(m,m'')\mapsto(h(m),h(m''))$. Is $F$ represented by the free monoid $\{a,b\}^*$ on two letters?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes it is", "it is", "true", "it is represented", "represented"], ["no", "no it is not", "it is not", "not", "false", "not represented", "it is not represented"]]}
@@ -187,7 +187,7 @@ topics:
           answer: '1'
           reveal: 'Such a homomorphism must send $n$ to $3n$, and this formula does work. Exactly one homomorphism exists for each chosen value of $h(1)$, which is the universal element condition for $(\mathbb{N},1)$.'
         exemplars:
-          - problem: 'The additive monoid $\mathbb{N}$ with the element $1$ is a universal element of the forgetful functor $U\colon\mathbf{Mon}\to\mathbf{Set}$. Let $M$ be the monoid $\mathbb{Z}/6$ under addition. By universality there is exactly one monoid homomorphism $h\colon\mathbb{N}\to M$ with $h(1)=4$. What is $h(5)$?'
+          - problem: 'The additive monoid $\mathbb{N}$ with the element $1$ is a universal element of the forgetful functor $U\colon\mathbf{Mon}\to\mathbf{Set}$. Let $M$ be the monoid $\mathbb{Z}/6$ under addition, and let $h\colon\mathbb{N}\to M$ be the monoid homomorphism with $h(1)=4$. What is $h(5)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A monoid homomorphism out of $(\mathbb{N},+)$ is fixed by $h(1)$, and $h(n)$ is the sum of $n$ copies of $h(1)$. So $h(5)=5\cdot 4=20$. In $\mathbb{Z}/6$ the number 20 equals 2.'
@@ -224,11 +224,11 @@ topics:
         key_prerequisites: [universal-properties]
         constraints: "Recover the representing object and universal tuple of projections/injections for the candidate-structure functor. Match its variance and exists-unique equation to the product or coproduct universal property."
         exemplars:
-          - problem: 'In $\mathbf{Set}$ let $A=\{1,2\}$ and $B=\{3,4\}$, and let $F(X)=\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$. The functor $F$ has a universal element $u$ at an object $P$. Take $X=\{7\}$ with $f\colon X\to A$, $f(7)=2$, and $g\colon X\to B$, $g(7)=4$. Then $(f,g)$ is an element of $F(X)$, so there is a unique $h\colon X\to P$ with $F(h)(u)=(f,g)$. What is $h(7)$?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{1,2\}$ and $B=\{3,4\}$, and let $F(X)=\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$. The functor $F$ has a universal element $u$ at an object $P$. Take $X=\{7\}$ with $f\colon X\to A$, $f(7)=2$, and $g\colon X\to B$, $g(7)=4$. Let $h\colon X\to P$ be the map with $F(h)(u)=(f,g)$. What is $h(7)$?'
             answer: '(2, 4)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The functor sends $X$ to pairs of maps out of $X$, so the universal element is the pair of projections of $P=A\times B$. The condition $F(h)(u)=(f,g)$ says $p_1\circ h=f$ and $p_2\circ h=g$. So $h(7)=(f(7),g(7))=(2,4)$.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{5\}$ and $B=\{6,7\}$, and let $F(X)=\mathrm{Hom}(A,X)\times\mathrm{Hom}(B,X)$. The functor $F$ has a universal element $u=(i_A,i_B)$ at an object $C$. Take $X=\{0,8\}$ with $f\colon A\to X$, $f(5)=0$, and $g\colon B\to X$, $g(6)=8$, $g(7)=0$. There is a unique $h\colon C\to X$ with $F(h)(u)=(f,g)$. What is $h(i_B(6))$?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{5\}$ and $B=\{6,7\}$, and let $F(X)=\mathrm{Hom}(A,X)\times\mathrm{Hom}(B,X)$. The functor $F$ has a universal element $u=(i_A,i_B)$ at an object $C$. Take $X=\{0,8\}$ with $f\colon A\to X$, $f(5)=0$, and $g\colon B\to X$, $g(6)=8$, $g(7)=0$. Let $h\colon C\to X$ be the map with $F(h)(u)=(f,g)$. What is $h(i_B(6))$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The functor sends $X$ to pairs of maps into $X$, so $C$ is the disjoint union $A+B$ with the injections $i_A$ and $i_B$. The condition $F(h)(u)=(f,g)$ says $h\circ i_A=f$ and $h\circ i_B=g$. Hence $h(i_B(6))=g(6)=8$.'
@@ -675,10 +675,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The function $f$ is a bijection, so it has an inverse. An inverse of a function is unique, so there is exactly $1$ function $g$ with both properties.'
-          - problem: 'In a category the morphism $f\colon A\to B$ induces a bijection $\mathrm{Hom}(X,A)\to\mathrm{Hom}(X,B)$, $h\mapsto f\circ h$, for every object $X$. Taking $X=B$ gives $g\colon B\to A$ with $f\circ g=1_B$. To show that $g\circ f=1_A$, compare $f\circ(g\circ f)$ with $f\circ 1_A$. What is $f\circ(g\circ f)$ equal to?'
-            answer: 'f'
+          - problem: 'In a category the morphism $f\colon A\to B$ induces a bijection $\mathrm{Hom}(X,A)\to\mathrm{Hom}(X,B)$, $h\mapsto f\circ h$, for every object $X$. Let $g\colon B\to A$ be a morphism with $f\circ g=1_B$. Which morphism $A\to A$ is equal to $g\circ f$?'
+            answer: 'id_A'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'By associativity $f\circ(g\circ f)=(f\circ g)\circ f=1_B\circ f=f$. Also $f\circ 1_A=f$, so $g\circ f$ and $1_A$ have the same image under the injective map $h\mapsto f\circ h$, and therefore they are equal.'
+            solution_sketch: 'By associativity $f\circ(g\circ f)=(f\circ g)\circ f=1_B\circ f=f$. Also $f\circ 1_A=f$, so $g\circ f$ and $1_A$ have the same image under the injective map $h\mapsto f\circ h$ for $X=A$. Therefore $g\circ f=1_A$, the identity of $A$.'
           - problem: 'Seven beads sit on a ring, and rotating the ring by $k$ places is the morphism $k$ of a one-object category with morphisms $0,1,\dots,6$ and composition adding modulo $7$. A natural isomorphism $\theta\colon\mathrm{Hom}(-,*)\Rightarrow\mathrm{Hom}(-,*)$ has $\theta_*(0)=3$. What is $\theta^{-1}_*(0)$, the value of its inverse at the identity?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -832,10 +832,10 @@ topics:
             answer_contract: {"kind": "none"}
             solution_sketch: 'Setup: an object of the category of elements is a pair (X, x) with x in F(X); a morphism from (X, x) to (Y, y) is an arrow h from X to Y with (F h)(x) = y. Step 1 (initial gives universal): let (A, u) be initial. For each element x of F(X), initiality gives a unique arrow h from A to X with (F h)(u) = x. Define a transformation from Hom(A, -) to F by sending h to (F h)(u); the unique-existence clause makes each component a bijection, and naturality in X holds because for any k from X to Y we get (F k)((F h)(u)) = (F(k h))(u). So F is isomorphic to Hom(A, -), and (A, u) is a universal element, hence a representation. Step 2 (universal gives initial): suppose F is isomorphic to Hom(A, -) by a natural isomorphism, and let u be the image of the identity on A. For each x in F(X), the inverse bijection and naturality give exactly one h from A to X with (F h)(u) = x, so there is exactly one morphism from (A, u) to (X, x) in the category of elements; hence (A, u) is initial. Conclusion: the initial objects are exactly the universal elements, so F is representable if and only if its category of elements has an initial object.'
     diagnostic_exemplar:
-      problem: 'Let $\mathcal C$ have two objects $0$ and $1$, their identity morphisms and exactly one other morphism $f\colon 0\to 1$. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(0)=\{1,2,3\}$ and $F(1)=\{4,5\}$, where $F(f)$ sends $1$ and $2$ to $4$ and sends $3$ to $5$. The objects of the category of elements $\int F$ are the pairs $(X,x)$ with $x\in F(X)$. A morphism $(X,x)\to(Y,y)$ is a morphism $g\colon X\to Y$ with $F(g)(x)=y$. How many morphisms does $\int F$ have?'
+      problem: 'Let $\mathcal C$ have two objects $0$ and $1$, their identity morphisms and exactly one other morphism $f\colon 0\to 1$. Let $F\colon\mathcal C\to\mathbf{Set}$ have $F(0)=\{1,2,3\}$ and $F(1)=\{4,5\}$, where $F(f)$ sends $1$ and $2$ to $4$ and sends $3$ to $5$. How many morphisms does the category of elements $\int F$ have?'
       answer_contract: {"kind":"exact"}
       answer: '8'
-      solution_sketch: 'There are $3+2=5$ objects, and each has an identity morphism. Each of the three elements of $F(0)$ also has one morphism, given by $f$, to the element it maps to. This gives $5+3=8$.'
+      solution_sketch: 'The objects of $\int F$ are the pairs $(X,x)$ with $x\in F(X)$, so there are $3+2=5$ objects, and each has an identity morphism. A morphism $(X,x)\to(Y,y)$ is a $g$ with $F(g)(x)=y$. Each of the three elements of $F(0)$ has one morphism, given by $f$. This gives $5+3=8$.'
     anki_seeds:
       - front: "Objects of the category of elements $\\int F$ (for $F\\colon\\mathcal C\\to\\mathbf{Set}$)?"
         back: "pairs $(C,x)$ with $x\\in FC$."
@@ -881,10 +881,10 @@ topics:
             answer: '(5, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Compatibility forces $\varphi(1,0)=(0,1)$ and $\varphi(0,1)=(1,0)$. A homomorphism of abelian groups is linear, so $\varphi(3,5)=3(0,1)+5(1,0)=(5,3)$.'
-          - problem: 'The free abelian group on $X=\{a,b\}$ is $\mathbb Z^2$. Use the adjunction between $\mathbf{Ab}$ and $\mathbf{Set}$ to find how many group homomorphisms $\mathbb Z^2\to\mathbb Z/6$ there are.'
+          - problem: 'The free abelian group on $X=\{a,b\}$ is $\mathbb Z^2$. How many group homomorphisms $\mathbb Z^2\to\mathbb Z/6$ are there?'
             answer: '36'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The adjunction gives a bijection between homomorphisms $\mathbb Z^2\to\mathbb Z/6$ and functions $\{a,b\}\to\mathbb Z/6$. There are $6$ choices for each of the $2$ elements, so $6\cdot 6=36$ homomorphisms.'
+            solution_sketch: 'The free functor from $\mathbf{Set}$ to $\mathbf{Ab}$ is left adjoint to the forgetful functor. So homomorphisms $\mathbb Z^2\to\mathbb Z/6$ match functions $\{a,b\}\to\mathbb Z/6$. There are $6$ choices for each of the $2$ elements, so $6\cdot 6=36$ homomorphisms.'
           - problem: 'A truck carries $2$ pallets per trip, so $n$ trips carry $G(n)=2n$ pallets. The number of trips $F(x)$ needed for $x$ pallets is characterised by the rule that $F(x)\le n$ exactly when $x\le G(n)$, for every whole number $n$. This rule determines $F$ uniquely. What is $F(7)$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -918,10 +918,10 @@ topics:
             answer: 'e'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The function $L_e$ is the identity map, which is a permutation. The function $L_z$ sends both $e$ and $z$ to $z$, so it is not injective, and only $m=e$ works.'
-          - problem: 'Let $M=\{e,z\}$ be the monoid with identity $e$ and $zz=ez=ze=z$, and let $L_m(x)=mx$. The functions $L_e$ and $L_z$ agree at $z$, because $L_e(z)=z=L_z(z)$. Is the map $m\mapsto L_m$ injective?'
+          - problem: 'Let $M=\{e,z\}$ be the monoid with identity $e$ and $zz=ez=ze=z$, and let $L_m(x)=mx$. Is the map $m\mapsto L_m$ injective?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is injective", "injective", "it is"], ["no", "it is not injective", "not injective", "it is not"]]}
-            solution_sketch: 'The functions $L_e$ and $L_z$ agree at $z$, but injectivity only needs them to differ at some point. At the unit they differ, since $L_e(e)=e$ and $L_z(e)=z$, so the map is injective.'
+            solution_sketch: 'The map is injective when $L_e$ and $L_z$ are different functions. They differ at one point, which is enough. At the unit, $L_e(e)=e$ and $L_z(e)=z$, so the map is injective.'
           - problem: 'A clock hand starts at $0$ on a $12$-hour clock. The permutation $L_4\colon x\mapsto 4+x$ of $\mathbb Z/12$ moves the hand ahead by $4$ hours. After how many moves does the hand first show $0$ again?'
             answer: '3'
             answer_contract: {"kind": "exact"}

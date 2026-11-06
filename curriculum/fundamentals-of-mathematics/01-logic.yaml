@@ -39,9 +39,9 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 0; d = 1'
             solution_sketch: 'Statement (a) is true, so it gets 1. For (b), $i^2=-1$ is not positive, so the value is 0. For (c), $0^2=0$ is not positive, so the value is 0. For (d), the numbers $k$, $k+2$ and $k+4$ have the three different remainders $0$, $1$ and $2$ modulo $3$, so one of them is divisible by $3$ and the value is 1.'
-          - problem: 'Take the sentence ''This sentence has exactly four words.'' (a) Count the words of the sentence. (b) Give the truth value of the sentence as 1 for true and 0 for false.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
-            answer: 'a = 6; b = 0'
+          - problem: 'Take the sentence ''This sentence has exactly four words.'' Give the truth value of the sentence as 1 for true and 0 for false.'
+            answer_contract: {"kind":"exact"}
+            answer: '0'
             solution_sketch: 'Count the words: This, sentence, has, exactly, four, words. The sentence has 6 words. The sentence names the number 4, so it is false and the value is 0.'
           # source: FoM exercise 1.1-1-1
           - problem: 'Read the twelve sentences below. (a) Count the sentences that are statements. (b) Count the true statements. (c) Count the false statements. A sentence with no truth value is not a statement. Sentences: (1) The year 2008 had 366 days. (2) The number 91 is a prime number. (3) Finish your homework. (4) This sentence has exactly six words. (5) Is 51 a prime number? (6) The sum of two odd numbers is odd. (7) The number $2^{10}$ equals 1024. (8) Every triangle has four sides. (9) This sentence is a false statement. (10) Wow! (11) The number 3 is the only prime number $p$ such that $p$, $p+2$ and $p+4$ are all prime. (12) Close the door.'
@@ -57,7 +57,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0'
             solution_sketch: 'Put $x=3$ in the sentence. It becomes $3+2=5$, so the value is 1. Put $x=4$ in the sentence. It becomes $4+2=5$, which is wrong, so the value is 0.'
-          - problem: 'A command such as ''Close the window.'' is not a statement. Give 1 for a statement and 0 for a sentence that is not a statement. (a) Close the window. (b) $2^5=32$. (c) Which number is larger, $2^5$ or $5^2$?'
+          - problem: 'Give 1 for a statement and 0 for a sentence that is not a statement. Part a: Close the window. Part b: $2^5=32$. Part c: Which number is larger, $2^5$ or $5^2$?'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 1; c = 0'
             solution_sketch: 'Sentence (a) is a command, so it gets 0. Sentence (b) is true because $2^5=32$, so it gets 1. Sentence (c) is a question, so it gets 0.'
@@ -69,7 +69,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 4; b = 19'
             solution_sketch: 'The pairs are $(3,5)$, $(5,7)$, $(11,13)$ and $(17,19)$. That gives 4 pairs. The last pair has the larger prime 19.'
-          - problem: 'A statement has a truth value, even if nobody knows that value. For each sentence, give 1 if it is a statement and 0 if it is not. (a) Every even number greater than $2$ is the sum of two primes. (b) Add two primes. (c) $n$ is the sum of two primes. (d) $10$ is the sum of two primes.'
+          - problem: 'For each sentence, give 1 if it is a statement and 0 if it is not. Part a: Every even number greater than $2$ is the sum of two primes. Part b: Add two primes. Part c: $n$ is the sum of two primes. Part d: $10$ is the sum of two primes.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 0; d = 1'
             solution_sketch: 'Sentence (a) is a statement, even when nobody knows its truth value. Sentence (b) is a command, so it gets 0. Sentence (c) holds the free letter $n$, so it gets 0. Sentence (d) is true because $10=3+7$, so it gets 1.'
@@ -185,10 +185,10 @@ topics:
         name: 'Definition 1.12 and Examples 1.13 and 1.15: the converse of an implication'
         key_prerequisites: [fom-1-1-statements]
         exemplars:
-          - problem: 'The converse of $p \Rightarrow q$ is $q \Rightarrow p$. Let $p$ have the value 1 and let $q$ have the value 0. Give the value as 1 or 0 of (a) $p \Rightarrow q$, (b) the converse of $p \Rightarrow q$.'
+          - problem: 'Let $p$ have the value 1 and let $q$ have the value 0. Give the value as 1 or 0 of part a, $p \Rightarrow q$, and of part b, the converse of $p \Rightarrow q$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 1'
-            solution_sketch: 'The implication $p \Rightarrow q$ has a true hypothesis and a false conclusion, so it has the value 0. The converse $q \Rightarrow p$ has a false hypothesis, so it has the value 1.'
+            solution_sketch: 'The implication $p \Rightarrow q$ has a true hypothesis and a false conclusion, so it has the value 0. The converse swaps the two parts and is $q \Rightarrow p$. It has a false hypothesis, so it has the value 1.'
           - problem: 'Look at the four cases for the pair of truth values of $p$ and $q$. (a) In how many cases do $p \Rightarrow q$ and its converse have different values? (b) In how many cases do both have the value 0?'
             answer_contract: {"kind":"multipart","parts":[{"name":"d","contract":{"kind":"exact"}},{"name":"z","contract":{"kind":"exact"}}]}
             answer: 'd = 2; z = 0'
@@ -292,10 +292,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 1; c = 0; d = 1'
             solution_sketch: 'Current flows when both $p$ and $q$ are closed, or when $r$ is closed. This is the statement $(p\wedge q)\vee r$. Case (a) has $r=1$, so the value is 1. Case (b) has $p=q=1$, so the value is 1. Case (c) has no closed path, so the value is 0. Case (d) has $r=1$, so the value is 1.'
-          - problem: 'A connective $\circ$ has the value 1 for exactly the pairs $(p,q)=(1,0)$ and $(p,q)=(0,0)$. Write $p\circ q$ as an or of conjunctions, one conjunction for each pair with the value 1. (a) How many conjunctions do you need? (b) Give the value of $p\wedge\neg q$ for $(p,q)=(0,0)$. (c) Give the value of $\neg p\wedge\neg q$ for $(p,q)=(0,0)$.'
-            answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
-            answer: 'a = 2; b = 0; c = 1'
-            solution_sketch: 'Each pair with the value 1 gives one conjunction, so you need 2. The conjunction $p\wedge\neg q$ fits the pair $(1,0)$ only. At $(0,0)$ it has the value 0. The conjunction $\neg p\wedge\neg q$ fits the pair $(0,0)$ only. At $(0,0)$ it has the value 1.'
+          - problem: 'A connective $\circ$ has the value 1 for exactly the pairs $(p,q)=(1,0)$ and $(p,q)=(0,0)$. Part a: List the values of $p\circ q$ for $(p,q)=(1,1),(1,0),(0,1),(0,0)$ in this order, as a string of four digits. Part b: Count the pairs for which $p\circ q$ and $\neg q$ have different values.'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"a"},{"contract":{"kind":"exact"},"name":"b"}]}
+            answer: 'a = 0101; b = 0'
+            solution_sketch: 'Write one conjunction for each pair with the value 1. These are $p\wedge\neg q$ for $(1,0)$ and $\neg p\wedge\neg q$ for $(0,0)$. Their or equals $\neg q$. So the string is 0101 and no pair gives a different value.'
           - problem: 'A logical function of $p$ and $q$ is fixed by its four output values for the four input pairs. (a) How many different logical functions of $p$ and $q$ exist? (b) How many of them have the value 1 for exactly one input pair? (c) How many conjunctions $u\wedge v$ exist with $u$ equal to $p$ or $\neg p$ and $v$ equal to $q$ or $\neg q$?'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 16; b = 4; c = 4'
@@ -365,7 +365,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 1; d = 0'
             solution_sketch: 'In (a) the two statements agree in all rows, so the value is 1. In (b) the pair $(1,0)$ gives 0 for the first and 1 for the second, so the value is 0. In (c) both statements are 0 only for $(1,1)$, so the value is 1. In (d) the pair $(1,0)$ gives 1 and 0, so the value is 0.'
-          - problem: 'To decide if two statements in $p$, $q$ and $r$ are equal, compare them for every assignment. (a) How many assignments are there for $p$, $q$ and $r$? (b) How many assignments are there for four statements $p$, $q$, $r$ and $s$? (c) For $p$, $q$ and $r$, count the assignments for which $(p\wedge q)\vee r$ and $p\wedge(q\vee r)$ have different values.'
+          - problem: 'The statements $p$, $q$ and $r$ each take the value 1 or 0. Part a: How many assignments are there for $p$, $q$ and $r$? Part b: How many assignments are there for four statements $p$, $q$, $r$ and $s$? Part c: For $p$, $q$ and $r$, count the assignments for which $(p\wedge q)\vee r$ and $p\wedge(q\vee r)$ have different values.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 8; b = 16; c = 2'
             solution_sketch: 'Each statement has 2 values, so three statements give $2^3=8$ assignments. Four statements give $2^4=16$. In (c) the two statements differ for $(p,q,r)=(0,1,1)$ and $(0,0,1)$. In both cases the first is 1 and the second is 0. So the count is 2.'
@@ -711,7 +711,7 @@ topics:
         key_prerequisites: [quantifiers, universal-existential-statements]
         exemplars:
           # source: FoM exercise 1.5-1-35
-          - problem: 'Give each truth value as 1 for true and 0 for false. Form the negation of each statement first. Then give the truth value of the negation. (a) $\exists p\in\mathbb{N}: 3p=12$. (b) $\forall x\in\mathbb{R}: x^2\ge 4$. (c) $\exists p,q\in\mathbb{N}: pq=15$. (d) $\forall n\in\mathbb{N}: \exists p,q\in\{2,\dots,n-1\}: pq=n$. (e) $\forall x>0: \exists n\in\mathbb{N}: n>x$. (f) $\forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): x^2<\varepsilon$. (g) $\exists a\in\mathbb{R}: \forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): |x^2-a^2|<\varepsilon$.'
+          - problem: 'Give each truth value as 1 for true and 0 for false. Give the truth value of the negation of each statement. Part a: $\exists p\in\mathbb{N}: 3p=12$. Part b: $\forall x\in\mathbb{R}: x^2\ge 4$. Part c: $\exists p,q\in\mathbb{N}: pq=15$. Part d: $\forall n\in\mathbb{N}: \exists p,q\in\{2,\dots,n-1\}: pq=n$. Part e: $\forall x>0: \exists n\in\mathbb{N}: n>x$. Part f: $\forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): x^2<\varepsilon$. Part g: $\exists a\in\mathbb{R}: \forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): |x^2-a^2|<\varepsilon$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}},{"name":"d","contract":{"kind":"exact"}},{"name":"e","contract":{"kind":"exact"}},{"name":"f","contract":{"kind":"exact"}},{"name":"g","contract":{"kind":"exact"}}]}
             answer: 'a=0;b=1;c=0;d=1;e=0;f=0;g=0'
             solution_sketch: 'The negation has the opposite truth value of the statement. Statements (a), (c), (e), (f) and (g) are true, so their negations have the value 0. For (a) use $p=4$, for (c) use $3\cdot 5$ and for (g) use $a=0$. Statement (b) fails for $x=0$ and statement (d) fails for the prime $n=5$, so their negations have the value 1.'
@@ -731,7 +731,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 0; c = 0'
             solution_sketch: 'In (a) the roots 1, 2 and 3 exist, so the value is 1. In (b) the number 2 is not a square of a natural number, so the value is 0. In (c) one $r$ must give both $r^2=1$ and $r^2=4$, which is not possible, so the value is 0.'
-          - problem: 'Fix $x$ in the inner statement $\exists r\in[0,\infty): r^2=x$. Give the value of $r$ in $[0,\infty)$ for each $x$. (a) $x=81$. (b) $x=144$. (c) $x=0$.'
+          - problem: 'For each $x$, give the value of $r$ in $[0,\infty)$ that makes the statement $\exists r\in[0,\infty): r^2=x$ true. Part a: $x=81$. Part b: $x=144$. Part c: $x=0$.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 9; b = 12; c = 0'
             solution_sketch: 'Take the nonnegative square root of each $x$. We have $9^2=81$, so (a) is 9. We have $12^2=144$, so (b) is 12. We have $0^2=0$, so (c) is 0.'
@@ -740,10 +740,10 @@ topics:
             answer: 'a = 1; b = 0; c = 1'
             solution_sketch: 'In (a) pick $r=x$ for each $x$, so the value is 1. In (b) one $r$ must equal 1, 2 and 3 together, so the value is 0. In (c) the choice $r=3$ is at least every $x$ in $S$, so the value is 1.'
           # source: FoM exercise 1.5-1-36
-          - problem: 'Write the negation of each statement. Move the negation through every quantifier. (a) $\forall x\in\mathbb{N}: x^2\ge 1$. (b) $\forall\varepsilon>0: \exists\delta>0: \forall x\in(x_0-\delta,x_0+\delta): |f(x)-f(x_0)|<\varepsilon$, where $f$ is one fixed function. (c) $\forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): \sqrt{|x|}<\varepsilon$. (d) $\exists f\in F: \forall\varepsilon>0: \exists\delta>0: \forall x\in(a-\delta,a+\delta): |f(x)-f(a)|<\varepsilon$, where $F$ is a fixed family of functions.'
+          - problem: 'Write the negation of each statement. Part a: $\forall x\in\mathbb{N}: x^2\ge 1$. Part b: $\forall\varepsilon>0: \exists\delta>0: \forall x\in(x_0-\delta,x_0+\delta): |f(x)-f(x_0)|<\varepsilon$, where $f$ is one fixed function. Part c: $\forall\varepsilon>0: \exists\delta>0: \forall x\in(-\delta,\delta): \sqrt{|x|}<\varepsilon$. Part d: $\exists f\in F: \forall\varepsilon>0: \exists\delta>0: \forall x\in(a-\delta,a+\delta): |f(x)-f(a)|<\varepsilon$, where $F$ is a fixed family of functions.'
             answer_contract: {"kind":"written"}
             answer: 'Swap each universal quantifier for an existential one and each existential for a universal one. Then reverse the last inequality.'
-            solution_sketch: 'Use Theorem 1.44 one quantifier at a time, from the outside in. Statement (a) becomes $\exists x\in\mathbb{N}: x^2<1$. Statement (b) becomes $\exists\varepsilon>0: \forall\delta>0: \exists x\in(x_0-\delta,x_0+\delta): |f(x)-f(x_0)|\ge\varepsilon$. Statement (c) becomes $\exists\varepsilon>0: \forall\delta>0: \exists x\in(-\delta,\delta): \sqrt{|x|}\ge\varepsilon$. Statement (d) becomes $\forall f\in F: \exists\varepsilon>0: \forall\delta>0: \exists x\in(a-\delta,a+\delta): |f(x)-f(a)|\ge\varepsilon$.'
+            solution_sketch: 'Use Theorem 1.44 one quantifier at a time, from the outside in. Part a becomes $\exists x\in\mathbb{N}: x^2<1$. Part b becomes $\exists\varepsilon>0: \forall\delta>0: \exists x\in(x_0-\delta,x_0+\delta): |f(x)-f(x_0)|\ge\varepsilon$. Part c becomes $\exists\varepsilon>0: \forall\delta>0: \exists x\in(-\delta,\delta): \sqrt{|x|}\ge\varepsilon$. Part d becomes $\forall f\in F: \exists\varepsilon>0: \forall\delta>0: \exists x\in(a-\delta,a+\delta): |f(x)-f(a)|\ge\varepsilon$.'
           # source: FoM exercise 1.5-1-38
           - problem: 'Write each statement with quantifiers. Then give its truth value and name the witness or counterexample that decides it. (a) Some prime number is even. (b) Every natural number has a square root in the natural numbers. (c) Each integer is the sum of two positive integers. (d) Each real number is the square of a positive real number.'
             answer_contract: {"kind":"written"}
@@ -759,10 +759,10 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 2; b = 2; c = 0'
             solution_sketch: 'In (a) the prime 2 is even, so it is the counterexample. In (b) the number 1 has $k=1$. The number 2 needs $k=\frac12$, which is not an integer, so (b) is 2. In (c) every nonzero $n$ has $k=\frac1n$, but $0\cdot k=0$, so (c) is 0.'
-          - problem: 'Let $S=\{1,2,3\}$. Look at the statement $\forall x\in S: \exists y\in S: y=x+1$ and at its negation $\exists x\in S: \forall y\in S: y\ne x+1$. (a) Give the truth value of the statement as 1 for true and 0 for false. (b) Give the truth value of the negation as 1 for true and 0 for false. (c) Give the one $x\in S$ that makes the inner part of the negation true.'
+          - problem: 'Let $S=\{1,2,3\}$. Look at the statement $\forall x\in S: \exists y\in S: y=x+1$. Part a: Give the truth value of the statement as 1 for true and 0 for false. Part b: Give the truth value of its negation as 1 for true and 0 for false. Part c: Give the one $x\in S$ that is a counterexample to the statement.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 1; c = 3'
-            solution_sketch: 'For $x=3$ the number 4 is not in $S$, so the statement has the value 0. The negation has the opposite value, so (b) is 1. The element $x=3$ is the witness, so (c) is 3.'
+            solution_sketch: 'For $x=3$ the number 4 is not in $S$, so the statement has the value 0. The negation is $\exists x\in S: \forall y\in S: y\ne x+1$. It has the opposite value, so (b) is 1. The element $x=3$ is the witness, so (c) is 3.'
           - problem: 'Let $a_n=(-1)^n$ and $L=2$. Look at the statement $\exists\varepsilon>0: \forall N\in\mathbb{N}: \exists n\ge N: |a_n-L|\ge\varepsilon$. (a) Give the value of $|a_n-L|$ for $n=4$. (b) Give the truth value of the statement as 1 for true and 0 for false. (c) Give the largest $\varepsilon$ for which the statement holds.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 1; b = 1; c = 3'
@@ -865,12 +865,12 @@ topics:
             answer: 'A true q makes the implication true. A false p, or p true with q false, makes the hypothesis false.'
             solution_sketch: 'Split into three cases. If q has value 1, the conclusion is true, so the implication is true. If p has value 0, the hypothesis is false, so the implication is true. If p has value 1 and q has value 0, then p implies q is false. The hypothesis is false again, so the implication is true.'
           # source: FoM exercise 1.6-1-39
-          - problem: 'Show in two ways that $[p\wedge(p\Rightarrow q)]\Rightarrow q$ is a tautology. (a) Build a truth table. (b) Replace $p\Rightarrow q$ by $\neg p\vee q$ and simplify.'
+          - problem: 'Show in two ways that $[p\wedge(p\Rightarrow q)]\Rightarrow q$ is a tautology. Part a: Build a truth table. Part b: Use algebra on the connectives.'
             answer_contract: {"kind":"written"}
             answer: 'A truth table has the value 1 in all four rows. Algebra gives not p or not q or q, and that is always true.'
             solution_sketch: 'Use Theorem 1.50 as the goal. A truth table with four rows gives the value 1 in each row. For the algebra, replace p implies q by not p or q. Then p and (not p or q) becomes p and q. The statement becomes not (p and q) or q, which is not p or not q or q, and that is true.'
           # source: FoM exercise 1.6-1-40
-          - problem: 'Show that the statement $p\wedge\neg p$ is an absurdity. Use two cases for $p$.'
+          - problem: 'Prove that the statement $p\wedge\neg p$ is an absurdity.'
             answer_contract: {"kind":"written"}
             answer: 'One of p and not p is false in each row, so their and-statement is false in both rows.'
             solution_sketch: 'Finish the second half of Proposition 1.53 in the same way as the first half. Take p with value 1. Then not p has value 0, so the and-statement has value 0. Take p with value 0. Then the first part is already 0, so the and-statement has value 0.'
@@ -928,7 +928,7 @@ topics:
             answer: 'If the hypothesis holds, p is true and A or B is true. The implication for that case then gives q.'
             solution_sketch: 'Use the case idea of Theorem 1.50 and Theorem 1.55. If q has value 1 or p has value 0, the implication is true. Now take p=1 and q=0. If A has value 1, the third part of the hypothesis is false. If B has value 1, the fourth part is false in the same way, and if A and B both have value 0, then A or B is false. In each case the hypothesis is false.'
           # source: FoM exercise 1.6-1-43
-          - problem: 'Prove the statement $[p\wedge(A\vee B)\wedge((p\wedge A)\Rightarrow q)\wedge((p\wedge B)\Rightarrow q)]\Rightarrow q$ in three ways. (a) Reason in words. (b) Use algebra with $x\Rightarrow y$ equal to $\neg x\vee y$. (c) Build a truth table.'
+          - problem: 'Prove the statement $[p\wedge(A\vee B)\wedge((p\wedge A)\Rightarrow q)\wedge((p\wedge B)\Rightarrow q)]\Rightarrow q$ in three ways. Part a: Reason in words. Part b: Use algebra. Part c: Build a truth table.'
             answer_contract: {"kind":"written"}
             answer: 'In words, the hypothesis gives p and one of A and B, and the matching implication gives q. Algebra and the truth table agree.'
             solution_sketch: 'Start from Theorem 1.59 and the methods of Theorem 1.50 and Theorem 1.55. In words, consider q true, then p false, then the cases for A and B. For algebra, replace each implication by an or-statement and expand with the distributive law. For the truth table, use 16 rows, one for each assignment of p, A, B and q.'
@@ -977,7 +977,7 @@ topics:
             answer: 'Both implications are false in exactly one row, the row with p true and q false. In all other rows both are true.'
             solution_sketch: 'The implication p implies q is false only for p=1 and q=0. The implication not q implies not p is false only when not q is 1 and not p is 0. That means q=0 and p=1, the same row. So both sides agree in every row, and the equivalence is a tautology.'
           # source: FoM exercise 1.6-1-45
-          - problem: 'Prove the statement $(p\Leftrightarrow q)\Leftrightarrow((p\Rightarrow q)\wedge(q\Rightarrow p))$ in three ways. (a) Reason in words. (b) Use algebra with $x\Rightarrow y$ equal to $\neg x\vee y$ and $p\Leftrightarrow q$ equal to $(p\wedge q)\vee(\neg p\wedge\neg q)$. (c) Build a truth table.'
+          - problem: 'Prove the statement $(p\Leftrightarrow q)\Leftrightarrow((p\Rightarrow q)\wedge(q\Rightarrow p))$ in three ways. Part a: Reason in words. Part b: Use algebra. Part c: Build a truth table.'
             answer_contract: {"kind":"written"}
             answer: 'Both sides are true exactly when p and q agree. Algebra expands the and-statement of the two implications, and a four-row truth table agrees.'
             solution_sketch: 'State Theorem 1.62 first. In words, split into the rows where p and q agree and the rows where they differ. For algebra, expand (not p or q) and (not q or p) with the distributive law. The result is (p and q) or (not p and not q). A truth table with four rows shows the value 1 for the equivalence in each row.'
@@ -1041,10 +1041,10 @@ topics:
             answer: 'Each fails in one row. Use p=1 and q=0 for (a), (b), (d) and (e), p=0 and q=0 for (f), and p=1, A=0, B=1, q=0 for (c).'
             solution_sketch: 'Compare each statement with the true laws, for example Theorem 1.50 and Theorem 1.59. In each row named in the answer, the hypothesis has the value 1 and the conclusion has the value 0. So the implication has the value 0. One failing row is enough to show that a statement is not a tautology.'
           # source: FoM exercise 1.6-1-52
-          - problem: 'Prove that every prime above $2$ is odd. Use the fact that each natural number is even or odd, and name the step that uses the law of disjunction.'
+          - problem: 'Prove that every prime above $2$ is odd.'
             answer_contract: {"kind":"written"}
             answer: 'A prime above 2 is even or odd. If it is even, it has the factor 2 and is not prime, so the law of disjunction leaves odd.'
-            solution_sketch: 'Take a prime number n above 2. By the fact, n is even or n is odd. If n is even, then 2 divides n and n is above 2, so n is not prime. So not (n is even) holds. Theorem 1.71 part 4 is the law of disjunction. It turns the statements (n is even or n is odd) and not (n is even) into n is odd.'
+            solution_sketch: 'Take a prime number n above 2. By the fact that each natural number is even or odd, n is even or n is odd. If n is even, then 2 divides n and n is above 2, so n is not prime. The law of disjunction (Theorem 1.71 part 4) then leaves n odd.'
         constraints: 'Evaluate negations of implications and find counterexamples; the items vary the statements.'
       - id: kp5
         name: 'Example 1.70 and Theorem 1.71: counterexamples and the laws of simplification, addition, syllogism and disjunction'
@@ -1109,7 +1109,7 @@ topics:
             answer: 'Assume the root of k is a/b in lowest terms. Then a squared equals k times b squared, so b squared divides a squared, so b is 1 and k is a square.'
             solution_sketch: 'Use the contradiction method of Example 1.57. Assume the root of k is a/b in lowest terms. Then a^2=kb^2. Each prime factor of b divides a^2, so it divides a. This contradicts lowest terms unless b=1. Then k=a^2 is a perfect square, which contradicts the assumption.'
           # source: FoM exercise 1.6-1-56
-          - problem: 'Prove that the function $f(x,y)=x+y+1$ of two variables is not a product $g(x)h(y)$ of two functions of one variable. Hint: assume it is, and use the four points $(0,0)$, $(1,0)$, $(0,1)$ and $(1,1)$.'
+          - problem: 'Prove that the function $f(x,y)=x+y+1$ of two variables is not a product $g(x)h(y)$ of two functions of one variable.'
             answer_contract: {"kind":"written"}
             answer: 'Assume f=g(x)h(y). Then f(0,0)f(1,1)=3 and f(1,0)f(0,1)=4, but both equal g(0)h(0)g(1)h(1).'
             solution_sketch: 'Use a proof by contradiction, as in Example 1.57. Assume f(x,y)=g(x)h(y). Then f(0,0)f(1,1) equals g(0)h(0)g(1)h(1). Also f(1,0)f(0,1) equals g(1)h(0)g(0)h(1), the same product. But the values are 1 times 3 and 2 times 2, which are 3 and 4.'
@@ -1313,7 +1313,7 @@ topics:
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 2; b = 0; c = 1'
             solution_sketch: 'Set $A$ does not hold itself and $C$ does not hold itself, but $B$ holds $B$. So $R=\{A, C\}$ and (a) is 2. This set has two elements. It differs from $A$, $B$ and $C$, so (b) is 0. Only $B$ holds $C$, so (c) is 1.'
-          - problem: 'Let $R$ be the set of all sets $x$ with $x \notin x$. Then $R \in R$ holds exactly when $R \notin R$ holds. Use 1 for true and 0 for false. (a) Suppose $R \in R$ is 1. Give the value of $R \notin R$. (b) Suppose $R \in R$ is 0. Give the value of $R \in R$ that the rule of $R$ forces. (c) Count the values of $R \in R$ that give no contradiction.'
+          - problem: 'Let $R$ be the set of all sets $x$ with $x \notin x$. Use 1 for true and 0 for false. Part a: Suppose $R \in R$ is 1. Give the value of $R \notin R$. Part b: Suppose $R \in R$ is 0. Give the value of $R \in R$ that the rule of $R$ forces. Part c: Count the values of $R \in R$ that give no contradiction.'
             answer_contract: {"kind":"multipart","parts":[{"name":"a","contract":{"kind":"exact"}},{"name":"b","contract":{"kind":"exact"}},{"name":"c","contract":{"kind":"exact"}}]}
             answer: 'a = 0; b = 1; c = 0'
             solution_sketch: 'If $R \in R$ is 1, then $R \notin R$ is the opposite value, so (a) is 0. If $R \in R$ is 0, then $R \notin R$ is 1, so $R$ meets its rule and $R \in R$ is forced to 1, and (b) is 1. Both values of $R \in R$ give a contradiction, so (c) is 0.'

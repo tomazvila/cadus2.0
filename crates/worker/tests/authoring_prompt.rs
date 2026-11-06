@@ -210,7 +210,10 @@ fn the_digest_is_sixteen_hex_characters_and_one_per_kind() {
 #[test]
 fn the_prompt_digests_of_this_checkout_are_pinned() {
     let pinned = [
-        (Kind::Template, "c0ef8977d579adc8"),
+        // Re-pinned 2026-11-06 after no handed values (D-AP1): the template system
+        // text gained the rule that a question never hands over a value.
+        // Old value: `c0ef8977d579adc8`. New value: `61a15548237a1259`.
+        (Kind::Template, "61a15548237a1259"),
         // Brief 09 (D-V1) moved this one: the teach tool takes an optional
         // `figure`, and the system text explains it. D-TM1 and D-TD1 moved it
         // again: the teach tool takes optional `terms`, `picture`, `watch_out`

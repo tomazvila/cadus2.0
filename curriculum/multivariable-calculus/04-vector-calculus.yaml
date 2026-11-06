@@ -97,10 +97,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","it is not","not a gradient field","there is no such function"],["yes","it is","gradient field","there is such a function"]]}
             solution_sketch: 'If $\mathbf{F} = \nabla f$, then $f_x = 3y$ and $f_y = 2x$, so the mixed partials would be $f_{xy} = 3$ and $f_{yx} = 2$. These are different, but mixed partials of a smooth function are equal. So $\mathbf{F}$ is not a gradient field.'
-          - problem: 'Let $\mathbf{F}(x, y) = \langle P, Q \rangle = \langle 3y,\; 2x \rangle$. Find $\dfrac{\partial Q}{\partial x} - \dfrac{\partial P}{\partial y}$.'
-            answer: '-1'
+          - problem: 'Find the value of $k$ for which $\mathbf{F}(x, y) = \langle 3y,\, kx \rangle$ is the gradient field of some function $f$.'
+            answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $\partial Q/\partial x = 2$ and $\partial P/\partial y = 3$. Their difference is $2 - 3 = -1$. A gradient field would give $0$, so this field is not a gradient field.'
+            solution_sketch: 'Write $P = 3y$ and $Q = kx$. A gradient field needs $\partial Q/\partial x = \partial P/\partial y$, so $k = 3$. Then $f = 3xy$ works.'
           - problem: 'Is $\mathbf{F}(x, y) = \langle 2xy,\; x^2 \rangle$ the gradient field of some function $f$?'
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["no","it is not","not a gradient field","there is no such function"],["yes","it is","gradient field","there is such a function"]]}
@@ -280,10 +280,10 @@ topics:
             answer: '10pi'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The length is $\int_C ds$. The speed is $\sqrt{9 + 16} = 5$, so the length is $\int_0^{2\pi} 5\,dt = 10\pi$ metres.'
-          - problem: 'Find the average density of a wire along the upper unit semicircle with density $\rho(x, y) = y$, that is, its mass divided by its length.'
+          - problem: 'Find the average density of a wire along the upper unit semicircle with density $\rho(x, y) = y$.'
             answer: '2/pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The mass is $\int_0^{\pi} \sin t\,dt = 2$. The length of a half circle of radius $1$ is $\pi$. So the average density is $2/\pi$.'
+            solution_sketch: 'The mass is $\int_0^{\pi} \sin t\,dt = 2$. The length of a half circle of radius $1$ is $\pi$. The average density is the mass over the length, $2/\pi$.'
         constraints: 'curves with constant speed (circles, helices); densities linear in one coordinate; answers exact; lengths and average densities'
     diagnostic_exemplar:
       problem: 'A wire follows the helix $\mathbf{r}(t) = \langle 3\cos t,\; 3\sin t,\; 4t \rangle$ for $0 \le t \le \pi$ and has density $\rho(x, y, z) = z$. Find its mass.'
@@ -603,14 +603,14 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'On the bottom and left edges the integrand is $0$. On the right edge $x = 2$ and $dx = 0$, giving $\int_0^2 2\,dy = 4$. On the top edge $y = 2$ and $dy = 0$, giving $\int_2^0 (-2)\,dx = 4$. The total is $8$.'
-          - problem: 'The area enclosed by a simple closed curve $C$ traversed counterclockwise is $\tfrac{1}{2}\oint_C (x\, dy - y\, dx)$. Use this to find the area of the triangle with vertices $(0, 0)$, $(4, 0)$ and $(0, 3)$.'
+          - problem: 'A closed curve $C$ runs counterclockwise around the triangle with vertices $(0, 0)$, $(4, 0)$ and $(0, 3)$. Find the area inside $C$ by a line integral along $C$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the two edges along the axes the integrand is $0$. On $(4,0) \to (0,3)$ with $x = 4 - 4t$, $y = 3t$ the integrand is $(4 - 4t)(3) + (3t)(4) = 12$, giving $12$. The area is half of this, $\tfrac{1}{2}(12) = 6$.'
-          - problem: 'Use the area formula $\tfrac{1}{2}\oint_C (x\, dy - y\, dx)$ to find the area enclosed by the ellipse $x = 3\cos t$, $y = 2\sin t$, $0 \le t \le 2\pi$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. On the two edges along the axes the integrand is $0$. On $(4,0) \to (0,3)$ with $x = 4 - 4t$, $y = 3t$ the integrand is $(4 - 4t)(3) + (3t)(4) = 12$, giving $12$. The area is half of this, $6$.'
+          - problem: 'Find the area enclosed by the ellipse $x = 3\cos t$, $y = 2\sin t$, $0 \le t \le 2\pi$, by a line integral along the ellipse.'
             answer: '6pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $x\,dy - y\,dx = (3\cos t)(2\cos t) + (2\sin t)(3\sin t) = 6$ times $dt$. So the integral around the ellipse is $\int_0^{2\pi} 6\,dt = 12\pi$. The area is half of this, $6\pi$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. Here $x\,dy - y\,dx = (3\cos t)(2\cos t)\,dt + (2\sin t)(3\sin t)\,dt = 6\,dt$. So the integral around the ellipse is $\int_0^{2\pi} 6\,dt = 12\pi$. The area is half of this, $6\pi$.'
           - problem: 'A fly moves along the curve $\mathbf{r}(t) = \langle t,\; t^2,\; t^3 \rangle$, $0 \le t \le 1$, with distances in metres, in the force field $\mathbf{F} = \langle y,\; z,\; x \rangle$ newtons. How much work, in joules, does the field do?'
             answer: '89/60'
             answer_contract: {"kind":"exact"}
@@ -1010,9 +1010,9 @@ topics:
             solution_sketch: 'A magnetic field must satisfy $\operatorname{div}\mathbf{B}=0$. Here $\operatorname{div}\mathbf{B}=2+k-3=k-1$, which is $0$ only for $k=1$.'
         constraints: "verifications on concrete low-degree fields; the two identities are used both to compute and to decide whether a field can be a gradient or a curl"
     diagnostic_exemplar:
-      problem: 'For $\mathbf{F} = \langle x^2, y^2, z^2 \rangle$, confirm that $\operatorname{curl} \mathbf{F} = \mathbf{0}$ and then state $\operatorname{div} \mathbf{F}$.'
-      answer: '$2x + 2y + 2z$'
-      solution_sketch: 'Each component depends only on its own variable, so all mixed partials in the curl vanish; the divergence is $2x + 2y + 2z$.'
+      problem: 'For $\mathbf{F} = \langle x^2, y^2, z^2 \rangle$, find $\operatorname{div} \mathbf{F}$.'
+      answer: '2x+2y+2z'
+      solution_sketch: 'Each component depends only on its own variable. The divergence is the sum of the three pure partials, which is $2x + 2y + 2z$.'
     anki_seeds:
       - front: 'Formulas: $\operatorname{div}\mathbf{F}$ and $\operatorname{curl}\mathbf{F}$ in terms of $\nabla$?'
         back: '$\operatorname{div}\mathbf{F} = \nabla \cdot \mathbf{F}$ (a scalar); $\operatorname{curl}\mathbf{F} = \nabla \times \mathbf{F}$ (a vector).'
@@ -1070,7 +1070,7 @@ topics:
             answer: '(0, 0, 0)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'The first component is $\partial_y(x+y)-\partial_z(x+z)=1-1=0$. The second is $\partial_z(y+z)-\partial_x(x+y)=1-1=0$ and the third is $\partial_x(x+z)-\partial_y(y+z)=1-1=0$, so the curl is $\langle 0,0,0\rangle$.'
-          - problem: 'The field $\mathbf{F}=\langle yz,\;xz,\;x\rangle$ has $P_y=Q_x$. What is $\operatorname{curl}\mathbf{F}$?'
+          - problem: 'Find $\operatorname{curl}\mathbf{F}$ for the field $\mathbf{F}=\langle yz,\;xz,\;x\rangle$.'
             answer: '(-x, y - 1, 0)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The first component is $\partial_y(x)-\partial_z(xz)=0-x=-x$. The second is $\partial_z(yz)-\partial_x(x)=y-1$ and the third is $\partial_x(xz)-\partial_y(yz)=z-z=0$. The curl is not zero, so $\mathbf{F}$ is not conservative; in space all three pairs must be tested.'
@@ -1245,30 +1245,30 @@ topics:
         name: "Area via Green's theorem"
         key_prerequisites: [line-integrals, double-integrals]
         exemplars:
-          - problem: 'Use $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$ to find the area of the ellipse $x = 3\cos t$, $y = 2\sin t$.'
+          - problem: 'Find the area of the ellipse $x = 3\cos t$, $y = 2\sin t$ with a line integral around its boundary.'
             answer: '6pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $dx = -3\sin t\,dt$ and $dy = 2\cos t\,dt$ we get $x\,dy - y\,dx = 6\cos^2 t + 6\sin^2 t = 6$. The area is $\tfrac{1}{2}\int_0^{2\pi} 6\,dt = 6\pi$.'
-          - problem: 'Use $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$ to find the area of the ellipse $x = 2\cos t$, $y = 5\sin t$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. With $dx = -3\sin t\,dt$ and $dy = 2\cos t\,dt$ we get $x\,dy - y\,dx = 6\cos^2 t + 6\sin^2 t = 6$. The area is $\tfrac{1}{2}\int_0^{2\pi} 6\,dt = 6\pi$.'
+          - problem: 'Use a line integral around the boundary to find the area of the ellipse $x = 2\cos t$, $y = 5\sin t$.'
             answer: '10pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $dx = -2\sin t\,dt$ and $dy = 5\cos t\,dt$ we get $x\,dy - y\,dx = 10\cos^2 t + 10\sin^2 t = 10$. The area is $\tfrac{1}{2}\int_0^{2\pi} 10\,dt = 10\pi$.'
-          - problem: 'Use $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$ on the triangle with vertices $(0,0)$, $(4,0)$ and $(0,3)$, traversed counterclockwise, to find its area.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. With $dx = -2\sin t\,dt$ and $dy = 5\cos t\,dt$ we get $x\,dy - y\,dx = 10$. The area is $\tfrac{1}{2}\int_0^{2\pi} 10\,dt = 10\pi$.'
+          - problem: 'The triangle with vertices $(0,0)$, $(4,0)$ and $(0,3)$ has a counterclockwise boundary. Find its area with a line integral around that boundary.'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'On the side from $(0,0)$ to $(4,0)$ we have $y = 0$ and $dy = 0$, so the integrand is $0$. The side from $(0,3)$ to $(0,0)$ has $x = 0$ and $dx = 0$, so it also gives $0$. On the slanted side $x = 4 - 4s$, $y = 3s$ and $x\,dy - y\,dx = 12\,ds$, so the area is $\tfrac{1}{2}\int_0^1 12\,ds = 6$.'
-          - problem: 'Use $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$ to find the area of the quadrilateral with vertices $(0,0)$, $(5,0)$, $(5,4)$ and $(0,2)$, traversed counterclockwise.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. On the side from $(0,0)$ to $(4,0)$ we have $y = 0$ and $dy = 0$, so the integrand is $0$. The side from $(0,3)$ to $(0,0)$ has $x = 0$ and $dx = 0$, so it also gives $0$. On the slanted side $x = 4 - 4s$, $y = 3s$ and $x\,dy - y\,dx = 12\,ds$, so the area is $\tfrac{1}{2}\int_0^1 12\,ds = 6$.'
+          - problem: 'Find the area of the quadrilateral with vertices $(0,0)$, $(5,0)$, $(5,4)$ and $(0,2)$ with a line integral around its boundary, traversed counterclockwise.'
             answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sides on the $x$-axis and on the $y$-axis give $0$. On the side from $(5,0)$ to $(5,4)$ we have $x\,dy - y\,dx = 20\,ds$, and on the side from $(5,4)$ to $(0,2)$ we have $x\,dy - y\,dx = 10\,ds$. So the area is $\tfrac{1}{2}(20 + 10) = 15$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. The sides on the $x$-axis and on the $y$-axis give $0$. On the side from $(5,0)$ to $(5,4)$ we have $x\,dy - y\,dx = 20\,ds$, and on the side from $(5,4)$ to $(0,2)$ we have $x\,dy - y\,dx = 10\,ds$. So the area is $\tfrac{1}{2}(20 + 10) = 15$.'
           - problem: 'The ellipse $x = a\cos t$, $y = 3\sin t$ with $a > 0$ has area $12\pi$. Find $a$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The area formula gives $\tfrac{1}{2}\int_0^{2\pi} 3a\,dt = 3\pi a$. Setting $3\pi a = 12\pi$ and dividing both sides by $3\pi$ gives $a = 4$.'
-          - problem: 'Use $A = \frac{1}{2}\oint_C (x\,dy - y\,dx)$ to find the area of the parallelogram with vertices $(0,0)$, $(6,0)$, $(8,3)$ and $(2,3)$, traversed counterclockwise.'
+          - problem: 'Find the area of the parallelogram with vertices $(0,0)$, $(6,0)$, $(8,3)$ and $(2,3)$ with a line integral around its boundary, traversed counterclockwise.'
             answer: '18'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The bottom side gives $0$ and the left side from $(2,3)$ to $(0,0)$ gives $0$. The side from $(6,0)$ to $(8,3)$ and the top side each give $x\,dy - y\,dx = 18\,ds$. So the area is $\tfrac{1}{2}(18 + 18) = 18$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. The bottom side gives $0$ and the left side from $(2,3)$ to $(0,0)$ gives $0$. The side from $(6,0)$ to $(8,3)$ and the top side each give $x\,dy - y\,dx = 18\,ds$. So the area is $\tfrac{1}{2}(18 + 18) = 18$.'
           - problem: 'A lawn is bounded by the ellipse $x = 10\cos t$, $y = 6\sin t$, with $x$ and $y$ in metres. Grass seed costs $2$ dollars per square metre. What does it cost to seed the whole lawn?'
             answer: '120pi'
             answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
@@ -1277,10 +1277,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The area of the pond is $\tfrac{1}{2}\int_0^{2\pi} 20\,dt = 20\pi$ square metres. Volume equals area times mean depth, so the mean depth is $60\pi \div 20\pi = 3$ metres.'
-          - problem: 'Find the area of the ellipse $x = 2\cos t$, $y = 4\sin t$ with the line integral $\oint_C (x\,dy - y\,dx)$.'
+          - problem: 'Find the area of the ellipse $x = 2\cos t$, $y = 4\sin t$ as a line integral over its boundary curve.'
             answer: '8pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For this ellipse $x\,dy - y\,dx = 8\,dt$, so the line integral is $16\pi$. The area formula has the factor $\tfrac{1}{2}$, so the area is $\tfrac{1}{2}\cdot 16\pi = 8\pi$.'
+            solution_sketch: 'The area of a region is $A = \tfrac{1}{2}\oint_C (x\,dy - y\,dx)$ for a counterclockwise boundary $C$. For this ellipse $x\,dy - y\,dx = 8\,dt$, so the line integral of $x\,dy - y\,dx$ is $16\pi$. The factor $\tfrac{1}{2}$ gives the area $8\pi$.'
         constraints: "ellipses and polygons parametrized with sin/cos or segments; the integrand collapses via sin^2 + cos^2 = 1; items may ask for a side, a cost or a depth"
     diagnostic_exemplar:
       problem: 'Use Green''s theorem to evaluate $\oint_C -y\,dx + x\,dy$, where $C$ is the boundary of the rectangle $[0, 3] \times [0, 2]$, traversed counterclockwise.'
@@ -1437,14 +1437,14 @@ topics:
             answer: 'x = 3cos(theta); y = 3sin(theta); z = z'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["theta", "z"]}, "name": "z"}]}
             solution_sketch: 'Every point of the cylinder lies on the circle of radius $3$ around the $z$-axis, so $x = 3\cos\theta$ and $y = 3\sin\theta$. The height $z$ is free, which gives $\mathbf{r}(\theta, z) = \langle 3\cos\theta, 3\sin\theta, z\rangle$.'
-          - problem: 'The surface $z = x^2 + 2y^2$ lies over the disk $x^2 + y^2 \le 4$. Parametrize it by $\mathbf{r}(u, v)$ with $x = u$ and $y = v$.'
+          - problem: 'The surface $z = x^2 + 2y^2$ lies over the disk $x^2 + y^2 \le 4$. Write its parametrization $\mathbf{r}(u, v)$ with domain $u^2 + v^2 \le 4$.'
             answer: '(u, v, u^2 + 2v^2)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A graph $z = f(x, y)$ is parametrized by taking the two inputs as parameters. With $x = u$ and $y = v$ we get $z = u^2 + 2v^2$, so $\mathbf{r}(u, v) = \langle u, v, u^2 + 2v^2\rangle$ for $u^2 + v^2 \le 4$.'
-          - problem: 'The plane $z = 5 - 2x + 3y$ lies over the square $0 \le x \le 1$, $0 \le y \le 1$. Parametrize this piece of the plane by $\mathbf{r}(s, t)$ with $x = s$ and $y = t$.'
+            solution_sketch: 'A graph $z = f(x, y)$ is parametrized by taking the two inputs as parameters. The domain $u^2 + v^2 \le 4$ matches the disk, so $x = u$ and $y = v$. Then $z = u^2 + 2v^2$ and $\mathbf{r}(u, v) = \langle u, v, u^2 + 2v^2\rangle$.'
+          - problem: 'The plane $z = 5 - 2x + 3y$ lies over the square $0 \le x \le 1$, $0 \le y \le 1$. Write its parametrization $\mathbf{r}(s, t)$ with domain $0 \le s \le 1$, $0 \le t \le 1$.'
             answer: '(s, t, 5 - 2s + 3t)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $x = s$ and $y = t$ the height is $z = 5 - 2s + 3t$. So $\mathbf{r}(s, t) = \langle s, t, 5 - 2s + 3t\rangle$ for $0 \le s \le 1$ and $0 \le t \le 1$.'
+            solution_sketch: 'The domain matches the square, so take $x = s$ and $y = t$. The height is $z = 5 - 2s + 3t$. So $\mathbf{r}(s, t) = \langle s, t, 5 - 2s + 3t\rangle$.'
           - problem: 'Parametrize the sphere $x^2 + y^2 + z^2 = 9$ by $\mathbf{r}(u, v)$, where $u$ is the angle from the positive $z$-axis, $0 \le u \le \pi$, and $v$ is the angle around the $z$-axis, $0 \le v \le 2\pi$. Give $x$, $y$ and $z$ as functions of $u$ and $v$.'
             answer: 'x = 3sin(u)cos(v); y = 3sin(u)sin(v); z = 3cos(u)'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "x"}, {"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "y"}, {"contract": {"kind": "function", "vars": ["u", "v"]}, "name": "z"}]}
@@ -1535,10 +1535,10 @@ topics:
         name: "The surface-area element"
         key_prerequisites: [vector-valued-functions, cross-product]
         exemplars:
-          - problem: 'Using $dS = |\mathbf{r}_\theta \times \mathbf{r}_z|\,d\theta\,dz$, find the lateral area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
+          - problem: 'Find the lateral area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 3$.'
             answer: '12pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z\rangle$ we get $|\mathbf{r}_\theta \times \mathbf{r}_z| = 2$. The area is $\int_0^3\int_0^{2\pi} 2\,d\theta\,dz = 12\pi$, which matches $2\pi r h$.'
+            solution_sketch: 'Parametrize with $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z\rangle$. Then $|\mathbf{r}_\theta \times \mathbf{r}_z| = 2$, so $dS = 2\,d\theta\,dz$. The area is $\int_0^3\int_0^{2\pi} 2\,d\theta\,dz = 12\pi$, which matches $2\pi r h$.'
           - problem: 'For the plane patch $\mathbf{r}(u, v) = \langle u, v, 2u + 2v\rangle$, compute $|\mathbf{r}_u \times \mathbf{r}_v|$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1547,10 +1547,10 @@ topics:
             answer: 'sqrt(14)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $\mathbf{r}_u = \langle 1, 0, 2\rangle$ and $\mathbf{r}_v = \langle 0, 1, 3\rangle$, so $\mathbf{r}_u \times \mathbf{r}_v = \langle -2, -3, 1\rangle$. Its length is $\sqrt{4 + 9 + 1} = \sqrt{14}$.'
-          - problem: 'Find the lateral surface area of the cylinder $x^2 + y^2 = 16$, $0 \le z \le 6$, using the parametrization $\mathbf{r}(\theta, z) = \langle 4\cos\theta, 4\sin\theta, z\rangle$.'
+          - problem: 'Find the lateral surface area of the cylinder $x^2 + y^2 = 16$, $0 \le z \le 6$.'
             answer: '48pi'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Here $|\mathbf{r}_\theta \times \mathbf{r}_z| = 4$, so $dS = 4\,d\theta\,dz$. The area is $\int_0^6\int_0^{2\pi} 4\,d\theta\,dz = 4 \cdot 2\pi \cdot 6 = 48\pi$.'
+            solution_sketch: 'Parametrize with $\mathbf{r}(\theta, z) = \langle 4\cos\theta, 4\sin\theta, z\rangle$. Then $|\mathbf{r}_\theta \times \mathbf{r}_z| = 4$, so $dS = 4\,d\theta\,dz$. The area is $\int_0^6\int_0^{2\pi} 4\,d\theta\,dz = 4 \cdot 2\pi \cdot 6 = 48\pi$.'
           - problem: 'For the plane patch $\mathbf{r}(u, v) = \langle u, v, 1 + u + 2v\rangle$ over $0 \le u \le 2$, $0 \le v \le 5$, find its area.'
             answer: '10sqrt(6)'
             answer_contract: {"kind": "exact"}
@@ -1577,9 +1577,9 @@ topics:
             solution_sketch: 'For $\mathbf{r}(\theta, z) = \langle 3\cos\theta, 3\sin\theta, z\rangle$ the factor $|\mathbf{r}_\theta \times \mathbf{r}_z|$ is $3$, the radius, not $9$. The area is $3 \cdot 2\pi \cdot 4 = 24\pi$.'
         constraints: "constant |r_u x r_v| on planes and cylinders; results reconcile with elementary area formulas; contexts include paint, cost and finding a height from an area"
     diagnostic_exemplar:
-      problem: 'Find the lateral surface area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 5$, by parametrizing the surface and using $dS = |\mathbf{r}_\theta \times \mathbf{r}_z|\,d\theta\,dz$.'
+      problem: 'Find the lateral surface area of the cylinder $x^2 + y^2 = 4$, $0 \le z \le 5$.'
       answer: '$20\pi$'
-      solution_sketch: '$\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$ gives $\mathbf{r}_\theta \times \mathbf{r}_z = \langle 2\cos\theta, 2\sin\theta, 0 \rangle$ of magnitude $2$, so the area is $\int_0^{2\pi}\!\int_0^5 2\,dz\,d\theta = 20\pi$.'
+      solution_sketch: 'Parametrize with $\mathbf{r}(\theta, z) = \langle 2\cos\theta, 2\sin\theta, z \rangle$. Then $\mathbf{r}_\theta \times \mathbf{r}_z = \langle 2\cos\theta, 2\sin\theta, 0 \rangle$ has magnitude $2$, so the area is $\int_0^{2\pi}\!\int_0^5 2\,dz\,d\theta = 20\pi$.'
     anki_seeds:
       - front: 'Normal vector to a parametrized surface $\mathbf{r}(u, v)$?'
         back: '$\mathbf{N} = \mathbf{r}_u \times \mathbf{r}_v$'
@@ -1974,10 +1974,10 @@ topics:
         name: "Closed surfaces piece by piece"
         key_prerequisites: [surface-integrals, parametrized-surfaces]
         exemplars:
-          - problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\, y,\, z \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 3$, which consists of the lateral surface, the top disk and the bottom disk.'
+          - problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\, y,\, z \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 3$.'
             answer: '9pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'On the lateral surface the outward normal is $\langle x, y, 0 \rangle$, so $\mathbf{F}\cdot\mathbf{n} = 1$ over area $6\pi$, which gives $6\pi$. On the top disk $\mathbf{n} = \langle 0, 0, 1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = 3$ over area $\pi$, which gives $3\pi$. On the bottom disk $z = 0$, so $\mathbf{F}\cdot\mathbf{n} = 0$. The total is $6\pi + 3\pi + 0 = 9\pi$.'
+            solution_sketch: 'Split the closed cylinder into the lateral surface, the top disk and the bottom disk. On the lateral surface the outward normal is $\langle x, y, 0 \rangle$, so $\mathbf{F}\cdot\mathbf{n} = 1$ over area $6\pi$, which gives $6\pi$. The top disk gives $3\cdot\pi = 3\pi$ and the bottom disk gives $0$. The total is $9\pi$.'
           - problem: 'Find the total outward flux of $\mathbf{F} = \langle x^2,\, 0,\, 0 \rangle$ through the boundary of the unit cube $[0,1]^3$, face by face.'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -1998,15 +1998,15 @@ topics:
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
             solution_sketch: 'The lateral surface gives $\mathbf{F}\cdot\mathbf{n} = 1$ over area $2\pi h$, so $2\pi h$. The top gives $h$ over area $\pi$, so $\pi h$, and the bottom gives $0$. The total is $3\pi h$, and $3\pi h = 15\pi$ gives $h = 5$ meters.'
-          - problem: 'What is the total outward flux of $\mathbf{F} = \langle x,\, y,\, z + 1 \rangle$ through the whole closed cylinder surface $x^2 + y^2 = 1$, $0 \le z \le 2$, with lateral surface, top disk and bottom disk?'
+          - problem: 'What is the total outward flux of $\mathbf{F} = \langle x,\, y,\, z + 1 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$?'
             answer: '6pi'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The bottom disk counts. Its normal is $\langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -(0 + 1) = -1$ over area $\pi$, which contributes $-\pi$. The lateral surface gives $4\pi$ and the top gives $3\pi$, so the total is $4\pi + 3\pi - \pi = 6\pi$.'
+            solution_sketch: 'Split the closed cylinder into three pieces. The bottom disk has normal $\langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -1$ over area $\pi$, which contributes $-\pi$. The lateral surface gives $4\pi$ and the top gives $3\pi$. The total is $4\pi + 3\pi - \pi = 6\pi$.'
         constraints: "closed cylinders and boxes assembled from 2-6 pieces; each piece is a flat cap, box face, or lateral surface whose contribution is a one-line integral; always state the outward normal of each piece"
     diagnostic_exemplar:
-      problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\; y,\; z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$ (lateral surface plus both caps), computing each piece separately.'
+      problem: 'Find the total outward flux of $\mathbf{F} = \langle x,\; y,\; z^2 \rangle$ through the closed cylinder $x^2 + y^2 = 1$, $0 \le z \le 2$.'
       answer: '$8\pi$'
-      solution_sketch: 'Lateral surface: the outward unit normal is $\langle x, y, 0 \rangle$, so $\mathbf{F}\cdot\mathbf{n} = x^2 + y^2 = 1$ and the flux is the area $4\pi$. Top cap $z = 2$: $\mathbf{F}\cdot\mathbf{n} = z^2 = 4$ over area $\pi$, giving $4\pi$. Bottom cap $z = 0$: $\mathbf{F}\cdot\mathbf{n} = -z^2 = 0$. Total $8\pi$ (matching $\iiint (2 + 2z)\,dV$).'
+      solution_sketch: 'Split the closed surface into the lateral surface and two caps. Lateral surface: the outward unit normal is $\langle x, y, 0 \rangle$, so $\mathbf{F}\cdot\mathbf{n} = 1$ and the flux is the area $4\pi$. Top cap: $\mathbf{F}\cdot\mathbf{n} = 4$ over area $\pi$ gives $4\pi$. Bottom cap: $\mathbf{F}\cdot\mathbf{n} = -z^2 = 0$. The total is $8\pi$.'
     anki_seeds:
       - front: 'General formula for the flux of $\mathbf{F}$ through a parametrized surface $\mathbf{r}(u, v)$ over domain $D$?'
         back: '$\iint_D \mathbf{F}(\mathbf{r}(u,v)) \cdot (\mathbf{r}_u \times \mathbf{r}_v)\, du\, dv$ — orient by the direction of $\mathbf{r}_u \times \mathbf{r}_v$.'
@@ -2257,10 +2257,10 @@ topics:
         name: "Strategic uses: closing surfaces and divergence-free fields"
         key_prerequisites: [divergence-curl, general-flux-integrals]
         exemplars:
-          - problem: 'Find the upward flux of $\mathbf{F} = \langle y,\, -x,\, z \rangle$ through the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$, by closing the surface with the unit disk in the plane $z = 0$ and applying the divergence theorem.'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle y,\, -x,\, z \rangle$ through the paraboloid $z = 1 - x^2 - y^2$, $z \ge 0$.'
             answer: 'pi/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The divergence is $0 + 0 + 1 = 1$, so the flux through the closed surface is the volume under the paraboloid, $\int_0^{2\pi}\!\int_0^1 (1 - r^2)\,r\,dr\,d\theta = \frac{\pi}{2}$. On the disk the field $\langle y, -x, 0 \rangle$ is tangent, so the disk adds $0$. The upward flux through the paraboloid is $\frac{\pi}{2}$.'
+            solution_sketch: 'Close the surface with the unit disk in the plane $z = 0$. The divergence is $1$, so the flux through the closed surface is the volume, $\int_0^{2\pi}\!\int_0^1 (1 - r^2)\,r\,dr\,d\theta = \frac{\pi}{2}$. On the disk the field $\langle y, -x, 0 \rangle$ is tangent, so the disk adds $0$. The upward flux through the paraboloid is $\frac{\pi}{2}$.'
           - problem: 'Find the outward flux of $\mathbf{F} = \langle y,\, z,\, x \rangle$ through the sphere of radius $3$ centered at the origin.'
             answer: '0'
             answer_contract: {"kind":"exact"}
@@ -2281,15 +2281,15 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The divergence is $c$, so the closed flux through the hemisphere and the floor disk is $c \cdot \frac{2\pi}{3}$. On the floor $\mathbf{F}\cdot\mathbf{n} = -cz = 0$, so the hemisphere carries all of it. Setting $\frac{2\pi c}{3} = \frac{16\pi}{3}$ gives $c = 8$.'
-          - problem: 'The upper unit hemisphere is closed with the disk $x^2 + y^2 \le 1$ in the plane $z = 0$. The upward flux of $\mathbf{F} = \langle 0,\, 0,\, z + 2 \rangle$ through the closed surface is $\frac{2\pi}{3}$. What is the upward flux through the hemisphere itself?'
+          - problem: 'Find the upward flux of $\mathbf{F} = \langle 0,\, 0,\, z + 2 \rangle$ through the upper unit hemisphere $z = \sqrt{1 - x^2 - y^2}$.'
             answer: '8pi/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Subtract the flux through the floor disk. On it $\mathbf{n} = \langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -2$ over area $\pi$, so the disk carries $-2\pi$. The hemisphere carries $\frac{2\pi}{3} - (-2\pi) = \frac{8\pi}{3}$.'
+            solution_sketch: 'Close the hemisphere with the disk $x^2 + y^2 \le 1$ in the plane $z = 0$. The divergence is $1$, so the closed flux is the half-ball volume $\frac{2\pi}{3}$. On the disk $\mathbf{n} = \langle 0, 0, -1 \rangle$ and $\mathbf{F}\cdot\mathbf{n} = -2$ over area $\pi$, so the disk carries $-2\pi$. The hemisphere carries $\frac{2\pi}{3} + 2\pi = \frac{8\pi}{3}$.'
         constraints: "closing exemplars use paraboloids or hemispheres capped by a flat disk on which F . n is 0 or constant; divergence-free exemplars require citing the theorem, not integrating; answers small rational multiples of pi or 0"
     diagnostic_exemplar:
-      problem: 'Find the upward flux of $\mathbf{F} = \langle y,\; -x,\; z \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$, by closing the surface with the disk $x^2 + y^2 \le 4$ in the plane $z = 0$ and applying the divergence theorem.'
+      problem: 'Find the upward flux of $\mathbf{F} = \langle y,\; -x,\; z \rangle$ through the paraboloid $z = 4 - x^2 - y^2$, $z \ge 0$.'
       answer: '$8\pi$'
-      solution_sketch: '$\operatorname{div}\mathbf{F} = 1$, so the total outward flux through the closed surface equals the volume $\int_0^{2\pi}\!\int_0^2 (4 - r^2)\,r\,dr\,d\theta = 8\pi$. On the bottom disk the outward normal is $\langle 0,0,-1\rangle$ and $\mathbf{F}\cdot\mathbf{n} = -z = 0$, so the whole $8\pi$ passes upward through the paraboloid.'
+      solution_sketch: 'Close the surface with the disk $x^2 + y^2 \le 4$ in the plane $z = 0$. Then $\operatorname{div}\mathbf{F} = 1$, so the total outward flux equals the volume, $\int_0^{2\pi}\!\int_0^2 (4 - r^2)\,r\,dr\,d\theta = 8\pi$. On the disk $\mathbf{F}\cdot\mathbf{n} = -z = 0$, so the whole $8\pi$ passes upward through the paraboloid.'
     anki_seeds:
       - front: 'If $\operatorname{div}\mathbf{F} = 0$ everywhere, what is the outward flux of $\mathbf{F}$ through any closed surface?'
         back: '$0$ — by the divergence theorem the flux equals $\iiint \operatorname{div}\mathbf{F}\, dV = 0$.'

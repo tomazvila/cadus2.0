@@ -1718,7 +1718,7 @@ topics:
         name: "Five-number summary and the 1.5-IQR outlier fence"
         key_prerequisites: [mean-median-mode]
         exemplars:
-          - problem: 'A boxplot has $Q_1=10$ and $Q_3=18$. What is the upper outlier fence $Q_3+1.5\cdot\text{IQR}$?'
+          - problem: 'A boxplot has $Q_1=10$ and $Q_3=18$. What is the upper outlier fence of the $1.5\cdot\text{IQR}$ rule?'
             answer: '30'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The IQR is the difference of the quartiles, $18-10=8$. The upper fence adds $1.5$ times the IQR to $Q_3$, so it is $18+1.5\cdot 8=18+12=30$.'
@@ -1730,7 +1730,7 @@ topics:
             answer: '3, 5, 9, 15, 20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The minimum is $3$ and the maximum is $20$. The median is $9$. The lower half $3, 5, 8$ gives $Q_1=5$, and the upper half $12, 15, 20$ gives $Q_3=15$.'
-          - problem: 'A data set has $Q_1=12$ and $Q_3=20$. What is the lower outlier fence $Q_1-1.5\cdot\text{IQR}$?'
+          - problem: 'A data set has $Q_1=12$ and $Q_3=20$. What is the lower outlier fence of the $1.5\cdot\text{IQR}$ rule?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The IQR is the difference of the quartiles, $20-12=8$. The lower fence subtracts $1.5$ times the IQR from $Q_1$, so it is $12-1.5\cdot 8=12-12=0$.'
@@ -1752,9 +1752,9 @@ topics:
             solution_sketch: 'Since the IQR is $Q_3-Q_1$, we get $Q_3=40+16=56$. The upper fence is $56+1.5\cdot 16=56+24=80$.'
         constraints: "IQR a small even integer so that 1.5*IQR is an integer; fences and candidate outliers are integers; the question asks for a fence, a verdict on one value, a count of outliers or the five-number summary of a data set of 7-9 values"
     diagnostic_exemplar:
-      problem: 'For the sorted data $2, 4, 6, 10, 12, 14, 18$ (exclude the median from each half), compute the upper outlier fence $Q_3 + 1.5 \cdot \text{IQR}$.'
+      problem: 'For the sorted data $2, 4, 6, 10, 12, 14, 18$ (exclude the median from each half), find the upper outlier fence of the $1.5\cdot\text{IQR}$ rule.'
       answer: '29'
-      solution_sketch: '$Q_1 = 4$, $Q_3 = 14$, IQR $= 10$; fence $= 14 + 15 = 29$.'
+      solution_sketch: '$Q_1 = 4$, $Q_3 = 14$, IQR $= 10$. The upper fence adds $1.5\cdot 10=15$ to $Q_3$, so it is $14 + 15 = 29$.'
     anki_seeds:
       - front: 'IQR $=$ ?'
         back: '$Q_3 - Q_1$, the spread of the middle 50% of the data.'
@@ -2172,10 +2172,10 @@ topics:
             solution_sketch: 'A symmetric distribution balances around its center. So the mean and the median are equal, and the mean is $70$.'
         constraints: "give mean and median (or a shape description); ask for the skew direction or for a comparison of the mean and median (difference or ratio)"
     diagnostic_exemplar:
-      problem: 'The prices of six homes, in thousands of dollars, are $200, 210, 220, 230, 240$ and $2000$. The median is the measure of center that suits these prices. What is the median?'
+      problem: 'The prices of six homes, in thousands of dollars, are $200, 210, 220, 230, 240$ and $2000$. What value best represents a typical price?'
       answer_contract: {"kind":"exact"}
       answer: '225'
-      solution_sketch: 'The six values are in order. The median is the mean of the two middle values $220$ and $230$, which is $225$.'
+      solution_sketch: 'The price $2000$ is far from the others, so the mean is pulled up and does not suit the data. The median suits it. The median is the mean of the two middle values $220$ and $230$, which is $225$.'
     anki_seeds:
       - front: 'Skewed data or outliers: report which center-spread pair?'
         back: 'Median with IQR (both are resistant).'

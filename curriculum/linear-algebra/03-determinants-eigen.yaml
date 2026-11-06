@@ -539,15 +539,15 @@ topics:
         name: Factoring out common row factors
         key_prerequisites: [determinant-properties-cramers-rule]
         exemplars:
-          - problem: 'Compute $\det\begin{pmatrix}2&4\\1&3\end{pmatrix}$ by first factoring $2$ out of row 1.'
+          - problem: 'Compute $\det\begin{pmatrix}2&4\\1&3\end{pmatrix}$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Row 1 is $2(1,2)$, so $\det=2\det\begin{pmatrix}1&2\\1&3\end{pmatrix}=2(3-2)=2$.'
-          - problem: 'Compute $\det\begin{pmatrix}3&6&9\\1&0&2\\2&1&1\end{pmatrix}$ by first factoring $3$ out of row 1.'
+          - problem: 'Compute $\det\begin{pmatrix}3&6&9\\1&0&2\\2&1&1\end{pmatrix}$.'
             answer: '21'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Row 1 is $3(1,2,3)$, so $\det=3\det\begin{pmatrix}1&2&3\\1&0&2\\2&1&1\end{pmatrix}$. Expanding the smaller determinant along row 1 gives $1(0-2)-2(1-4)+3(1-0)=-2+6+3=7$, so $\det=3\cdot7=21$.'
-          - problem: 'Compute $\det\begin{pmatrix}3&9\\2&5\end{pmatrix}$ by first factoring $3$ out of row 1.'
+          - problem: 'Compute $\det\begin{pmatrix}3&9\\2&5\end{pmatrix}$.'
             answer: '-3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Row 1 is $3(1,3)$, so $\det=3\det\begin{pmatrix}1&3\\2&5\end{pmatrix}=3(5-6)=3\cdot(-1)=-3$.'
@@ -559,7 +559,7 @@ topics:
             answer: '-14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Row 1 of $A$ is $2$ times row 1 of $M$, and the other rows match. So $\det A=2\det M=2\cdot(-7)=-14$.'
-          - problem: 'Compute $\det\begin{pmatrix}1&2&1\\0&1&3\\6&3&3\end{pmatrix}$ by first factoring $3$ out of row 3.'
+          - problem: 'Compute $\det\begin{pmatrix}1&2&1\\0&1&3\\6&3&3\end{pmatrix}$.'
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Row 3 is $3(2,1,1)$, so $\det=3\det\begin{pmatrix}1&2&1\\0&1&3\\2&1&1\end{pmatrix}$. Expanding along row 1 gives $1(1-3)-2(0-6)+1(0-2)=-2+12-2=8$, so $\det=3\cdot8=24$.'
@@ -575,15 +575,15 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Pulling the factor $5$ out of row 2 gives $\det A=5\det M$. So $\det M=35\div5=7$.'
-          - problem: 'What is $\det\begin{pmatrix}2&6\\3&5\end{pmatrix}$? Factor $2$ out of row 1 first.'
+          - problem: 'Compute $\det\begin{pmatrix}2&6\\3&5\end{pmatrix}$.'
             answer: '-8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Pulling $2$ out of a row multiplies the determinant by $2$, so the factor must be multiplied back. The value is $2\det\begin{pmatrix}1&3\\3&5\end{pmatrix}=2(5-9)=-8$.'
+            solution_sketch: 'Row 1 is $2(1,3)$. Pulling $2$ out of a row multiplies the determinant by $2$, so the factor must be multiplied back. The value is $2\det\begin{pmatrix}1&3\\3&5\end{pmatrix}=2(5-9)=-8$.'
         constraints: 'one row with an obvious common factor of 2 or 3, or a given multiple; one error-analysis item; volume and unit-conversion contexts'
     diagnostic_exemplar:
-      problem: 'Compute $\det\begin{pmatrix}2&4&6\\1&3&2\\0&1&4\end{pmatrix}$ by first factoring $2$ out of row $1$ and then eliminating.'
+      problem: 'Compute $\det\begin{pmatrix}2&4&6\\1&3&2\\0&1&4\end{pmatrix}$.'
       answer: '10'
-      solution_sketch: 'Factoring gives $2\det\begin{pmatrix}1&2&3\\1&3&2\\0&1&4\end{pmatrix}$; $R_2 \to R_2 - R_1$ makes it triangular-ish with determinant $5$, so the answer is $10$.'
+      solution_sketch: 'Row 1 is $2(1,2,3)$, so the determinant is $2\det\begin{pmatrix}1&2&3\\1&3&2\\0&1&4\end{pmatrix}$. The step $R_2 \to R_2 - R_1$ gives the row $(0,1,-1)$, and $R_3 \to R_3 - R_2$ gives $(0,0,5)$. The triangular determinant is $5$, so the answer is $2\cdot 5=10$.'
     anki_seeds:
       - front: 'Row-reduction recipe for determinants: reduce to triangular form, then the determinant equals...'
         back: 'the diagonal product, corrected by $(-1)$ per swap and by any factors pulled out of rows.'
@@ -1116,10 +1116,10 @@ topics:
             answer: '-2, 5, 7'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The matrix is lower triangular, so its eigenvalues are the diagonal entries 7, -2 and 5. The single off-diagonal entry -4 changes nothing. The eigenvalues are -2, 5 and 7.'
-          - problem: 'Let $A = \begin{pmatrix}4&6&2\\0&7&5\\0&0&3\end{pmatrix}$. The number $7$ is an eigenvalue of $A$. Find the eigenvector of $A$ for $\lambda = 7$ whose second entry is $1$.'
+          - problem: 'Let $A = \begin{pmatrix}4&6&2\\0&7&5\\0&0&3\end{pmatrix}$. Find the eigenvector of $A$ for the largest eigenvalue whose second entry is $1$.'
             answer: '(2, 1, 0)'
             answer_contract: {"kind":"coordinates","arity":3}
-            solution_sketch: 'Form $A - 7I = \begin{pmatrix}-3&6&2\\0&0&5\\0&0&-4\end{pmatrix}$. The second row gives $z = 0$, and the first row gives $-3x + 6y = 0$, so $x = 2y$. With $y = 1$ the eigenvector is $(2, 1, 0)$.'
+            solution_sketch: 'The matrix is triangular, so its eigenvalues are the diagonal entries $4$, $7$ and $3$. The largest is $7$. Form $A - 7I$: the second row gives $z = 0$, and the first row gives $-3x + 6y = 0$, so $x = 2y$. With $y = 1$ the eigenvector is $(2, 1, 0)$.'
           - problem: 'Find the eigenvalues of $A = \begin{pmatrix}3&1&2\\0&3&4\\0&0&-2\end{pmatrix}$, counting a repeated eigenvalue as many times as it occurs.'
             answer: '-2, 3, 3'
             answer_contract: {"kind":"exact"}
@@ -1237,18 +1237,18 @@ topics:
             answer: '(0, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The matrix $A - 3I = \begin{pmatrix} 2 & 0 \\ 0 & 0 \end{pmatrix}$ gives the single equation $2x = 0$, so $x = 0$ and $y$ is free. With $y = 1$ the vector is $(0, 1)$.'
-          - problem: 'The matrix $A = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$ has the eigenvalues $0$ and $5$. The eigenspace for $\lambda = 0$ is the null space of $A$. Find the vector of the form $(x, 1)$ in this eigenspace.'
+          - problem: 'The matrix $A = \begin{pmatrix} 1 & 2 \\ 2 & 4 \end{pmatrix}$ has the eigenvalues $0$ and $5$. Find the vector of the form $(x, 1)$ in the eigenspace of $A$ for $\lambda = 0$.'
             answer: '(-2, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'We solve $A\mathbf{x} = \mathbf{0}$, and both rows give the equation $x + 2y = 0$. With $y = 1$ we get $x = -2$, and $A(-2, 1) = (0, 0)$ confirms the vector $(-2, 1)$.'
+            solution_sketch: 'The eigenspace for $\lambda = 0$ holds the vectors with $A\mathbf{x} = \mathbf{0}$. Both rows give the equation $x + 2y = 0$. With $y = 1$ we get $x = -2$, and $A(-2, 1) = (0, 0)$ confirms the vector $(-2, 1)$.'
           - problem: 'A population of $90\,000$ people lives in two cities, P and Q. Each year $10\%$ of the residents of P move to Q and $20\%$ of the residents of Q move to P, so the vector $(p, q)$ of the two populations changes each year by $(p, q) \mapsto M(p, q)$ with $M = \begin{pmatrix} 0.9 & 0.2 \\ 0.1 & 0.8 \end{pmatrix}$. How many people live in P in the distribution that does not change from year to year?'
             answer: '60000'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A distribution that does not change satisfies $M\mathbf{v} = \mathbf{v}$, so it lies in the eigenspace of $\lambda = 1$. The equation $(M - I)\mathbf{v} = \mathbf{0}$ gives $0.1p = 0.2q$, so $p = 2q$. With $p + q = 90000$ we get $3q = 90000$, so $q = 30000$ and $p = 60000$.'
-          - problem: 'For $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$ and $\lambda = 2$ we have $A - 2I = \begin{pmatrix} 2 & 2 \\ 1 & 1 \end{pmatrix}$. What is the vector of the form $(1, y)$ in this eigenspace?'
+          - problem: 'Let $A = \begin{pmatrix} 4 & 2 \\ 1 & 3 \end{pmatrix}$. What is the vector of the form $(1, y)$ in the eigenspace of $A$ for $\lambda = 2$?'
             answer: '(1, -1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The eigenspace equation is $x + y = 0$. It gives $y = -x$, so with $x = 1$ the vector is $(1, -1)$. Check: $A(1, -1) = (2, -2) = 2(1, -1)$, while $A(1, 1) = (6, 4)$ is not a multiple of $(1, 1)$.'
+            solution_sketch: 'Form $A - 2I = \begin{pmatrix} 2 & 2 \\ 1 & 1 \end{pmatrix}$ and solve $(A - 2I)\mathbf{x} = \mathbf{0}$. The equation is $x + y = 0$, so $y = -x$ and with $x = 1$ the vector is $(1, -1)$. Check: $A(1, -1) = (2, -2) = 2(1, -1)$.'
           - problem: 'A transformation of the plane sends each point $\mathbf{x}$ to $A\mathbf{x}$ with $A = \begin{pmatrix} 3 & 1 \\ 0 & 2 \end{pmatrix}$. Some direction is stretched by exactly the factor $2$, so each vector in that direction is sent to twice itself. Find the vector of the form $(x, 1)$ in that direction.'
             answer: '(-1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1429,10 +1429,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "they oscillate", "it oscillates"], ["no", "they do not oscillate", "it does not oscillate"]]}
             solution_sketch: 'The trace is $2$ and the determinant is $0 + 5 = 5$, so the discriminant is $4 - 20 = -16$, which is negative. The eigenvalues are $1 \pm 2i$, which are not real, so the populations oscillate.'
-          - problem: 'The characteristic equation of $A = \begin{pmatrix} 4 & -2 \\ 1 & 2 \end{pmatrix}$ is $\lambda^2 - 6\lambda + 10 = 0$. What are the eigenvalues of $A$?'
+          - problem: 'Find the eigenvalues of $A = \begin{pmatrix} 4 & -2 \\ 1 & 2 \end{pmatrix}$.'
             answer: '3 + i, 3 - i'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The discriminant is $36 - 40 = -4$, which is negative, so the roots are not real. Hence $\lambda = \frac{6 \pm 2i}{2} = 3 \pm i$, and $4$ and $2$ would need a discriminant of $+4$.'
+            solution_sketch: 'The trace is $6$ and the determinant is $4\cdot 2 - (-2)\cdot 1 = 10$, so the characteristic equation is $\lambda^2 - 6\lambda + 10 = 0$. The discriminant is $36 - 40 = -4$, which is negative, so the roots are not real. Hence $\lambda = \frac{6 \pm 2i}{2} = 3 \pm i$.'
         constraints: 'real 2x2 matrices with negative discriminant; eigenvalues a +- bi with integer a, b'
       - id: kp2
         name: 'Rotation-scaling interpretation'
@@ -1475,10 +1475,10 @@ topics:
             answer: '50'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "km", "allow_omitted": true}
             solution_sketch: 'The matrix has the form $\begin{pmatrix} a & -b \\ b & a \end{pmatrix}$ with $a = 4$ and $b = 3$, so each minute multiplies the distance by $\sqrt{16 + 9} = 5$. After $2$ minutes the distance is $2 \cdot 5^2 = 50$ km.'
-          - problem: 'With $A = \begin{pmatrix} 4 & -3 \\ 3 & 4 \end{pmatrix}$ the distance of the drone from the beacon is multiplied by the same factor each minute, and at the start the drone is $4$ km away. After how many whole minutes is the drone first more than $1000$ km from the beacon?'
+          - problem: 'A drone flies around a beacon. Its position, measured from the beacon in kilometers, is multiplied by $A = \begin{pmatrix} 4 & -3 \\ 3 & 4 \end{pmatrix}$ each minute. At the start the drone is $4$ km from the beacon. After how many whole minutes is the drone first more than $1000$ km from the beacon?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The distance after $n$ minutes is $4 \cdot 5^n$ km. Now $4 \cdot 5^3 = 500$ is not above $1000$, while $4 \cdot 5^4 = 2500$ is, so the answer is $4$ minutes.'
+            solution_sketch: 'The matrix $A$ has the form $\begin{pmatrix} a & -b \\ b & a \end{pmatrix}$, so it scales every length by $\sqrt{4^2+3^2}=5$. The distance after $n$ minutes is $4 \cdot 5^n$ km. Now $4 \cdot 5^3 = 500$ is not above $1000$, while $4 \cdot 5^4 = 2500$ is, so the answer is $4$ minutes.'
           - problem: 'A routine transforms every point $(x, y)$ of the screen, measured from the centre, into $A(x, y)$ with $A = \begin{pmatrix} 3 & 4 \\ -4 & 3 \end{pmatrix}$. After the transformation a point is $35$ units from the centre. How far from the centre was the point before?'
             answer: '7'
             answer_contract: {"kind": "exact"}
@@ -1910,10 +1910,10 @@ topics:
             answer: '[[5,-6],[0,2]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
             solution_sketch: 'The inverse is $P^{-1} = \begin{pmatrix} 1 & -2 \\ 0 & 1 \end{pmatrix}$, and $PD = \begin{pmatrix} 5 & 4 \\ 0 & 2 \end{pmatrix}$. Then $PDP^{-1} = \begin{pmatrix} 5 & -6 \\ 0 & 2 \end{pmatrix}$.'
-          - problem: 'Is $A = PDP^{-1}$ for $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$, $P = \begin{pmatrix} 2 & 1 \\ 3 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$? Compare $AP$ with $PD$ to decide.'
+          - problem: 'Is $A = PDP^{-1}$ for $A = \begin{pmatrix} 1 & 2 \\ 3 & 2 \end{pmatrix}$, $P = \begin{pmatrix} 2 & 1 \\ 3 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & -1 \end{pmatrix}$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "equal", "true"], ["no", "it is not", "not equal", "false"]]}
-            solution_sketch: 'We compute $AP = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$ and $PD = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$, so $AP = PD$. The matrix $P$ has determinant $-5$, so it is invertible, and multiplying by $P^{-1}$ on the right gives $A = PDP^{-1}$.'
+            solution_sketch: 'The equation $A = PDP^{-1}$ is the same as $AP = PD$ when $P$ is invertible. We compute $AP = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$ and $PD = \begin{pmatrix} 8 & -1 \\ 12 & 1 \end{pmatrix}$. The matrix $P$ has determinant $-5$, so $A = PDP^{-1}$.'
           - problem: 'Let $P = \begin{pmatrix} 3 & 1 \\ 1 & 1 \end{pmatrix}$ and $D = \begin{pmatrix} 4 & 0 \\ 0 & 2 \end{pmatrix}$. Compute $PDP^{-1}$.'
             answer: '[[5,-3],[1,1]]'
             answer_contract: {"kind": "matrix", "rows": 2, "cols": 2}
@@ -1968,10 +1968,10 @@ topics:
             answer: '-30'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $A^4 = PD^4P^{-1}$ with $D^4 = \begin{pmatrix} 1 & 0 \\ 0 & 16 \end{pmatrix}$ and $P^{-1} = \begin{pmatrix} 1 & 0 \\ -2 & 1 \end{pmatrix}$. Then $PD^4 = \begin{pmatrix} 1 & 0 \\ 2 & 16 \end{pmatrix}$, and row 2 times column 1 of $P^{-1}$ gives $2 \cdot 1 + 16 \cdot (-2) = -30$.'
-          - problem: 'Each year $10\%$ of the residents of city P move to city Q and $20\%$ of the residents of city Q move to city P. The yearly matrix is $M = PDP^{-1}$ with $P = \begin{pmatrix} 2 & 1 \\ 1 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 1 & 0 \\ 0 & 0.7 \end{pmatrix}$. After many years $D^n$ is close to $\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$. In the long run, what fraction of all the residents lives in city P, whatever the starting populations are?'
+          - problem: 'Each year $10\%$ of the residents of city P move to city Q and $20\%$ of the residents of city Q move to city P. The yearly matrix is $M = PDP^{-1}$ with $P = \begin{pmatrix} 2 & 1 \\ 1 & -1 \end{pmatrix}$ and $D = \begin{pmatrix} 1 & 0 \\ 0 & 0.7 \end{pmatrix}$. In the long run, what fraction of all the residents lives in city P, whatever the starting populations are?'
             answer: '2/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For large $n$ the matrix $M^n = PD^nP^{-1}$ is close to $P\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}P^{-1} = \begin{pmatrix} 2/3 & 2/3 \\ 1/3 & 1/3 \end{pmatrix}$. So a population $(p, q)$ becomes $\frac{p + q}{3}(2, 1)$, which means $\frac{2}{3}$ of the total lives in city P and $\frac{1}{3}$ in city Q.'
+            solution_sketch: 'Because $0.7^n$ goes to $0$, $D^n$ goes to $\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}$. So $M^n = PD^nP^{-1}$ goes to $P\begin{pmatrix} 1 & 0 \\ 0 & 0 \end{pmatrix}P^{-1} = \begin{pmatrix} 2/3 & 2/3 \\ 1/3 & 1/3 \end{pmatrix}$. A population $(p, q)$ becomes $\frac{p + q}{3}(2, 1)$, so $\frac{2}{3}$ of the total lives in city P.'
           - problem: 'A two-species population is multiplied each step by $A = \begin{pmatrix} 4 & 2 \\ 2 & 4 \end{pmatrix}$, which has the eigenvector $(1, 1)$ for the eigenvalue $6$ and the eigenvector $(1, -1)$ for the eigenvalue $2$. The starting population is $(1, 0)$. What is the population after $3$ steps?'
             answer: '(112, 104)'
             answer_contract: {"kind": "coordinates", "arity": 2}

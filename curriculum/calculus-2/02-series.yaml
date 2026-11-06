@@ -217,42 +217,42 @@ topics:
         name: Monotone bounded sequences
         key_prerequisites: [limits-of-sequences]
         exemplars:
-          - problem: 'The sequence $a_1 = \sqrt{2}$, $a_{n+1} = \sqrt{2a_n}$ is increasing and bounded above by $2$. Find its limit.'
+          - problem: 'Find the limit of the sequence $a_1 = \sqrt{2}$, $a_{n+1} = \sqrt{2a_n}$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An increasing sequence that is bounded above converges, say to $L$. Passing to the limit in the recursion gives $L = \sqrt{2L}$, so $L^2 = 2L$ and $L = 0$ or $L = 2$. The terms start at $\sqrt{2} > 0$ and increase, so the limit is 2.'
+            solution_sketch: 'Show by induction that $a_n<2$ and $a_{n+1}>a_n$, so the sequence is increasing and bounded above and it converges to a limit $L$. Passing to the limit gives $L = \sqrt{2L}$, so $L = 0$ or $L = 2$. The terms start at $\sqrt{2}>0$ and increase, so $L=2$.'
           - problem: 'Is the sequence $a_n = \frac{n}{n+1}$ increasing, decreasing or neither?'
             answer: 'increasing'
             answer_contract: {"kind": "label", "options": [["increasing", "it is increasing", "increases", "strictly increasing", "the sequence is increasing"], ["decreasing", "it is decreasing", "decreases", "strictly decreasing", "the sequence is decreasing"], ["neither", "not monotone", "neither increasing nor decreasing"]]}
             solution_sketch: 'Write $a_n = 1 - \frac{1}{n+1}$. The subtracted part $\frac{1}{n+1}$ gets smaller as $n$ grows, so $a_n$ gets larger and the sequence is increasing.'
-          - problem: 'The sequence $a_n = \frac{3n - 1}{n + 2}$ is increasing and bounded above by $4$. Find its limit.'
+          - problem: 'Find the limit of the sequence $a_n = \frac{3n - 1}{n + 2}$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An increasing sequence that is bounded above converges. Both the numerator and the denominator have degree $1$, so the limit is the ratio of the leading coefficients, 3.'
-          - problem: 'The sequence $a_1 = 1$, $a_{n+1} = \frac{a_n + 6}{2}$ is increasing and bounded above by $6$. Find its limit.'
+            solution_sketch: 'Write $a_n=3-\frac{7}{n+2}$. The term $\frac{7}{n+2}$ decreases, so $a_n$ is increasing, and $a_n<3$, so it is bounded above and converges. The term $\frac{7}{n+2}$ tends to $0$, so the limit is $3$.'
+          - problem: 'Find the limit of the sequence $a_1 = 1$, $a_{n+1} = \frac{a_n + 6}{2}$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sequence converges to a limit $L$. Passing to the limit in the recursion gives $L = \frac{L + 6}{2}$, so $2L = L + 6$ and $L = 6$.'
-          - problem: 'After each daily dose, the drug level in a patient''s blood satisfies $A_{n+1} = 0.6A_n + 40$ milligrams, with $A_1 = 40$. The levels are increasing and bounded above by $100$. What level do they approach?'
+            solution_sketch: 'We have $a_{n+1}-a_n=\frac{6-a_n}{2}>0$ while $a_n<6$, so the sequence is increasing and bounded above by $6$. It converges to a limit $L$. Passing to the limit gives $L = \frac{L + 6}{2}$, so $L = 6$.'
+          - problem: 'After each daily dose, the drug level in a patient''s blood satisfies $A_{n+1} = 0.6A_n + 40$ milligrams, with $A_1 = 40$. What level do the levels approach?'
             answer: '100'
             answer_contract: {"kind": "unit", "quantity": "mass", "unit": "mg", "allow_omitted": true}
-            solution_sketch: 'The levels converge to a limit $L$. Passing to the limit gives $L = 0.6L + 40$, so $0.4L = 40$. Dividing by $0.4$ gives $L = 100$ milligrams.'
-          - problem: 'What is the limit of the increasing sequence $a_n = 5 - \frac{1}{n^2}$?'
+            solution_sketch: 'If $A_n<100$, then $A_{n+1}<0.6\cdot100+40=100$ and $A_{n+1}-A_n=40-0.4A_n>0$. So the levels increase, are bounded above by $100$ and converge to a limit $L$. Passing to the limit gives $L = 0.6L + 40$, so $0.4L = 40$ and $L = 100$ milligrams.'
+          - problem: 'What is the limit of the sequence $a_n = 5 - \frac{1}{n^2}$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An increasing sequence that is bounded above converges, and $a_n < 5$ for every $n$. The term $\frac{1}{n^2}$ tends to $0$, so the limit is 5.'
-          - problem: 'The sequence $a_1 = 2$, $a_{n+1} = \sqrt{4a_n}$ is increasing and bounded above by $5$. Find its limit.'
+            solution_sketch: 'The term $\frac{1}{n^2}$ decreases, so $a_n$ is increasing, and $a_n < 5$ for every $n$. So the sequence converges. The term $\frac{1}{n^2}$ tends to $0$, so the limit is 5.'
+          - problem: 'Find the limit of the sequence $a_1 = 2$, $a_{n+1} = \sqrt{4a_n}$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sequence converges to a limit $L$ with $L = \sqrt{4L}$. Squaring gives $L^2 = 4L$, so $L = 0$ or $L = 4$. The terms start at $2$ and increase, so the limit is 4.'
-          - problem: 'A reservoir holds $V_n = 800 - \frac{300}{n}$ litres after $n$ hours. The volumes are increasing and bounded above by $800$ litres. What volume does the reservoir approach?'
+            solution_sketch: 'Show by induction that $a_n<4$ and $a_{n+1}>a_n$, so the sequence is increasing and bounded above and it converges to a limit $L$ with $L = \sqrt{4L}$. Squaring gives $L^2 = 4L$, so $L = 0$ or $L = 4$. The terms start at $2$ and increase, so $L=4$.'
+          - problem: 'A reservoir holds $V_n = 800 - \frac{300}{n}$ litres after $n$ hours. What volume does the reservoir approach?'
             answer: '800'
             answer_contract: {"kind": "unit", "quantity": "volume", "unit": "L", "allow_omitted": true}
-            solution_sketch: 'The volumes converge. The term $\frac{300}{n}$ tends to $0$, so $V_n$ approaches $800 - 0 = 800$ litres.'
-          - problem: 'The sequence $a_n = 1 + \frac{1}{n}$ is decreasing and bounded below by $1$. Find its limit.'
+            solution_sketch: 'The term $\frac{300}{n}$ decreases, so $V_n$ is increasing, and $V_n<800$, so the volumes are bounded above and converge. The term $\frac{300}{n}$ tends to $0$, so $V_n$ approaches $800 - 0 = 800$ litres.'
+          - problem: 'Find the limit of the sequence $a_n = 1 + \frac{1}{n}$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A decreasing sequence that is bounded below converges. The term $\frac{1}{n}$ tends to $0$, so $a_n$ approaches $1 + 0$ and the limit is 1.'
+            solution_sketch: 'The term $\frac{1}{n}$ decreases, so $a_n$ is decreasing, and $a_n>1$, so it is bounded below and converges. The term $\frac{1}{n}$ tends to $0$, so the limit is 1.'
         constraints: "monotonicity checkable by a difference or ratio; recursive examples solvable by passing to the limit"
       - id: kp3
         name: Growth rates and the e-limit
@@ -585,18 +585,18 @@ topics:
             answer: '5/11'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series has $a = \frac{45}{100}$ and $r = \frac{1}{100}$, so the sum is $\frac{45}{99}$. Dividing the top and the bottom by $9$ gives 5/11.'
-          - problem: 'A calculator displays $0.8888\ldots$, where the digit $8$ repeats forever. Use a geometric series to find this number as a fraction.'
+          - problem: 'A calculator displays $0.8888\ldots$, where the digit $8$ repeats forever. Write this number as a fraction in lowest terms.'
             answer: '8/9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $0.8888\ldots = \frac{8}{10} + \frac{8}{100} + \cdots$, with $a = \frac{8}{10}$ and $r = \frac{1}{10}$. The sum is $\frac{8/10}{9/10} = 8/9$.'
+            solution_sketch: 'Write $0.8888\ldots = \frac{8}{10} + \frac{8}{100} + \cdots$. This is a geometric series with $a = \frac{8}{10}$ and $r = \frac{1}{10}$. The sum is $\frac{8/10}{9/10} = \frac89$.'
           - problem: 'A sensor reading repeats the two-digit block $57$ forever: $0.575757\ldots$. What is the value of this repeating decimal as a fraction?'
             answer: '19/33'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series has $a = \frac{57}{100}$ and $r = \frac{1}{100}$, so the sum is $\frac{57}{99}$. Dividing the top and the bottom by $3$ gives 19/33.'
-          - problem: 'A repeating decimal starts $0.1666\ldots$, where the digit $6$ repeats forever after the leading digit $1$. Use a geometric series to find it as a fraction.'
+          - problem: 'A repeating decimal starts $0.1666\ldots$, where the digit $6$ repeats forever after the leading digit $1$. Write it as a fraction in lowest terms.'
             answer: '1/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Split off the leading digit: $0.1666\ldots = \frac{1}{10} + \left(\frac{6}{100} + \frac{6}{1000} + \cdots\right)$. The geometric part is $\frac{6/100}{9/10} = \frac{1}{15}$, and $\frac{1}{10} + \frac{1}{15} = 1/6$.'
+            solution_sketch: 'Split off the leading digit: $0.1666\ldots = \frac{1}{10} + \left(\frac{6}{100} + \frac{6}{1000} + \cdots\right)$. The geometric part is $\frac{6/100}{9/10} = \frac{1}{15}$, and $\frac{1}{10} + \frac{1}{15} = \frac16$.'
           - problem: 'Write $2.\overline{3}$ as a fraction.'
             answer: '7/3'
             answer_contract: {"kind": "exact"}
@@ -658,22 +658,22 @@ topics:
             answer: '1/(2n-1) - 1/(2n+1)'
             answer_contract: {"kind":"function","vars":["n"]}
             solution_sketch: 'Assume $\frac{2}{(2n-1)(2n+1)} = \frac{A}{2n-1} + \frac{B}{2n+1}$ and multiply both sides by $(2n-1)(2n+1)$ to get $2 = A(2n+1) + B(2n-1)$. Put $n = \frac12$ to get $2 = 2A$, so $A = 1$, and put $n = -\frac12$ to get $2 = -2B$, so $B = -1$. So the fraction equals $\frac{1}{2n-1} - \frac{1}{2n+1}$.'
-          - problem: 'The fraction $\frac{1}{(n+1)(n+5)}$ can be written as $c\left(\frac{1}{n+1}-\frac{1}{n+5}\right)$ for a constant $c$. Find $c$.'
+          - problem: 'Split $\frac{1}{(n+1)(n+5)}$ into partial fractions. Find the coefficient of $\frac{1}{n+1}$.'
             answer: '1/4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Combine the bracket: $\frac{1}{n+1}-\frac{1}{n+5} = \frac{(n+5)-(n+1)}{(n+1)(n+5)} = \frac{4}{(n+1)(n+5)}$. This is $4$ times the original fraction, so $c = 1/4$.'
+            solution_sketch: 'Write $\frac{1}{(n+1)(n+5)}=\frac{A}{n+1}+\frac{B}{n+5}$, so $1=A(n+5)+B(n+1)$. Putting $n=-1$ gives $1=4A$. So $A=\frac14$.'
           - problem: 'Find the constant $B$ in $\frac{6}{(n+1)(n+3)}=\frac{A}{n+1}+\frac{B}{n+3}$.'
             answer: '-3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Multiply both sides by $(n+1)(n+3)$ to get $6 = A(n+3) + B(n+1)$. Put $n = -3$ to get $-2B = 6$, so $B = -3$. Put $n = -1$ to get $2A = 6$, so $A = 3$.'
-          - problem: 'The identity $\frac{1}{n(n+3)}=c\left(\frac{1}{n}-\frac{1}{n+3}\right)$ holds for one constant $c$. What is $c$?'
-            answer: '1/3'
+          - problem: 'Split $\frac{1}{n(n+3)}$ into partial fractions. Find the coefficient of $\frac{1}{n+3}$.'
+            answer: '-1/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Combine the bracket: $\frac{1}{n}-\frac{1}{n+3} = \frac{(n+3)-n}{n(n+3)} = \frac{3}{n(n+3)}$. This is $3$ times the original fraction, so $c = 1/3$.'
-          - problem: 'Write $\frac{1}{n}-\frac{1}{n+2}$ as a single fraction.'
-            answer: '2/(n(n+2))'
+            solution_sketch: 'Write $\frac{1}{n(n+3)}=\frac{A}{n}+\frac{B}{n+3}$, so $1=A(n+3)+Bn$. Putting $n=-3$ gives $1=-3B$. So $B=-\frac13$.'
+          - problem: 'Split $\frac{2}{n(n+2)}$ into partial fractions. Find the coefficient of $\frac{1}{n}$.'
+            answer: '1'
             answer_contract: {"kind":"function","vars":["n"]}
-            solution_sketch: 'Use the common denominator $n(n+2)$. Then $\frac{n+2}{n(n+2)} - \frac{n}{n(n+2)} = \frac{2}{n(n+2)}$, because the numerator $(n+2) - n$ equals $2$.'
+            solution_sketch: 'Write $\frac{2}{n(n+2)}=\frac{A}{n}+\frac{B}{n+2}$, so $2=A(n+2)+Bn$. Putting $n=0$ gives $2=2A$. So $A=1$.'
           - problem: 'Write $\frac{7}{(3n+1)(3n+8)}$ as a sum of partial fractions.'
             answer: '1/(3n+1) - 1/(3n+8)'
             answer_contract: {"kind":"function","vars":["n"]}
@@ -1106,26 +1106,26 @@ topics:
             answer: '1/sqrt(2)'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The $n$th term gives $f(x) = \frac{x}{(x^2+1)^{3/2}}$. Substitute $u = x^2 + 1$, so $du = 2x\,dx$ and the limits become $2$ and $\infty$. The integral is $\frac{1}{2}\int_2^{\infty} u^{-3/2}\,du = \frac12 \cdot \frac{2}{\sqrt{2}} = \frac{1}{\sqrt{2}}$. It is finite, so the series converges.'
-          - problem: 'Apply the integral test to $\sum_{n=1}^{\infty} n e^{-n^2}$ by evaluating $\int_1^{\infty} x e^{-x^2}\,dx$.'
+          - problem: 'The integral test compares $\sum_{n=1}^{\infty} n e^{-n^2}$ with $\int_1^{\infty} f(x)\,dx$, where $f(n)$ is the $n$th term of the series. Find the value of this integral.'
             answer: '1/(2e)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substitute $u = x^2$, so $du = 2x\,dx$ and the limits become $1$ and $\infty$. The integral is $\frac{1}{2}\int_1^{\infty} e^{-u}\,du = \frac{1}{2e}$. It is finite, so the series converges.'
-          - problem: 'Apply the integral test to $\sum_{n=2}^{\infty} \frac{1}{n(\ln n)^2}$ by evaluating $\int_2^{\infty} \frac{dx}{x(\ln x)^2}$.'
+            solution_sketch: 'Take $f(x) = x e^{-x^2}$. Substitute $u = x^2$, so $du = 2x\,dx$ and the limits become $1$ and $\infty$. The integral is $\frac{1}{2}\int_1^{\infty} e^{-u}\,du = \frac{1}{2e}$.'
+          - problem: 'The integral test compares $\sum_{n=2}^{\infty} \frac{1}{n(\ln n)^2}$ with $\int_2^{\infty} f(x)\,dx$, where $f(n)$ is the $n$th term of the series. Find the value of this integral.'
             answer: '1/ln(2)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substitute $u = \ln x$, so $du = \frac{dx}{x}$ and the limits become $\ln 2$ and $\infty$. The integral is $\int_{\ln 2}^{\infty} u^{-2}\,du = \frac{1}{\ln 2}$. It is finite, so the series converges.'
-          - problem: 'A pump adds $\frac{n}{(n^2+1)^2}$ litres to a tank in minute $n$. Because the amounts decrease, the litres added after minute $1$ are at most $\int_1^{\infty} \frac{x}{(x^2+1)^2}\,dx$. Find this bound, in litres.'
+            solution_sketch: 'Take $f(x) = \frac{1}{x(\ln x)^2}$. Substitute $u = \ln x$, so $du = \frac{dx}{x}$ and the limits become $\ln 2$ and $\infty$. The integral is $\int_{\ln 2}^{\infty} u^{-2}\,du = \frac{1}{\ln 2}$.'
+          - problem: 'A pump adds $\frac{n}{(n^2+1)^2}$ litres to a tank in minute $n$. The amounts decrease as $n$ grows. Use the integral test to find a bound on the litres added after minute $1$, in litres.'
             answer: '1/4'
             answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
-            solution_sketch: 'Substitute $u = x^2 + 1$, so $du = 2x\,dx$ and the limits become $2$ and $\infty$. The integral is $\frac{1}{2}\int_2^{\infty} u^{-2}\,du = \frac{1}{4}$. So at most $\frac{1}{4}$ litre is added after the first minute.'
-          - problem: 'A reservoir receives $\frac{n}{(n^2+4)^3}$ megalitres in year $n$. The amount received after year $1$ is at most $\int_1^{\infty} \frac{x}{(x^2+4)^3}\,dx$. Find this bound, in megalitres.'
+            solution_sketch: 'Take $f(x) = \frac{x}{(x^2+1)^2}$, which decreases. The litres added after minute $1$ are at most $\int_1^{\infty} f(x)\,dx$. Substitute $u = x^2 + 1$, so $du = 2x\,dx$ and the limits become $2$ and $\infty$. The integral is $\frac{1}{2}\int_2^{\infty} u^{-2}\,du = \frac{1}{4}$.'
+          - problem: 'A reservoir receives $\frac{n}{(n^2+4)^3}$ megalitres in year $n$. The amounts decrease as $n$ grows. Use the integral test to find a bound on the megalitres received after year $1$.'
             answer: '1/100'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Substitute $u = x^2 + 4$, so $du = 2x\,dx$ and the limits become $5$ and $\infty$. The integral is $\frac{1}{2}\int_5^{\infty} u^{-3}\,du = \frac12 \cdot \frac{1}{2 \cdot 25} = \frac{1}{100}$ megalitre.'
-          - problem: 'Apply the integral test to $\sum_{n=1}^{\infty} \frac{1}{n^2+1}$ by evaluating $\int_1^{\infty} \frac{dx}{x^2+1}$.'
+            solution_sketch: 'Take $f(x) = \frac{x}{(x^2+4)^3}$, which decreases. The amount received after year $1$ is at most $\int_1^{\infty} f(x)\,dx$. Substitute $u = x^2 + 4$, so $du = 2x\,dx$ and the limits become $5$ and $\infty$. The integral is $\frac{1}{2}\int_5^{\infty} u^{-3}\,du = \frac{1}{100}$ megalitre.'
+          - problem: 'The integral test compares $\sum_{n=1}^{\infty} \frac{1}{n^2+1}$ with $\int_1^{\infty} f(x)\,dx$, where $f(n)$ is the $n$th term of the series. Find the value of this integral.'
             answer: 'pi/4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An antiderivative is $\arctan x$. So the integral is $\lim_{b\to\infty} \arctan b - \arctan 1 = \frac{\pi}{2} - \frac{\pi}{4} = \frac{\pi}{4}$. It is finite, so the series converges.'
+            solution_sketch: 'Take $f(x) = \frac{1}{x^2+1}$. An antiderivative is $\arctan x$. So the integral is $\lim_{b\to\infty} \arctan b - \arctan 1 = \frac{\pi}{2} - \frac{\pi}{4} = \frac{\pi}{4}$.'
         constraints: "integrand must be positive, continuous, decreasing on the tail; integral solvable by one substitution"
       - id: kp3
         name: Hypotheses and remainder estimates
@@ -1135,38 +1135,38 @@ topics:
             answer: 'positive, continuous, decreasing'
             answer_contract: {"kind":"label","options":[["positive, continuous, decreasing","positive, continuous and decreasing","positive continuous decreasing","positive, continuous, and decreasing","continuous, positive, decreasing","continuous, positive and decreasing","positive, decreasing, continuous","positive, decreasing and continuous"],["positive, bounded, decreasing"],["continuous, decreasing, alternating"],["positive, continuous, increasing"]]}
             solution_sketch: 'The integral test needs $f$ positive, continuous and decreasing on $[N, \infty)$. Boundedness is not enough, an alternating $f$ breaks positivity, and an increasing $f$ would make the integral grow. So the correct list is positive, continuous, decreasing.'
-          - problem: 'The series $\sum \frac{1}{n^2}$ is approximated by its first $10$ terms. By the integral test the error is at most $\int_{10}^{\infty} \frac{dx}{x^2}$. Find this bound.'
+          - problem: 'The series $\sum \frac{1}{n^2}$ is approximated by its first $10$ terms. Use the integral test to find a bound on the error.'
             answer: '1/10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An antiderivative of $x^{-2}$ is $-\frac{1}{x}$. So $\int_{10}^{\infty} \frac{dx}{x^2} = 0 - \left(-\frac{1}{10}\right) = \frac{1}{10}$.'
-          - problem: 'The series $\sum \frac{1}{n^3}$ is approximated by its first $4$ terms. By the integral test the error is at most $\int_{4}^{\infty} \frac{dx}{x^3}$. Find this bound.'
+            solution_sketch: 'The error is at most the integral of $\frac{1}{x^2}$ from $10$ to $\infty$. An antiderivative of $x^{-2}$ is $-\frac{1}{x}$. So the integral is $0 - \left(-\frac{1}{10}\right) = \frac{1}{10}$.'
+          - problem: 'The series $\sum \frac{1}{n^3}$ is approximated by its first $4$ terms. Use the integral test to find a bound on the error.'
             answer: '1/32'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An antiderivative of $x^{-3}$ is $-\frac{1}{2x^2}$. So $\int_{4}^{\infty} \frac{dx}{x^3} = \frac{1}{2 \cdot 16} = \frac{1}{32}$.'
-          - problem: 'For $\sum \frac{1}{n^3}$ the integral test gives the error bound $R_N \le \frac{1}{2N^2}$ after $N$ terms. Find the smallest whole number $N$ for which this bound is at most $\frac{1}{200}$.'
+            solution_sketch: 'The error is at most the integral of $\frac{1}{x^3}$ from $4$ to $\infty$. An antiderivative of $x^{-3}$ is $-\frac{1}{2x^2}$. So the integral is $\frac{1}{2 \cdot 16} = \frac{1}{32}$.'
+          - problem: 'The series $\sum \frac{1}{n^3}$ is approximated by its first $N$ terms. Find the smallest whole number $N$ for which the integral test bounds the error by $\frac{1}{200}$ or less.'
             answer: '10'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need $\frac{1}{2N^2} \le \frac{1}{200}$, that is $2N^2 \ge 200$, so $N^2 \ge 100$. The smallest whole number is $N = 10$.'
+            solution_sketch: 'The error bound is $\int_N^{\infty} x^{-3}\,dx = \frac{1}{2N^2}$. We need $\frac{1}{2N^2} \le \frac{1}{200}$, so $N^2 \ge 100$. The smallest whole number is $N = 10$.'
           - problem: 'The integral test is applied to $\sum_{n=1}^{\infty} \frac{2 + \sin n}{n^2}$ with $f(x) = \frac{2 + \sin x}{x^2}$. Which of the conditions positive, continuous, decreasing fails for $f$?'
             answer: 'decreasing'
             answer_contract: {"kind":"label","options":[["decreasing","it is not decreasing","f is not decreasing","not decreasing"],["positive","it is not positive"],["continuous","it is not continuous"]]}
             solution_sketch: 'We have $2 + \sin x \ge 1 > 0$, so $f$ is positive, and $f$ is continuous for $x \ge 1$. But $f(1.5\pi) \approx 0.045$ is smaller than $f(2\pi) \approx 0.051$, so $f$ is not decreasing.'
-          - problem: 'A tank receives $\frac{1}{n^2}$ litres of water on day $n$. After $50$ days the amount still to come is at most $\int_{50}^{\infty} \frac{dx}{x^2}$. Find this bound, in litres.'
+          - problem: 'A tank receives $\frac{1}{n^2}$ litres of water on day $n$. Use the integral test to find a bound on the litres still to come after $50$ days, in litres.'
             answer: '1/50'
             answer_contract: {"kind":"unit","quantity":"volume","unit":"litre","allow_omitted":true}
-            solution_sketch: 'An antiderivative of $x^{-2}$ is $-\frac{1}{x}$. So $\int_{50}^{\infty} \frac{dx}{x^2} = \frac{1}{50}$. At most $\frac{1}{50}$ litre is still to come.'
-          - problem: 'For $\sum \frac{1}{n^2}$ the integral test gives the error bound $R_N \le \frac{1}{N}$ after $N$ terms. Find the smallest whole number $N$ for which this bound is at most $\frac{1}{60}$.'
+            solution_sketch: 'The amount still to come is at most the integral of $\frac{1}{x^2}$ from $50$ to $\infty$. An antiderivative of $x^{-2}$ is $-\frac{1}{x}$. So the bound is $\frac{1}{50}$ litre.'
+          - problem: 'The series $\sum \frac{1}{n^2}$ is approximated by its first $N$ terms. Find the smallest whole number $N$ for which the integral test bounds the error by $\frac{1}{60}$ or less.'
             answer: '60'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need $\frac{1}{N} \le \frac{1}{60}$, which means $N \ge 60$. The smallest whole number is $N = 60$.'
-          - problem: 'A bank adds up deposits of $\frac{1}{n^3}$ dollars, one for each day $n$, and wants the sum of the first $N$ days to be within $0.001$ of the full total. The error bound is $\frac{1}{2N^2}$. Find the smallest whole number $N$ that guarantees this.'
+            solution_sketch: 'The error bound is $\int_N^{\infty} x^{-2}\,dx = \frac{1}{N}$. We need $\frac{1}{N} \le \frac{1}{60}$, which means $N \ge 60$. The smallest whole number is $N = 60$.'
+          - problem: 'A bank adds up deposits of $\frac{1}{n^3}$ dollars, one for each day $n$, and wants the sum of the first $N$ days to be within $0.001$ of the full total. Find the smallest whole number $N$ for which the integral test guarantees this.'
             answer: '23'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need $\frac{1}{2N^2} \le 0.001$, so $N^2 \ge 500$. Since $22^2 = 484 < 500$ and $23^2 = 529 \ge 500$, the smallest whole number is $N = 23$.'
-          - problem: 'The series $\sum \frac{1}{n^4}$ is approximated by its first $5$ terms. By the integral test the error is at most $\int_{5}^{\infty} \frac{dx}{x^4}$. Find this bound.'
+            solution_sketch: 'The error bound is $\int_N^{\infty} x^{-3}\,dx = \frac{1}{2N^2}$. We need $\frac{1}{2N^2} \le 0.001$, so $N^2 \ge 500$. Since $22^2 = 484 < 500$ and $23^2 = 529 \ge 500$, the smallest whole number is $N = 23$.'
+          - problem: 'The series $\sum \frac{1}{n^4}$ is approximated by its first $5$ terms. Use the integral test to find a bound on the error.'
             answer: '1/375'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'An antiderivative of $x^{-4}$ is $-\frac{1}{3x^3}$. So $\int_{5}^{\infty} \frac{dx}{x^4} = \frac{1}{3 \cdot 125} = \frac{1}{375}$.'
+            solution_sketch: 'The error is at most the integral of $\frac{1}{x^4}$ from $5$ to $\infty$. An antiderivative of $x^{-4}$ is $-\frac{1}{3x^3}$. So the integral is $\frac{1}{3 \cdot 125} = \frac{1}{375}$.'
         constraints: "hypothesis questions list all three conditions; remainder bounds for p = 2 or p = 3 only"
     diagnostic_exemplar:
       problem: 'Find the least integer $p$ for which $\sum_{n=1}^{\infty} \frac{1}{n^{p/2}}$ converges.'
@@ -1210,30 +1210,30 @@ topics:
             answer: 'converges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'Since $n^2+5>n^2$, each term satisfies $\frac{1}{n^2+5}<\frac{1}{n^2}$. The series $\sum \frac{1}{n^2}$ is a $p$-series with $p=2>1$, so it converges, and by direct comparison the given series converges.'
-          - problem: 'Since $n^3+1>n^3$, every term of $\sum_{n=1}^{\infty} \frac{\sqrt{n}}{n^3+1}$ is smaller than $\frac{\sqrt{n}}{n^3}$, which is $\frac{1}{n^p}$ for some $p$. What is $p$?'
+          - problem: 'Find the largest $p$ such that $\frac{\sqrt{n}}{n^3+1}\le\frac{1}{n^p}$ for all $n\ge1$.'
             answer: '5/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{\sqrt{n}}{n^3}=\frac{n^{1/2}}{n^3}=n^{1/2-3}=n^{-5/2}$. So $p=\frac{5}{2}$, which is greater than $1$, and the comparison series converges.'
-          - problem: 'Because $3^n+n>3^n$, each term of $\sum_{n=1}^{\infty} \frac{1}{3^n+n}$ is smaller than $\frac{1}{3^n}$. What is the sum of the geometric series $\sum_{n=1}^{\infty} \frac{1}{3^n}$, which bounds the sum of the given series?'
+            solution_sketch: 'The inequality means $n^{p+1/2}\le n^3+1$. Since $n^3\le n^3+1$, the value $p+\frac12=3$ works. A larger $p$ fails for large $n$. So $p=\frac52$, which is greater than $1$, and the comparison series converges.'
+          - problem: 'Let $k$ be the largest integer such that $\frac{1}{3^n+n}\le\frac{1}{k^n}$ for all $n\ge1$. Find $\sum_{n=1}^{\infty}\frac{1}{k^n}$.'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The geometric series has first term $\frac{1}{3}$ and ratio $\frac{1}{3}$, so its sum is $\frac{1/3}{1-1/3}=\frac{1}{2}$. Hence the given series converges and its sum is less than $\frac{1}{2}$.'
-          - problem: 'A bank pays a bonus of $\frac{1}{n^2+5}$ thousand dollars in year $n$, for ever. Because $\frac{1}{n^2+5}<\frac{1}{n^2}$, the total of all bonuses is less than the sum of $\sum_{n=1}^{\infty} \frac{1}{n^2}$. What is that sum?'
+            solution_sketch: 'The inequality means $k^n\le 3^n+n$. For $k=4$ and $n=2$ we get $16\le 11$, which is false, while $k=3$ works for every $n$. So $k=3$ and the sum is $\frac{1/3}{1-1/3}=\frac12$.'
+          - problem: 'A bank pays a bonus of $\frac{1}{n^2+5}$ thousand dollars in year $n$, for ever. Let $p$ be the largest integer such that $\frac{1}{n^2+5}\le\frac{1}{n^p}$ for all $n\ge1$. Find the exact value of $\sum_{n=1}^{\infty}\frac{1}{n^p}$.'
             answer: 'pi^2/6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The series $\sum_{n=1}^{\infty} \frac{1}{n^2}$ is the $p$-series with $p=2$, and its sum is $\frac{\pi^2}{6}$. So the bonuses never total more than $\frac{\pi^2}{6}$ thousand dollars, about $1645$ dollars.'
-          - problem: 'The series $\sum_{n=1}^{\infty} \frac{1}{3^n+5}$ is bounded termwise by a convergent geometric series $\sum_{n=1}^{\infty} \frac{1}{k^n}$, where $k>1$ is an integer. What is the largest integer $k$ for which $\frac{1}{3^n+5}\le\frac{1}{k^n}$ holds for all $n\ge1$?'
-            answer: '3'
+            solution_sketch: 'The inequality means $n^p\le n^2+5$. For $p=3$ and $n=3$ we get $27\le 14$, which is false, while $p=2$ works for every $n$. So $p=2$, and $\sum \frac{1}{n^2}=\frac{\pi^2}{6}$ thousand dollars is an upper bound for all bonuses.'
+          - problem: 'Find the smallest $r>0$ such that $\frac{1}{3^n+5}\le r^n$ for all $n\ge1$.'
+            answer: '1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality $\frac{1}{3^n+5}\le\frac{1}{k^n}$ means $k^n\le 3^n+5$. For $k=4$ and $n=2$ we get $16\le 14$, which is false, while $k=3$ works for every $n$. So the largest integer is $3$.'
-          - problem: 'The $n$th echo of a signal has strength $\frac{1}{n^{3/2}+4}$ for $n\ge1$. To show that the total strength is finite, an engineer bounds each term by $\frac{1}{n^p}$ and uses a convergent $p$-series. Which $p$ does the bound $\frac{1}{n^{3/2}+4}<\frac{1}{n^p}$ give?'
+            solution_sketch: 'For $r<\frac13$ we get $r^n(3^n+5)=(3r)^n+5r^n$, which tends to $0$, so the inequality fails for large $n$. For $r=\frac13$ we have $\frac{1}{3^n}\ge\frac{1}{3^n+5}$. So $r=\frac13$, and the geometric series converges because $r<1$.'
+          - problem: 'The $n$th echo of a signal has strength $\frac{1}{n^{3/2}+4}$ for $n\ge1$. Find the largest $p$ such that this strength is at most $\frac{1}{n^p}$ for all $n\ge1$.'
             answer: '3/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $n^{3/2}+4>n^{3/2}$, we have $\frac{1}{n^{3/2}+4}<\frac{1}{n^{3/2}}$. So $p=\frac{3}{2}$, which is greater than $1$, and the total strength is finite.'
-          - problem: 'Since $\cos^2 n\le 1$, each term of $\sum_{n=1}^{\infty} \frac{\cos^2 n}{n^2}$ is at most $\frac{1}{n^p}$ for some $p>1$ that gives a convergent comparison series. Which $p$ does the inequality $\cos^2 n\le 1$ give directly?'
+            solution_sketch: 'The inequality means $n^p\le n^{3/2}+4$. Since $n^{3/2}\le n^{3/2}+4$, the value $p=\frac32$ works, and a larger $p$ fails for large $n$. So $p=\frac32$, which is greater than $1$, and the total strength is finite.'
+          - problem: 'Take $n$ in radians. Find the largest integer $p$ such that $\frac{\cos^2 n}{n^2}\le\frac{1}{n^p}$ for all $n\ge1$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{\cos^2 n}{n^2}\le\frac{1}{n^2}$, so $p=2$. The series $\sum \frac{1}{n^2}$ converges because $2>1$, so the given series converges as well.'
+            solution_sketch: 'Since $\cos^2 n\le1$, the value $p=2$ works. For $p=3$ and $n=3$ the inequality becomes $\cos^2 3\le\frac13$, which is false because $\cos^2 3>\frac13$. So $p=2$, and $\sum\frac{1}{n^2}$ converges.'
         constraints: "comparator is a p-series or geometric series; the bound must hold termwise"
       - id: kp2
         name: Bounding below by a divergent series
@@ -1243,69 +1243,69 @@ topics:
             answer: 'diverges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'We have $\frac{n+1}{n^2}>\frac{n}{n^2}=\frac{1}{n}$ for every $n\ge1$. The harmonic series $\sum \frac{1}{n}$ diverges, so the larger series diverges as well.'
-          - problem: 'To show that $\sum_{n=1}^{\infty} \frac{\ln n}{n}$ diverges, we compare it with $\sum_{n=1}^{\infty} \frac{1}{n}$. What is the smallest integer $N$ such that $\frac{\ln n}{n}\ge\frac{1}{n}$ for every $n\ge N$?'
-            answer: '3'
+          - problem: 'Find the largest integer $c$ such that $\frac{\ln n}{n}\ge\frac{c}{n}$ for every $n\ge3$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality $\frac{\ln n}{n}\ge\frac{1}{n}$ means $\ln n\ge1$, that is $n\ge e\approx 2.72$. So the smallest integer is $N=3$, and the series diverges by comparison with the harmonic series.'
-          - problem: 'A factory emits $\frac{2}{\sqrt{n}+3}$ tonnes of a pollutant in year $n$. From which year $N$ on is the emission in every year at least $\frac{1}{\sqrt{n}}$ tonnes?'
-            answer: '9'
+            solution_sketch: 'The inequality means $\ln n\ge c$ for all $n\ge3$. The smallest value is $\ln 3$, which is greater than $1$ and less than $2$. So $c=1$, and the series diverges by comparison with the harmonic series.'
+          - problem: 'A factory emits $\frac{2}{\sqrt{n}+3}$ tonnes of a pollutant in year $n$. Find the largest constant $c$ such that the emission in every year $n\ge9$ is at least $\frac{c}{\sqrt{n}}$ tonnes.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The condition $\frac{2}{\sqrt{n}+3}\ge\frac{1}{\sqrt{n}}$ means $2\sqrt{n}\ge\sqrt{n}+3$, so $\sqrt{n}\ge3$ and $n\ge9$. So $N=9$, and since $\sum \frac{1}{\sqrt{n}}$ diverges, the total emission is unbounded.'
-          - problem: 'The series $\sum_{n=1}^{\infty} \frac{\ln n}{n}$ also diverges by comparison with $\sum_{n=1}^{\infty} \frac{2}{n}$ from some point on. What is the smallest integer $N$ such that $\frac{\ln n}{n}\ge\frac{2}{n}$ for every $n\ge N$?'
-            answer: '8'
+            solution_sketch: 'The condition means $c\le\frac{2\sqrt{n}}{\sqrt{n}+3}$ for all $n\ge9$. This fraction grows with $n$, and at $n=9$ it equals $\frac{6}{6}=1$. So $c=1$, and since $\sum \frac{1}{\sqrt{n}}$ diverges, the total emission is unbounded.'
+          - problem: 'Find the largest integer $c$ such that $\frac{\ln n}{n}\ge\frac{c}{n}$ for every $n\ge8$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality means $\ln n\ge2$, that is $n\ge e^2\approx 7.39$. Since $\ln 7\approx 1.95$ and $\ln 8\approx 2.08$, the smallest integer is $N=8$.'
+            solution_sketch: 'The inequality means $\ln n\ge c$ for all $n\ge8$. The smallest value is $\ln 8$. Since $e^2<8<e^3$, it lies between $2$ and $3$. So $c=2$, and the series diverges by comparison with $\sum\frac2n$.'
           - problem: 'Each day $n$, a video gets $\frac{3}{n+4}$ million views. Find the largest constant $c$ such that $\frac{3}{n+4}\ge\frac{c}{n}$ for every $n\ge1$.'
             answer: '3/5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The inequality means $c\le\frac{3n}{n+4}$ for all $n\ge1$. The fraction $\frac{3n}{n+4}$ increases with $n$, so its smallest value is $\frac{3}{5}$ at $n=1$, and $c=\frac{3}{5}$.'
-          - problem: 'To show that $\sum_{n=1}^{\infty} \frac{\ln(n+1)}{n}$ diverges, we compare it with the harmonic series. What is the smallest integer $N$ such that $\frac{\ln(n+1)}{n}\ge\frac{1}{n}$ for every $n\ge N$?'
-            answer: '2'
+          - problem: 'Find the largest integer $c$ such that $\frac{\ln(n+1)}{n}\ge\frac{c}{n}$ for every $n\ge60$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality means $\ln(n+1)\ge1$, that is $n+1\ge e$ and so $n\ge1.72$. Hence $N=2$, and the series diverges by comparison with the harmonic series.'
-          - problem: 'The series $\sum_{n=1}^{\infty} \frac{\ln n}{n}$ also lies above $\sum_{n=1}^{\infty} \frac{3}{n}$ from some point on. What is the smallest integer $N$ such that $\frac{\ln n}{n}\ge\frac{3}{n}$ for every $n\ge N$?'
-            answer: '21'
+            solution_sketch: 'The inequality means $\ln(n+1)\ge c$ for all $n\ge60$. The smallest value is $\ln 61$. Since $e^4<61<e^5$, it lies between $4$ and $5$. So $c=4$, and the series diverges by comparison with $\sum\frac4n$.'
+          - problem: 'Find the largest integer $c$ such that $\frac{\ln n}{n}\ge\frac{c}{n}$ for every $n\ge21$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The inequality means $\ln n\ge3$, that is $n\ge e^3\approx 20.09$. Since $\ln 20\approx 2.996$ and $\ln 21\approx 3.045$, the smallest integer is $N=21$.'
+            solution_sketch: 'The inequality means $\ln n\ge c$ for all $n\ge21$. The smallest value is $\ln 21$. Since $e^3<21<e^4$, it lies between $3$ and $4$. So $c=3$, and the series diverges by comparison with $\sum\frac3n$.'
         constraints: "the inequality must go the useful direction; divergent comparator is the harmonic series or a p-series with p <= 1"
       - id: kp3
         name: Fixing a comparison that goes the wrong way
         key_prerequisites: [integral-p-series-tests, geometric-series-convergence]
         exemplars:
-          - problem: 'The bound $\frac{1}{n^2-2}>\frac{1}{n^2}$ points the wrong way for a convergence proof. Does $\sum_{n=2}^{\infty} \frac{1}{n^2-2}$ still converge?'
+          - problem: 'Does $\sum_{n=2}^{\infty} \frac{1}{n^2-2}$ converge or diverge?'
             answer: 'converges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
-            solution_sketch: 'For $n\ge2$ we have $n^2-2\ge\frac{n^2}{2}$, so $\frac{1}{n^2-2}\le\frac{2}{n^2}$. The series $\sum \frac{2}{n^2}$ converges as a multiple of a $p$-series with $p=2$, so the given series converges.'
-          - problem: 'For $n\ge3$ the bound $\frac{1}{n^2-7}>\frac{1}{n^2}$ points the wrong way. Find the smallest integer $C$ such that $\frac{1}{n^2-7}\le\frac{C}{n^2}$ for all $n\ge3$.'
+            solution_sketch: 'The simple bound $\frac{1}{n^2}$ goes the wrong way, because $\frac{1}{n^2-2}>\frac{1}{n^2}$. For $n\ge2$ we have $n^2-2\ge\frac{n^2}{2}$, so $\frac{1}{n^2-2}\le\frac{2}{n^2}$. The series $\sum \frac{2}{n^2}$ converges, so the given series converges.'
+          - problem: 'Find the smallest integer $C$ such that $\frac{1}{n^2-7}\le\frac{C}{n^2}$ for all $n\ge3$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition means $C\ge\frac{n^2}{n^2-7}$ for all $n\ge3$. This fraction decreases with $n$, and at $n=3$ it equals $\frac{9}{2}=4.5$. The smallest integer $C$ is $5$.'
-          - problem: 'For $n\ge1$ the bound $\frac{1}{3^n-2}>\frac{1}{3^n}$ points the wrong way. Find the smallest integer $C$ such that $\frac{1}{3^n-2}\le\frac{C}{3^n}$ for all $n\ge1$.'
+          - problem: 'Find the smallest integer $C$ such that $\frac{1}{3^n-2}\le\frac{C}{3^n}$ for all $n\ge1$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition means $C\ge\frac{3^n}{3^n-2}$ for all $n\ge1$. This fraction decreases with $n$, and at $n=1$ it equals $\frac{3}{1}=3$. So the smallest integer is $C=3$.'
-          - problem: 'In week $n\ge2$ of a trial, the expected number of new cases is $\frac{1}{n^2-3}$ thousand. Since $\frac{1}{n^2-3}>\frac{1}{n^2}$, the simple bound fails. Find the smallest integer $C$ such that $\frac{1}{n^2-3}\le\frac{C}{n^2}$ for all $n\ge2$.'
+          - problem: 'In week $n\ge2$ of a trial, the expected number of new cases is $\frac{1}{n^2-3}$ thousand. Find the smallest integer $C$ such that this number is at most $\frac{C}{n^2}$ thousand for all $n\ge2$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition means $C\ge\frac{n^2}{n^2-3}$ for all $n\ge2$. This fraction decreases with $n$, and at $n=2$ it equals $\frac{4}{1}=4$. So the smallest integer is $C=4$.'
-          - problem: 'For $n\ge1$ the bound $\frac{1}{n+3}<\frac{1}{n}$ points the wrong way for a divergence proof. Does $\sum_{n=1}^{\infty} \frac{1}{n+3}$ converge or diverge?'
+          - problem: 'Does $\sum_{n=1}^{\infty} \frac{1}{n+3}$ converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
-            solution_sketch: 'For $n\ge1$ we have $n+3\le4n$, so $\frac{1}{n+3}\ge\frac{1}{4n}$. The series $\sum \frac{1}{4n}$ is a quarter of the harmonic series and diverges, so the given series diverges.'
+            solution_sketch: 'The simple bound $\frac{1}{n}$ goes the wrong way, because $\frac{1}{n+3}<\frac{1}{n}$. For $n\ge1$ we have $n+3\le4n$, so $\frac{1}{n+3}\ge\frac{1}{4n}$. The series $\sum \frac{1}{4n}$ is a quarter of the harmonic series and diverges, so the given series diverges.'
           - problem: 'A charity receives $\frac{1}{n+3}$ million dollars in month $n$. Find the largest constant $c$ such that $\frac{1}{n+3}\ge\frac{c}{n}$ for all $n\ge1$.'
             answer: '1/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition means $c\le\frac{n}{n+3}$ for all $n\ge1$. This fraction increases with $n$, so its smallest value is $\frac{1}{4}$ at $n=1$, and $c=\frac{1}{4}$.'
-          - problem: 'For $n\ge1$ the bound $\frac{1}{2^n-1}>\frac{1}{2^n}$ points the wrong way. Find the smallest integer $C$ such that $\frac{1}{2^n-1}\le\frac{C}{2^n}$ for all $n\ge1$.'
+          - problem: 'Find the smallest integer $C$ such that $\frac{1}{2^n-1}\le\frac{C}{2^n}$ for all $n\ge1$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The condition means $C\ge\frac{2^n}{2^n-1}$ for all $n\ge1$. This fraction decreases with $n$, and at $n=1$ it equals $\frac{2}{1}=2$. So the smallest integer is $C=2$.'
         constraints: "denominators shrunk by a subtraction; repair with a constant multiple of the natural comparator"
     diagnostic_exemplar:
-      problem: 'For $n\ge 1$, $0<\frac{1}{3^n+n}\le\frac{1}{3^n}$. The comparison test bounds $\sum_{n=1}^{\infty}\frac{1}{3^n+n}$ from above by the sum of the larger series. Find that upper bound.'
+      problem: 'Compare each term of $\sum_{n=1}^{\infty}\frac{1}{3^n+n}$ with $\frac{c}{3^n}$. Let $c$ be the smallest constant such that every term is at most $\frac{c}{3^n}$ for $n\ge1$. Find the upper bound $\sum_{n=1}^{\infty}\frac{c}{3^n}$.'
       answer_contract: {"kind":"exact"}
       answer: '1/2'
-      solution_sketch: 'The larger series is $\sum_{n=1}^{\infty}(1/3)^n$, a geometric series with first term $1/3$ and ratio $1/3$. Its sum is $(1/3)/(1-1/3)=1/2$.'
+      solution_sketch: 'We need $c\ge\frac{3^n}{3^n+n}$ for all $n$. This fraction is below $1$ and gets as near to $1$ as we want, so $c=1$. The geometric series $\sum (1/3)^n$ has sum $\frac{1/3}{1-1/3}=\frac12$.'
     anki_seeds:
       - front: "Direct comparison proves convergence when your positive terms are..."
         back: "bounded above, termwise, by the terms of a convergent series"
@@ -1404,30 +1404,30 @@ topics:
             answer: 'converges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'For every $n\ge1$ we have $\frac{1}{n\cdot2^n}\le\frac{1}{2^n}$. The geometric series $\sum \frac{1}{2^n}$ has ratio $\frac{1}{2}<1$ and converges, so the given series converges by direct comparison.'
-          - problem: 'In a limit comparison of $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}+\sqrt{n+1}}$ with $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$, what is $L=\lim_{n\to\infty}\frac{a_n}{b_n}$?'
+          - problem: 'Let $a_n=\frac{1}{\sqrt{n}+\sqrt{n+1}}$. Find the positive number $L$ for which the ratio of $a_n$ to $\frac{L}{\sqrt n}$ tends to $1$ as $n\to\infty$.'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Form the ratio of the two terms and simplify it. We have $\frac{a_n}{b_n}=\frac{\sqrt{n}}{\sqrt{n}+\sqrt{n+1}}=\frac{1}{1+\sqrt{1+1/n}}$. As $n\to\infty$ this tends to $\frac{1}{1+1}=\frac{1}{2}$.'
-          - problem: 'Since $\frac{1}{n\cdot2^n}\le\frac{1}{2^n}$ for every $n\ge1$, the sum of $\sum_{n=1}^{\infty} \frac{1}{n\cdot2^n}$ is at most the sum of a geometric series. What is the sum of $\sum_{n=1}^{\infty} \frac{1}{2^n}$?'
+            solution_sketch: 'The ratio is $\frac{\sqrt n}{L(\sqrt n+\sqrt{n+1})}=\frac{1}{L(1+\sqrt{1+1/n})}$. As $n\to\infty$ this tends to $\frac{1}{2L}$. Set $\frac{1}{2L}=1$ to get $L=\frac12$.'
+          - problem: 'Find the least whole number $M$ such that every partial sum of $\sum_{n=1}^{\infty} \frac{1}{n\cdot2^n}$ is below $M$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The geometric series has first term $\frac{1}{2}$ and ratio $\frac{1}{2}$. Its sum is $\frac{1/2}{1-1/2}=1$, so the given series has a sum of at most $1$.'
-          - problem: 'What is $L=\lim_{n\to\infty}\frac{a_n}{b_n}$ for $a_n=\frac{3n^2+1}{n^4+5}$ and $b_n=\frac{1}{n^2}$?'
+            solution_sketch: 'Since $\frac{1}{n\cdot2^n}\le\frac{1}{2^n}$, each partial sum is below the sum of $\sum\frac{1}{2^n}$. That geometric series has first term $\frac12$ and ratio $\frac12$, so its sum is $1$. The partial sums are positive, so $M=0$ fails and $M=1$.'
+          - problem: 'Let $a_n=\frac{3n^2+1}{n^4+5}$. Find the positive number $c$ for which the ratio of $a_n$ to $\frac{c}{n^2}$ tends to $1$ as $n\to\infty$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{b_n}=\frac{3n^4+n^2}{n^4+5}$. Dividing top and bottom by $n^4$ gives $\frac{3+1/n^2}{1+5/n^4}\to3$, so $L=3$.'
+            solution_sketch: 'The ratio is $\frac{3n^4+n^2}{c(n^4+5)}$. Dividing top and bottom by $n^4$ gives $\frac{3+1/n^2}{c(1+5/n^4)}\to\frac3c$. Set $\frac3c=1$ to get $c=3$.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{n+2}{n^2+3n}$ converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'The terms behave like $\frac{n}{n^2}=\frac{1}{n}$. Since $\frac{n+2}{n^2+3n}\cdot n\to1$, which is finite and positive, the series behaves like the harmonic series and diverges.'
-          - problem: 'The $n$th layer of a stack is $\frac{2}{n^{3/2}+1}$ centimetres thick. To show that the stack has finite height, compare with $\sum_{n=1}^{\infty} \frac{1}{n^{3/2}}$. What limit $L$ does the limit comparison give?'
+          - problem: 'The $n$th layer of a stack is $\frac{2}{n^{3/2}+1}$ centimeters thick. Find the positive number $c$ for which the ratio of this thickness to $\frac{c}{n^{3/2}}$ tends to $1$ as $n\to\infty$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply the term by the reciprocal of the comparison term. We have $\frac{2}{n^{3/2}+1}\cdot n^{3/2}=\frac{2n^{3/2}}{n^{3/2}+1}=\frac{2}{1+n^{-3/2}}$. This tends to $2$, so $L=2$.'
-          - problem: 'A game pays $\frac{1}{n\cdot3^n}$ dollars in round $n$. Because $\frac{1}{n\cdot3^n}\le\frac{1}{3^n}$, the total payout is at most the sum of a geometric series. What is the sum of $\sum_{n=1}^{\infty} \frac{1}{3^n}$?'
-            answer: '1/2'
+            solution_sketch: 'The ratio is $\frac{2n^{3/2}}{c(n^{3/2}+1)}=\frac{2}{c(1+n^{-3/2})}$. This tends to $\frac2c$. Set $\frac2c=1$ to get $c=2$. Since $\frac32>1$, the stack has finite height.'
+          - problem: 'A game pays $\frac{1}{n\cdot3^n}$ dollars in round $n$. Find the least whole number of dollars $M$ such that the total payout over any number of rounds is at most $M$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The geometric series has first term $\frac{1}{3}$ and ratio $\frac{1}{3}$. Its sum is $\frac{1/3}{1-1/3}=\frac{1}{2}$, so the total payout is at most half a dollar.'
+            solution_sketch: 'Since $\frac{1}{n\cdot3^n}\le\frac{1}{3^n}$, the total payout is at most the sum of $\sum\frac{1}{3^n}$. That geometric series has first term $\frac13$ and ratio $\frac13$, so its sum is $\frac12$. The payout is positive, so $M=0$ fails and $M=1$.'
         constraints: "one problem where limit comparison is essential, one where a direct bound is quicker"
     diagnostic_exemplar:
       problem: 'Find $\lim_{n\to\infty} \dfrac{(2n+1)/(n^3+4)}{1/n^2}$.'
@@ -1633,19 +1633,19 @@ topics:
             answer: 'inconclusive'
             answer_contract: {"kind": "label", "options": [["inconclusive", "it is inconclusive", "the test is inconclusive", "the ratio test is inconclusive", "no conclusion", "cannot tell", "no verdict"], ["converges", "it converges", "the series converges"], ["diverges", "it diverges", "the series diverges"]]}
             solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{n+1}{n+2}$, which tends to $1$. Since $L=1$, the ratio test is inconclusive and does not decide convergence.'
-          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$. Use the $p$-series test to decide whether the series converges or diverges.'
+          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{1}{\sqrt{n}}$. Does the series converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'We have $\frac{1}{\sqrt{n}}=\frac{1}{n^{1/2}}$, a $p$-series with $p=\frac{1}{2}$. Since $\frac{1}{2}\le1$, the series diverges.'
-          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{3n+1}{n^2+4}$. In a limit comparison with $\sum_{n=1}^{\infty} \frac{1}{n}$, what is $C=\lim_{n\to\infty}\frac{a_n}{1/n}$?'
+          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{3n+1}{n^2+4}$. Let $b_n=\frac{1}{n^p}$, where $p$ is the exponent for which $\lim_{n\to\infty}\frac{a_n}{b_n}$ is finite and positive. What is that limit?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{1/n}=\frac{3n^2+n}{n^2+4}$. Dividing top and bottom by $n^2$ gives $\frac{3+1/n}{1+4/n^2}\to3$, so $C=3$ and the series diverges like the harmonic series.'
-          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{2}{n^2+3}$. In a limit comparison with $\sum_{n=1}^{\infty} \frac{1}{n^2}$, what is $C=\lim_{n\to\infty}\frac{a_n}{1/n^2}$?'
+            solution_sketch: 'For large $n$ the term behaves like $\frac{3}{n}$, so $p=1$. Then $\frac{a_n}{b_n}=\frac{3n^2+n}{n^2+4}$. Dividing top and bottom by $n^2$ gives $\frac{3+1/n}{1+4/n^2}\to3$, so the limit is $3$ and the series diverges like the harmonic series.'
+          - problem: 'The ratio test is inconclusive for $\sum_{n=1}^{\infty} \frac{2}{n^2+3}$. Let $b_n=\frac{1}{n^p}$, where $p$ is the exponent for which $\lim_{n\to\infty}\frac{a_n}{b_n}$ is finite and positive. What is that limit?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{1/n^2}=\frac{2n^2}{n^2+3}$. Dividing top and bottom by $n^2$ gives $\frac{2}{1+3/n^2}\to2$, so $C=2$ and the series converges like the $p$-series with $p=2$.'
-          - problem: 'A charity receives $\frac{5}{n^{3/2}}$ thousand dollars in week $n$. The ratio test is inconclusive for the series of its receipts, so we treat it as a multiple of a $p$-series $\sum\frac{1}{n^p}$. What is $p$?'
+            solution_sketch: 'For large $n$ the term behaves like $\frac{2}{n^2}$, so $p=2$. Then $\frac{a_n}{b_n}=\frac{2n^2}{n^2+3}$. Dividing top and bottom by $n^2$ gives $\frac{2}{1+3/n^2}\to2$, so the limit is $2$ and the series converges like the $p$-series with $p=2$.'
+          - problem: 'A charity receives $\frac{5}{n^{3/2}}$ thousand dollars in week $n$. The ratio test is inconclusive for the series of its receipts. Write the receipts as a constant times $\frac{1}{n^p}$. What is $p$?'
             answer: '3/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The receipts are $\frac{5}{n^{3/2}}=5\cdot\frac{1}{n^{3/2}}$, so $p=\frac{3}{2}$. Since $\frac{3}{2}>1$, the total receipts converge even though the ratio test could not show it.'
@@ -1662,30 +1662,30 @@ topics:
             answer: 'root test'
             answer_contract: {"kind": "label", "options": [["root test", "root", "the root test", "use the root test", "the root test is easier"], ["ratio test", "ratio", "the ratio test", "use the ratio test", "the ratio test is easier"]]}
             solution_sketch: 'The whole term is a single base raised to the power $n$. So the $n$th root removes the power at once and leaves $\frac{2n+1}{5n}\to\frac{2}{5}$, which is far simpler than the ratio.'
-          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \frac{3^n}{n^n}$. What is $L=\lim_{n\to\infty}\sqrt[n]{a_n}$?'
+          - problem: 'Apply the ratio test or the root test to $\sum_{n=1}^{\infty} \frac{3^n}{n^n}$. What is the limit $L$ that the test gives?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\sqrt[n]{a_n}=\frac{3}{n}$, because both $3^n$ and $n^n$ are $n$th powers. This tends to $0$, so $L=0<1$ and the series converges.'
+            solution_sketch: 'Both $3^n$ and $n^n$ are $n$th powers, so the root test is the simple one. We have $\sqrt[n]{a_n}=\frac{3}{n}$, which tends to $0$. So $L=0<1$ and the series converges.'
           - problem: 'Does $\sum_{n=1}^{\infty} \frac{n!\,4^n}{n^n}$ converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind": "label", "options": [["converges", "converge", "it converges", "convergent", "the series converges", "the series is convergent", "yes"], ["diverges", "diverge", "it diverges", "divergent", "the series diverges", "the series is divergent", "no"]]}
             solution_sketch: 'The factorial makes the ratio test the natural choice. We get $\frac{a_{n+1}}{a_n}=4\left(\frac{n}{n+1}\right)^n\to\frac{4}{e}\approx1.47>1$, so the series diverges.'
-          - problem: 'Use the root test on $\sum_{n=1}^{\infty} \left(\frac{3n}{2n+1}\right)^n$. What is $L=\lim_{n\to\infty}\sqrt[n]{a_n}$?'
+          - problem: 'Apply the ratio test or the root test to $\sum_{n=1}^{\infty} \left(\frac{3n}{2n+1}\right)^n$. What is the limit $L$ that the test gives?'
             answer: '3/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The $n$th root of $a_n$ is $\frac{3n}{2n+1}$, which tends to $\frac{3}{2}$. So $L=\frac{3}{2}>1$ and the series diverges.'
-          - problem: 'Use the ratio test on $\sum_{n=1}^{\infty} \frac{(n!)^2}{(2n)!}$. What is $L=\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$?'
+            solution_sketch: 'The whole term is an $n$th power, so the root test is the simple one. The $n$th root of $a_n$ is $\frac{3n}{2n+1}$, which tends to $\frac{3}{2}$. So $L=\frac{3}{2}>1$ and the series diverges.'
+          - problem: 'Apply the ratio test or the root test to $\sum_{n=1}^{\infty} \frac{(n!)^2}{(2n)!}$. What is the limit $L$ that the test gives?'
             answer: '1/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)^2}{(2n+2)(2n+1)}=\frac{n+1}{2(2n+1)}$. This tends to $\frac{1}{4}$, so $L=\frac{1}{4}<1$ and the series converges.'
-          - problem: 'A pension fund pays $\left(\frac{2n+1}{3n+4}\right)^n$ thousand dollars in year $n$. Use the root test on the series of payments. What is $L=\lim_{n\to\infty}\sqrt[n]{a_n}$?'
+            solution_sketch: 'Factorials appear, so the ratio test is the simple one. We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)^2}{(2n+2)(2n+1)}=\frac{n+1}{2(2n+1)}$, which tends to $\frac{1}{4}$. So $L=\frac{1}{4}<1$ and the series converges.'
+          - problem: 'A pension fund pays $\left(\frac{2n+1}{3n+4}\right)^n$ thousand dollars in year $n$. Apply the ratio test or the root test to the series of payments. What is the limit $L$ that the test gives?'
             answer: '2/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The $n$th root of the payment is $\frac{2n+1}{3n+4}$, which tends to $\frac{2}{3}$. So $L=\frac{2}{3}<1$ and the total of all payments is finite.'
-          - problem: 'A machine uses $\frac{2^n\,n!}{n^n}$ litres of oil in hour $n$. Use the ratio test on the series of amounts. What is $L=\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$?'
+            solution_sketch: 'Each payment is an $n$th power, so the root test is the simple one. The $n$th root of the payment is $\frac{2n+1}{3n+4}$, which tends to $\frac{2}{3}$. So $L=\frac{2}{3}<1$ and the total of all payments is finite.'
+          - problem: 'A machine uses $\frac{2^n\,n!}{n^n}$ litres of oil in hour $n$. Apply the ratio test or the root test to the series of amounts. What is the limit $L$ that the test gives?'
             answer: '2/e'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=2\left(\frac{n}{n+1}\right)^n=2\left(1+\frac{1}{n}\right)^{-n}$. This tends to $\frac{2}{e}\approx0.74$, so $L=\frac{2}{e}<1$ and the total oil use is finite.'
+            solution_sketch: 'A factorial appears, so the ratio test is the simple one. We have $\frac{a_{n+1}}{a_n}=2\left(\frac{n}{n+1}\right)^n=2\left(1+\frac{1}{n}\right)^{-n}$, which tends to $\frac{2}{e}$. Since $\frac{2}{e}<1$, the total oil use is finite.'
         constraints: "root test when a_n is an nth power; ratio test when factorials appear; verdicts state L"
     diagnostic_exemplar:
       problem: 'Find $\lim_{n\to\infty}\sqrt[n]{a_n}$ for $a_n=\left(\frac{2n}{3n+1}\right)^n$.'
@@ -1733,18 +1733,18 @@ topics:
             answer: '0.58'
             answer_contract: {"kind": "approx", "decimals": 2}
             solution_sketch: 'The four walks give $1-\frac12+\frac13-\frac14=\frac{12-6+4-3}{12}=\frac{7}{12}$. This is $0.5833\ldots$, so after four walks the bug is about $0.58$ m east of its starting point.'
-          - problem: 'The terms of $\sum_{n=1}^{\infty}(-1)^n\left(\sqrt{n+1}-\sqrt n\right)$ have sizes $b_n=\sqrt{n+1}-\sqrt n$. Find $\lim_{n\to\infty}b_n$.'
+          - problem: 'Find $\lim_{n\to\infty}(-1)^n\left(\sqrt{n+1}-\sqrt n\right)$.'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Multiply and divide by the conjugate to get $\sqrt{n+1}-\sqrt n=\frac{1}{\sqrt{n+1}+\sqrt n}$. The denominator grows without bound, so $b_n\to 0$. The sizes are also positive and decreasing, so the alternating series test applies and the series converges.'
+            solution_sketch: 'Multiply and divide by $\\sqrt{n+1}+\\sqrt n$ to get $\sqrt{n+1}-\sqrt n=\frac{1}{\sqrt{n+1}+\sqrt n}$. The denominator grows without bound, so the terms tend to $0$. The sizes are also positive and decreasing, so the alternating series test applies.'
           - problem: 'A second bug walks $\frac12$ m east, then $\frac23$ m west, then $\frac34$ m east, then $\frac45$ m west, and so on, so that walk number $k$ is $\frac{k}{k+1}$ m long. Does its position settle toward one point as the walks go on?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it settles", "converges", "it converges", "yes, it settles", "yes it settles"], ["no", "it does not settle", "diverges", "it diverges", "no, it does not settle", "no it does not settle"]]}
             solution_sketch: 'The length of walk $k$ is $\frac{k}{k+1}$, and this tends to $1$, not to $0$. A series whose terms do not tend to $0$ diverges by the term test. So the bug keeps swinging back and forth, and its position does not settle.'
-          - problem: 'The argument for the convergence of $\sum_{n=1}^{\infty}(-1)^{n+1}\frac{2n+1}{n}$ is that the signs alternate and $\frac{2n+1}{n}$ decreases. What number do the sizes $\frac{2n+1}{n}$ approach as $n$ grows?'
+          - problem: 'Find $\lim_{n\to\infty}\left|(-1)^{n+1}\frac{2n+1}{n}\right|$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Write $\frac{2n+1}{n}=2+\frac1n$, which tends to $2$. The sizes decrease, but they do not tend to $0$, so the alternating series test does not apply. The terms do not tend to $0$, so the series diverges by the term test, and the argument is wrong.'
+            solution_sketch: 'Write $\frac{2n+1}{n}=2+\frac1n$, which tends to $2$. The sizes decrease, but they do not tend to $0$. So the terms do not tend to $0$ and the series diverges by the term test.'
           - problem: 'Find the sum of $\sum_{n=1}^{\infty}(-1)^{n+1}\left(\frac1n+\frac1{n+1}\right)$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -1774,11 +1774,11 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The derivative of $\frac{\ln x}{x}$ is $\frac{1-\ln x}{x^2}$, which is positive for $x<e\approx2.72$ and negative for $x>e$. Check: $b_2=\frac{\ln 2}{2}\approx0.347$ is less than $b_3=\frac{\ln 3}{3}\approx0.366$, while $b_3>b_4=\frac{\ln 4}{4}\approx0.347$. So the sizes rise from $n=2$ to $n=3$ and fall from $n=3$ on, and $N=3$.'
-          - problem: 'The argument that $\sum_{n=1}^{\infty}(-1)^n\frac{n}{2n+1}$ passes the alternating series test is that $\frac{n}{2n+1}$ is positive. What number do the sizes $\frac{n}{2n+1}$ approach as $n$ grows?'
+          - problem: 'Find $\lim_{n\to\infty}\left|(-1)^n\frac{n}{2n+1}\right|$.'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide the numerator and the denominator by $n$ to get $\frac{1}{2+1/n}$, which tends to $\frac12$. The sizes are positive but they do not tend to $0$. So the test does not apply, and the terms do not tend to $0$, so the series diverges. The argument is wrong.'
-          - problem: 'To test $\sum_{n=1}^{\infty}(-1)^n\frac{n^2+1}{4n^2+5}$, find the limit of the sizes $b_n=\frac{n^2+1}{4n^2+5}$.'
+            solution_sketch: 'Divide the numerator and the denominator by $n$ to get $\frac{1}{2+1/n}$, which tends to $\frac12$. The limit is not $0$, so the terms do not tend to $0$ and the series diverges.'
+          - problem: 'Find $\lim_{n\to\infty}\left|(-1)^n\frac{n^2+1}{4n^2+5}\right|$.'
             answer: '1/4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Divide the numerator and the denominator by $n^2$ to get $\frac{1+1/n^2}{4+5/n^2}$, which tends to $\frac14$. This is not $0$, so the series diverges by the term test.'
@@ -1829,22 +1829,22 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it converges", "converges", "convergent", "yes, it converges", "yes it converges"], ["no", "it diverges", "diverges", "divergent", "no, it diverges", "no it diverges"]]}
             solution_sketch: 'Taking absolute values gives $\sum\frac{1}{n^4}$, a $p$-series with $p=4>1$. It converges, so the original series converges absolutely.'
-          - problem: 'Replace each term of $\sum_{n=1}^{\infty}\frac{(-1)^n}{\sqrt{n^3}}$ by its absolute value. The result is a $p$-series. What is $p$?'
+          - problem: 'The series $\sum_{n=1}^{\infty}\left|\frac{(-1)^n}{\sqrt{n^3}}\right|$ has the form $\sum_{n=1}^{\infty}\frac{1}{n^p}$. Find $p$.'
             answer: '3/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $\sqrt{n^3}=n^{3/2}$, the absolute series is $\sum\frac{1}{n^{3/2}}$. So $p=\frac32$, and as $\frac32>1$ the absolute series converges.'
-          - problem: 'To show that $\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n^2+3n}$ converges absolutely, compare $\frac{1}{n^2+3n}$ with $\frac{1}{n^p}$. Find the integer $p$ for which $\frac{1}{n^2+3n}\le\frac{1}{n^p}$ for every $n\ge1$ and $\sum\frac{1}{n^p}$ converges.'
+            solution_sketch: 'The factor $(-1)^n$ has absolute value $1$, and $\sqrt{n^3}=n^{3/2}$. So the series is $\sum\frac{1}{n^{3/2}}$ and $p=\frac32$. As $\frac32>1$, the series of absolute values converges.'
+          - problem: 'The terms of $\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n^2+3n}$ have absolute values of at most $\frac{1}{n^p}$ for every $n\ge1$, and $\sum\frac{1}{n^p}$ converges. Find the integer $p$ for which both facts hold.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The comparison $\frac{1}{n^2+3n}\le\frac{1}{n^p}$ needs $n^p\le n^2+3n$. For $p=3$ this fails at $n=3$, since $27>18$. For $p=1$ it holds, but $\sum\frac1n$ diverges. For $p=2$ it holds and $\sum\frac{1}{n^2}$ converges, so $p=2$.'
+            solution_sketch: 'The bound $\frac{1}{n^2+3n}\le\frac{1}{n^p}$ needs $n^p\le n^2+3n$. For $p=3$ this fails at $n=3$, since $27>18$. For $p=1$ it holds, but $\sum\frac1n$ diverges. For $p=2$ it holds and $\sum\frac{1}{n^2}$ converges, so $p=2$.'
           - problem: 'Does $\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n+2}$ converge absolutely?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it converges", "converges", "convergent", "yes, it converges", "yes it converges"], ["no", "it diverges", "diverges", "divergent", "no, it diverges", "no it diverges"]]}
             solution_sketch: 'The absolute series is $\sum\frac{1}{n+2}$. For $n\ge2$, $\frac{1}{n+2}\ge\frac{1}{2n}$, and $\sum\frac{1}{2n}$ is a constant multiple of the harmonic series, which diverges. So the absolute series diverges, and the series does not converge absolutely.'
-          - problem: 'The series $\sum_{n=1}^{\infty}(-1)^n\left(\frac34\right)^n$ converges absolutely. Find the sum of its absolute series $\sum_{n=1}^{\infty}\left(\frac34\right)^n$.'
+          - problem: 'Find the sum of $\sum_{n=1}^{\infty}\left|(-1)^n\left(\frac34\right)^n\right|$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The absolute series is geometric with first term $\frac34$ and ratio $\frac34$. Its sum is $\frac{3/4}{1-3/4}=3$.'
+            solution_sketch: 'Each absolute value is $\left(\frac34\right)^n$, so the series is geometric with first term $\frac34$ and ratio $\frac34$. Its sum is $\frac{3/4}{1-3/4}=3$.'
           - problem: 'A bug walks along a line, alternately east and west. Walk $k$ is $\left(\frac37\right)^k$ m long. How far does the bug walk in total if it keeps going forever?'
             answer: '3/4'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -1853,10 +1853,10 @@ topics:
             answer: '3/10'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The signed walks form $\sum_{k\ge1}(-1)^{k+1}\left(\frac37\right)^k$, a geometric series with first term $\frac37$ and ratio $-\frac37$. Its sum is $\frac{3/7}{1+3/7}=\frac{3}{10}$ m. This is less than the $\frac34$ m it walks in total.'
-          - problem: 'The terms of $\sum_{n=1}^{\infty}\frac{\cos n}{n^{5/2}}$ change sign irregularly. Since $|\cos n|\le1$, the absolute series is bounded term by term by a $p$-series $\sum\frac{1}{n^p}$. Find $p$.'
+          - problem: 'Find the largest $p$ for which $\left|\frac{\cos n}{n^{5/2}}\right|\le\frac{1}{n^p}$ holds for every $n\ge1$, whatever the value of $\cos n$.'
             answer: '5/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{|\cos n|}{n^{5/2}}\le\frac{1}{n^{5/2}}$ for every $n$. So the comparison series is $\sum\frac{1}{n^{5/2}}$, with $p=\frac52>1$. It converges, so the series converges absolutely.'
+            solution_sketch: 'The value of $\cos n$ lies between $-1$ and $1$, so $|\cos n|\le1$. Then $\frac{|\cos n|}{n^{5/2}}\le\frac{1}{n^{5/2}}$ for every $n$. A larger $p$ fails when $|\cos n|$ is near $1$, so $p=\frac52$. As $\frac52>1$, the series converges absolutely.'
         constraints: 'absolute series handled by a p-series, a geometric series or a direct comparison; contexts with total distance versus net displacement; at most two label items'
       - id: kp2
         name: The three-way classification
@@ -1874,18 +1874,18 @@ topics:
             answer: 'divergent'
             answer_contract: {"kind": "label", "options": [["absolutely convergent", "absolutely", "converges absolutely", "absolute convergence", "absolute"], ["conditionally convergent", "conditionally", "converges conditionally", "conditional convergence", "conditional"], ["divergent", "diverges", "it diverges", "the series diverges", "not convergent"]]}
             solution_sketch: 'The sizes $\frac{3n+1}{n+2}$ tend to $3$, not to $0$. So the terms do not tend to $0$, and the series diverges by the term test. No absolute or conditional convergence is possible.'
-          - problem: 'The series $\sum_{n=1}^{\infty}(-1)^n\left(\frac23\right)^n$ converges absolutely. Find its sum.'
+          - problem: 'Find the sum of $\sum_{n=1}^{\infty}(-1)^n\left(\frac23\right)^n$.'
             answer: '-2/5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'This is a geometric series with first term $-\frac23$ and ratio $-\frac23$. Its sum is $\frac{-2/3}{1+2/3}=-\frac25$.'
+            solution_sketch: 'The series is geometric with first term $-\frac23$ and ratio $-\frac23$. Since $\left|-\frac23\right|<1$, it converges. Its sum is $\frac{-2/3}{1+2/3}=-\frac25$.'
           - problem: 'A pendulum bob swings alternately right and left. Swing $k$ covers $\frac{12}{2^k}$ cm. Find the total distance the bob travels over all swings.'
             answer: '12'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
             solution_sketch: 'The distances $\frac{12}{2^k}$ form a geometric series with first term $6$ and ratio $\frac12$. Their sum is $\frac{6}{1-1/2}=12$ cm. The total distance uses the absolute values, not the signed values.'
-          - problem: 'The argument that $\sum_{n=1}^{\infty}\frac{(-1)^n}{\sqrt n}$ converges absolutely is that it converges. What is the exponent $p$ of the $p$-series $\sum\frac{1}{n^p}$ formed by the absolute values?'
+          - problem: 'Write $\sum_{n=1}^{\infty}\left|\frac{(-1)^n}{\sqrt n}\right|$ in the form $\sum_{n=1}^{\infty}\frac{1}{n^p}$. What is $p$?'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The absolute series is $\sum\frac{1}{\sqrt n}=\sum\frac{1}{n^{1/2}}$, so $p=\frac12$. Since $\frac12\le1$, the absolute series diverges. The argument is wrong: the series converges only conditionally.'
+            solution_sketch: 'The absolute series is $\sum\frac{1}{\sqrt n}=\sum\frac{1}{n^{1/2}}$, so $p=\frac12$. Since $\frac12\le1$, the absolute series diverges. The alternating series converges only conditionally.'
           - problem: 'A pendulum bob swings right, then left, and so on. Swing $k$ covers $\frac{12}{2^k}$ cm, and the first swing is to the right. How far right of its starting point does the bob end up after all swings?'
             answer: '4'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
@@ -1899,22 +1899,22 @@ topics:
             answer: 'conditionally convergent'
             answer_contract: {"kind": "label", "options": [["absolutely convergent", "absolutely", "converges absolutely", "absolute convergence", "absolute"], ["conditionally convergent", "conditionally", "converges conditionally", "conditional convergence", "conditional"], ["divergent", "diverges", "it diverges", "the series diverges", "not convergent"]]}
             solution_sketch: 'The sizes $b_n=\frac{3n+1}{2n^2+5}$ tend to $0$ and decrease: the numerator of the derivative is $-6x^2-4x+15$, which is negative for $x\ge2$, and $b_1>b_2>b_3$. So the series converges. A limit comparison with $\sum\frac1n$ gives $L=\frac32$, so the absolute series diverges. The series is conditionally convergent.'
-          - problem: 'For $\sum_{n=1}^{\infty}(-1)^n\frac{n+1}{n^3+2}$, compare the absolute series with $\sum\frac{1}{n^2}$ by the limit comparison test. Find $L=\lim_{n\to\infty}\frac{|a_n|}{1/n^2}$.'
+          - problem: 'Let $a_n=(-1)^n\frac{n+1}{n^3+2}$. Find the positive number $c$ for which the ratio of $|a_n|$ to $\frac{c}{n^2}$ tends to $1$ as $n\to\infty$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{|a_n|}{1/n^2}=\frac{n^2(n+1)}{n^3+2}=\frac{n^3+n^2}{n^3+2}$. Divide the numerator and the denominator by $n^3$: the limit is $1$.'
+            solution_sketch: 'The ratio is $\frac{n^3+n^2}{c(n^3+2)}$. Dividing top and bottom by $n^3$ gives $\frac{1+1/n}{c(1+2/n^3)}\to\frac1c$. Set $\frac1c=1$ to get $c=1$. Since $\sum\frac{1}{n^2}$ converges, the series converges absolutely.'
           - problem: 'Classify $\sum_{n=1}^{\infty}(-1)^n\frac{n^2}{3^n}$ as absolutely convergent, conditionally convergent, or divergent.'
             answer: 'absolutely convergent'
             answer_contract: {"kind": "label", "options": [["absolutely convergent", "absolutely", "converges absolutely", "absolute convergence", "absolute"], ["conditionally convergent", "conditionally", "converges conditionally", "conditional convergence", "conditional"], ["divergent", "diverges", "it diverges", "the series diverges", "not convergent"]]}
             solution_sketch: 'Apply the ratio test to the absolute series: $\frac{(n+1)^2/3^{n+1}}{n^2/3^n}=\frac{(n+1)^2}{3n^2}\to\frac13<1$. So the absolute series converges, and the series is absolutely convergent.'
-          - problem: 'Apply the ratio test to the absolute series of $\sum_{n=1}^{\infty}(-1)^n\frac{n+2}{2^n}$. Find $L=\lim_{n\to\infty}\frac{|a_{n+1}|}{|a_n|}$.'
+          - problem: 'Find $L=\lim_{n\to\infty}\left|\frac{a_{n+1}}{a_n}\right|$ for $a_n=(-1)^n\frac{n+2}{2^n}$.'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{|a_{n+1}|}{|a_n|}=\frac{(n+3)/2^{n+1}}{(n+2)/2^n}=\frac{n+3}{2(n+2)}$. This tends to $\frac12$, which is less than $1$, so the series converges absolutely.'
-          - problem: 'To classify $\sum_{n=1}^{\infty}(-1)^n\frac{5n+2}{2n+1}$, first apply the term test. Find $\lim_{n\to\infty}|a_n|$.'
+            solution_sketch: 'We have $\left|\frac{a_{n+1}}{a_n}\right|=\frac{(n+3)/2^{n+1}}{(n+2)/2^n}=\frac{n+3}{2(n+2)}$. This tends to $\frac12$, which is less than $1$, so the series converges absolutely.'
+          - problem: 'Find $\lim_{n\to\infty}\left|(-1)^n\frac{5n+2}{2n+1}\right|$.'
             answer: '5/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide the numerator and the denominator by $n$ to get $\frac{5+2/n}{2+1/n}$, which tends to $\frac52$. Since $|a_n|\to\frac52\ne0$, the series diverges by the term test.'
+            solution_sketch: 'Divide the numerator and the denominator by $n$ to get $\frac{5+2/n}{2+1/n}$, which tends to $\frac52$. Since this limit is not $0$, the terms do not tend to $0$ and the series diverges.'
           - problem: 'A bug walks alternately east and west, and walk $k$ is $\frac{5k+3}{k^3+1}$ m long. For large $k$, the walk is close to $\frac{c}{k^2}$ m. Find $c$.'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1923,10 +1923,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We want $c=\lim_{k\to\infty}k\cdot\frac{4k}{k^2+k+1}=\lim\frac{4k^2}{k^2+k+1}$. Divide the numerator and the denominator by $k^2$: the limit is $4$. So the adjustments behave like $\frac4k$, and the total of their sizes diverges.'
-          - problem: 'The absolute series of $\sum_{n=1}^{\infty}(-1)^n\frac{n}{3n^2+1}$ is compared with $\sum\frac{1}{n^2}$, and the ratio grows without bound. It is then compared with $\sum\frac1n$ instead. What limit $L$ results?'
+          - problem: 'Let $a_n=(-1)^n\frac{n}{3n^2+1}$. Find the positive number $c$ for which the ratio of $|a_n|$ to $\frac{c}{n}$ tends to $1$ as $n\to\infty$.'
             answer: '1/3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{n/(3n^2+1)}{1/n}=\frac{n^2}{3n^2+1}$, which tends to $\frac13$. This is finite and positive, and $\sum\frac1n$ diverges, so the absolute series diverges. The first choice $\sum\frac{1}{n^2}$ was too small to compare with.'
+            solution_sketch: 'The ratio is $\frac{n^2}{c(3n^2+1)}$, which tends to $\frac{1}{3c}$. Set $\frac{1}{3c}=1$ to get $c=\frac13$. Since $\sum\frac1n$ diverges, the absolute series diverges.'
         constraints: 'absolute series needs a limit comparison, a ratio test or a term test; include one term-test divergence; contexts with a comparison constant; at most two label items'
     diagnostic_exemplar:
       problem: 'Find the largest value of $p$ for which $\sum_{n=1}^{\infty} \frac{(-1)^n}{n^p}$ converges conditionally but not absolutely.'
@@ -2076,10 +2076,10 @@ topics:
             solution_sketch: 'Gains count as positive and losses as negative, so the total is $120\left(1-\frac12+\frac13-\frac14+\frac15\right)=120\cdot\frac{47}{60}=94$. The trader is $94$ dollars ahead after $5$ days.'
         constraints: 'add the first terms exactly; pair an estimate with its bound where the question needs both; two direction items (larger or smaller) with different answers; contexts with 1/e and a probe'
     diagnostic_exemplar:
-      problem: 'The error of the partial sum $S_N$ of $\sum_{n=1}^{\infty} \frac{(-1)^{n+1}}{n^2}$ is at most $\frac{1}{(N+1)^2}$. Find the least integer $N$ with $\frac{1}{(N+1)^2}<0.01$.'
+      problem: 'Find the least integer $N$ for which the error bound that the alternating series test guarantees for the partial sum $S_N$ of $\sum_{n=1}^{\infty}\frac{(-1)^{n+1}}{n^2}$ is below $0.01$.'
       answer_contract: {"kind":"exact"}
       answer: '10'
-      solution_sketch: 'The inequality needs $(N+1)^2>100$, so $N+1>10$. The least integer is $N=10$.'
+      solution_sketch: 'The error is at most the first omitted term, $\frac{1}{(N+1)^2}$. The bound is below $0.01$ when $(N+1)^2>100$, so $N+1>10$. The least integer is $N=10$.'
     anki_seeds:
       - front: "Alternating series error bound: the error after n terms is at most..."
         back: '$b_{n+1}$, the first omitted term'
@@ -2115,30 +2115,30 @@ topics:
             answer: 'limit comparison test'
             answer_contract: {"kind": "label", "options": [["limit comparison test", "limit comparison", "the limit comparison test", "comparison test", "LCT"], ["ratio test", "the ratio test", "ratio"], ["alternating series test", "alternating series", "the alternating series test", "AST"]]}
             solution_sketch: 'The terms are a ratio of polynomials, with no factorial, no $n$th power and no alternating sign. For large $n$ they behave like $\frac{2n^2}{n^4}=\frac{2}{n^2}$. A limit comparison with the $p$-series $\sum\frac{1}{n^2}$ settles the question.'
-          - problem: 'A limit comparison with a $p$-series settles whether $\sum_{n=1}^{\infty}\frac{n+3}{n^{5/2}+1}$ converges. Find the exponent $p$ of that $p$-series.'
-            answer: '3/2'
+          - problem: 'The series $\sum_{n=1}^{\infty} n^{q}\,\frac{n+3}{n^{5/2}+1}$ converges when $q<q_0$ and diverges when $q\ge q_0$. Find $q_0$.'
+            answer: '1/2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'For large $n$ the term behaves like $\frac{n}{n^{5/2}}=\frac{1}{n^{3/2}}$. So the comparison series is $\sum\frac{1}{n^{3/2}}$, with $p=\frac32$. It converges, so the given series converges.'
-          - problem: 'The terms of $\sum_{n=1}^{\infty}\frac{6^n}{n!}$ hold a factorial and an $n$th power. Find $L=\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$.'
-            answer: '0'
+            solution_sketch: 'For large $n$ the term behaves like $n^{q}\cdot\frac{n}{n^{5/2}}=\frac{1}{n^{3/2-q}}$. The limit comparison test with a $p$-series gives convergence exactly when $\frac32-q>1$. So $q<\frac12$ and $q_0=\frac12$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}\frac{(n!)^2\,b^n}{(2n)!}$ with $b>0$ converges when $b<b_0$ and diverges when $b>b_0$. Find $b_0$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{6^{n+1}/(n+1)!}{6^n/n!}=\frac{6}{n+1}$. This tends to $0$, which is less than $1$, so the series converges by the ratio test.'
-          - problem: 'A tank is filled in stages. Stage $n$ adds $\frac{3n+1}{n^3+4}$ cubic meters of water. For large $n$ the stage volume is close to $\frac{c}{n^2}$ cubic meters. Find $c$.'
-            answer: '3'
+            solution_sketch: 'The terms hold factorials, so use the ratio test. We have $\frac{a_{n+1}}{a_n}=\frac{b\,(n+1)^2}{(2n+2)(2n+1)}=\frac{b(n+1)}{2(2n+1)}$, which tends to $\frac b4$. The series converges when $\frac b4<1$ and diverges when $\frac b4>1$, so $b_0=4$.'
+          - problem: 'Stage $n$ of the filling of a tank adds $\frac{3n+1}{n^{s}+4}$ cubic meters of water, where $s>0$. The total volume added is finite when $s>s_0$ and infinite when $s<s_0$. Find $s_0$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We want $c=\lim_{n\to\infty}n^2\cdot\frac{3n+1}{n^3+4}=\lim\frac{3n^3+n^2}{n^3+4}$. Divide the numerator and the denominator by $n^3$: the limit is $3$. Since $\sum\frac{1}{n^2}$ converges, the total volume added is finite.'
+            solution_sketch: 'For large $n$ the stage volume behaves like $\frac{3n}{n^{s}}=\frac{3}{n^{s-1}}$. The limit comparison test with a $p$-series gives a finite total exactly when $s-1>1$. So $s_0=2$.'
           - problem: 'Does $\sum_{n=1}^{\infty}(-1)^n\frac{n+1}{n}$ converge?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it converges", "converges", "convergent", "yes, it converges", "yes it converges"], ["no", "it diverges", "diverges", "divergent", "no, it diverges", "no it diverges"]]}
             solution_sketch: 'The sizes $\frac{n+1}{n}=1+\frac1n$ tend to $1$, not to $0$. The terms do not tend to $0$, so the series diverges by the term test. The alternating series test does not apply.'
-          - problem: 'A reservoir receives $\frac{n^2}{2^n}$ thousand liters of water in year $n$. To decide whether the total inflow over all years is finite, find $L=\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$, where $a_n$ is the inflow in year $n$.'
-            answer: '1/2'
+          - problem: 'A reservoir receives $\frac{n^2 b^n}{2^n}$ thousand liters of water in year $n$, where $b>0$. The total inflow over all years is finite when $b<b_0$ and infinite when $b>b_0$. Find $b_0$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)^2/2^{n+1}}{n^2/2^n}=\frac{(n+1)^2}{2n^2}$. This tends to $\frac12$, which is less than $1$, so the total inflow is finite.'
-          - problem: 'For $\sum_{n=1}^{\infty}\frac{5n+2}{2n^3+7}$, compare with the $p$-series $\sum\frac1{n^2}$. Find $L=\lim_{n\to\infty}\frac{a_n}{1/n^2}$.'
-            answer: '5/2'
+            solution_sketch: 'The terms hold an $n$th power, so use the ratio test. We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)^2\,b}{2n^2}$, which tends to $\frac b2$. The total is finite when $\frac b2<1$ and infinite when $\frac b2>1$, so $b_0=2$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}\frac{5n^{t}+2}{2n^3+7}$ converges when $t<t_0$ and diverges when $t\ge t_0$. Find $t_0$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{1/n^2}=\frac{n^2(5n+2)}{2n^3+7}=\frac{5n^3+2n^2}{2n^3+7}$. Divide the numerator and the denominator by $n^3$: the limit is $\frac52$. This is finite and positive, so the series converges like $\sum\frac{1}{n^2}$.'
+            solution_sketch: 'For large $n$ the term behaves like $\frac{5n^{t}}{2n^3}=\frac{5}{2n^{3-t}}$. The limit comparison test with a $p$-series gives convergence exactly when $3-t>1$. So $t<2$ and $t_0=2$.'
         constraints: 'one rational, one factorial or exponential, one alternating per set; the question names or asks for the test; contexts with stage-by-stage totals'
       - id: kp2
         name: Full verdicts on mixed forms
@@ -2148,34 +2148,34 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it converges", "converges", "convergent", "yes, it converges", "yes it converges"], ["no", "it diverges", "diverges", "divergent", "no, it diverges", "no it diverges"]]}
             solution_sketch: 'The terms hold an exponential, so use the ratio test. We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)^3}{5n^3}\to\frac15$. Since $\frac15<1$, the series converges.'
-          - problem: 'Apply the root test to $\sum_{n=1}^{\infty}\left(\frac{2n+1}{3n+4}\right)^n$ and find $L=\lim_{n\to\infty}\sqrt[n]{a_n}$.'
-            answer: '2/3'
+          - problem: 'The series $\sum_{n=1}^{\infty}\left(\frac{bn+1}{3n+4}\right)^n$ with $b>0$ converges when $b<b_0$ and diverges when $b>b_0$. Find $b_0$.'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The $n$th root of $\left(\frac{2n+1}{3n+4}\right)^n$ is $\frac{2n+1}{3n+4}$. This tends to $\frac23$, which is less than $1$, so the series converges.'
-          - problem: 'The integral test is used on $\sum_{n=1}^{\infty}\frac{1}{n^2+1}$. Find $\int_1^{\infty}\frac{dx}{x^2+1}$.'
-            answer: 'pi/4'
+            solution_sketch: 'The term is an $n$th power, so use the root test. The $n$th root of $a_n$ is $\frac{bn+1}{3n+4}$, which tends to $\frac b3$. The series converges when $\frac b3<1$ and diverges when $\frac b3>1$, so $b_0=3$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}\frac{n}{(n^2+1)^{s/2}}$ converges when $s>s_0$ and diverges when $s<s_0$. Find $s_0$.'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'An antiderivative of $\frac{1}{x^2+1}$ is $\arctan x$. So the integral is $\lim_{b\to\infty}\arctan b-\arctan1=\frac\pi2-\frac\pi4=\frac\pi4$. The integral is finite, so the series converges.'
+            solution_sketch: 'The term is positive and decreasing for large $n$, so use the integral test. With $u=x^2+1$ we have $\int\frac{x\,dx}{(x^2+1)^{s/2}}=\frac12\int u^{-s/2}\,du$. This is finite at infinity exactly when $\frac s2>1$, so $s_0=2$.'
           - problem: 'Does $\sum_{n=1}^{\infty}\frac{2n+1}{3n+4}$ converge?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it converges", "converges", "convergent", "yes, it converges", "yes it converges"], ["no", "it diverges", "diverges", "divergent", "no, it diverges", "no it diverges"]]}
             solution_sketch: 'The terms $\frac{2n+1}{3n+4}$ tend to $\frac23$, not to $0$. So the series diverges by the term test.'
-          - problem: 'A mining company extracts $\frac{n}{4^n}$ thousand tonnes of ore in year $n$. To decide whether the total over all years is finite, find $L=\lim_{n\to\infty}\frac{a_{n+1}}{a_n}$, where $a_n$ is the amount in year $n$.'
-            answer: '1/4'
+          - problem: 'A mining company extracts $\frac{n\,b^n}{4^n}$ thousand tonnes of ore in year $n$, where $b>0$. The total over all years is finite when $b<b_0$ and infinite when $b>b_0$. Find $b_0$.'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)/4^{n+1}}{n/4^n}=\frac{n+1}{4n}$. This tends to $\frac14$, which is less than $1$, so the total is finite.'
-          - problem: 'The integral test is used on $\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^2}$. Find $\int_2^{\infty}\frac{dx}{x(\ln x)^2}$.'
-            answer: '1/ln(2)'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'With $u=\ln x$ we have $du=\frac{dx}{x}$, so the integral becomes $\int\frac{du}{u^2}=-\frac1u$. It equals $\lim_{b\to\infty}\left(-\frac{1}{\ln b}\right)+\frac{1}{\ln2}=\frac{1}{\ln2}$. The integral is finite, so the series converges.'
-          - problem: 'Use the limit comparison test on $\sum_{n=1}^{\infty}\frac{1}{n^2+4n+5}$ with the $p$-series $\sum\frac{1}{n^2}$. Find $L=\lim_{n\to\infty}\frac{a_n}{1/n^2}$.'
+            solution_sketch: 'The terms hold an $n$th power, so use the ratio test. We have $\frac{a_{n+1}}{a_n}=\frac{(n+1)\,b}{4n}$, which tends to $\frac b4$. The total is finite when $\frac b4<1$ and infinite when $\frac b4>1$, so $b_0=4$.'
+          - problem: 'The series $\sum_{n=2}^{\infty}\frac{1}{n(\ln n)^{s}}$ converges when $s>s_0$ and diverges when $s<s_0$. Find $s_0$.'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{1/n^2}=\frac{n^2}{n^2+4n+5}$. Divide the numerator and the denominator by $n^2$: the limit is $1$. This is finite and positive, so the series converges like $\sum\frac{1}{n^2}$.'
-          - problem: 'A fund pays $\frac{5n+1}{n^3+2n}$ thousand dollars in year $n$. To decide whether the total payout is finite, compare with $\sum\frac{1}{n^2}$ and find $L=\lim_{n\to\infty}\frac{a_n}{1/n^2}$, where $a_n$ is the payment in year $n$.'
-            answer: '5'
+            solution_sketch: 'The term is positive and decreasing, so use the integral test. With $u=\ln x$ we have $du=\frac{dx}{x}$, so the integral becomes $\int_{\ln 2}^{\infty}u^{-s}\,du$. This is finite exactly when $s>1$, so $s_0=1$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}\frac{1}{n^{s}+4n+5}$ converges when $s>s_0$ and diverges when $s<s_0$. Find $s_0$.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{a_n}{1/n^2}=\frac{n^2(5n+1)}{n^3+2n}=\frac{5n^3+n^2}{n^3+2n}$. Divide the numerator and the denominator by $n^3$: the limit is $5$. This is finite and positive, so the total payout is finite.'
+            solution_sketch: 'If $s>1$, the term behaves like $\frac{1}{n^{s}}$ and the limit comparison test with a $p$-series gives convergence. If $s<1$, the term behaves like $\frac{1}{4n}$ and the series diverges. So $s_0=1$.'
+          - problem: 'A fund pays $n^{q}\,\frac{5n+1}{n^3+2n}$ thousand dollars in year $n$. The total payout is finite when $q<q_0$ and infinite when $q\ge q_0$. Find $q_0$.'
+            answer: '1'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For large $n$ the payment behaves like $n^{q}\cdot\frac{5n}{n^3}=\frac{5}{n^{2-q}}$. The limit comparison test with a $p$-series gives a finite total exactly when $2-q>1$. So $q<1$ and $q_0=1$.'
         constraints: 'each set mixes ratio, root, integral, comparison and term tests; verdicts and the number from the deciding test; contexts with yearly or stage totals'
       - id: kp3
         name: Classification capstone
@@ -2185,30 +2185,30 @@ topics:
             answer: 'conditionally convergent'
             answer_contract: {"kind": "label", "options": [["absolutely convergent", "absolutely", "converges absolutely", "absolute convergence", "absolute"], ["conditionally convergent", "conditionally", "converges conditionally", "conditional convergence", "conditional"], ["divergent", "diverges", "it diverges", "the series diverges", "not convergent"]]}
             solution_sketch: 'Factor the denominator: $2n^2+3n+1=(2n+1)(n+1)$, so $|a_n|=\frac{1}{2n+1}$. A limit comparison with $\sum\frac1n$ gives $L=\frac12$, so the absolute series diverges. The sizes $\frac{1}{2n+1}$ decrease to $0$, so the alternating series test shows convergence. The series is conditionally convergent.'
-          - problem: 'For $\sum_{n=1}^{\infty}(-1)^n\frac{2n+3}{n^3+1}$, compare the absolute series with $\sum\frac{1}{n^2}$ by the limit comparison test. Find $L=\lim_{n\to\infty}\frac{|a_n|}{1/n^2}$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}(-1)^n\frac{2n+3}{n^{s}+1}$ converges absolutely when $s>s_0$ and does not converge absolutely when $s<s_0$. Find $s_0$.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{|a_n|}{1/n^2}=\frac{n^2(2n+3)}{n^3+1}=\frac{2n^3+3n^2}{n^3+1}$. Divide the numerator and the denominator by $n^3$: the limit is $2$. Since $\sum\frac{1}{n^2}$ converges, the absolute series converges.'
+            solution_sketch: 'The absolute series has the term $\frac{2n+3}{n^{s}+1}$, which behaves like $\frac{2}{n^{s-1}}$ for large $n$. The limit comparison test with a $p$-series gives convergence exactly when $s-1>1$. So $s_0=2$.'
           - problem: 'Classify $\sum_{n=1}^{\infty}(-1)^n\frac{n+1}{n^3+2}$ as absolutely convergent, conditionally convergent, or divergent.'
             answer: 'absolutely convergent'
             answer_contract: {"kind": "label", "options": [["absolutely convergent", "absolutely", "converges absolutely", "absolute convergence", "absolute"], ["conditionally convergent", "conditionally", "converges conditionally", "conditional convergence", "conditional"], ["divergent", "diverges", "it diverges", "the series diverges", "not convergent"]]}
             solution_sketch: 'The absolute series $\sum\frac{n+1}{n^3+2}$ is compared with $\sum\frac1{n^2}$: the limit comparison constant is $L=1$. Since $\sum\frac{1}{n^2}$ converges, the absolute series converges, and the series is absolutely convergent.'
-          - problem: 'To classify $\sum_{n=1}^{\infty}(-1)^n\frac{3n+1}{n+2}$, first apply the term test. Find $\lim_{n\to\infty}|a_n|$.'
+          - problem: 'The series $\sum_{n=1}^{\infty}(-1)^n\frac{3n+1}{(n+2)\,n^{s}}$ converges when $s>s_0$ and diverges when $s<s_0$. Find $s_0$.'
+            answer: '0'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'If $s\le0$, then $|a_n|$ does not tend to $0$ because $\frac{3n+1}{n+2}\to3$. So the series diverges by the term test. If $s>0$, the terms alternate and decrease to $0$, so the series converges by the alternating series test. Hence $s_0=0$.'
+          - problem: 'Walk $k$ of a bug is $\frac{(2k+1)\,k^{q}}{k^4+3k}$ m long. The total distance walked is finite when $q<q_0$ and infinite when $q\ge q_0$. Find $q_0$.'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'For large $k$ the walk behaves like $k^{q}\cdot\frac{2k}{k^4}=\frac{2}{k^{3-q}}$. The limit comparison test with a $p$-series gives a finite total exactly when $3-q>1$. So $q<2$ and $q_0=2$.'
+          - problem: 'Find the smallest integer $m$ for which $\sum_{n=1}^{\infty}\frac{(-1)^n}{n^m+1}$ converges absolutely.'
+            answer: '2'
+            answer_contract: {"kind": "exact"}
+            solution_sketch: 'The absolute series is $\sum\frac{1}{n^m+1}$. For $m=1$ it behaves like the harmonic series and diverges. For $m=2$ its terms are less than $\frac{1}{n^2}$, so it converges, and $m=2$ is the smallest such integer.'
+          - problem: 'A signal alternates in sign, and pulse $n$ has size $\frac{n^2 b^n}{3^n}$ volts, where $b>0$. The sum of the pulse sizes is finite when $b<b_0$ and infinite when $b>b_0$. Find $b_0$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Divide the numerator and the denominator by $n$ to get $\frac{3+1/n}{1+2/n}$, which tends to $3$. Since $|a_n|\to3\ne0$, the series diverges by the term test.'
-          - problem: 'A bug walks alternately east and west, and walk $k$ is $\frac{2k+1}{k^2+3k}$ m long. For large $k$ the walk is close to $\frac{c}{k}$ m. Find $c$.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We want $c=\lim_{k\to\infty}k\cdot\frac{2k+1}{k^2+3k}=\lim\frac{2k^2+k}{k^2+3k}$. Divide the numerator and the denominator by $k^2$: the limit is $2$. So the walks behave like $\frac2k$, and the total distance walked is infinite, while the position settles.'
-          - problem: 'The argument that $\sum_{n=1}^{\infty}\frac{(-1)^n}{n^2+1}$ is conditionally convergent is that its terms alternate and decrease to $0$. Find the exponent $p$ of the $p$-series with which its absolute series should be compared.'
-            answer: '2'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'The absolute series $\sum\frac{1}{n^2+1}$ is smaller than the convergent $p$-series $\sum\frac{1}{n^2}$, so $p=2$. The absolute series converges, so the series is absolutely convergent. The argument is wrong.'
-          - problem: 'A signal alternates in sign, and pulse $n$ has size $\frac{n^2}{3^n}$ volts. To decide whether the sum of the pulse sizes is finite, find $L=\lim_{n\to\infty}\frac{|a_{n+1}|}{|a_n|}$.'
-            answer: '1/3'
-            answer_contract: {"kind": "exact"}
-            solution_sketch: 'We have $\frac{|a_{n+1}|}{|a_n|}=\frac{(n+1)^2/3^{n+1}}{n^2/3^n}=\frac{(n+1)^2}{3n^2}$. This tends to $\frac13$, which is less than $1$, so the sum of the pulse sizes is finite.'
+            solution_sketch: 'The sizes hold an $n$th power, so use the ratio test. We have $\frac{|a_{n+1}|}{|a_n|}=\frac{(n+1)^2\,b}{3n^2}$, which tends to $\frac b3$. The sum is finite when $\frac b3<1$ and infinite when $\frac b3>1$, so $b_0=3$.'
         constraints: 'three-way classification with the deciding test named in the sketch; one term-test divergence; contexts with comparison constants'
     diagnostic_exemplar:
       problem: 'Find the largest integer $k$ for which $\sum_{n=1}^{\infty} \frac{n^k}{n^6+1}$ converges.'

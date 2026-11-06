@@ -20,6 +20,10 @@
 //! ([`cadus_core::curriculum::lint_curriculum_names`]). A topic or knowledge-point
 //! name with math outside `$...$` is a finding.
 //!
+//! The handed value rule ([`cadus_core::curriculum::lint_curriculum_handed`]): a
+//! problem text never gives a value that the question exists to make the learner
+//! produce.
+//!
 //! The exemplar CONTENT rules (sketches, asks, the practice floor) live behind
 //! [`cadus_core::curriculum::lint_curriculum_full`]. The exemplar content rules
 //! and the program rules come from functions that the parity comparison does not
@@ -39,7 +43,8 @@ use std::path::PathBuf;
 use std::process::ExitCode;
 
 use cadus_core::curriculum::{
-    lint_curriculum, lint_curriculum_names, lint_curriculum_probes, lint_curriculum_program,
+    lint_curriculum, lint_curriculum_handed, lint_curriculum_names, lint_curriculum_probes,
+    lint_curriculum_program,
 };
 
 /// The environment variable that names the curriculum tree.
@@ -64,6 +69,7 @@ fn main() -> ExitCode {
     findings.extend(lint_curriculum_probes(&path));
     findings.extend(lint_curriculum_program(&path));
     findings.extend(lint_curriculum_names(&path));
+    findings.extend(lint_curriculum_handed(&path));
     if findings.is_empty() {
         println!("OK: {shown} is a valid curriculum (0 findings).");
         return ExitCode::SUCCESS;

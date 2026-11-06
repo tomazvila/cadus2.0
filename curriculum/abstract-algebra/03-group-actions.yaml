@@ -111,7 +111,7 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The permutation $\sigma_3$ adds $3$ to each point modulo $5$. So $\sigma_3(4) = 4+3 = 7 \equiv 2 \pmod 5$, and the image of $4$ is $2$.'
-          - problem: 'The dihedral group $D_4$ acts on the vertices $1,2,3,4$ of a square, giving a homomorphism $\varphi: D_4 \to S_4$. A symmetry that fixes all four vertices must be the identity. What is the order of the image $\varphi(D_4)$?'
+          - problem: 'The dihedral group $D_4$ acts on the vertices $1,2,3,4$ of a square, giving a homomorphism $\varphi: D_4 \to S_4$. What is the order of the image $\varphi(D_4)$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A symmetry that fixes all four vertices is the identity, so the kernel of $\varphi$ is trivial and $\varphi$ is injective. An injective map keeps the number of elements, so the image has $8$ elements.'
@@ -357,10 +357,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By the orbit-stabilizer theorem, $36 = 9\cdot|\mathrm{Stab}(x)|$. So the stabilizer has order $36/9 = 4$.'
-          - problem: 'The group $\mathbb{Z}_{12}$ acts on $\mathbb{Z}_4$ by $g\cdot x = x+g \bmod 4$, and the stabilizer of $0$ is $\{0,4,8\}$. All elements of the coset $5+\{0,4,8\} = \{1,5,9\}$ send $0$ to the same point. Which point is it?'
+          - problem: 'The group $\mathbb{Z}_{12}$ acts on $\mathbb{Z}_4$ by $g\cdot x = x+g \bmod 4$, and the stabilizer of $0$ is $\{0,4,8\}$. Which point does the element $5$ send $0$ to?'
             answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'If $h$ is in the stabilizer, then $(g+h)\cdot 0 = g\cdot(h\cdot 0) = g\cdot 0$, so every element of a coset sends $0$ to the same point. For the coset $5+\mathrm{Stab}(0)$ this point is $5\cdot 0 = 5 \equiv 1 \pmod 4$, and indeed $1\cdot 0 = 1$ and $9\cdot 0 = 9\equiv 1$.'
+            solution_sketch: 'The element $5$ sends $0$ to $5 \equiv 1 \pmod 4$. If $h$ is in the stabilizer, then $(5+h)\cdot 0 = 5\cdot(h\cdot 0) = 5\cdot 0$. So every element of the coset $5+\{0,4,8\} = \{1,5,9\}$ sends $0$ to the same point, $1$.'
           - problem: 'A finite group $G$ of order $40$ acts on a set $X$, and the stabilizer of a point $x$ has order $5$. How many elements does the orbit of $x$ have?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -419,10 +419,10 @@ topics:
         name: "Conjugacy classes and centralizers"
         key_prerequisites: [orbits-stabilizers]
         exemplars:
-          - problem: 'Under conjugation, the orbit of an element $x$ is its conjugacy class and the stabilizer of $x$ is its centralizer $C(x)$. In $S_3$ the conjugacy class of $(1\,2)$ has $3$ elements. What is the order of $C((1\,2))$?'
+          - problem: 'The group $S_3$ acts on itself by conjugation, and the conjugacy class of $(1\,2)$ has $3$ elements. What is the order of the centralizer of $(1\,2)$ in $S_3$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'By the orbit-stabilizer theorem for conjugation, $|S_3| = |\text{class}|\cdot|C(x)|$, so $6 = 3\cdot|C((1\,2))|$. Hence $|C((1\,2))| = 2$, and the centralizer is $\{e,(1\,2)\}$.'
+            solution_sketch: 'The orbit of $(1\,2)$ is its conjugacy class and its stabilizer is the centralizer $C((1\,2))$. By the orbit-stabilizer theorem, $|S_3| = |\text{class}|\cdot|C((1\,2))|$, so $6 = 3\cdot|C((1\,2))|$. Hence the order is $2$.'
           - problem: 'In the dihedral group $D_4$ of order $8$, the conjugacy class of the half-turn $r^2$ is the single element $\{r^2\}$. What is the order of the centralizer $C(r^2)$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
@@ -508,10 +508,10 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A coloring fixed by the rotation has every bead the same color as the next bead. So all four beads share one color, which gives $2$ fixed colorings.'
-          - problem: 'A rotation by $120^\circ$ permutes the $6$ beads of a bracelet in two cycles of length $3$, and it acts on the $3$-colorings of the bracelet. How many colorings does this rotation fix?'
+          - problem: 'A bracelet has $6$ beads in a ring, and each bead has one of $3$ colors. A rotation turns the ring by $120^\circ$. How many colorings does this rotation fix?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The rotation splits the $6$ beads into $2$ cycles of length $3$. A fixed coloring is constant on each cycle, so there are $3$ choices per cycle and $3^2 = 9$ fixed colorings.'
+            solution_sketch: 'A turn by $120^\circ$ moves each bead $2$ places. The $6$ beads form $\gcd(2,6)=2$ cycles of length $3$. A fixed coloring is constant on each cycle, so there are $3^2 = 9$ fixed colorings.'
           - problem: 'A permutation of a row of $12$ tiles acts on the $3$-colorings of the row and fixes exactly $81$ of them. How many cycles does the permutation have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -524,10 +524,10 @@ topics:
             answer: '10'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Burnside''s lemma divides the sum of the counts by the group order. The sum is $36+3+3+6+6+6 = 60$, so there are $60/6 = 10$ orbits.'
-          - problem: 'A group of order $4$ acts on the $2$-colorings of the corners of a square, and its four elements fix $16$, $2$, $4$ and $2$ colorings. The four numbers add up to $24$. How many orbits are there?'
+          - problem: 'A group of order $4$ acts on the $2$-colorings of the corners of a square. Its four elements fix $16$, $2$, $4$ and $2$ colorings. How many orbits are there?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Burnside''s lemma divides the sum by the order of the group. The sum is $16+2+4+2 = 24$, and Burnside''s lemma gives $24/4 = 6$ orbits.'
+            solution_sketch: 'Burnside''s lemma divides the sum of the fixed counts by the order of the group. The sum is $16+2+4+2 = 24$, so there are $24/4 = 6$ orbits.'
           - problem: 'Ten lamps stand in a ring and each is either on or off. Moving every lamp $4$ places around the ring is a rotation of the ring. How many of the $2^{10}$ on-off settings does this rotation leave unchanged?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -557,10 +557,10 @@ topics:
             answer: '14'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The rotations by $0$ to $5$ positions have $\gcd(r,6) = 6,1,2,3,2,1$ cycles, so they fix $2^6, 2, 2^2, 2^3, 2^2, 2$ colorings. The average is $(64+2+4+8+4+2)/6 = 84/6 = 14$.'
-          - problem: 'A necklace has $6$ beads and $3$ colors are available. The rotation by $180^\circ$ sends each bead to the bead $3$ positions away, so the $6$ positions form $3$ cycles of length $2$. How many colorings are fixed by this rotation?'
+          - problem: 'A necklace has $6$ beads and $3$ colors are available. How many colorings does the rotation by $180^\circ$ fix?'
             answer: '27'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The rotation by $3$ positions has $\gcd(3,6)=3$ cycles, each of length $2$, and a fixed coloring is constant on each cycle. So the number of fixed colorings is $3^3 = 27$.'
+            solution_sketch: 'The rotation by $180^\circ$ moves each bead $3$ places. It has $\gcd(3,6)=3$ cycles, each of length $2$, and a fixed coloring is constant on each cycle. So the number of fixed colorings is $3^3 = 27$.'
           - problem: 'How many distinct colorings does a ring of $5$ beads have when each bead has one of $3$ colors and rotations of the ring do not count as different?'
             answer: '51'
             answer_contract: {"kind": "exact"}
@@ -650,10 +650,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equation $3+x = x$ in $\mathbb{Z}_5$ gives $3 = 0$ after subtracting $x$, which is false. So no element satisfies it and $\lambda_3$ has $0$ fixed points.'
-          - problem: 'In the group $G=\mathbb{Z}_7$ let $\lambda_3(x) = 3+x$, and recall that $\lambda_a\circ\lambda_b = \lambda_{a+b}$. What is the order of the permutation $\lambda_3$?'
+          - problem: 'In the group $G=\mathbb{Z}_7$ let $\lambda_3(x) = 3+x$. What is the order of the permutation $\lambda_3$?'
             answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $\lambda_a\circ\lambda_b = \lambda_{a+b}$, the $k$-fold composite $\lambda_3^k$ equals $\lambda_{3k}$. It is the identity exactly when $3k\equiv 0 \pmod 7$, and because $7$ is prime the smallest such $k$ is $7$.'
+            solution_sketch: 'The $k$-fold composite $\lambda_3^k$ sends $x$ to $3k+x$, so it equals $\lambda_{3k}$. It is the identity exactly when $3k\equiv 0 \pmod 7$, and because $7$ is prime the smallest such $k$ is $7$.'
           - problem: 'Let $g$, $x$, $y$ be elements of a group $G$ with $gx = gy$. To show that $x=y$, and so that the map $\lambda_g$ is injective, one multiplies both sides on the left by a single element of $G$. Which element is it?'
             answer: 'g^(-1)'
             answer_contract: {"kind": "exact"}
@@ -695,11 +695,11 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'In the left-regular action of $\mathbb{Z}_8$ the rule is $\lambda_g(x) = g+x$. So $\lambda_5(0) = 5+0 = 5$, and since $5\neq 0$ the element $5$ is not in the kernel.'
-          - problem: 'For the left-regular action of $\mathbb{Z}_{12}$, where $\lambda_g(x) = g+x$, the map $g\mapsto\lambda_g$ is a homomorphism: $\lambda_g\circ\lambda_h = \lambda_{g+h}$. What is $(\lambda_7\circ\lambda_5)(0)$?'
+          - problem: 'For the left-regular action of $\mathbb{Z}_{12}$, where $\lambda_g(x) = g+x$, what is $(\lambda_7\circ\lambda_5)(0)$?'
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'By definition $(\lambda_7\circ\lambda_5)(0) = 7+(5+0) = 12$, and $12\equiv 0$ in $\mathbb{Z}_{12}$. This agrees with $\lambda_{7+5}(0) = \lambda_0(0) = 0$, as the homomorphism property predicts.'
-          - problem: 'In the left-regular action of $\mathbb{Z}_9$ the permutation $\lambda_3$ satisfies $\lambda_3^k(x) = 3k+x$. What is the order of $\lambda_3$?'
+          - problem: 'In the left-regular action of $\mathbb{Z}_9$, where $\lambda_g(x) = g+x$, what is the order of the permutation $\lambda_3$?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The powers satisfy $\lambda_3^k(x) = 3k+x$, so $\lambda_3^k$ is the identity exactly when $3k\equiv 0 \pmod 9$. The smallest positive such $k$ is $3$, since $3\cdot 3 = 9$.'

@@ -392,10 +392,10 @@ topics:
             answer: '7/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
             solution_sketch: 'We have $-1 = (74.3 - 75) / (\sigma / 5)$, so $\sigma / 5 = 0.7$. Then $\sigma = 3.5 = 7/2$ cm.'
-          - problem: 'Cement sacks are labelled 25 kg, and the process has $\sigma = 0.4$ kg. A sample of $n = 16$ sacks has mean 24.7 kg. Use the empirical rule to estimate the p-value of the two-sided test of $H_0: \mu = 25$, to three decimal places.'
+          - problem: 'Cement sacks are labelled 25 kg, and the process has $\sigma = 0.4$ kg. A sample of $n = 16$ sacks has mean 24.7 kg. Find the p-value of the two-sided test of $H_0: \mu = 25$, to three decimal places.'
             answer: '0.003'
             answer_contract: {"kind": "approx", "decimals": 3}
-            solution_sketch: 'The standard error is $0.4 / \sqrt{16} = 0.1$, so $z = (24.7 - 25) / 0.1 = -3$. A value 3 standard errors away has a two-sided p-value of about 0.003.'
+            solution_sketch: 'The standard error is $0.4 / \sqrt{16} = 0.1$, so $z = (24.7 - 25) / 0.1 = -3$. A value 3 standard errors away has a two-sided p-value of 0.003 by the empirical rule.'
           - problem: 'A population has $\sigma = 6$ g. What sample size $n$ gives a standard error of 1.5 g?'
             answer: '16'
             answer_contract: {"kind": "exact"}
@@ -443,10 +443,10 @@ topics:
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The expected count under $H_0$ is $np_0 = 120 \cdot 1/6 = 20$. This is one of the two numbers used to check the normal approximation.'
-          - problem: 'A supplier claims that at most 10% of its parts are defective, but an inspector suspects that the defect rate is higher. The inspector will examine $n = 250$ parts. To check the normal approximation, what is the smaller of $np_0$ and $n(1 - p_0)$?'
-            answer: '25'
+          - problem: 'A supplier states that at most 10% of its parts are defective, but an inspector suspects that the defect rate is higher. What is the smallest number of parts $n$ for which the normal approximation is valid for the test?'
+            answer: '100'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The null value is $p_0 = 0.1$. So $np_0 = 250 \cdot 0.1 = 25$ and $n(1 - p_0) = 250 \cdot 0.9 = 225$. The smaller number is 25, which is at least 10.'
+            solution_sketch: 'The null value is $p_0 = 0.1$. We need $np_0 \ge 10$, so $n \ge 100$, and $n(1 - p_0) \ge 10$, so $n \ge 11.1$. Both are true when $n = 100$, so the smallest $n$ is 100.'
           - problem: 'A package insert says that a mild side effect occurs with probability 0.02. A researcher will observe $n = 400$ patients to test $H_0: p = 0.02$. The normal approximation needs $np_0 \ge 10$ and $n(1 - p_0) \ge 10$. Are both conditions met?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes they are met", "both are met", "met"], ["no", "no they are not met", "not met", "one fails"]]}
@@ -455,10 +455,10 @@ topics:
             answer: 'p < 0.4'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The suspicion is a lower proportion. So the alternative hypothesis is $p < 0.4$, and the null hypothesis is $p = 0.4$.'
-          - problem: 'A spinner is claimed to land on red with probability 1/4. It will be spun $n = 80$ times. To check the normal approximation, what is $n(1 - p_0)$?'
-            answer: '60'
+          - problem: 'A spinner has the null value $p_0 = 1/4$ for the probability of red. What is the smallest number of spins $n$ for which the normal approximation is valid for a test of this value?'
+            answer: '40'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The null value is $p_0 = 1/4$. So $n(1 - p_0) = 80 \cdot 3/4 = 60$. This is at least 10, and so is $np_0 = 80 \cdot 1/4 = 20$.'
+            solution_sketch: 'The null value is $p_0 = 1/4$. We need $np_0 \ge 10$, so $n \ge 40$, and $n(1 - p_0) \ge 10$, so $n \ge 13.4$. Both are true when $n = 40$, so the smallest $n$ is 40.'
           - problem: 'A restaurant claims that 75% of its customers prefer a new menu, but a manager suspects that the proportion is lower. She will ask $n = 40$ customers. The normal approximation needs $np_0 \ge 10$ and $n(1 - p_0) \ge 10$. Are both conditions met?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes they are met", "both are met", "met"], ["no", "no they are not met", "not met", "one fails"]]}
@@ -1239,10 +1239,10 @@ topics:
             answer: '-2.8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The $t$ statistic is $t=-1.4\div0.5=-2.8$. The negative sign shows that sales fall as the price rises, and the test has $10-2=8$ degrees of freedom.'
-          - problem: 'A regression of test score on study time has $n=14$ students and $t^*=2.2$ for $12$ degrees of freedom. The standard error of the slope is $\operatorname{SE}_b=0.25$. Find the margin of error $t^*\operatorname{SE}_b$ of the confidence interval for the slope.'
+          - problem: 'A regression of test score on study time has $n=14$ students and $t^*=2.2$ for $12$ degrees of freedom. The standard error of the slope is $\operatorname{SE}_b=0.25$. Find the margin of error of the confidence interval for the slope.'
             answer: '0.55'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The margin of error is the critical value times the standard error. So $t^*\operatorname{SE}_b=2.2\cdot0.25=0.55$. The interval extends $0.55$ on each side of $b$.'
+            solution_sketch: 'The margin of error of the interval is the critical value times the standard error. So it is $2.2\cdot0.25=0.55$. The interval extends $0.55$ on each side of $b$.'
           - problem: 'A confidence interval for a slope has margin of error $0.55$, and the critical value is $t^*=2.2$. What is the standard error of the slope?'
             answer: '0.25'
             answer_contract: {"kind": "exact"}

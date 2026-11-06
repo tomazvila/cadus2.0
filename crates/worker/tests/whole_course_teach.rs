@@ -136,7 +136,9 @@ fn retired_sources(
     // 50 before the courses rewrite; 156 more were retired on 2026-10-07.
     // 2026-10-08, story framing removed: subtraction-with-borrowing/kp3 retired (207, was 206).
     // Foundations merge (2026-10-12): the retired rows of 9 dropped twin steps left the report and solutions-of-inequalities/kp2 joined it: 199.
-    assert_eq!(retired.len(), 199);
+    // 2026-11-06, no handed values (D-AP1): adding-subtracting-like-fractions/kp2 joined it, because its
+    // exemplar that asked yes or no now asks for a fraction: 200 (was 199).
+    assert_eq!(retired.len(), 200);
     let mut keys = BTreeSet::new();
     for row in retired {
         let kp = row["kp_key"].as_str().expect("retired kp");
@@ -335,7 +337,8 @@ fn source_evidence(
     // 759 before the courses rewrite; 156 were retired on 2026-10-07.
     // 2026-10-08, story framing removed: 602 selected, 207 retired (was 603 and 206).
     // Foundations merge (2026-10-12): 784 KPs, 585 selected and 199 retired.
-    assert_eq!(templates.len(), 585);
+    // 2026-11-06, no handed values (D-AP1): 584 selected and 200 retired (was 585 and 199).
+    assert_eq!(templates.len(), 584);
     let retired = retired_sources(specs, &templates);
     // 2026-10-28, VBE skill wave 1: 42 points were authored after the archive.
     // The archive counts stay as they are: the current points are the 784

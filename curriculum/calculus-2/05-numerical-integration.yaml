@@ -320,18 +320,18 @@ topics:
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The bound is $\frac{6 \cdot 32}{180n^4} = \frac{16}{15n^4}$. Requiring $\frac{16}{15n^4} \le 0.001$ gives $n^4 \ge 1066.7$. Since $4^4 = 256$ falls short and $6^4 = 1296$ works, the smallest even value is $n = 6$.'
-          - problem: 'For an integral on $[0, 1]$ with $K = \max|f^{(4)}| = 24$, find the smallest even $n$ so that the Simpson bound $\frac{24}{180n^4}$ is at most $0.001$.'
+          - problem: 'For an integral on $[0, 1]$, the fourth derivative of $f$ has $K = \max|f^{(4)}| = 24$. Find the smallest even $n$ for which the Simpson error bound is at most $0.001$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The condition $\frac{24}{180n^4} \le 0.001$ gives $n^4 \ge 133.3$. Since $3^4 = 81$ falls short and $4^4 = 256$ works, and $4$ is even, $n = 4$.'
+            solution_sketch: 'The Simpson bound is $\frac{K(b-a)^5}{180n^4} = \frac{24}{180n^4}$. The condition $\frac{24}{180n^4} \le 0.001$ gives $n^4 \ge 133.3$. Since $3^4 = 81$ falls short and $4^4 = 256$ works, and $4$ is even, $n = 4$.'
           - problem: 'For an integral on $[0, 3]$ with $K = \max|f''''| = 4$, the trapezoid error bound is $\frac{K(b-a)^3}{12n^2}$. Find the smallest integer $n$ so that the bound is at most $0.001$.'
             answer: '95'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The bound is $\frac{4 \cdot 27}{12n^2} = \frac{9}{n^2}$. Requiring $\frac{9}{n^2} \le 0.001$ gives $n^2 \ge 9000$. Since $94^2 = 8836$ falls short and $95^2 = 9025$ works, $n = 95$.'
-          - problem: 'The Simpson bound $\frac{24}{180n^4}$ for an integral on $[0,1]$ must be at most $0.0001$. This gives $n^4 \ge 1333.3$, so $n \ge 6.04$. What is the smallest even $n$ that works?'
+          - problem: 'The Simpson bound $\frac{24}{180n^4}$ for an integral on $[0,1]$ is to be at most $0.0001$. Find the smallest even $n$ for which this holds.'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The value $n = 6$ is too small: $6^4 = 1296$ is below $1333.3$, so $n = 6$ does not meet the target. The next integer, $7$, is odd, so the smallest even value that works is $n = 8$, with $8^4 = 4096$.'
+            solution_sketch: 'We need $\frac{24}{180n^4} \le 0.0001$, which gives $n^4 \ge 1333.3$. The value $n = 6$ is too small: $6^4 = 1296$ is below $1333.3$. The next integer, $7$, is odd, so the smallest even value that works is $n = 8$, with $8^4 = 4096$.'
         constraints: "targets 10^-2, 10^-3 or 10^-4; K and (b - a) chosen so the threshold lands between consecutive (even, for Simpson) values of n; the answer is the single integer n"
     diagnostic_exemplar:
       problem: 'For an integral over $[0, 2]$ with $K = \max|f^{(2)}| = 6$, find the smallest integer $n$ for which the trapezoid error bound $\frac{K(b-a)^3}{12n^2}$ is at most $0.01$.'

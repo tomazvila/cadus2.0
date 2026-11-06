@@ -212,7 +212,7 @@ topics:
         name: "Integral domains and cancellation"
         key_prerequisites: [ring-axioms-examples]
         exemplars:
-          - problem: 'In the integral domain $\mathbb{Z}_{11}$ the element $x$ satisfies $7x = 7 \cdot 4 + 7 \cdot 5$. Cancel the common nonzero factor and find $x$.'
+          - problem: 'In the integral domain $\mathbb{Z}_{11}$ the element $x$ satisfies $7x = 7 \cdot 4 + 7 \cdot 5$. Find $x$.'
             answer: '9'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Factor the right side: $7\cdot4+7\cdot5=7(4+5)=7\cdot9$. The equation is $7x=7\cdot9$ and $\mathbb{Z}_{11}$ is an integral domain, so the nonzero factor $7$ cancels. Hence $x=9$.'
@@ -437,9 +437,9 @@ topics:
             solution_sketch: 'The elements of $U(8)$ are $1, 3, 5, 7$. The element $1$ has order $1$, and each of $3, 5, 7$ squares to $1$ modulo $8$, so it has order $2$. So the largest order is $2$.'
         constraints: "Euler reductions with n <= 40; cyclicity checks of U(n) for n <= 12"
     diagnostic_exemplar:
-      problem: 'Compute $\varphi(15)$, then use Euler''s theorem in the form $a^{-1} = a^{\varphi(n)-1}$ to find the inverse of $7$ in $\mathbb{Z}_{15}$.'
+      problem: 'Find the inverse of $7$ in $\mathbb{Z}_{15}$ under multiplication.'
       answer: '13'
-      solution_sketch: '$\varphi(15) = \varphi(3)\varphi(5) = 2 \cdot 4 = 8$, so $7^{-1} = 7^{7} \bmod 15$. From $7^2 = 49 \equiv 4$ and $7^4 \equiv 4^2 = 16 \equiv 1$, we get $7^{7} = 7^{4} \cdot 7^{2} \cdot 7 \equiv 1 \cdot 4 \cdot 7 = 28 \equiv 13$. Check: $7 \cdot 13 = 91 = 6 \cdot 15 + 1$.'
+      solution_sketch: 'Find $x$ with $7x \equiv 1 \pmod{15}$. Since $7 \cdot 13 = 91 = 6 \cdot 15 + 1$, the inverse is $13$. Euler''s theorem gives the same result: $7^{-1} = 7^{\varphi(15)-1} = 7^7 \equiv 13$.'
     anki_seeds:
       - front: "$a$ is a unit of $\\mathbb{Z}_n$ iff..."
         back: "$\\gcd(a, n) = 1$; there are $\\varphi(n)$ units."
@@ -533,10 +533,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The product $\frac13z$ is an integer exactly when $3$ divides $z$. So the least positive $z$ is $3$, and for $z=1$ and $z=2$ the product leaves $\mathbb{Z}$, which shows that $\mathbb{Z}$ does not absorb multiplication by $\frac13$.'
-          - problem: 'In $\mathbb{Z}$ let $x = 36$ lie in the ideal $12\mathbb{Z}$, and let $r = 5$. Write $rx = 12q$ with $q \in \mathbb{Z}$. Find $q$.'
+          - problem: 'In $\mathbb{Z}$ let $x = 36$ lie in the ideal $12\mathbb{Z}$, and let $r = 5$. What is the product $rx$ divided by $12$?'
             answer: '15'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The product is $rx=5\cdot36=180$. Since $180=12\cdot15$, we have $q=15$. Equivalently $36=12\cdot3$, so $rx=12\cdot(5\cdot3)=12\cdot15$.'
+            solution_sketch: 'The product is $rx=5\cdot36=180$. Since $180=12\cdot15$, the quotient is $15$. Equivalently $36=12\cdot3$, so $rx=12\cdot(5\cdot3)=12\cdot15$.'
           - problem: 'Let $I$ be the ideal of $\mathbb{Z}[x]$ consisting of the polynomials with even constant term. Take $f(x) = x^2 + 3x + 4$ in $I$ and $g(x) = x + 1$ in $\mathbb{Z}[x]$. Find the constant term of $fg$.'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -598,10 +598,10 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The ideal contains every combination $8x+12y$, not only the sum, and $12-8=4$ is in it. Since $8x+12y=4(2x+3y)$, the ideal is $4\mathbb{Z}$. So $d=\gcd(8,12)=4$, and $20$ is only one element of it.'
-          - problem: 'To show that every element of the ideal $\langle 8, 12 \rangle$ of $\mathbb{Z}$ is a multiple of $4$, a proof needs one factoring line. Which equation holds for all integers $x$ and $y$: $8x + 12y = 4(2x + 3y)$, $8x + 12y = 4(2x + 3y) + 4$, $8x + 12y = 4(2x + 3y) - 4$, or $8x + 12y = 4(2x + 3y) + 8$?'
-            answer: '8x + 12y = 4(2x + 3y)'
-            answer_contract: {"kind": "label", "options": [["8x + 12y = 4(2x + 3y)", "8x+12y=4(2x+3y)", "8x + 12y = 4(2x+3y)", "8x+12y = 4(2x+3y)", "the first equation", "the first one", "first"], ["8x + 12y = 4(2x + 3y) + 4"], ["8x + 12y = 4(2x + 3y) - 4"], ["8x + 12y = 4(2x + 3y) + 8"]]}
-            solution_sketch: 'Expanding the right side gives $4(2x+3y)=8x+12y$, so the first equation is an identity. Each of the other three equations adds the nonzero constant $4$, $-4$ or $8$ to the right side, so it fails for $x=y=0$. The true line shows that $8x+12y$ is $4$ times the integer $2x+3y$.'
+          - problem: 'Find the largest positive integer $d$ such that every element of the ideal $\langle 8, 12 \rangle$ of $\mathbb{Z}$ is a multiple of $d$.'
+            answer: '4'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Every element has the form $8x + 12y = 4(2x + 3y)$, so it is a multiple of $4$. The ideal holds $8 - 12 \cdot 0 = 8$ and $12$, and $12 - 8 = 4$, so $4$ itself is an element. No larger $d$ divides $4$, so $d = 4$.'
           - problem: 'Write the full proof that every ideal of $\mathbb{Z}$ is principal.'
             answer: 'Every ideal of Z equals dZ for some d'
             answer_contract: {"kind": "none"}
@@ -991,10 +991,10 @@ topics:
             answer: '2, 3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Test each residue: $0, 1, 2, 3, 4$ give $1, 2, 5, 10, 17$ and modulo $5$ these are $1, 2, 0, 0, 2$. So the roots are $2$ and $3$.'
-          - problem: 'The polynomial $x^2+1$ has no root among $0$ and $1$ in $\mathbb{Z}_{5}$. What is the smallest $a$ in $\mathbb{Z}_{5}$ with $a^2+1=0$?'
+          - problem: 'What is the smallest $a$ in $\mathbb{Z}_{5}$ with $a^2+1=0$?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A root test must try every element of $\mathbb{Z}_5$, not only $0$ and $1$. The value at $2$ is $2^2+1=5\equiv 0$, so $x^2+1$ has a root and is reducible.'
+            solution_sketch: 'A root test must try every element of $\mathbb{Z}_5$. The values at $0$ and $1$ are $1$ and $2$, so neither is a root. The value at $2$ is $2^2+1=5\equiv 0$, so $a=2$.'
           - problem: 'Factor $x^2+1$ over $\mathbb{Z}_{5}$, with coefficients in $\{0,1,2,3,4\}$.'
             answer: '(x + 2)(x + 3)'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
@@ -1003,7 +1003,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is irreducible","irreducible"],["no","it is reducible","reducible"]]}
             solution_sketch: 'A cubic over a field is reducible exactly when it has a root. The values at $0, 1, 2$ are $1, 4, 13$, which are $1, 1, 1$ modulo $3$, so there is no root and the cubic is irreducible.'
-          - problem: 'The polynomial $x^4+x^2+1$ has no root in $\mathbb{Z}_{2}$. Factor it over $\mathbb{Z}_{2}$.'
+          - problem: 'Factor $x^4+x^2+1$ over $\mathbb{Z}_{2}$.'
             answer: '(x^2 + x + 1)^2'
             answer_contract: {"kind":"required_form","form":"factored_polynomial"}
             solution_sketch: 'The values at $0$ and $1$ are $1$ and $3\equiv 1$, so there is no root, yet a quartic can still split into two quadratics. Here $(x^2+x+1)^2=x^4+2x^3+3x^2+2x+1\equiv x^4+x^2+1$ modulo $2$.'
@@ -1048,10 +1048,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is irreducible","irreducible"],["no","it is reducible","reducible"]]}
             solution_sketch: 'A rational root must be $1$ or $-1$, since both the constant term and the leading coefficient are $1$. The values are $1-1+1=1$ and $-1+1+1=1$, so there is no rational root, and a cubic with no rational root is irreducible over $\mathbb{Q}$.'
-          - problem: 'The polynomial $2x^3+x^2-7x-6$ has the integer roots $2$ and $-1$. Find the third root.'
+          - problem: 'The polynomial $2x^3+x^2-7x-6$ has exactly one rational root that is not an integer. Find it.'
             answer: '-3/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The leading coefficient $2$ allows candidates with denominator $2$. Dividing out $(x-2)(x+1)=x^2-x-2$ leaves $2x+3$, so the third root is $-\tfrac32$.'
+            solution_sketch: 'The integer candidates $\pm1,\pm2,\pm3,\pm6$ give the roots $2$ and $-1$. Dividing out $(x-2)(x+1)=x^2-x-2$ leaves $2x+3$, so the third root is $-\tfrac32$.'
           - problem: 'The volume of a box is $2x^3+x^2-7x-6$ cubic centimetres and its height is $x+1$ centimetres. What polynomial gives the area of its base in square centimetres?'
             answer: '2x^2 - x - 6'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
@@ -1101,10 +1101,10 @@ topics:
             answer: '0'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The value at $0$ is $1$ and the value at $1$ is $3\equiv 1$ modulo $2$. Neither is $0$, so there are $0$ roots, and the cubic is irreducible over $\mathbb{Z}_2$.'
-          - problem: 'The polynomial $x^3+2x^2+2$ has the root $2$ modulo $3$. How many rational roots does $x^3+2x^2+2$ have?'
+          - problem: 'How many rational roots does $x^3+2x^2+2$ have?'
             answer: '0'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'A factorization over $\mathbb{Q}$ would give a rational root among $\pm 1, \pm 2$. The values are $5, 3, 18, 2$, none is zero, so the cubic is irreducible over $\mathbb{Q}$ even though its reduction modulo $3$ has the root $2$.'
+            solution_sketch: 'A rational root must be one of $\pm 1, \pm 2$. The values are $5, 3, 18, 2$, and none is zero. So the cubic has no rational root.'
           - problem: 'Expand $(x+1)^4+1$.'
             answer: 'x^4 + 4x^3 + 6x^2 + 4x + 2'
             answer_contract: {"kind":"required_form","form":"expanded_polynomial"}
@@ -1185,7 +1185,7 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'A residue $a$ is a unit in $\mathbb{Z}_{12}$ exactly when $\gcd(a,12)=1$, which gives $1, 5, 7, 11$. There are $4$ units among the $11$ nonzero residues, so $12\mathbb{Z}$ is not maximal.'
-          - problem: 'Find the integer $a$ with $0<a<6$ for which $4a$ lies in $6\mathbb{Z}$; the pair $4$ and $a$ then shows that $6\mathbb{Z}$ is not a prime ideal of $\mathbb{Z}$.'
+          - problem: 'Find the integer $a$ with $0<a<6$ for which $4a$ lies in $6\mathbb{Z}$.'
             answer: '3'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $4a$ to be a multiple of $6$, and among $1,\dots,5$ only $a=3$ works, since $4\cdot 3=12$. Neither $4$ nor $3$ is in $6\mathbb{Z}$ although their product is, so $6\mathbb{Z}$ is not prime.'
@@ -1252,10 +1252,10 @@ topics:
           answer: '2'
           reveal: 'Only $1$ and $-1$ are invertible, so $\mathbb{Z}$ is an integral domain but not a field. This is why an ideal with quotient $\mathbb{Z}$ is prime but not maximal.'
         exemplars:
-          - problem: 'Evaluation at $0$ gives a ring isomorphism $\mathbb{Z}[x]/\langle x\rangle\cong\mathbb{Z}$. Which integer corresponds to the class of $x^2+3x+7$?'
+          - problem: 'The ring $\mathbb{Z}[x]/\langle x\rangle$ is isomorphic to $\mathbb{Z}$. Which integer corresponds to the class of $x^2+3x+7$?'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The isomorphism sends the class of a polynomial $f$ to $f(0)$. For $x^2+3x+7$ this is $0+0+7=7$.'
+            solution_sketch: 'The isomorphism sends the class of a polynomial $f$ to $f(0)$, because the ideal $\langle x\rangle$ holds the polynomials with $f(0)=0$. For $x^2+3x+7$ this is $0+0+7=7$.'
           - problem: 'How many elements does $\mathbb{F}_2[x]/\langle x^2+x+1\rangle$ have?'
             answer: '4'
             answer_contract: {"kind":"exact"}
@@ -1357,10 +1357,10 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The remainder on division by $x+2$ is the value at $-2$. Compute $(-2)^3+3(-2)^2+5=-8+12+5=9$, a constant, whose degree $0$ is less than $\deg(x+2)=1$.'
-          - problem: 'In $\mathbb{Z}[i]$ the exact quotient of $5+4i$ by $1+3i$ is $1.7-1.1i$. Rounding each part down gives $q=1-2i$, which is not the nearest Gaussian integer. What is the remainder, found with the Gaussian integer nearest to the exact quotient?'
+          - problem: 'In $\mathbb{Z}[i]$, divide $5+4i$ by $1+3i$ and take as quotient the Gaussian integer nearest to the exact quotient. What is the remainder?'
             answer: '-i'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The quotient $1-2i$ leaves a remainder of norm $13$, which is not less than $N(1+3i)=10$. The nearest Gaussian integer to $1.7-1.1i$ is $q=2-i$, and $r=5+4i-(1+3i)(2-i)=5+4i-(5+5i)=-i$ with $N(r)=1$.'
+            solution_sketch: 'The exact quotient is $(5+4i)(1-3i)/10 = 1.7-1.1i$. Rounding each part down gives $1-2i$, whose remainder has norm $13$, which is not less than $N(1+3i)=10$. The nearest Gaussian integer is $q=2-i$, and $r=5+4i-(1+3i)(2-i)=5+4i-(5+5i)=-i$ with $N(r)=1$.'
           - problem: 'In $\mathbb{Z}$ with the absolute value as norm, write $-13=4q+r$ with $|r|<4$ and $|r|$ as small as possible. What is $r$?'
             answer: '-1'
             answer_contract: {"kind":"exact"}
@@ -1498,10 +1498,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind":"label","options":[["yes","it is irreducible","irreducible","2 is irreducible"],["no","it is not irreducible","not irreducible","reducible","2 is reducible"]]}
             solution_sketch: 'If $2=xy$ with both factors nonunits, then $N(x)N(y)=4$ forces $N(x)=2$. But $a^2+5b^2=2$ has no integer solution, so no such factorization exists. Hence $2$ is irreducible, and the answer is yes.'
-          - problem: 'Find the product $ab$ of two elements $a$ and $b$ of $\mathbb{Z}[\sqrt{-5}]$ that $2$ divides, although $2$ divides neither $a$ nor $b$. Take $a = 1+\sqrt{-5}$ and $b = 1-\sqrt{-5}$.'
+          - problem: 'Find the smallest positive integer $n$ that equals a product $ab$ of two elements of $\mathbb{Z}[\sqrt{-5}]$, where $2$ divides $n$ but $2$ divides neither $a$ nor $b$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $ab = (1+\sqrt{-5})(1-\sqrt{-5}) = 1+5 = 6 = 2\cdot 3$, so $2$ divides $6$. But $(1\pm\sqrt{-5})/2$ is not in the ring, since its coordinates are not integers, so $2$ divides neither factor. Hence $2$ is not prime, although it is irreducible.'
+            solution_sketch: 'Take $a = 1+\sqrt{-5}$ and $b = 1-\sqrt{-5}$. Then $ab = 6 = 2\cdot 3$, so $2$ divides $6$. But $(1\pm\sqrt{-5})/2$ is not in the ring, so $2$ divides neither factor. The values $2$ and $4$ fail, because their factors have norm $1$, $2$ or $4$ and give only units and multiples of $2$.'
           - problem: 'Find the Gaussian integer $a+bi$ with $a>b>0$ whose norm is $13$.'
             answer: '3+2i'
             answer_contract: {"kind":"exact"}
@@ -1539,22 +1539,22 @@ topics:
             answer: 'Euclidean -> PID -> UFD'
             answer_contract: {"kind":"label","options":[["Euclidean -> PID -> UFD","every Euclidean domain is a PID and every PID is a UFD","euclidean implies pid implies ufd","Euclidean domain -> PID -> UFD","Euclidean => PID => UFD"],["PID -> Euclidean -> UFD","pid implies euclidean implies ufd"],["UFD -> PID -> Euclidean","ufd implies pid implies euclidean"],["PID -> UFD -> Euclidean","pid implies ufd implies euclidean"]]}
             solution_sketch: 'Every Euclidean domain is a principal ideal domain, because a nonzero element of least norm generates each ideal. Every principal ideal domain is a unique factorization domain, but the reverse implications fail, for example $\mathbb{Z}[x]$ is a UFD and not a PID.'
-          - problem: 'In $\mathbb{Z}[i]$, $2=-i(1+i)^2$. What is the exponent of the irreducible factor $1+i$ in the factorization of $16$ into irreducibles?'
+          - problem: 'Factor $16$ into irreducibles in $\mathbb{Z}[i]$. Write every factor that is an associate of $1+i$ as $1+i$. What is the exponent of $1+i$?'
             answer: '8'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Since $16=2^4$, we get $16=(-i)^4(1+i)^8$, and $(-i)^4=1$. So $16=(1+i)^8$, and the exponent is $8$.'
-          - problem: 'In $\mathbb{Z}[i]$, $5=(2+i)(2-i)$. How many irreducible factors does $25$ have, counted with multiplicity?'
+            solution_sketch: 'First factor $2=-i(1+i)^2$ in $\mathbb{Z}[i]$. Since $16=2^4$, we get $16=(-i)^4(1+i)^8$, and $(-i)^4=1$. So $16=(1+i)^8$, and the exponent is $8$.'
+          - problem: 'How many irreducible factors does $25$ have in $\mathbb{Z}[i]$, counted with multiplicity? Do not count units.'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $25=5^2=(2+i)^2(2-i)^2$. Both $2+i$ and $2-i$ have norm $5$, which is prime, so they are irreducible, and the count is $2+2=4$.'
+            solution_sketch: 'First factor $5=(2+i)(2-i)$. Then $25=5^2=(2+i)^2(2-i)^2$. Both $2+i$ and $2-i$ have norm $5$, which is prime, so they are irreducible, and the count is $2+2=4$.'
           - problem: 'Which irreducible factor $a+bi$ with $a>0$ and $b>0$ occurs in the factorization of $3+4i$ in $\mathbb{Z}[i]$?'
             answer: '2+i'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We have $(2+i)^2=4+4i-1=3+4i$. The norm $N(2+i)=5$ is prime, so $2+i$ is irreducible, and it is the factor with $a>0$ and $b>0$.'
-          - problem: 'In $\mathbb{Z}[i]$, $2=-i(1+i)^2$. How many irreducible factors does $8$ have, counted with multiplicity?'
+          - problem: 'How many irreducible factors does $8$ have in $\mathbb{Z}[i]$, counted with multiplicity? Do not count units.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $8=2^3=(-i)^3(1+i)^6=i(1+i)^6$. The factor $1+i$ has norm $2$, which is prime, so it is irreducible and appears $6$ times.'
+            solution_sketch: 'First factor $2=-i(1+i)^2$. Then $8=2^3=(-i)^3(1+i)^6=i(1+i)^6$. The factor $1+i$ has norm $2$, which is prime, so it is irreducible and appears $6$ times.'
           - problem: 'Which of the Gaussian integers $1+2i$, $2+2i$, $3+4i$ and $4+3i$ is irreducible in $\mathbb{Z}[i]$?'
             answer: '1+2i'
             answer_contract: {"kind":"label","options":[["1+2i","1 + 2i","it is 1+2i"],["2+2i","2 + 2i","it is 2+2i"],["3+4i","3 + 4i","it is 3+4i"],["4+3i","4 + 3i","it is 4+3i"]]}
@@ -1567,10 +1567,10 @@ topics:
             answer: '16'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'We need $a^2+b^2=65$. In $\mathbb{Z}[i]$ we have $65=5\cdot 13=(2+i)(2-i)(3+2i)(3-2i)$, and the points are $(\pm1,\pm8)$, $(\pm8,\pm1)$, $(\pm4,\pm7)$ and $(\pm7,\pm4)$, which gives $16$.'
-          - problem: 'The number $2$ factors as $(1+i)(1-i)$ in $\mathbb{Z}[i]$. Up to multiplication by units, how many different irreducible factors does $2$ have?'
+          - problem: 'Up to multiplication by units, how many different irreducible factors does $2$ have in $\mathbb{Z}[i]$?'
             answer: '1'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The factor $1-i=-i(1+i)$ is a unit multiple of $1+i$, so the two factors are associates. Hence $2=-i(1+i)^2$ has just $1$ irreducible factor up to units, repeated twice.'
+            solution_sketch: 'First factor $2=(1+i)(1-i)$. The factor $1-i=-i(1+i)$ is a unit multiple of $1+i$, so the two factors are associates. Hence $2=-i(1+i)^2$ has just $1$ irreducible factor up to units, repeated twice.'
         constraints: 'factorizations in Z[i] with norms <= 625; irreducibility certified by prime norms; the implication chain quoted, not proved'
       - id: kp3
         name: "Failure of unique factorization: $\\mathbb{Z}[\\sqrt{-5}]$"
@@ -1596,10 +1596,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Units have norm $1$. The equations $a^2+5b^2=2$ and $a^2+5b^2=3$ have no integer solutions, and $2$ has norm $4$, so the smallest norm of a nonunit is $4$.'
-          - problem: 'In $\mathbb{Z}[\sqrt{-5}]$, $6=2\cdot 3=(1+\sqrt{-5})(1-\sqrt{-5})$ and all four factors are irreducible and pairwise not associates. Is $\mathbb{Z}[\sqrt{-5}]$ a unique factorization domain?'
+          - problem: 'Is $\mathbb{Z}[\sqrt{-5}]$ a unique factorization domain?'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","it is not a ufd","not a ufd"],["yes","it is a ufd","ufd"]]}
-            solution_sketch: 'The element $6$ has two factorizations into irreducibles that differ by more than order and units. Their norms $4, 9, 6, 6$ show that no factor of one is an associate of a factor of the other, so unique factorization fails.'
+            solution_sketch: 'Factor $6$ in two ways: $6=2\cdot 3=(1+\sqrt{-5})(1-\sqrt{-5})$. The norms $4, 9, 6, 6$ show that all four factors are irreducible and that no factor of one product is an associate of a factor of the other. So unique factorization fails.'
           - problem: 'In $\mathbb{Z}[\sqrt{-5}]$, $21=3\cdot 7=(1+2\sqrt{-5})(1-2\sqrt{-5})$. What is the norm of $1+2\sqrt{-5}$ with the norm $N(a+b\sqrt{-5})=a^2+5b^2$?'
             answer: '21'
             answer_contract: {"kind":"exact"}

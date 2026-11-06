@@ -115,3 +115,28 @@ fn every_kind_reaches_a_check() {
         .expect_err("an empty hint ladder is refused");
     assert_eq!(rejection.code, "hint-missing");
 }
+
+/// A template statement that hands a value is refused before the gate runs.
+/// A statement that states only the rounding is not refused for that reason.
+#[test]
+fn a_statement_that_hands_a_value_is_refused() {
+    let handed = verify(
+        &spec(),
+        &json!({
+            "statement": "Using $e^{{0.3}} \\approx 1.34986$, find ${a} e^{{0.3}}$ to the nearest whole number.",
+            "answer_expr": "a"
+        }),
+    )
+    .expect_err("the statement hands a value");
+    assert_eq!(handed.code, "handed-value");
+    assert!(handed.message.contains("1.34986"), "{}", handed.message);
+
+    let rounding_only = verify(
+        &spec(),
+        &json!({
+            "statement": "Find ${a} e^{{0.3}}$ to the nearest whole number.",
+            "answer_expr": "a"
+        }),
+    );
+    assert!(rounding_only.is_err_and(|r| r.code != "handed-value"));
+}

@@ -49,10 +49,10 @@ topics:
             answer: "no"
             answer_contract: {"kind": "label", "options": [["yes", "it does", "it has one", "there is one"], ["no", "it does not", "none", "no initial object", "there is none"]]}
             solution_sketch: 'An initial object has exactly one morphism to every object, so it must divide every number in the list. The numbers $2$ and $3$ have no common divisor in the list, and neither divides the other. So no object is initial.'
-          - problem: 'The empty set has exactly one function to every set. Is the empty set a terminal object of $\mathbf{Set}$? To decide, count the functions from $\{0,1\}$ to $\emptyset$. How many are there?'
-            answer: "0"
+          - problem: 'How many of the three sets $\emptyset$, $\{0\}$ and $\{0,1\}$ are terminal objects of $\mathbf{Set}$?'
+            answer: "1"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A function from $\{0,1\}$ to $\emptyset$ would have to send $0$ to an element of $\emptyset$, and there is none, so there are $0$ such functions. A terminal object needs exactly one function from every set into it, so $\emptyset$ is not terminal. The empty set is an initial object.'
+            solution_sketch: 'A terminal object needs exactly one function from every set into it. A function from $\{0,1\}$ to $\emptyset$ would send $0$ to an element of $\emptyset$, and there is none, so $\emptyset$ is not terminal. The set $\{0,1\}$ has $2$ functions from $\{0\}$, so it is not terminal. Only $\{0\}$ is terminal.'
           - problem: 'The objects of a category are the functions $f\colon A\to S$ into the set $S=\{1,2,3,4\}$. A morphism from $f\colon A\to S$ to $g\colon B\to S$ is a function $k\colon A\to B$ with $g\circ k=f$. The terminal object is a function $T\to S$. How many elements does $T$ have?'
             answer: "4"
             answer_contract: {"kind": "exact"}
@@ -115,10 +115,10 @@ topics:
             answer: "(1, 2)"
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'The map $h$ has $\pi_1h=f$ and $\pi_2h=g$, so $h(x)=(f(x),g(x))$. For $x=v$ this gives $(f(v),g(v))=(1,2)$.'
-          - problem: 'The contravariant power set functor $P$ sends a set $X$ to the set of its subsets. It is represented by $\{0,1\}$: a function $\chi\colon X\to\{0,1\}$ corresponds to the subset $\{x:\chi(x)=1\}$. For $X=\{1,2,3,4\}$ and $\chi(1)=1$, $\chi(2)=0$, $\chi(3)=1$, $\chi(4)=0$, which subset corresponds to $\chi$?'
-            answer: "1, 3"
+          - problem: 'The contravariant power set functor $P$ sends a set $X$ to the set of its subsets, and sends a map to its preimage map. $P$ is represented by a set $R$, so $P(X)$ and $\mathrm{Hom}(X,R)$ are in natural bijection. How many elements does $R$ have?'
+            answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The subset that corresponds to $\chi$ contains exactly the elements on which $\chi$ takes the value $1$. These are $1$ and $3$, so the subset is $\{1,3\}$. The other elements $2$ and $4$ take the value $0$ and are left out.'
+            solution_sketch: 'A bijection $P(X)\cong\mathrm{Hom}(X,R)$ at a one-point set $X$ gives $|R|=|P(X)|$. A one-point set has $2$ subsets, so $R$ has $2$ elements. The set $R=\{0,1\}$ works: a map $\chi$ matches the subset $\{x:\chi(x)=1\}$.'
           - problem: 'A shop describes each item in a basket $X$ by one of $3$ colors and one of $5$ sizes. This gives the functor $S(X)=\mathrm{Hom}(X,\text{Colors})\times\mathrm{Hom}(X,\text{Sizes})$, and a set $U$ with $\mathrm{Hom}(X,U)\cong S(X)$ for all $X$ represents it. How many elements does $U$ have?'
             answer: "15"
             answer_contract: {"kind": "exact"}
@@ -127,14 +127,14 @@ topics:
             answer: "6"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $U$ has as many elements as $S$ has at a one-element set, which is the number of colors times the number of sizes. So $4\cdot(\text{sizes})=24$, and the number of sizes is $24/4=6$.'
-          - problem: 'Let $S(X)=\mathrm{Hom}(X,\{0,1\})\sqcup\mathrm{Hom}(X,\{0,1\})$ (two disjoint copies). At a one-point set $S$ has $4$ elements, and so does $\mathrm{Hom}(\text{point},U)$ for a four-element set $U$. For a two-element set $X$ there are $16$ maps from $X$ to $U$. How many elements does $S(X)$ have?'
+          - problem: 'Let $S(X)=\mathrm{Hom}(X,\{0,1\})\sqcup\mathrm{Hom}(X,\{0,1\})$ (two disjoint copies). Suppose a finite set $U$ has a bijection $S(X)\cong\mathrm{Hom}(X,U)$ for every one-point set $X$. For a two-element set $X$, how many more elements does $\mathrm{Hom}(X,U)$ have than $S(X)$?'
             answer: "8"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'There are $2^2=4$ maps from $X$ to $\{0,1\}$, so the two copies together give $4+4=8$ elements. Since $8\ne 16$, no natural bijection with $\mathrm{Hom}(X,U)$ exists, and matching sizes at one object is not enough.'
-          - problem: 'Under the bijection $\mathrm{Hom}(X,A\times B)\to\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$ given by $u\mapsto(\pi_1u,\pi_2u)$, which pair corresponds to the identity map of $A\times B$ (the case $X=A\times B$)?'
+            solution_sketch: 'At a one-point set, $S$ has $2+2=4$ elements, so $\mathrm{Hom}(\text{point},U)=U$ has $4$ elements. For a two-element set $X$, $\mathrm{Hom}(X,U)$ has $4^2=16$ elements and $S(X)$ has $4+4=8$. The difference is $8$, so no natural bijection exists.'
+          - problem: 'The product $A\times B$ with projections $\pi_1,\pi_2$ represents the functor $X\mapsto\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$. Which pair corresponds to the identity map of $A\times B$ under the natural bijection $\mathrm{Hom}(X,A\times B)\to\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$, in the case $X=A\times B$?'
             answer: "(π1, π2)"
             answer_contract: {"kind": "label", "options": [["(π1, π2)", "(π1,π2)", "(pi1, pi2)", "(pi1,pi2)", "pi1, pi2", "pi1,pi2", "π1, π2", "π1,π2"], ["(π2, π1)", "(pi2, pi1)", "pi2, pi1", "π2, π1", "(p2, p1)"], ["(id_A, id_B)", "(id A, id B)", "id_A, id_B", "(idA, idB)"], ["(π1, id)", "(pi1, id)", "pi1, id", "π1, id"]]}
-            solution_sketch: 'Put $u=\mathrm{id}_{A\times B}$ in the formula $u\mapsto(\pi_1u,\pi_2u)$. Then $\pi_1u=\pi_1$ and $\pi_2u=\pi_2$, so the identity corresponds to the pair $(\pi_1,\pi_2)$ of projections. This pair is the universal element of the functor.'
+            solution_sketch: 'The bijection sends a map $u\colon X\to A\times B$ to the pair of its components $(\pi_1u,\pi_2u)$. For $u=\mathrm{id}_{A\times B}$ this is $(\pi_1,\pi_2)$. This pair is the universal element of the functor.'
           - problem: 'Write the full proof that in the category of sets the product $A\times B$ with projections $\pi_1,\pi_2$ represents the functor $S(X)=\mathrm{Hom}(X,A)\times\mathrm{Hom}(X,B)$ via the bijection $u\mapsto(\pi_1u,\pi_2u)$, natural in $X$.'
             answer: "See the solution."
             answer_contract: {"kind": "none"}
@@ -338,10 +338,10 @@ topics:
             answer: "0, 1, 2, 12"
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The equalizer is the set of $n$ with $f(n)=g(n)$, with the inclusion into $A$. Checking each $n$, the remainders agree for $n=0,1,2$ and $n=12$, and for no other $n$ in $A$. So the equalizer is $\{0,1,2,12\}$.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{1,2,3,4\}$ and $B=\{c,d\}$, with $f(1)=c$, $f(2)=d$, $f(3)=c$, $f(4)=d$ and $g(1)=c$, $g(2)=d$, $g(3)=d$, $g(4)=d$. The map $e\colon\{5,6,7\}\to A$ with $e(5)=1$, $e(6)=2$, $e(7)=4$ is an equalizer of $f$ and $g$. Let $X=\{r,s\}$ and $m\colon X\to A$ with $m(r)=4$ and $m(s)=1$. There is a unique $u\colon X\to\{5,6,7\}$ with $eu=m$. What are $u(r)$ and $u(s)$?'
-            answer: "7, 5"
+          - problem: 'In $\mathbf{Set}$ let $A=\{1,2,3,4\}$ and $B=\{c,d\}$, with $f(1)=c$, $f(2)=d$, $f(3)=c$, $f(4)=d$ and $g(1)=c$, $g(2)=d$, $g(3)=d$, $g(4)=d$. Let $E$ be the equalizer of $f$ and $g$, with inclusion $e\colon E\to A$. Let $X=\{r,s\}$ and $m\colon X\to A$ with $m(r)=4$ and $m(s)=1$. There is a unique $u\colon X\to E$ with $eu=m$. What are $u(r)$ and $u(s)$?'
+            answer: "4, 1"
             answer_contract: {"kind": "list", "ordered": true, "member": {"kind": "exact"}}
-            solution_sketch: 'The factor $u$ must satisfy $e(u(x))=m(x)$. Since $m(r)=4=e(7)$, we get $u(r)=7$, and since $m(s)=1=e(5)$, we get $u(s)=5$. The values $4$ and $1$ lie where $f$ and $g$ agree, so such a factor exists.'
+            solution_sketch: 'The equalizer is the set of $x$ with $f(x)=g(x)$, so $E=\{1,2,4\}$. The factor $u$ must satisfy $e(u(x))=m(x)$, and $e$ is the inclusion. So $u(r)=m(r)=4$ and $u(s)=m(s)=1$, and both values lie in $E$.'
           - problem: 'Let $f,g\colon\mathbb{R}\to\mathbb{R}$ be $f(x)=x^2$ and $g(x)=x+6$. Find the equalizer of $f$ and $g$ in $\mathbf{Set}$, as a subset of $\mathbb{R}$.'
             answer: "-2, 3"
             answer_contract: {"kind": "exact"}
@@ -524,14 +524,14 @@ topics:
         key_prerequisites: [products-coproducts]
         constraints: "Construct a pullback using a product and the equalizer of the two induced maps, or use its universal property to prove stability of monomorphisms under pullback. Closed items may construct the categorical object or diagnose assertions whose validity the learner must determine; the unmarked item asks for a full proof. Candidate claims must not be endorsed or explained by the stem."
         exemplars:
-          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,2\}$, $B=\{0,1\}$ and $C=\{0,1,2\}$, with $f=(0,1,1)$ and $g=(1,2)$, listing the values at $0,1,2$ and at $0,1$. The pullback of $f$ and $g$ is the equalizer of $f\pi_1$ and $g\pi_2$ inside the product $A\times B$. How many elements does it have?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,2\}$, $B=\{0,1\}$ and $C=\{0,1,2\}$, with $f=(0,1,1)$ and $g=(1,2)$, listing the values at $0,1,2$ and at $0,1$. How many elements does the pullback of $f$ and $g$ have?'
             answer: "2"
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The equalizer keeps the pairs $(a,b)$ with $f(a)=g(b)$. The value of $g$ is $1$ at $b=0$ and $2$ at $b=1$, and $f(a)=1$ for $a=1,2$, so the pairs are $(1,0)$ and $(2,0)$. The pullback has $2$ elements.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$, $B=\{0,1,2\}$ and $C=\{0,1,2\}$, with $f=(2,0)$ and $g=(0,2,2)$, listing the values at $0,1$ and at $0,1,2$. The pullback, built as the equalizer inside $A\times B$, has exactly one pair with first coordinate $1$. What is it?'
+            solution_sketch: 'The pullback is the equalizer of $f\pi_1$ and $g\pi_2$ inside the product $A\times B$, so it keeps the pairs $(a,b)$ with $f(a)=g(b)$. The value of $g$ is $1$ at $b=0$ and $2$ at $b=1$, and $f(a)=1$ for $a=1,2$, so the pairs are $(1,0)$ and $(2,0)$. The pullback has $2$ elements.'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1\}$, $B=\{0,1,2\}$ and $C=\{0,1,2\}$, with $f=(2,0)$ and $g=(0,2,2)$, listing the values at $0,1$ and at $0,1,2$. The pullback of $f$ and $g$ has exactly one pair with first coordinate $1$. What is it?'
             answer: "(1, 0)"
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'For $a=1$ we have $f(1)=0$, and $g(b)=0$ only for $b=0$. So the only pair with first coordinate $1$ is $(1,0)$.'
+            solution_sketch: 'The pullback is the equalizer of $f\pi_1$ and $g\pi_2$ inside $A\times B$, so it holds the pairs $(a,b)$ with $f(a)=g(b)$. For $a=1$ we have $f(1)=0$, and $g(b)=0$ only for $b=0$. So the only pair with first coordinate $1$ is $(1,0)$.'
           - problem: 'In a category with binary products and equalizers, the pullback of $f\colon A\to C$ and $g\colon B\to C$ is built from the product $A\times B$ with projections $\pi_1,\pi_2$. Which pair of morphisms $A\times B\to C$ is equalized?'
             answer: "f∘π1 and g∘π2"
             answer_contract: {"kind": "label", "options": [["f∘π1 and g∘π2", "fπ1 and gπ2", "f pi1 and g pi2", "f p1 and g p2", "f∘pi1 and g∘pi2", "fπ1, gπ2"], ["f∘π2 and g∘π1", "fπ2 and gπ1", "f pi2 and g pi1", "f p2 and g p1", "f∘pi2 and g∘pi1", "fπ2, gπ1"], ["π1 and π2", "pi1 and pi2", "p1 and p2", "π1, π2"], ["f and g", "f, g"]]}
@@ -750,22 +750,22 @@ topics:
         key_prerequisites: [universal-properties]
         constraints: "Require the learner to use computing a limit cone in set. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
         exemplars:
-          - problem: 'In $\mathbf{Set}$, let $D$ be the parallel pair $f,g\colon A\to B$ with $A=\{1,2,3,4\}$, $B=\{5,6\}$, $f(1)=5$, $f(2)=6$, $f(3)=5$, $f(4)=6$, and $g(1)=5$, $g(2)=5$, $g(3)=5$, $g(4)=6$. Find the limit of $D$, taking its apex to be a subset of $A$.'
-            answer: '1, 3, 4'
+          - problem: 'In $\mathbf{Set}$, let $D$ be the parallel pair $f,g\colon A\to B$ with $A=\{1,2,3,4\}$, $B=\{5,6\}$, $f(1)=5$, $f(2)=6$, $f(3)=5$, $f(4)=6$, and $g(1)=5$, $g(2)=5$, $g(3)=5$, $g(4)=6$. How many elements does the limit of $D$ have?'
+            answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The limit of a parallel pair is the set of elements of $A$ on which $f$ and $g$ agree, with the inclusion into $A$ as one leg. Test each element: $f(1)=5=g(1)$, $f(2)=6$ but $g(2)=5$, $f(3)=5=g(3)$ and $f(4)=6=g(4)$. So the limit is $\{1,3,4\}$.'
+            solution_sketch: 'The limit of a parallel pair is the set of elements of $A$ on which $f$ and $g$ agree, with the inclusion into $A$ as one leg. Test each element: $f(1)=5=g(1)$, $f(2)=6$ but $g(2)=5$, $f(3)=5=g(3)$ and $f(4)=6=g(4)$. So the limit is $\{1,3,4\}$, with $3$ elements.'
           - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\xrightarrow{f}B\xleftarrow{g}C$ with $A=\{1,2,3,4\}$, $C=\{5,6\}$, $B=\{7,8\}$, $f(1)=7$, $f(2)=8$, $f(3)=7$, $f(4)=8$, and $g(5)=8$, $g(6)=7$. How many elements does the limit of $D$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit of a cospan consists of the pairs $(u,v)$ with $u\in A$, $v\in C$ and $f(u)=g(v)$. For $v=5$ we have $g(5)=8$, and $f(u)=8$ for $u=2$ and $u=4$, which gives $2$ pairs. For $v=6$ we have $g(6)=7$, and $f(u)=7$ for $u=1$ and $u=3$, which gives $2$ more pairs. The limit has $2+2=4$ elements.'
-          - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\xrightarrow{f}B\xleftarrow{g}C$ with $A=\{1,2,3\}$, $C=\{4\}$, $B=\{5,6\}$, $f(1)=5$, $f(2)=6$, $f(3)=5$, and $g(4)=6$. Take the elements of the limit of $D$ to be pairs $(u,v)$ with $u\in A$ and $v\in C$. The limit has exactly one element. What is it?'
-            answer: '(2, 4)'
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'A pair $(u,v)$ belongs to the limit when $f(u)=g(v)$. Since $C=\{4\}$ and $g(4)=6$, we need $f(u)=6$. Only $u=2$ has $f(2)=6$, because $f(1)=5$ and $f(3)=5$. So the only element is $(2,4)$.'
-          - problem: 'In $\mathbf{Set}$, let $D$ be the diagram of three parallel maps $f,g,h\colon A\to B$ with $A=\{1,2,3,4,5\}$, $B=\{7,8\}$, $f(1)=7$, $f(2)=7$, $f(3)=8$, $f(4)=8$, $f(5)=7$, $g(1)=7$, $g(2)=8$, $g(3)=8$, $g(4)=8$, $g(5)=8$, and $h(1)=7$, $h(2)=8$, $h(3)=7$, $h(4)=8$, $h(5)=8$. Find the limit of $D$, taking its apex to be a subset of $A$.'
-            answer: '1, 4'
+          - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\xrightarrow{f}B\xleftarrow{g}C$ with $A=\{1,2,3\}$, $C=\{4,7\}$, $B=\{5,6\}$, $f(1)=5$, $f(2)=6$, $f(3)=5$, $g(4)=6$, and $g(7)=5$. How many elements does the limit of $D$ have?'
+            answer: '3'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'An element of the limit is a pair $(u,v)$ with $u\in A$, $v\in C$ and $f(u)=g(v)$. For $v=4$ we need $f(u)=6$, which gives $u=2$. For $v=7$ we need $f(u)=5$, which gives $u=1$ and $u=3$. So the limit has the $3$ elements $(2,4)$, $(1,7)$ and $(3,7)$.'
+          - problem: 'In $\mathbf{Set}$, let $D$ be the diagram of three parallel maps $f,g,h\colon A\to B$ with $A=\{1,2,3,4,5\}$, $B=\{7,8\}$, $f(1)=7$, $f(2)=7$, $f(3)=8$, $f(4)=8$, $f(5)=7$, $g(1)=7$, $g(2)=8$, $g(3)=8$, $g(4)=8$, $g(5)=8$, and $h(1)=7$, $h(2)=8$, $h(3)=7$, $h(4)=8$, $h(5)=8$. How many elements does the limit of $D$ have?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With several parallel maps, the limit is the set of elements of $A$ on which all the maps agree. Element $1$ gives the values $7$, $7$, $7$, so it is in. Element $2$ gives $7$, $8$, $8$, element $3$ gives $8$, $8$, $7$ and element $5$ gives $7$, $8$, $8$, so they are out. Element $4$ gives $8$, $8$, $8$, so it is in. The limit is $\{1,4\}$.'
+            solution_sketch: 'With several parallel maps, the limit is the set of elements of $A$ on which all the maps agree. Element $1$ gives the values $7$, $7$, $7$, so it is in. Element $4$ gives $8$, $8$, $8$, so it is in. Elements $2$, $3$ and $5$ give different values, so the limit is $\{1,4\}$, with $2$ elements.'
           - problem: 'Four leaders and five followers at a dance come from three schools $a$, $b$ and $c$. Leaders $1$ and $2$ come from school $a$, leader $3$ from school $b$ and leader $4$ from school $c$. Follower $5$ comes from school $a$, followers $6$, $7$ and $8$ from school $b$ and follower $9$ from school $c$. Let $f$ send each leader to a school and $g$ send each follower to a school. How many elements does the limit of the cospan $\mathrm{Leaders}\xrightarrow{f}\mathrm{Schools}\xleftarrow{g}\mathrm{Followers}$ in $\mathbf{Set}$ have?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -774,10 +774,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit of parallel maps is the set of applications on which all three maps agree. Applications $1$ and $5$ are accepted by all three clerks, and application $2$ is rejected by all three. Application $3$ is accepted only by $h$, application $4$ only by $f$ and application $6$ only by $g$, so they are out. The limit is $\{1,2,5\}$, which has $3$ elements.'
-          - problem: 'In $\mathbf{Set}$, let $D$ be the diagram $A\xrightarrow{f}B$ together with two parallel maps $g,h\colon B\to C$, where $A=\{0,1,2,3\}$, $B=\{0,1,2\}$, $C=\{0,1\}$, $f(0)=0$, $f(1)=1$, $f(2)=2$, $f(3)=1$, $g(0)=0$, $g(1)=0$, $g(2)=1$, and $h(0)=0$, $h(1)=1$, $h(2)=1$. Find the limit of $D$, taking its apex to be a subset of $A$.'
-            answer: '0, 2'
+          - problem: 'In $\mathbf{Set}$, let $D$ be the diagram $A\xrightarrow{f}B$ together with two parallel maps $g,h\colon B\to C$, where $A=\{0,1,2,3\}$, $B=\{0,1,2\}$, $C=\{0,1\}$, $f(0)=0$, $f(1)=1$, $f(2)=2$, $f(3)=1$, $g(0)=0$, $g(1)=0$, $g(2)=1$, and $h(0)=0$, $h(1)=1$, $h(2)=1$. How many elements does the limit of $D$ have?'
+            answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A cone has legs $\lambda_A$, $\lambda_B=f\circ\lambda_A$ and $\lambda_C=g\circ\lambda_B=h\circ\lambda_B$. So the condition on $\lambda_A$ is $g(f(a))=h(f(a))$. Test each $a$: $a=0$ gives $g(0)=0=h(0)$, $a=1$ gives $g(1)=0$ but $h(1)=1$, $a=2$ gives $g(2)=1=h(2)$, and $a=3$ gives $f(3)=1$ and again $g(1)\ne h(1)$. The limit is $\{0,2\}$.'
+            solution_sketch: 'A cone has legs $\lambda_A$, $\lambda_B=f\circ\lambda_A$ and $\lambda_C=g\circ\lambda_B=h\circ\lambda_B$. So the condition on $\lambda_A$ is $g(f(a))=h(f(a))$. Test each $a$: $a=0$ and $a=2$ pass, while $a=1$ and $a=3$ fail because $g(1)\ne h(1)$. The limit is $\{0,2\}$, with $2$ elements.'
           - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\xrightarrow{f}B\xleftarrow{g}C$ with $B=\{p,q\}$. The map $f$ sends $3$ elements of $A$ to $p$ and $5$ elements of $A$ to $q$. The map $g$ sends $k$ elements of $C$ to $p$ and $2$ elements of $C$ to $q$. The limit of $D$ has $19$ elements. Find $k$.'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -815,10 +815,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit of a parallel pair is the set of households on which $f$ and $g$ agree. Households $1$, $3$, $5$, $7$ and $8$ gave the same answer both times. Households $2$, $4$ and $6$ changed their answer. The limit has $5$ elements.'
-          - problem: 'Take a span $D_1\leftarrow D_0\to D_2$ in $\mathbf{Set}$ with $|D_0|=5$, $|D_1|=2$ and $|D_2|=4$. The product $|D_1|\cdot|D_2|$ is $8$. How many elements does the limit of the span have?'
+          - problem: 'Take a span $D_1\leftarrow D_0\to D_2$ in $\mathbf{Set}$ with $|D_0|=5$, $|D_1|=2$ and $|D_2|=4$. How many elements does the limit of the span have?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The product formula is the limit of the discrete diagram on $D_1$ and $D_2$, not of a span. For a span, every cone is determined by its leg $\lambda_0$ into $D_0$, since the other two legs are $a\circ\lambda_0$ and $b\circ\lambda_0$. So the limit is $D_0$ itself and it has $5$ elements.'
+            solution_sketch: 'The product formula $2\cdot4=8$ is the limit of the discrete diagram on $D_1$ and $D_2$, not of a span. For a span, every cone is fixed by its leg $\lambda_0$ into $D_0$, since the other two legs are $a\circ\lambda_0$ and $b\circ\lambda_0$. So the limit is $D_0$ itself and it has $5$ elements.'
           - problem: 'Write the full proof that, for two parallel functions $f,g\colon A\to B$ in $\mathbf{Set}$, a limiting cone of the diagram consisting of $A$, $B$, $f$ and $g$ has the equalizer $\{a\in A: f(a)=g(a)\}$ as its apex.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -833,10 +833,10 @@ topics:
           reveal: 'A cone is a pair of legs, one point of $A$ and one point of $B$, so there are $2\cdot 3=6$. The product $A\times B$ has the same $6$ elements, and the universal property says that cones with apex $X$ correspond one-to-one to maps $X\to A\times B$.'
         constraints: "Require the learner to use the universal property of a limit cone. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
         exemplars:
-          - problem: 'In $\mathbf{Set}$, the limit of the discrete diagram on $A=\{1,2\}$ and $B=\{3,4\}$ is the product $A\times B$ with projections $p$ and $q$. A cone over the diagram with apex $X=\{5\}$ has legs $r\colon X\to A$ and $s\colon X\to B$ with $r(5)=2$ and $s(5)=3$. The mediating map $u\colon X\to A\times B$ satisfies $p\circ u=r$ and $q\circ u=s$. What is $u(5)$?'
+          - problem: 'In $\mathbf{Set}$, the limit of the discrete diagram on $A=\{1,2\}$ and $B=\{3,4\}$ is the product $A\times B$ with projections $p$ and $q$. A cone over the diagram with apex $X=\{5\}$ has legs $r\colon X\to A$ and $s\colon X\to B$ with $r(5)=2$ and $s(5)=3$. Let $u\colon X\to A\times B$ be the mediating map from the cone to the limit. What is $u(5)$?'
             answer: '(2, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'The mediating map must commute with every leg, so $p(u(5))=r(5)=2$ and $q(u(5))=s(5)=3$. These two equations fix both coordinates of $u(5)$, which shows existence and uniqueness at once. So $u(5)=(2,3)$.'
+            solution_sketch: 'The mediating map commutes with every leg, so $p(u(5))=r(5)=2$ and $q(u(5))=s(5)=3$. These two equations fix both coordinates of $u(5)$, which shows existence and uniqueness at once. So $u(5)=(2,3)$.'
           - problem: 'The positive divisors of $72$ form a category with one morphism $x\to y$ exactly when $x$ divides $y$. Find the apex of the limit cone of the discrete diagram on $18$ and $12$.'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -1052,10 +1052,10 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The limit is the set of compatible pairs (customer, driver) in the same district. District $a$ gives $3\cdot 2=6$ pairs, district $b$ gives $1\cdot 1=1$ pair and district $c$ gives $0\cdot 2=0$ pairs. The limit has $6+1+0=7$ elements.'
-          - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\to C\leftarrow B$ with $A=\{0,1\}$, $B=\{2,3\}$ and $C=\{5\}$. Take the elements of $\lim D$ to be the compatible pairs $(a,b)$. The cone $(X,\mu)$ has $X=\{7,8\}$, with $\mu_A(7)=1$, $\mu_A(8)=0$, $\mu_B(7)=3$ and $\mu_B(8)=2$. The unique map $u\colon X\to\lim D$ satisfies $\lambda_A\circ u=\mu_A$ and $\lambda_B\circ u=\mu_B$, where $\lambda_A$ and $\lambda_B$ are the projections. What is $u(8)$?'
+          - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\to C\leftarrow B$ with $A=\{0,1\}$, $B=\{2,3\}$ and $C=\{5\}$. A cone $(X,\mu)$ over $D$ has $X=\{7,8\}$, with $\mu_A(7)=1$, $\mu_A(8)=0$, $\mu_B(7)=3$ and $\mu_B(8)=2$. Let $u\colon X\to\lim D$ be the unique map from the cone to the limit. What is $u(8)$?'
             answer: '(0, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Every pair $(a,b)$ is compatible, because $C$ has a single element. The map $u$ sends each point to the pair of its leg values. So $u(8)$ has $A$-coordinate $\mu_A(8)=0$ and $B$-coordinate $\mu_B(8)=2$, and $u(8)=(0,2)$.'
+            solution_sketch: 'An element of $\lim D$ is a pair $(a,b)$ with equal images in $C$. Every pair is compatible, because $C$ has a single element. The map $u$ sends each point to the pair of its leg values. So $u(8)=(\mu_A(8),\mu_B(8))=(0,2)$.'
           - problem: 'In $\mathbf{Set}$, let $D$ be the cospan $A\xrightarrow{f}C\xleftarrow{g}B$ with $A=\{0,1,2,3\}$, $B=\{4,5,6\}$ and $C=\{0,1\}$, where $f(0)=0$, $f(1)=1$, $f(2)=0$, $f(3)=1$, and $g(4)=0$, $g(5)=1$, $g(6)=1$. Is the triple $(a,b,c)=(3,5,1)$ a compatible family of $D$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is", "it is a compatible family", "compatible"], ["no", "it is not", "it is not a compatible family", "not compatible", "incompatible", "it isn't compatible", "it is not compatible"]]}
@@ -1089,10 +1089,10 @@ topics:
             answer: '36'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The legs of a limit cone are jointly monic, so $p\circ u=p\circ v$ and $q\circ u=q\circ v$ force $u=v$. Conversely every pair with $u=v$ satisfies both equations. So we count the functions $u\colon X\to L$. Since $L$ has $6$ elements, there are $6^2=36$ functions, and $36$ pairs.'
-          - problem: 'A shop''s first database lists every outfit as a pair (shirt, trousers), with shirts red or blue and trousers black, grey or green. Its second database lists the six outfits as rows $1$ to $6$, with shirts red, blue, red, blue, red, blue and trousers black, black, grey, grey, green, green, in the order of the rows. Both are limits of the discrete diagram of the shirts and the trousers in $\mathbf{Set}$. The unique isomorphism of cones sends each pair to the row with the same shirt and trousers. Which row does it send (blue, green) to?'
+          - problem: 'A shop''s first database lists every outfit as a pair (shirt, trousers), with shirts red or blue and trousers black, grey or green. Its second database lists the six outfits as rows $1$ to $6$, with shirts red, blue, red, blue, red, blue and trousers black, black, grey, grey, green, green, in the order of the rows. Both are limits of the discrete diagram of the shirts and the trousers in $\mathbf{Set}$. They are related by a unique isomorphism of cones. Which row does it send (blue, green) to?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The isomorphism of cones must keep both legs, so it sends a pair to the row with the same shirt and the same trousers. The blue shirts are in rows $2$, $4$ and $6$, and the green trousers are in rows $5$ and $6$. Only row $6$ has both, so (blue, green) goes to row $6$.'
+            solution_sketch: 'The isomorphism of cones keeps both legs, so it sends a pair to the row with the same shirt and the same trousers. The blue shirts are in rows $2$, $4$ and $6$, and the green trousers are in rows $5$ and $6$. Only row $6$ has both, so (blue, green) goes to row $6$.'
           - problem: 'A jacket comes in $3$ sizes and in some number of colors. Two spreadsheets each list the size-and-color combinations, and each is a limit cone of the discrete diagram of the sizes and the colors in $\mathbf{Set}$. The second spreadsheet has $15$ rows. How many colors does the jacket come in?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -1122,10 +1122,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The colimit is the quotient of $B$ by the relations $f(a)\sim g(a)$. The element $1$ of $A$ gives $1\sim 2$ and the element $2$ gives $3\sim 4$. So the classes are $\{1,2\}$, $\{3,4\}$ and $\{5\}$, and the colimit has $3$ elements.'
-          - problem: 'Two bus lines leave a stop every $12$ minutes and every $18$ minutes. Take the whole numbers from $1$ to $100$ as a category with one morphism $m\to n$ exactly when $m$ divides $n$. The colimit of the discrete diagram on $12$ and $18$ is the initial cocone. Find its nadir. The two buses leave together for the first time at that minute.'
+          - problem: 'Two bus lines leave a stop every $12$ minutes and every $18$ minutes. Take the whole numbers from $1$ to $100$ as a category with one morphism $m\to n$ exactly when $m$ divides $n$. Find the nadir of the colimit of the discrete diagram on $12$ and $18$.'
             answer: '36'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A cocone under the diagram has a nadir that both $12$ and $18$ divide, so the nadirs are the multiples of $36$ up to $100$, namely $36$ and $72$. The initial cocone has a morphism to every other cocone, and $36$ divides $72$. So the nadir of the colimit is $36$, the least common multiple of $12$ and $18$.'
+            solution_sketch: 'A cocone under the diagram has a nadir that both $12$ and $18$ divide, so the nadirs are the multiples of $36$ up to $100$, namely $36$ and $72$. The colimit is the initial cocone, and it has a morphism to every other cocone. Since $36$ divides $72$, the nadir is $36$, the least common multiple of $12$ and $18$. The two buses leave together at minute $36$.'
           - problem: 'In $\mathbf{Set}$, let $D$ be the span $B\xleftarrow{f}A\xrightarrow{g}C$ with $A=\{1,2\}$, $B=\{p,q,r\}$, $C=\{s,t\}$, $f(1)=p$, $f(2)=q$, $g(1)=s$ and $g(2)=s$. In the colimit of $D$, are $p$ and $q$ the same element?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "they are", "they are the same", "same", "the same element", "they are the same element"], ["no", "they are not", "they are different", "different", "they are not the same"]]}
@@ -1142,19 +1142,19 @@ topics:
             answer: '7'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $A$ consists of the contacts in both books, which are Bo and Di, so $|A|=2$. The colimit is the disjoint union $B\sqcup C$ with each element of $A$ in $B$ glued to the same contact in $C$. The disjoint union has $4+5=9$ elements, and the $2$ gluings remove $2$ of them, which leaves $9-2=7$ elements.'
-          - problem: 'A colimit in a category $\mathcal C$ is a limit in $\mathcal C^{op}$. How many elements does a terminal object of $\mathbf{Set}^{op}$ have?'
+          - problem: 'How many elements does a terminal object of $\mathbf{Set}^{op}$ have?'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A terminal object of $\mathbf{Set}^{op}$ is an initial object of $\mathbf{Set}$, which is the colimit of the empty diagram. In $\mathbf{Set}$ that is the empty set, which sends exactly one function to every set. So the terminal object of $\mathbf{Set}^{op}$ has $0$ elements.'
+            solution_sketch: 'A colimit in a category $\mathcal C$ is a limit in $\mathcal C^{op}$. So a terminal object of $\mathbf{Set}^{op}$ is an initial object of $\mathbf{Set}$, which is the empty set. It has $0$ elements.'
           - problem: 'Write the full proof that, in $\mathbf{Set}$, the quotient of the disjoint union of the values of a small diagram $D$ by the equivalence relation generated by $x\sim Df(x)$, with legs sending each element to its equivalence class, is a colimit of $D$.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
             solution_sketch: 'Setup: form the disjoint union of the sets $Dj$ and quotient it by the smallest equivalence relation $\sim$ satisfying $x\sim Df(x)$ for every element $x$ in $Dj$ and every arrow $f\colon j\to j''$; call the quotient set $U$. Legs: define each leg from $Dj$ to $U$ by sending $x$ to its class; the generating relations give exactly the cocone condition. Universal property: take any cocone with apex $X$ and legs $\gamma_j$, and define a map $u\colon U\to X$ by sending the class of $x$ to the value of the leg at $x$. Cocone condition: equivalent elements are forced to have equal leg values by chains of generating pairs, so $u$ is independent of the representative. Uniqueness: the condition that $u$ composed with each leg equals that leg determines $u$ on every class, so at most one such $u$ exists. Conclusion: $U$ with the class legs is an initial cocone, hence a colimit, and this is exactly the dual of the limit story with all arrows reversed.'
     diagnostic_exemplar:
-      problem: 'In $\mathbf{Set}$, let $f,g\colon\{1,2,3\}\to\{a,b,c,d\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=c$ and $g(1)=b$, $g(2)=c$, $g(3)=c$. The colimit of the parallel pair $f,g$ is the quotient of $\{a,b,c,d\}$ by the least equivalence relation with $f(x)\sim g(x)$ for all $x$. How many elements does the colimit have?'
+      problem: 'In $\mathbf{Set}$, let $f,g\colon\{1,2,3\}\to\{a,b,c,d\}$ be given by $f(1)=a$, $f(2)=b$, $f(3)=c$ and $g(1)=b$, $g(2)=c$, $g(3)=c$. How many elements does the colimit of the parallel pair $f,g$ have?'
       answer_contract: {"kind":"exact"}
       answer: '2'
-      solution_sketch: 'The relation forces $a\sim b$ and $b\sim c$, and $c\sim c$ adds nothing. So $\{a,b,c\}$ is one class and $\{d\}$ is the other. There are $2$ classes.'
+      solution_sketch: 'The colimit is the quotient of $\{a,b,c,d\}$ by the least equivalence relation with $f(x)\sim g(x)$ for all $x$. The relation gives $a\sim b$ and $b\sim c$, and $c\sim c$ adds nothing. So $\{a,b,c\}$ is one class and $\{d\}$ is the other, which makes $2$ classes.'
     anki_seeds:
       - front: "Formula for $\\lim D$ in $\\mathbf{Set}$?"
         back: "the set of compatible families $(x_j)$ with $Df(x_j)=x_{j'}$ for every $f\\colon j\\to j'$."
@@ -1222,10 +1222,10 @@ topics:
             answer: '23'
             answer_contract: {"kind": "unit", "quantity": "euro", "unit": "euro", "allow_omitted": true}
             solution_sketch: 'The curry is $\hat g(x)=(a\mapsto 4x+3a)$. So $\hat g(2)$ is the price function $a\mapsto 8+3a$, and $\hat g(2)(5)=8+15=23$ euros.'
-          - problem: 'Let $X=\{1,2\}$, $A=\{0,1\}$, $B=\{0,1,2\}$. Currying matches the maps $X\times A\to B$ one-to-one with the maps $X\to B^A$. How many maps $X\to B^A$ are there?'
+          - problem: 'Let $X=\{1,2\}$, $A=\{0,1\}$, $B=\{0,1,2\}$. How many maps $X\to B^A$ are there?'
             answer: '81'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The set $B^A$ has $3^2=9$ elements, and a map from the $2$-element set $X$ to it chooses one of $9$ values for each of $2$ points, so there are $9^2=81$ maps. This agrees with the $3^4=81$ maps $X\times A\to B$, as the bijection says.'
+            solution_sketch: 'Currying matches the maps $X\to B^A$ one to one with the maps $X\times A\to B$. The set $X\times A$ has $4$ elements and $B$ has $3$, so there are $3^4=81$ such maps. The direct count agrees: $B^A$ has $9$ elements, and $9^2=81$.'
           - problem: 'Write the full proof that in $\mathbf{Set}$ the set $B^A$ of all functions $A \to B$, with evaluation $\mathrm{ev}(f, a) = f(a)$, satisfies the universal property of the exponential: every $g\colon X \times A \to B$ has a unique $\hat g\colon X \to B^A$ with $\mathrm{ev} \circ (\hat g \times 1_A) = g$.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1328,11 +1328,11 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $F(A)=3$ and $F(B)=3$, and the limit of $3$ and $3$ in $(\mathbb N,\le)$ is $3$. The intersection $A\cap B$ has $2$ members, so $F(A\cap B)=2\ne3$. The size functor does not preserve this limit.'
-          - problem: 'A packer puts items into boxes of $2$, and the functor $F(n)=\lfloor n/2\rfloor$ gives the number of full boxes for $n$ items, from $(\mathbb N,\le)$ to itself. The limit of the diagram with objects $7$ and $10$ is $7$, and its cones have an apex $c$ with $c\le7$. For how many whole numbers $c\ge0$ is the image of the cone with apex $c$ a limit cone over the diagram with objects $F(7)$ and $F(10)$?'
+          - problem: 'A packer puts items into boxes of $2$, and the functor $F(n)=\lfloor n/2\rfloor$ gives the number of full boxes for $n$ items, from $(\mathbb N,\le)$ to itself. Let $D$ be the diagram with objects $7$ and $10$. For how many cones over $D$ is the image under $F$ a limit cone over the diagram with objects $F(7)$ and $F(10)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The image diagram has objects $F(7)=3$ and $F(10)=5$, with limit $3$. The image of the cone with apex $c$ is a limit cone exactly when $F(c)=3$, which for $c\le7$ means $c=6$ or $c=7$. So there are $2$ such numbers, and the cone with apex $6$ shows that $F$ preserves but does not reflect this limit.'
-          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and let $T$ be the category with one object and only its identity arrow. Let $F\colon P\to T$ be the only functor. Let $D$ be the diagram with objects $2$ and $6$, and note that its cones in $P$ have apex $1$ or $2$. The functor $F$ sends every cone over $D$ to a limit cone of $T$. Which apex gives the limit cone of $D$ in $P$?'
+            solution_sketch: 'In $(\mathbb N,\le)$ the limit of $D$ is $7$, and a cone over $D$ has an apex $c$ with $c\le7$. The image diagram has objects $F(7)=3$ and $F(10)=5$, with limit $3$. The image of the cone with apex $c$ is a limit cone exactly when $F(c)=3$, so $c=6$ or $c=7$. There are $2$ such cones.'
+          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and let $T$ be the category with one object and only its identity arrow. Let $F\colon P\to T$ be the only functor. Let $D$ be the diagram with objects $2$ and $6$. The functor $F$ sends every cone over $D$ to a limit cone of $T$. Which apex gives the limit cone of $D$ in $P$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A cone over $D$ has an apex that divides both $2$ and $6$, so the apex is $1$ or $2$. The limit is the greatest such apex, which is $2$. The cone with apex $1$ has a limit image in $T$ but is not a limit cone, so $F$ does not reflect limits of $D$.'
@@ -1340,10 +1340,10 @@ topics:
             answer: '24'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Preservation says that $U$ of the product group is the product of the sets $U(\mathbb Z_4)$ and $U(\mathbb Z_6)$. That set has $4\cdot6=24$ elements, so $U(\mathbb Z_4\times\mathbb Z_6)$ has $24$ elements.'
-          - problem: 'Let $F\colon(\mathbb N,\le)\to(\mathbb N,\le)$ be the functor $F(n)=2n$, and let $D$ be the diagram with objects $5$ and $8$. In $(\mathbb N,\le)$ the limit of a diagram of two objects is the smaller one, and a cone over $D$ has an apex $c$ with $c\le5$. Does $F$ reflect the limit of $D$?'
+          - problem: 'Let $F\colon(\mathbb N,\le)\to(\mathbb N,\le)$ be the functor $F(n)=2n$, and let $D$ be the diagram with objects $5$ and $8$. Does $F$ reflect the limit of $D$?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it reflects it", "it reflects it", "reflects", "it does reflect"], ["no", "no, it does not", "it does not reflect it", "does not reflect", "it does not", "it doesn't"]]}
-            solution_sketch: 'The limit of $D$ is $5$. The image diagram has objects $10$ and $16$ with limit $10$, and the image of the cone with apex $c$ is a limit cone exactly when $2c=10$, so when $c=5$. So every cone over $D$ whose image is a limit cone is the limit cone with apex $5$, and $F$ reflects this limit.'
+            solution_sketch: 'In $(\mathbb N,\le)$ the limit of a diagram of two objects is the smaller one, so the limit of $D$ is $5$, and a cone over $D$ has an apex $c$ with $c\le5$. The image diagram has objects $10$ and $16$ with limit $10$. The image of the cone with apex $c$ is a limit cone exactly when $2c=10$, so when $c=5$. So $F$ reflects this limit.'
           - problem: 'Write the full proof that neither preservation nor reflection of limits of a diagram $D$ asserts that $D$ has a limit: express each as a statement about every cone $\lambda$ over $D$, where $P(\lambda)$ means that $\lambda$ is a limit cone and $Q(\lambda)$ means that $F(\lambda)$ is a limit cone, and describe the cone that refutes each statement.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1353,18 +1353,18 @@ topics:
         name: Examples and non-examples
         key_prerequisites: [functors, free-groups-presentations]
         exemplars:
-          - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Mon}$ be the free monoid functor and let $X=Y=\{*\}$. Then $F(X\times Y)$ is the free monoid on one element, which is $(\mathbb N,+)$, and $FX\times FY$ is $\mathbb N\times\mathbb N$ with componentwise addition. What is the least number of elements that generate $\mathbb N\times\mathbb N$ as a monoid?'
+          - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Mon}$ be the free monoid functor and let $X=Y=\{*\}$. What is the least number of elements that generate the monoid $FX\times FY$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pairs $(1,0)$ and $(0,1)$ are not sums of two nonzero pairs, so every generating set contains both. They generate every pair $(m,n)=m(1,0)+n(0,1)$, so the least number is $2$. The monoid $\mathbb N$ needs only $1$ generator, so $F(X\times Y)\not\cong FX\times FY$ and $F$ does not preserve this product.'
+            solution_sketch: 'The free monoid on one element is $(\mathbb N,+)$, so $F(X\times Y)=\mathbb N$ and $FX\times FY=\mathbb N\times\mathbb N$ with componentwise addition. The pairs $(1,0)$ and $(0,1)$ are not sums of two nonzero pairs, so every generating set contains both. They generate every pair, so the least number is $2$. The monoid $\mathbb N$ needs only $1$ generator.'
           - problem: 'A game stores each piece as a pair of a board square from a set $X$ and one of $3$ colours, so the functor $F$ sends a set $X$ to $X\times\{0,1,2\}$ in $\mathbf{Set}$. For $X=Y=\{1,2\}$, how many times as many elements as $F(X\times Y)$ does the product $FX\times FY$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $X\times Y$ has $4$ elements, so $F(X\times Y)$ has $4\cdot3=12$ elements. The sets $FX$ and $FY$ each have $2\cdot3=6$ elements, so $FX\times FY$ has $36$. The ratio is $36\div12=3$, so $F$ does not preserve the product.'
-          - problem: 'A robot moves on a grid, and its moves form the monoid $(\mathbb N\times\mathbb N,+)$, where $(m,n)$ means $m$ steps east and $n$ steps north. The image of the free monoid on one element is the set of moves $k\cdot(1,1)$, the repeated diagonal step. Among the $16$ moves $(m,n)$ with $0\le m,n\le3$, how many cannot be made with diagonal steps alone?'
+          - problem: 'A robot moves on a grid, and its moves form the monoid $(\mathbb N\times\mathbb N,+)$, where $(m,n)$ means $m$ steps east and $n$ steps north. The free monoid on one element maps to this monoid and sends its generator to $(1,1)$. Among the $16$ moves $(m,n)$ with $0\le m,n\le3$, how many are not in the image of this map?'
             answer: '12'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A move can be made with diagonal steps alone exactly when $m=n$. There are $4$ such moves among the $16$, namely $(0,0),(1,1),(2,2),(3,3)$. So $16-4=12$ moves cannot be made.'
+            solution_sketch: 'The image of the free monoid on one element is the set of moves $k\cdot(1,1)$, so a move is in the image exactly when $m=n$. There are $4$ such moves among the $16$, namely $(0,0),(1,1),(2,2),(3,3)$. So $16-4=12$ moves are not in the image.'
           - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$. Let $F\colon P\to P$ be the functor with $F(1)=1$, $F(2)=2$, $F(3)=2$, $F(6)=6$. What is the limit in $P$ of the diagram with the two objects $F(2)$ and $F(3)$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1377,10 +1377,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it preserves it", "it preserves it", "preserves", "it does preserve"], ["no", "no, it does not", "it does not preserve it", "does not preserve", "it does not", "it doesn't"]]}
             solution_sketch: 'The limit of the diagram with objects $2$ and $6$ is $2$, and $F(2)=3$. The image diagram has objects $F(2)=3$ and $F(6)=6$, whose limit is $3$. Since $F(2)=3$, the image of the limit cone is a limit cone, so $F$ preserves this limit.'
-          - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Grp}$ be the free group functor and $X=Y=\{*\}$, so that $F(X\times Y)\to FX\times FY$ is the map $\mathbb Z\to\mathbb Z\times\mathbb Z$ with $n\mapsto(n,n)$. How many pairs $(m,n)$ with $-2\le m,n\le2$ lie in its image?'
+          - problem: 'Let $F\colon\mathbf{Set}\to\mathbf{Grp}$ be the free group functor and $X=Y=\{*\}$. Let $F(X\times Y)\to FX\times FY$ be the comparison map induced by the two projections. How many pairs $(m,n)$ with $-2\le m,n\le2$ lie in its image?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The image of $n\mapsto(n,n)$ consists of the pairs with $m=n$. Among the pairs with $-2\le m,n\le2$ these are $(-2,-2),(-1,-1),(0,0),(1,1),(2,2)$, so there are $5$ of them. The map is not onto, so it is not an isomorphism.'
+            solution_sketch: 'The free group on one element is $\mathbb Z$, so the map is $\mathbb Z\to\mathbb Z\times\mathbb Z$ with $n\mapsto(n,n)$. Its image is the set of pairs with $m=n$. Among the pairs with $-2\le m,n\le2$ these are $(-2,-2),(-1,-1),(0,0),(1,1),(2,2)$, so there are $5$ of them.'
           - problem: 'Write the full proof that the free group functor $F\colon\mathbf{Set}\to\mathbf{Grp}$ does not preserve binary products, using the sets $X=Y=\{*\}$ and a proof that $F(X\times Y)$ and $FX\times FY$ are not isomorphic.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -1394,10 +1394,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Fullness says that $F$ maps $\mathrm{Hom}_{\mathcal C}(X,L)$ onto $\mathrm{Hom}_{\mathcal D}(FX,FL)$, so at least one $v$ has $Fv=u$. Faithfulness says that $F$ is injective on this hom-set, so at most one does. So there is exactly $1$ such arrow, and $\mathrm{Hom}_{\mathcal C}(X,L)$ has $4$ arrows.'
-          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and $Q=\{0,1,2,3\}$ with an arrow $x\to y$ when $x\le y$. Let $F\colon P\to Q$ be the functor with $F(1)=0$, $F(2)=1$, $F(3)=2$, $F(6)=3$. Such a functor is full when $F(a)\le F(b)$ implies that $a$ divides $b$. For which pair $(a,b)$ in $P$ is $F(a)\le F(b)$ although $a$ does not divide $b$?'
+          - problem: 'Let $P=\{1,2,3,6\}$ with an arrow $a\to b$ when $a$ divides $b$, and $Q=\{0,1,2,3\}$ with an arrow $x\to y$ when $x\le y$. Let $F\colon P\to Q$ be the functor with $F(1)=0$, $F(2)=1$, $F(3)=2$, $F(6)=3$. For which pair $(a,b)$ in $P$ is there an arrow $F(a)\to F(b)$ in $Q$ but no arrow $a\to b$ in $P$?'
             answer: '(2, 3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'We need $F(a)\le F(b)$ with $a\nmid b$. The only pair is $(2,3)$, since $F(2)=1\le F(3)=2$ but $2$ does not divide $3$. In every other pair $F(a)\le F(b)$ already means $a$ divides $b$. So $F$ is faithful but not full.'
+            solution_sketch: 'A pair fails when $F(a)\le F(b)$ but $a$ does not divide $b$. The only such pair is $(2,3)$, since $F(2)=1\le F(3)=2$ but $2$ does not divide $3$. In every other pair $F(a)\le F(b)$ already means $a$ divides $b$. So $F$ is faithful but not full.'
           - problem: 'Four tasks are numbered $1$ to $4$. Task $1$ must finish before tasks $2$, $3$ and $4$, and task $2$ must finish before task $4$; no other order is required. A scheduler puts task $i$ in time slot $i$, which gives a functor from the tasks to the slots $1\le2\le3\le4$. For how many ordered pairs of different tasks $(x,y)$ is slot $x$ at most slot $y$ although $x$ is not required to finish before $y$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
@@ -1484,14 +1484,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it has a limit", "it has a limit", "has a limit"], ["no", "no, it has no limit", "it has no limit", "has no limit", "it does not have a limit", "does not have a limit"]]}
             solution_sketch: 'A limit of the empty diagram is a terminal object, an object $t$ with an arrow $n\to t$ for every $n$. That would be a number $t\ge n$ for every $n$, and no such number exists. So the empty diagram has no limit, and the category is not complete.'
-          - problem: 'A rope of $40$ cm and a rope of $56$ cm are cut into equal pieces with no waste, as long as possible. In the category of positive whole numbers with an arrow $a\to b$ when $a$ divides $b$, a piece length is an object that divides both $40$ and $56$. What is the limit of the diagram with objects $40$ and $56$, that is, the greatest piece length?'
+          - problem: 'A rope of $40$ cm and a rope of $56$ cm are cut into equal pieces with no waste, as long as possible. In the category of positive whole numbers with an arrow $a\to b$ when $a$ divides $b$, what is the limit of the diagram with objects $40$ and $56$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A cone over the diagram is a piece length that divides both $40$ and $56$, and the limit is the greatest such length. That is $\gcd(40,56)=8$. So the longest equal pieces are $8$ cm long.'
-          - problem: 'Three lights flash every $4$, $6$ and $10$ seconds, starting together. In the category of positive whole numbers with an arrow $a\to b$ when $a$ divides $b$, a time at which a light flashes again is an object that every period divides. What is the colimit of the diagram with objects $4$, $6$ and $10$, that is, the first time in seconds at which all three flash together again?'
+            solution_sketch: 'A cone over the diagram is an object with an arrow to $40$ and an arrow to $56$, so it is a common divisor. The limit is the greatest such object, and $\gcd(40,56)=8$. So the longest equal pieces are $8$ cm long.'
+          - problem: 'Three lights flash every $4$, $6$ and $10$ seconds, starting together. In the category of positive whole numbers with an arrow $a\to b$ when $a$ divides $b$, what is the colimit of the diagram with objects $4$, $6$ and $10$?'
             answer: '60'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A cocone is a number divisible by $4$, $6$ and $10$, and the colimit is the least such number, the least common multiple. We have $\mathrm{lcm}(4,6,10)=60$, so the lights flash together again after $60$ seconds.'
+            solution_sketch: 'A cocone is an object that receives an arrow from $4$, from $6$ and from $10$, so it is a common multiple. The colimit is the least such object, and $\mathrm{lcm}(4,6,10)=60$. So the lights flash together again after $60$ seconds.'
           - problem: 'Regard $\{1,2,3\}$ as a category with one arrow $a\to b$ when $a$ divides $b$. How many subsets of $\{1,2,3\}$, as diagrams, have no limit?'
             answer: '1'
             answer_contract: {"kind": "exact"}
@@ -1509,26 +1509,26 @@ topics:
         name: Completeness from products and equalizers
         key_prerequisites: [equalizers-coequalizers]
         exemplars:
-          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2,3\}$, $X_2=\{a,b,c\}$, $X_3=\{p,q,r\}$, $f(0)=p$, $f(1)=q$, $f(2)=p$, $f(3)=r$, $g(a)=p$, $g(b)=q$, $g(c)=q$. The limit of $D$ is the equalizer of two maps $X_1\times X_2\times X_3\rightrightarrows X_3\times X_3$. How many elements does the limit of $D$ have?'
+          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2,3\}$, $X_2=\{a,b,c\}$, $X_3=\{p,q,r\}$, $f(0)=p$, $f(1)=q$, $f(2)=p$, $f(3)=r$, $g(a)=p$, $g(b)=q$, $g(c)=q$. How many elements does the limit of $D$ have?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A tuple $(x_1,x_2,x_3)$ lies in the equalizer exactly when $x_3=f(x_1)$ and $x_3=g(x_2)$, so exactly when $f(x_1)=g(x_2)$ and $x_3$ is that common value. The pairs are $(0,a)$, $(2,a)$, $(1,b)$, $(1,c)$, and no pair involves $3$ since $r$ is not a value of $g$. So the limit has $4$ elements.'
-          - problem: 'Two clocks show the hour $t$, for $t=0,1,\dots,23$. The first clock shows $t \bmod 12$ and the second shows $t \bmod 5$. A time is called a match when the two clocks show the same number. The set of matches is the equalizer of the two maps from $\{0,\dots,23\}$ to $\mathbb Z$. How many matches are there?'
+            solution_sketch: 'The limit of $D$ is the set of tuples $(x_1,x_2,x_3)$ with $x_3=f(x_1)$ and $x_3=g(x_2)$. So it is the set of pairs with $f(x_1)=g(x_2)$, and $x_3$ is the common value. The pairs are $(0,a)$, $(2,a)$, $(1,b)$ and $(1,c)$, and no pair uses $3$ because $r$ is not a value of $g$. So the limit has $4$ elements.'
+          - problem: 'Two clocks show the hour $t$, for $t=0,1,\dots,23$. The first clock shows $t \bmod 12$ and the second shows $t \bmod 5$. A time is called a match when the two clocks show the same number. How many matches are there?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The two clocks agree for $t=0,1,2,3,4$, where both show $t$. For $t=5,\dots,11$ the first clock shows $t$ and the second shows $t-5$ or less, so they differ. For $t\ge12$ the first shows $t-12$ and the second shows $t \bmod 5$, and these differ for $t=12,\dots,23$. So there are $5$ matches.'
-          - problem: 'A pizza shop offers $2$ sizes, $3$ crusts and $4$ toppings. A pizza is one choice of each. In $\mathbf{Set}$, the set of pizzas is the limit of the diagram of the three sets with no arrows, which is their product, and no equalizer is needed. How many pizzas are there?'
+            solution_sketch: 'The matches are the values of $t$ where the two maps agree, which is an equalizer. The clocks agree for $t=0,1,2,3,4$, where both show $t$. For $t=5,\dots,11$ the first clock shows $t$ and the second shows less, so they differ. For $t=12,\dots,23$ the first shows $t-12$, and this differs from $t \bmod 5$ because $12$ is not a multiple of $5$. So there are $5$ matches.'
+          - problem: 'A pizza shop offers $2$ sizes, $3$ crusts and $4$ toppings. A pizza is one choice of each. In $\mathbf{Set}$, the set of pizzas is the limit of the diagram of the three sets with no arrows. How many pizzas are there?'
             answer: '24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'With no arrows, the second product is the empty product, a one-element set, so the equalizer imposes no condition. The limit is the product of the three sets, with $2\cdot3\cdot4=24$ elements. So there are $24$ pizzas.'
-          - problem: 'In $\mathbf{Set}$ let $X=\{0,1,\dots,9\}$ and $f\colon X\to X$ be $f(x)=x^3 \bmod 10$. The diagram with one object $X$ and one arrow $f$ has as limit the equalizer of $1_X$ and $f$. How many elements does this limit have?'
+            solution_sketch: 'A diagram with no arrows has no condition on the tuples. The limit is the set of all triples with one element from each set. So there are $2\cdot3\cdot4=24$ pizzas.'
+          - problem: 'In $\mathbf{Set}$ let $X=\{0,1,\dots,9\}$ and $f\colon X\to X$ be $f(x)=x^3 \bmod 10$. How many elements does the limit of the diagram with one object $X$ and one arrow $f$ have?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The limit is the set of $x$ with $f(x)=x$. Checking $x^3\bmod 10$ for $x=0,\dots,9$ gives the values $0,1,8,7,4,5,6,3,2,9$, which equal $x$ for $x=0,1,4,5,6,9$. So the limit has $6$ elements.'
-          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2\}$, $X_2=\{0,1\}$, $X_3=\{0,1\}$, $f(x)=x \bmod 2$ and $g(y)=y$. The limit is the equalizer of two maps $X_1\times X_2\times X_3\rightrightarrows X_3\times X_3$, and the product has $12$ elements. How many elements does the limit of $D$ have?'
+            solution_sketch: 'The limit is the set of $x$ with $f(x)=x$, the equalizer of $1_X$ and $f$. Checking $x^3\bmod 10$ for $x=0,\dots,9$ gives the values $0,1,8,7,4,5,6,3,2,9$, which equal $x$ for $x=0,1,4,5,6,9$. So the limit has $6$ elements.'
+          - problem: 'In $\mathbf{Set}$ let $D$ be the diagram $X_1\xrightarrow{f}X_3\xleftarrow{g}X_2$ with $X_1=\{0,1,2\}$, $X_2=\{0,1\}$, $X_3=\{0,1\}$, $f(x)=x \bmod 2$ and $g(y)=y$. How many elements does the limit of $D$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'If both maps were $(\pi_3,\pi_3)$, they would be equal and would not use the arrows $f$ and $g$. The correct second map is $(f\circ\pi_1,g\circ\pi_2)$, and a triple lies in the equalizer when $x_3=f(x_1)=g(x_2)$. The pairs $(x_1,x_2)$ with $f(x_1)=g(x_2)$ are $(0,0)$, $(1,1)$, $(2,0)$, so the limit has $3$ elements.'
+            solution_sketch: 'The limit is the set of triples $(x_1,x_2,x_3)$ with $x_3=f(x_1)=g(x_2)$. The pairs $(x_1,x_2)$ with $f(x_1)=g(x_2)$ are $(0,0)$, $(1,1)$ and $(2,0)$. Each pair fixes $x_3$, so the limit has $3$ elements.'
           - problem: 'The poset category $(\mathbb N,\le)$ has a product for any two objects, their minimum, and an equalizer for any two parallel arrows. Is it complete?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it is complete", "it is complete", "complete"], ["no", "no, it is not complete", "it is not complete", "not complete"]]}
@@ -1546,14 +1546,14 @@ topics:
         name: Finite completeness from a terminal object and pullbacks
         key_prerequisites: [pullbacks-pushouts]
         exemplars:
-          - problem: 'In $\mathbf{Set}$ let $A=\{1,2,3\}$ and $B=\{x,y\}$, and let $1$ be a one-element set. The pullback of the unique maps $A\to1\leftarrow B$ is a product of $A$ and $B$. How many elements does it have?'
+          - problem: 'In $\mathbf{Set}$ let $A=\{1,2,3\}$ and $B=\{x,y\}$, and let $1$ be a one-element set. How many elements does the pullback of the unique maps $A\to1\leftarrow B$ have?'
             answer: '6'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pullback is the set of pairs $(a,b)$ with $!_A(a)=!_B(b)$ in $1$, and this holds for every pair because $1$ has one element. So the pullback is $A\times B$ with $3\cdot2=6$ elements.'
-          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,2,3,4,5\}$, $B=\{0,1,2\}$, $f(x)=x \bmod 3$ and $g(x)=\lfloor x/2\rfloor$. The pullback of $(1_A,f)\colon A\to A\times B$ and $(1_A,g)\colon A\to A\times B$ is an equalizer of $f$ and $g$. How many elements does it have?'
+            solution_sketch: 'The pullback is the set of pairs $(a,b)$ with $!_A(a)=!_B(b)$ in $1$. This holds for every pair because $1$ has one element. So the pullback is $A\times B$ with $3\cdot2=6$ elements.'
+          - problem: 'In $\mathbf{Set}$ let $A=\{0,1,2,3,4,5\}$, $B=\{0,1,2\}$, $f(x)=x \bmod 3$ and $g(x)=\lfloor x/2\rfloor$. How many elements does the pullback of $(1_A,f)\colon A\to A\times B$ and $(1_A,g)\colon A\to A\times B$ have?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The pullback is the set of pairs $(x,y)$ with $(x,f(x))=(y,g(y))$, which forces $y=x$ and $f(x)=g(x)$. We have $x \bmod 3=\lfloor x/2\rfloor$ for $x=0$ (both $0$) and $x=5$ (both $2$), and for no other $x$. So the pullback has $2$ elements.'
+            solution_sketch: 'The pullback is the set of pairs $(x,y)$ with $(x,f(x))=(y,g(y))$, which forces $y=x$ and $f(x)=g(x)$. So it is the equalizer of $f$ and $g$. We have $x \bmod 3=\lfloor x/2\rfloor$ for $x=0$ (both $0$) and $x=5$ (both $2$), and for no other $x$. So the pullback has $2$ elements.'
           - problem: 'In $\mathbf{Set}$ let $A=\{0,1,\dots,6\}$, $B=\{0,1,2\}$, $f(x)=x \bmod 3$ and $g(x)=0$. How many elements does the equalizer of $f$ and $g$ have?'
             answer: '3'
             answer_contract: {"kind": "exact"}
@@ -1562,14 +1562,14 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "yes, there is a product", "there is a product", "it exists"], ["no", "no, there is none", "there is no product", "it does not exist", "there is none", "none"]]}
             solution_sketch: 'A product $P$ of infinitely many two-element sets would have $\mathrm{Hom}(Y,P)$ in bijection with the product of the sets $\mathrm{Hom}(Y,\{0,1\})$. For $Y=\{*\}$ the right side has infinitely many elements, but $\mathrm{Hom}(\{*\},P)$ is finite when $P$ is finite. So no finite set is such a product.'
-          - problem: 'A cafe offers $2$ drinks, $3$ snacks and $5$ desserts, and a combo is one item of each kind. The set of combos is the product of the three sets, built by pulling back over the one-element set twice. How many combos are there?'
+          - problem: 'A cafe offers $2$ drinks, $3$ snacks and $5$ desserts, and a combo is one item of each kind. In $\mathbf{Set}$, how many elements does the set of combos have?'
             answer: '30'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The first pullback gives the product of two of the sets, and the second pullback over the one-element set gives the product with the third set. So there are $2\cdot3\cdot5=30$ combos.'
-          - problem: 'Two shops charge $f(n)=3n+1$ euros and $g(n)=n+9$ euros for $n$ items, for $n=0,1,\dots,9$. The equalizer of $f$ and $g$, built as a pullback of $(1,f)$ and $(1,g)$, is the set of $n$ where the prices agree. Which $n$ is in it?'
+            solution_sketch: 'A pullback over the one-element set is a product of two sets. Two pullbacks over the one-element set give the product of the three sets. So there are $2\cdot3\cdot5=30$ combos.'
+          - problem: 'Two shops charge $f(n)=3n+1$ euros and $g(n)=n+9$ euros for $n$ items, for $n=0,1,\dots,9$. For which $n$ do the two shops charge the same price?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The prices agree when $3n+1=n+9$, so $2n=8$ and $n=4$. This is the only solution, and $n=4$ lies in $\{0,\dots,9\}$.'
+            solution_sketch: 'The set of such $n$ is the equalizer of $f$ and $g$, and it is a pullback of $(1,f)$ and $(1,g)$. The prices agree when $3n+1=n+9$, so $2n=8$ and $n=4$. This is the only solution, and $4$ lies in $\{0,\dots,9\}$.'
           - problem: 'The category of finite sets has a terminal object and all pullbacks. Does it have all finite limits?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "yes, it does", "it has all finite limits", "it does"], ["no", "no, it does not", "it lacks some finite limits", "it does not"]]}

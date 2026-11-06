@@ -366,10 +366,10 @@ topics:
             answer: 'hyperboloid'
             answer_contract: {"kind":"label","options":[["hyperboloid","a hyperboloid","hyperboloid of one sheet","a hyperboloid of one sheet","one-sheeted hyperboloid","one sheet hyperboloid","hyperboloid of 1 sheet"],["sphere","a sphere"],["cone","a cone"],["paraboloid","a paraboloid"]]}
             solution_sketch: 'There are two positive squares and one negative square, with a nonzero constant $4$. That pattern is a hyperboloid, not a sphere, a cone or a paraboloid.'
-          - problem: 'The surface $x^2 + y^2 = 36$ in space is a circular cylinder. Find the radius of its circular cross-section.'
+          - problem: 'Every horizontal cross-section of the surface $x^2 + y^2 = 36$ in space is a circle. Find the radius of this circle.'
             answer: '6'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The equation has no $z$, so every horizontal slice is the same circle $x^2 + y^2 = 36$. Its radius is $\sqrt{36} = 6$.'
+            solution_sketch: 'The equation has no $z$, so every horizontal slice is the same curve $x^2 + y^2 = 36$. Its radius is $\sqrt{36} = 6$.'
           - problem: 'Find the centre of the sphere $x^2 + y^2 + z^2 - 6x + 4y - 2z = 3$.'
             answer: '(3, -2, 1)'
             answer_contract: {"kind":"coordinates","arity":3}
@@ -469,10 +469,10 @@ topics:
         name: "The two-path test"
         key_prerequisites: [functions-several-variables, limit-laws]
         exemplars:
-          - problem: 'Does $\lim_{(x,y) \to (0,0)} \dfrac{xy}{x^2 + y^2}$ exist? Compare the values along $y = 0$ and along $y = x$.'
+          - problem: 'Decide whether the limit of $\dfrac{xy}{x^2 + y^2}$ as $(x,y) \to (0,0)$ exists.'
             answer: 'no'
             answer_contract: {"kind":"label","options":[["no","it does not exist","does not exist","DNE","the limit does not exist","limit does not exist","the limit does not exist."],["yes","it exists","the limit exists","exists"]]}
-            solution_sketch: 'Along $y = 0$ the function is $0$, and along $y = x$ it is $\frac{x^2}{2x^2} = \frac{1}{2}$. The two path limits $0$ and $\frac{1}{2}$ differ, so the limit does not exist.'
+            solution_sketch: 'Pick two paths to the origin. Along $y = 0$ the function is $0$, and along $y = x$ it is $\frac{x^2}{2x^2} = \frac{1}{2}$. The two path limits differ, so the limit does not exist.'
           - problem: 'Let $f(x, y) = \dfrac{2xy^2}{x^2 + y^4}$. Find the limit of $f$ as $(x, y) \to (0, 0)$ along the parabola $x = y^2$ minus its limit along the line $y = 0$.'
             answer: '1'
             answer_contract: {"kind":"exact"}
@@ -627,10 +627,10 @@ topics:
             answer: '5'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The reading is undefined where the denominator $25-x^2-y^2$ equals $0$. That is the circle $x^2+y^2=25$, whose radius is $5$ metres.'
-          - problem: 'The function $f(x,y)=\dfrac{1}{x^2-y}$ is continuous everywhere except on the curve $y=x^2$. What is the value of $y$ at the point of this curve where $x=-3$?'
+          - problem: 'The function $f(x,y)=\dfrac{1}{x^2-y}$ is discontinuous at exactly one point with $x=-3$. What is the $y$-coordinate of that point?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The denominator $x^2-y$ is $0$ exactly on the curve $y=x^2$. At $x=-3$ this gives $y=(-3)^2=9$.'
+            solution_sketch: 'A quotient is discontinuous where the denominator is $0$, so $x^2-y=0$ and $y=x^2$. At $x=-3$ this gives $y=(-3)^2=9$.'
           - problem: 'Does $\lim_{(x,y)\to(0,0)} \dfrac{x^3y}{x^4+y^2}$ exist?'
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["no", "it does not exist", "does not exist", "the limit does not exist", "no, the limit does not exist", "DNE", "limit does not exist", "no it does not exist"], ["yes", "it exists", "exists", "the limit exists", "yes, the limit exists", "does exist", "yes it exists", "limit exists"]]}
@@ -716,10 +716,10 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The expression is $r^2\ln r^2=2r^2\ln r$. Writing it as $\frac{2\ln r}{r^{-2}}$ and applying l''Hôpital''s rule gives $-r^2 \to 0$ as $r \to 0^+$.'
-          - problem: 'In polar coordinates, $\dfrac{x^2y}{x^2+y^2}$ equals $r\cos^2\theta\sin\theta$. What is the limit as $(x,y)\to(0,0)$?'
+          - problem: 'Find $\lim_{(x,y)\to(0,0)} \dfrac{x^2y}{x^2+y^2}$.'
             answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The expression depends on $\theta$, but it is also multiplied by $r$. Since $|r\cos^2\theta\sin\theta| \le r \to 0$ for every $\theta$, the limit is $0$.'
+            solution_sketch: 'Put $x = r\cos\theta$ and $y = r\sin\theta$. The quotient becomes $r\cos^2\theta\sin\theta$. Since $|r\cos^2\theta\sin\theta| \le r \to 0$ for every $\theta$, the limit is $0$.'
           - problem: 'A thin plate has density $\rho(x,y)=\dfrac{x^2y^2}{x^2+y^2}$ kilograms per square metre at every point $(x,y) \ne (0,0)$. What density do the points near the origin approach?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -983,11 +983,11 @@ topics:
             answer: '0.3'
             answer_contract: {"kind": "approx", "decimals": 1}
             solution_sketch: 'Only the speed changes, from $80$ to $90$, with the load $10$ fixed. The quotient is $\frac{27.5-24.5}{90-80}=\frac{3.0}{10}=0.3$ litres per $100$ km for each extra km/h.'
-          - problem: 'For a function $f$ we know $f(2,3)=10$ and $f_x(2,3) \approx 4$. Use this to estimate $f(2.1,3)$.'
+          - problem: 'For a function $f$ we know $f(2,3)=10$ and the measured rate of change in $x$ is $f_x(2,3) = 4$. Use this to estimate $f(2.1,3)$.'
             answer: '10.4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Moving $x$ from $2$ to $2.1$ with $y=3$ fixed changes $f$ by about $4\cdot 0.1=0.4$. The estimate is $10+0.4=10.4$.'
-          - problem: 'Using the estimate $f_x(2,3) \approx 6$, by how much must $x$ increase from $2$, with $y$ fixed at $3$, for $f$ to rise by $3$?'
+          - problem: 'The measured rate of change in $x$ is $f_x(2,3) = 6$. By how much must $x$ increase from $2$, with $y$ fixed at $3$, for $f$ to rise by $3$?'
             answer: '1/2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Since $f$ changes by about $6$ for each unit of $x$, the increase needed is the required rise divided by the rate. That is $\frac{3}{6}=\frac12$.'
@@ -1024,7 +1024,7 @@ topics:
             answer: 'y'
             answer_contract: {"kind": "label", "options": [["y", "y is held fixed", "the variable y", "y is fixed", "y is held constant", "y is constant", "y stays fixed", "the y variable"], ["x", "x is held fixed", "the variable x", "x is fixed", "x is held constant", "x is constant", "x stays fixed", "the x variable"]]}
             solution_sketch: 'The partial derivative $f_x$ measures the change in $f$ as $x$ varies. Along a horizontal line the height is constant, so $y$ is held fixed.'
-          - problem: 'Along an eastward path the elevation changes at the rate $h_x \approx 0.2$ metres of height per metre walked. How far must you walk to climb $30$ metres?'
+          - problem: 'Along an eastward path the measured rate of change of elevation is $h_x = 0.2$ metres of height per metre walked. How far must you walk to climb $30$ metres?'
             answer: '150'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The distance needed is the climb divided by the rate of climb. That is $\frac{30}{0.2}=150$ metres.'
@@ -1237,14 +1237,14 @@ topics:
             answer: '24x^2 y'
             answer_contract: {"kind":"function","vars":["x","y"]}
             solution_sketch: 'Differentiate in $x$ once: $f_x = 8x^3 y + 3y^5$. Differentiate in $x$ again: the term $3y^5$ is constant in $x$, so $f_{xx} = 24x^2 y$.'
-          - problem: 'The height of a ridge, in meters, is $h(x, y) = x^4 y - 2x^2 y^3$, where $x$ and $y$ are in kilometers. The slope in the direction of increasing $x$ is $h_x$. How fast does this slope change per kilometer travelled in that direction at the point $(1, 2)$?'
+          - problem: 'The height of a ridge, in meters, is $h(x, y) = x^4 y - 2x^2 y^3$, where $x$ and $y$ are in kilometers. At the point $(1, 2)$, how fast does the slope in the direction of increasing $x$ change per kilometer travelled in that direction?'
             answer: '-8'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The slope is $h_x = 4x^3 y - 4xy^3$. Differentiating again in $x$ gives $h_{xx} = 12x^2 y - 4y^3$. At $(1, 2)$ this is $24 - 32 = -8$.'
-          - problem: 'A factory''s weekly output is $Q(L, K) = 12LK^2 - L^3$ units, where $L$ is the number of labor hours and $K$ the number of machines. The marginal product of labor is $Q_L$. At $L = 2$ and $K = 3$, how fast does the marginal product of labor change per extra hour of labor?'
+            solution_sketch: 'The slope in that direction is $h_x = 4x^3 y - 4xy^3$. Differentiating again in $x$ gives $h_{xx} = 12x^2 y - 4y^3$. At $(1, 2)$ this is $24 - 32 = -8$.'
+          - problem: 'A factory''s weekly output is $Q(L, K) = 12LK^2 - L^3$ units, where $L$ is the number of labor hours and $K$ the number of machines. At $L = 2$ and $K = 3$, how fast does the marginal product of labor change per extra hour of labor?'
             answer: '-12'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The marginal product is $Q_L = 12K^2 - 3L^2$. Differentiating again in $L$ gives $Q_{LL} = -6L$. At $L = 2$ this is $-12$ units per hour, so the marginal product falls.'
+            solution_sketch: 'The marginal product of labor is $Q_L = 12K^2 - 3L^2$. Differentiating again in $L$ gives $Q_{LL} = -6L$. At $L = 2$ this is $-12$ units per hour, so the marginal product falls.'
           - problem: 'Let $f(x, y) = x^6 - 2x^2 y^4$. Find $f_{yy}$.'
             answer: '-24x^2 y^2'
             answer_contract: {"kind":"function","vars":["x","y"]}
@@ -1279,11 +1279,11 @@ topics:
             answer: 'e^x cos(y)'
             answer_contract: {"kind":"function","vars":["x","y"]}
             solution_sketch: 'First differentiate in $y$: $f_y = e^x\cos y$. Then differentiate that result in $x$: $f_{yx} = e^x\cos y$.'
-          - problem: 'For one mole of an ideal gas, the pressure in kilopascals is $P(V, T) = \dfrac{8T}{V}$, where $V$ is the volume in liters and $T$ is the temperature in kelvin. Differentiate $P$ with respect to $V$, then differentiate the result with respect to $T$. What is this mixed partial derivative at $V = 4$?'
+          - problem: 'For one mole of an ideal gas, the pressure in kilopascals is $P(V, T) = \dfrac{8T}{V}$, where $V$ is the volume in liters and $T$ is the temperature in kelvin. At $V = 4$, how fast does the sensitivity of the pressure to the volume change with the temperature?'
             answer: '-1/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'First $P_V = -\frac{8T}{V^2}$. Then differentiating in $T$ gives $P_{VT} = -\frac{8}{V^2}$. At $V = 4$ this is $-\frac{8}{16} = -\frac{1}{2}$.'
-          - problem: 'The cost, in dollars, of producing $x$ chairs and $y$ tables is $C(x, y) = 200 + 3x^2 y + 5xy^2$. The marginal cost of a chair is $C_x$. At the production level $(x, y) = (4, 5)$, how much does the marginal cost of a chair change per extra table made?'
+            solution_sketch: 'The sensitivity of $P$ to $V$ is $P_V = -\frac{8T}{V^2}$. Differentiating in $T$ gives $P_{VT} = -\frac{8}{V^2}$. At $V = 4$ this is $-\frac{8}{16} = -\frac{1}{2}$.'
+          - problem: 'The cost, in dollars, of producing $x$ chairs and $y$ tables is $C(x, y) = 200 + 3x^2 y + 5xy^2$. At the production level $(x, y) = (4, 5)$, how much does the marginal cost of a chair change per extra table made?'
             answer: '74'
             answer_contract: {"kind":"unit","quantity":"dollar","unit":"dollar","allow_omitted":true}
             solution_sketch: 'The marginal cost of a chair is $C_x = 6xy + 5y^2$. Differentiating in $y$ gives $C_{xy} = 6x + 10y$. At $(4, 5)$ this is $24 + 50 = 74$ dollars.'

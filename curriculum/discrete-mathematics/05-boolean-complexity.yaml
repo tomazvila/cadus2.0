@@ -139,10 +139,10 @@ topics:
           answer: '3'
           reveal: 'Only the row $(1,1)$ has no input equal to $0$, so the other $3$ rows have value $1$. The disjunctive normal form writes one minterm for each of these rows.'
         exemplars:
-          - problem: 'A function $f(x,y,z)$ equals $1$ exactly when $x=y$ and $z=0$. Its disjunctive normal form has one minterm for each row of the truth table where $f=1$. How many minterms does it have?'
+          - problem: 'A function $f(x,y,z)$ equals $1$ exactly when $x=y$ and $z=0$. How many minterms does its full disjunctive normal form have?'
             answer: '2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The condition holds for $(x,y,z)=(1,1,0)$ and $(0,0,0)$ only. These are $2$ rows, so the disjunctive normal form has $2$ minterms, namely $xy\bar{z}$ and $\bar{x}\bar{y}\bar{z}$.'
+            solution_sketch: 'The condition holds for $(x,y,z)=(1,1,0)$ and $(0,0,0)$ only. Each of these $2$ rows gives one minterm, namely $xy\bar{z}$ and $\bar{x}\bar{y}\bar{z}$. So there are $2$ minterms.'
           - problem: 'A function of $x$, $y$ and $z$ equals $1$ exactly when exactly two of the inputs are $1$. Number the rows of the truth table $0$ to $7$ by the binary value of $xyz$, with $x$ as the leading digit, so $(1,0,1)$ is row $5$. Which rows give the minterms of its disjunctive normal form?'
             answer: '3, 5, 6'
             answer_contract: {"kind":"exact"}
@@ -159,10 +159,10 @@ topics:
             answer: '4'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The motion passes when two members vote yes, in $3$ rows, or when all three vote yes, in $1$ row. That is $4$ rows, so the disjunctive normal form has $4$ minterms.'
-          - problem: 'The expression $x\bar{y}+y\bar{z}$ is evaluated at all eight rows of the truth table of $x$, $y$ and $z$. Its full disjunctive normal form has one minterm for each row where the value is $1$. How many minterms does it have?'
+          - problem: 'The expression $x\bar{y}+y\bar{z}$ has the variables $x$, $y$ and $z$. How many minterms does its full disjunctive normal form have?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The term $x\bar{y}$ is $1$ in the $2$ rows with $x=1$, $y=0$. The term $y\bar{z}$ is $1$ in the $2$ rows with $y=1$, $z=0$. The two sets do not overlap, so there are $4$ rows and $4$ minterms.'
+            solution_sketch: 'The term $x\bar{y}$ is $1$ in the $2$ rows with $x=1$, $y=0$. The term $y\bar{z}$ is $1$ in the $2$ rows with $y=1$, $z=0$. The two sets do not overlap, so there are $4$ rows with value $1$ and $4$ minterms.'
           - problem: 'How many minterms does the full disjunctive normal form of the function of $x$ and $y$ that equals $1$ when at least one input is $1$ have?'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -171,10 +171,10 @@ topics:
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The function is $1$ for every setting of $x$, $y$ and $z$ when $w=1$. There are $2^3=8$ such settings, so the full disjunctive normal form has $8$ minterms.'
-          - problem: 'A function of four variables is $1$ in exactly $5$ rows of its truth table. Its full disjunctive normal form has one minterm for each of these rows, and each minterm uses one literal for each variable. How many literals does the full disjunctive normal form contain altogether?'
+          - problem: 'A function of four variables is $1$ in exactly $5$ rows of its truth table. How many literals does its full disjunctive normal form contain altogether?'
             answer: '20'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'There are $5$ minterms. Each has $4$ literals, one for each of the $4$ variables, so the total is $5\cdot4=20$ literals.'
+            solution_sketch: 'Each row with value $1$ gives one minterm, so there are $5$ minterms. Each minterm has one literal for each of the $4$ variables, so the total is $5\cdot4=20$ literals.'
           - problem: 'A function of $x$, $y$ and $z$ equals $1$ when $z=0$, and also when $x=1$ and $y=0$. How many minterms does its full disjunctive normal form have?'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -184,10 +184,10 @@ topics:
         name: 'Minterms, maxterms, and CNF'
         key_prerequisites: [boolean-algebra-basics]
         exemplars:
-          - problem: 'A function $g(x,y)$ equals $1$ exactly when $x=y=1$. Number the rows $0$ to $3$ by the binary value of $xy$. The full conjunctive normal form has one maxterm for each row where $g=0$. Which rows give its maxterms?'
+          - problem: 'A function $g(x,y)$ equals $1$ exactly when $x=y=1$. Number the rows $0$ to $3$ by the binary value of $xy$. Which rows give the maxterms of its full conjunctive normal form?'
             answer: '0, 1, 2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The function is $1$ only in row $3$, which is $(1,1)$. It is $0$ in rows $0$, $1$ and $2$, so these rows give the maxterms.'
+            solution_sketch: 'The function is $1$ only in row $3$, which is $(1,1)$. It is $0$ in rows $0$, $1$ and $2$, and each row with value $0$ gives one maxterm. So these rows give the maxterms.'
           - problem: 'A Boolean function of $3$ variables is $1$ in exactly $5$ of its $8$ rows. How many minterms does its full disjunctive normal form have?'
             answer: '5'
             answer_contract: {"kind":"exact"}
@@ -204,10 +204,10 @@ topics:
             answer: '1, 0, 0, 1'
             answer_contract: {"kind":"list","member":{"kind":"exact"},"ordered":true}
             solution_sketch: 'Row $(0,0)$ matches $\bar{x}\bar{y}$, so $f=1$. Rows $(0,1)$ and $(1,0)$ match neither term, so $f=0$. Row $(1,1)$ matches $xy$, so the column reads $1, 0, 0, 1$.'
-          - problem: 'The full conjunctive normal form of the alarm function of a house with three sensors has the maxterms $M_0$, $M_2$, $M_5$ and $M_7$, one for each row where the alarm is off. In how many of the $8$ rows of the truth table does the alarm sound?'
+          - problem: 'The full conjunctive normal form of the alarm function of a house with three sensors has the maxterms $M_0$, $M_2$, $M_5$ and $M_7$. In how many of the $8$ rows of the truth table does the alarm sound?'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The $4$ maxterms mean that the alarm is off in $4$ rows. The table has $8$ rows, so the alarm sounds in $8-4=4$ rows.'
+            solution_sketch: 'Each maxterm marks one row where the function is $0$, so the alarm is off in $4$ rows. The table has $8$ rows, so the alarm sounds in $8-4=4$ rows.'
           - problem: 'A function on two variables is given by the conjunctive normal form $(x+y)(\bar{x}+y)$. Number the rows $0$ to $3$ by the binary value of $xy$. Which rows give the minterms of its full disjunctive normal form?'
             answer: '1, 3'
             answer_contract: {"kind":"exact"}
@@ -375,18 +375,18 @@ topics:
             answer: 'no'
             answer_contract: {"kind":"label","options":[["yes","it is","true","yes it is","yes, it is"],["no","it is not","false","not","no it is not","no, it is not"]]}
             solution_sketch: 'Divide by $n$: $(6n^2 + n)/n = 6n + 1$. This grows without bound, so no constant $C$ gives $6n^2 + n \le Cn$ for all large $n$, and the function is not $O(n)$.'
-          - problem: 'A program performs $4n^2 + 3n + 6$ steps on $n$ items. To show the count is $O(n^2)$ we use $C = 6$ and need $4n^2 + 3n + 6 \le 6n^2$ for all $n \ge n_0$. What is the smallest integer $n_0$?'
-            answer: '3'
+          - problem: 'A program performs $4n^2 + 3n + 6$ steps on $n$ items. Find the smallest integer $C$ with $4n^2 + 3n + 6 \le Cn^2$ for all $n \ge 2$.'
+            answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The condition is $0 \le 2n^2 - 3n - 6$. At $n = 2$ the right side is $8 - 6 - 6 = -4$, so $n = 2$ fails. At $n = 3$ it is $18 - 9 - 6 = 3$, and the quadratic keeps increasing, so $n_0 = 3$.'
+            solution_sketch: 'Divide by $n^2$. The ratio is $4 + 3/n + 6/n^2$, which decreases as $n$ grows. Its largest value for $n \ge 2$ is at $n = 2$: $4 + 1.5 + 1.5 = 7$. So $C = 7$.'
           - problem: 'Program A takes $100n$ steps on $n$ items and Program B takes $n^2$ steps. From which input size onward does B always take more steps than A?'
             answer: '101'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'B takes more steps exactly when $n^2 > 100n$, which means $n > 100$. At $n = 100$ the two counts are equal, so B is ahead for every size from $101$ onward.'
-          - problem: 'To show that $2n^2 + 5n + 1$ is $O(n^2)$ we take $C = 5$. What is the smallest integer $n_0$ with $2n^2 + 5n + 1 \le 5n^2$ for all $n \ge n_0$?'
-            answer: '2'
+          - problem: 'Find the smallest integer $C$ with $2n^2 + 5n + 1 \le Cn^2$ for all $n \ge 2$.'
+            answer: '5'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The condition is $0 \le 3n^2 - 5n - 1$. At $n = 1$ the right side is $3 - 5 - 1 = -3$, so $n = 1$ fails. At $n = 2$ it is $12 - 10 - 1 = 1$, and the quadratic increases from there, so $n_0 = 2$.'
+            solution_sketch: 'Divide by $n^2$. The ratio is $2 + 5/n + 1/n^2$, which decreases as $n$ grows. At $n = 2$ it is $2 + 2.5 + 0.25 = 4.75$. The smallest integer at least $4.75$ is $5$.'
           - problem: 'The function $7n + 4\ln n$ is claimed to be $O(n)$. With $n_0 = 2$, what is the smallest integer $C$ with $7n + 4\ln n \le Cn$ for every integer $n \ge 2$?'
             answer: '9'
             answer_contract: {"kind":"exact"}
@@ -416,26 +416,26 @@ topics:
             answer: 'cubic'
             answer_contract: {"kind":"label","options":[["cubic","n^3","O(n^3)","n cubed"],["quadratic","n^2","O(n^2)"],["linear","n","O(n)"],["exponential","2^n","O(2^n)"]]}
             solution_sketch: 'The cubic term dominates: the ratio $(5n^3 + 2n + 1)/n^3$ tends to $5$, a finite positive constant. So the function grows like $n^3$, and the tightest simple bound is the cubic one.'
-          - problem: 'Find $\lim_{n \to \infty} \dfrac{7n^3 + 4n^2 + 9}{n^3}$.'
+          - problem: 'Find the limit of $\dfrac{7n^3 + 4n^2 + 9}{g(n)}$ as $n \to \infty$, where $g(n) = n^p$ is the power of $n$ that makes this limit finite and not zero.'
             answer: '7'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide each term by $n^3$ to get $7 + 4/n + 9/n^3$. The last two terms tend to $0$, so the limit is $7$, the coefficient of the dominant term.'
+            solution_sketch: 'The dominant term is $7n^3$, so $p = 3$. Divide each term by $n^3$ to get $7 + 4/n + 9/n^3$. The last two terms tend to $0$, so the limit is $7$.'
           - problem: 'A program takes $T(n) = 2n^3 + 50n$ steps on $n$ items. As $n$ grows, the ratio $T(2n)/T(n)$ approaches which number?'
             answer: '8'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'For large $n$ the cubic term dominates, so $T(n)$ behaves like $2n^3$. Then $T(2n)/T(n)$ behaves like $2(2n)^3/(2n^3) = 8$, so doubling the input makes the program about $8$ times slower.'
-          - problem: 'Find $\lim_{n \to \infty} \dfrac{4n^2 + 9n\log n + 2}{n^2}$.'
+          - problem: 'Find the limit of $\dfrac{4n^2 + 9n\log n + 2}{g(n)}$ as $n \to \infty$, where $g(n) = n^p$ is the power of $n$ that makes this limit finite and not zero.'
             answer: '4'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide each term by $n^2$ to get $4 + 9\log(n)/n + 2/n^2$. Since $\log(n)/n$ tends to $0$, the last two terms vanish and the limit is $4$.'
+            solution_sketch: 'The dominant term is $4n^2$, so $p = 2$. Divide each term by $n^2$ to get $4 + 9\log(n)/n + 2/n^2$. Since $\log(n)/n$ tends to $0$, the limit is $4$.'
           - problem: 'Algorithm A takes $20n\log_2 n$ steps and Algorithm B takes $n^2$ steps on $n$ items. What is the smallest integer $n$ from which B takes more steps than A for every larger input?'
             answer: '144'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'B takes more steps when $n^2 > 20n\log_2 n$, which means $n > 20\log_2 n$. At $n = 143$ we get $20\log_2 143 \approx 143.2$, which is more than $143$, so A is still ahead. At $n = 144$ we get about $143.4$, so B is ahead from $144$ onward.'
-          - problem: 'Find $\lim_{n \to \infty} \dfrac{3 \cdot 2^n + n^3 + 7}{2^n}$.'
+          - problem: 'Find the limit of $\dfrac{3 \cdot 2^n + n^3 + 7}{g(n)}$ as $n \to \infty$, where $g(n) = b^n$ is the exponential that makes this limit finite and not zero.'
             answer: '3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Divide each term by $2^n$ to get $3 + n^3/2^n + 7/2^n$. An exponential outgrows every power of $n$, so both extra terms tend to $0$ and the limit is $3$.'
+            solution_sketch: 'The dominant term is $3 \cdot 2^n$, so $b = 2$. Divide each term by $2^n$ to get $3 + n^3/2^n + 7/2^n$. An exponential outgrows every power of $n$, so both extra terms tend to $0$ and the limit is $3$.'
           - problem: 'Which function grows faster as $n$ becomes large: $n\log n$ or $n^2$?'
             answer: 'n^2'
             answer_contract: {"kind":"label","options":[["n^2","n squared","quadratic"],["n log n","nlogn","n*log(n)"]]}
@@ -702,10 +702,10 @@ topics:
             answer: '1'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Here $a = 2$ and $b = 2$, so $\log_2 2 = 1$ because $2^1 = 2$. The work term $n$ also has exponent $1$, which is the balanced case.'
-          - problem: 'Strassen''s algorithm for multiplying $n \times n$ matrices satisfies $T(n) = 7T(n/2) + n^2$. Find the critical exponent $\log_2 7$ to two decimal places.'
+          - problem: 'Strassen''s algorithm for multiplying $n \times n$ matrices satisfies $T(n) = 7T(n/2) + n^2$. Find the critical exponent of this recurrence to two decimal places.'
             answer: '2.81'
             answer_contract: {"kind":"approx","decimals":2}
-            solution_sketch: 'We need $x$ with $2^x = 7$. Since $2^2 = 4$ and $2^3 = 8$, the value lies between $2$ and $3$, and $\log_2 7 \approx 2.807$. To two decimal places this is $2.81$, which is above the exponent $2$ of $f(n)$, so the leaves dominate.'
+            solution_sketch: 'The critical exponent is $\log_2 7$, the $x$ with $2^x = 7$. Since $2^2 = 4$ and $2^3 = 8$, the value lies between $2$ and $3$, and to three decimal places it is $2.807$. To two decimal places this is $2.81$, which is above the exponent $2$ of $f(n)$, so the leaves dominate.'
           - problem: 'Which case of the Master Theorem applies to Strassen''s recurrence $T(n) = 7T(n/2) + n^2$?'
             answer: '1'
             answer_contract: {"kind":"exact"}

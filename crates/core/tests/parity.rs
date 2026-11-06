@@ -14,7 +14,8 @@ use common::dump::tree;
 /// The semantic curriculum hash of the checked-in tree (spec section 3).
 // 2026-10-29, VBE course wave 2a (the course vbe-math): hash 0d3ac571... (was 2d27cee6...).
 // 2026-10-29, VBE wave 2b (the six exam sets): hash 8c62ed82... (was 0d3ac571...).
-const TREE_HASH: &str = "93c5f7d5be8693809bc166ad2aa5e48544d0cbbc14ba4168609c09eeab81d570";
+// 2026-11-06, no handed steps (D-AP1): hash 386423c6... (was 45f60e15...).
+const TREE_HASH: &str = "386423c69802b1443c77b4ba6aa8c5aaea5214c4b16fb3ddf5328922f80cbe8c";
 
 /// The length of the dump in bytes, without the trailing newline.
 // 2026-10-06 (later): the units 00, 01, 03, 06 and 07 content pass moved the
@@ -38,7 +39,9 @@ const TREE_HASH: &str = "93c5f7d5be8693809bc166ad2aa5e48544d0cbbc14ba4168609c09e
 // 2026-11-05, 233 names carry their math inside $...$ (D-NM1): dump length 15,227,332 (was 15,225,855), measured with `dump_curriculum curriculum`; hash re-pinned (was 88add6ec...209b).
 // 2026-11-05, the public exam papers and the part I sets (D-VBE4): dump length 15,641,091 (was 15,227,332), measured with `dump_curriculum curriculum`; hash 7d54e7fe... (was 576d76a0...); topics 1204 (was 1183), units 107 (was 105), knowledge points 3558 (was 3516), exemplars 28997 (was 28398), prereq edges 4640 (was 4094), encompassing edges 4559 (was 4013).
 // 2026-11-05, eight paper tasks with labelled-curve figures and name answers (D-FG1): dump length 15,647,372 (was 15,641,091), measured with `dump_curriculum curriculum`; hash re-pinned (was 7d54e7fe...e871).
-const DUMP_LEN: usize = 15_647_372;
+// 2026-11-06, no handed values (D-AP1): dump length 15,646,848 (was 15,647,372), measured with `dump_curriculum curriculum`; hash 45f60e15... (was 93c5f7d5...).
+// 2026-11-06, no handed steps (D-AP1): dump length 15,620,408 (was 15,646,848), measured with `dump_curriculum curriculum`; hash 386423c6... (was 45f60e15...); 1,219 exemplar or diagnostic texts and keys rewritten, no topic or point added or removed.
+const DUMP_LEN: usize = 15_620_408;
 
 /// The `counts` object of the dump, as the oracle writes it.
 // 2026-10-12, Foundations merge (D-C1): counts re-pinned to the merged tree.

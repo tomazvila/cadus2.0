@@ -108,7 +108,8 @@ fn the_teach_digest_moves_and_the_other_kinds_keep_theirs() {
     let before = digest_of(&old_teach_material());
     assert_eq!(before, "dfc6329034bf030f");
     assert_ne!(before, prompt_digest(Kind::Teach));
-    assert_eq!(prompt_digest(Kind::Template), "c0ef8977d579adc8");
+    // Re-pinned 2026-11-06 after no handed values (D-AP1). Old value: `c0ef8977d579adc8`.
+    assert_eq!(prompt_digest(Kind::Template), "61a15548237a1259");
     assert_eq!(prompt_digest(Kind::HintLadder), "c8e040f53fce1881");
     assert_eq!(prompt_digest(Kind::Diagnosis), "164baef458d55e4f");
 }

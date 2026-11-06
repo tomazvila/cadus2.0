@@ -196,10 +196,10 @@ topics:
             answer: 'a = -1; b = 2; g = x^2; h = x + 2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "h"}]}
             solution_sketch: 'Setting $x^2 = x + 2$ gives $(x - 2)(x + 1) = 0$, so $x = -1$ and $x = 2$. At $x = 0$ the line gives $2$ and the parabola gives $0$, so the line is on top. Hence $a = -1$, $b = 2$, $g = x^2$, $h = x + 2$.'
-          - problem: 'The region between $y = x^2$ and $y = 2x$ is described as $0 \le x \le 2$ and $g(x) \le y \le h(x)$. What is the upper boundary $h(x)$?'
+          - problem: 'The region between $y = x^2$ and $y = 2x$ is a type I region. What is its upper boundary $h(x)$?'
             answer: '2x'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'At $x = 1$ the line $y = 2x$ gives $2$ and the parabola $y = x^2$ gives $1$. So the line is the upper curve, and the correct description is $x^2 \le y \le 2x$ with upper boundary $h(x) = 2x$.'
+            solution_sketch: 'The curves meet where $x^2 = 2x$, at $x = 0$ and $x = 2$. At $x = 1$ the line $y = 2x$ gives $2$ and the parabola gives $1$. So the line is the upper curve and $h(x) = 2x$.'
           - problem: 'The region $R$ is bounded by the curves $y = x^2$ and $y = 3x - 2$. Describe $R$ as a type I region, $a \le x \le b$ and $g(x) \le y \le h(x)$. Find $a$, $b$, $g$ and $h$.'
             answer: 'a = 1; b = 2; g = x^2; h = 3x - 2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "g"}, {"contract": {"kind": "function", "vars": ["x"]}, "name": "h"}]}
@@ -1258,10 +1258,10 @@ topics:
             answer: '45pi'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"m^3","allow_omitted":true}
             solution_sketch: 'The silo is a circular cylinder, so we integrate $1$ with the volume element $dV = r\,dz\,dr\,d\theta$. The volume is $\int_0^{2\pi}\int_0^{3}\int_0^{5} r\,dz\,dr\,d\theta = 5 \cdot \frac{9}{2} \cdot 2\pi = 45\pi$ cubic metres.'
-          - problem: 'Water of depth $h$ fills a cylindrical tank of radius $2$ metres, so its volume is $\int_0^{2\pi}\int_0^{2}\int_0^{h} r\,dz\,dr\,d\theta$. The tank holds $20\pi$ cubic metres of water. How deep is the water?'
+          - problem: 'Water of depth $h$ fills a cylindrical tank of radius $2$ metres. The tank holds $20\pi$ cubic metres of water. How deep is the water?'
             answer: '5'
             answer_contract: {"kind":"unit","quantity":"length","unit":"m","allow_omitted":true}
-            solution_sketch: 'The integral equals $h \cdot \frac{4}{2} \cdot 2\pi = 4\pi h$ cubic metres. Setting $4\pi h = 20\pi$ and dividing by $4\pi$ gives $h = 5$ metres.'
+            solution_sketch: 'In cylindrical coordinates the volume is $\int_0^{2\pi}\int_0^{2}\int_0^{h} r\,dz\,dr\,d\theta = 4\pi h$ cubic metres. Setting $4\pi h = 20\pi$ gives $h = 5$ metres.'
         constraints: 'solids are coordinate cylinders, cones and paraboloids; the answer is one piece of the set-up (integrand including the factor r, or a bound) or a value found from it'
       - id: kp2
         name: "Evaluating cylindrical integrals"
@@ -1481,10 +1481,10 @@ topics:
             answer: 'r'
             answer_contract: {"kind":"function","vars":["r"]}
             solution_sketch: 'The Jacobian is the determinant with rows $(\cos\theta, -r\sin\theta)$ and $(\sin\theta, r\cos\theta)$. It equals $r\cos^2\theta + r\sin^2\theta = r$.'
-          - problem: 'Find the volume of the ice-cream cone region inside the cone $\varphi \le \frac{\pi}{3}$ and the sphere $\rho \le 1$.'
+          - problem: 'Find the volume of the solid above the cone $z = \sqrt{(x^2+y^2)/3}$ and inside the sphere $x^2+y^2+z^2 = 1$.'
             answer: 'pi/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The volume is $\int_0^{2\pi}\int_0^{\pi/3}\int_0^1 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$. The factors are $\frac{1}{3}$, $1 - \cos\frac{\pi}{3} = \frac{1}{2}$ and $2\pi$, so $V = \frac{\pi}{3}$.'
+            solution_sketch: 'The cone has the half-angle $\varphi = \frac{\pi}{3}$. Spherical coordinates give $\int_0^{2\pi}\int_0^{\pi/3}\int_0^1 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$. The factors are $\frac{1}{3}$, $\frac{1}{2}$ and $2\pi$, so $V = \frac{\pi}{3}$.'
           - problem: 'The solid $E$ is the ball $x^2 + y^2 + z^2 \le 9$ and the integrand is $x^2 + y^2 + z^2$. Which coordinate system makes this integral easiest: rectangular, cylindrical or spherical?'
             answer: 'spherical'
             answer_contract: {"kind":"label","options":[["spherical","spherical coordinates","spherical coordinate system"],["cylindrical","cylindrical coordinates","cylindrical coordinate system"],["rectangular","rectangular coordinates","cartesian","cartesian coordinates"]]}
@@ -1493,10 +1493,10 @@ topics:
             answer: '6pi'
             answer_contract: {"kind":"unit","quantity":"mass","unit":"kg","allow_omitted":true}
             solution_sketch: 'The mass is $\int_0^{2\pi}\int_0^{\pi}\int_1^2 \frac{1}{\rho}\rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$. The factors are $\int_1^2 \rho\,d\rho = \frac{3}{2}$, $2$ and $2\pi$, so $m = 6\pi$ kilograms.'
-          - problem: 'An ice-cream treat is the solid with its tip at the origin, bounded by the cone $\varphi = \frac{\pi}{3}$ and the sphere $\rho = 6$ centimetres. Find its volume.'
+          - problem: 'An ice-cream treat has its tip at the origin. Its cone has a half-angle of $60^\circ$ at the tip, and a sphere of radius $6$ centimetres centered at the origin closes it. Find its volume.'
             answer: '72pi'
             answer_contract: {"kind":"unit","quantity":"cubic_volume","unit":"cm^3","allow_omitted":true}
-            solution_sketch: 'The volume is $\int_0^{2\pi}\int_0^{\pi/3}\int_0^6 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$. The factors are $72$, $\frac{1}{2}$ and $2\pi$, so $V = 72\pi$ cubic centimetres.'
+            solution_sketch: 'The cone is $\varphi = \frac{\pi}{3}$ and the sphere is $\rho = 6$. The volume is $\int_0^{2\pi}\int_0^{\pi/3}\int_0^6 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta$. The factors are $72$, $\frac{1}{2}$ and $2\pi$, so $V = 72\pi$ cubic centimetres.'
           - problem: 'Find the average value of $z$ over the upper half of the unit ball.'
             answer: '3/8'
             answer_contract: {"kind":"exact"}
@@ -1505,10 +1505,10 @@ topics:
             answer: 'cylindrical'
             answer_contract: {"kind":"label","options":[["spherical","spherical coordinates","spherical coordinate system"],["cylindrical","cylindrical coordinates","cylindrical coordinate system"],["rectangular","rectangular coordinates","cartesian","cartesian coordinates"]]}
             solution_sketch: 'The solid is bounded by $r = 2$ and by the planes $z = 0$ and $z = 3$, and the integrand is $r^2$. So the limits are constants in cylindrical coordinates.'
-          - problem: 'Find the volume of the solid inside the cone $\varphi \le \frac{\pi}{6}$ and the sphere $\rho \le 3$.'
+          - problem: 'Find the volume of the solid above the cone $z = \sqrt{3(x^2+y^2)}$ and inside the sphere $x^2+y^2+z^2 = 9$.'
             answer: '9pi(2 - sqrt(3))'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The volume is $\int_0^{2\pi}\int_0^{\pi/6}\int_0^3 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta = 2\pi \cdot \left(1 - \frac{\sqrt{3}}{2}\right) \cdot 9$. This equals $9\pi(2 - \sqrt{3})$.'
+            solution_sketch: 'The cone has the half-angle $\varphi = \frac{\pi}{6}$. The volume is $\int_0^{2\pi}\int_0^{\pi/6}\int_0^3 \rho^2\sin\varphi\,d\rho\,d\varphi\,d\theta = 2\pi \cdot \left(1 - \frac{\sqrt{3}}{2}\right) \cdot 9$. This equals $9\pi(2 - \sqrt{3})$.'
           - problem: 'The polar map $x = r\cos\theta$, $y = r\sin\theta$ is used near the point with $r = 3$ and $\theta = \frac{\pi}{4}$. By what factor does the map multiply small areas there?'
             answer: '3'
             answer_contract: {"kind":"exact"}
@@ -1639,23 +1639,23 @@ topics:
         name: "Choosing a transformation"
         key_prerequisites: [double-integrals, partial-derivatives-trig-exp, determinants-2x2]
         exemplars:
-          - problem: 'Find the area of the region in the first quadrant bounded by $xy = 1$, $xy = 4$, $y = x$ and $y = 4x$, using $u = xy$, $v = y/x$.'
+          - problem: 'Find the area of the region in the first quadrant bounded by $xy = 1$, $xy = 4$, $y = x$ and $y = 4x$.'
             answer: '3ln(2)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'Here $x = \sqrt{u/v}$, $y = \sqrt{uv}$ and $|J| = \frac{1}{2v}$, and the region is $1 \le u \le 4$, $1 \le v \le 4$. The area is $3 \cdot \frac{1}{2}\ln 4 = 3\ln 2$.'
-          - problem: 'The region is bounded by the lines $y = x$, $y = x + 3$, $y = -x$ and $y = -x + 4$. Choose new variables that turn the boundary lines into constant coordinate lines, and find the area of the region.'
+            solution_sketch: 'Take $u = xy$ and $v = y/x$. Then $x = \sqrt{u/v}$, $y = \sqrt{uv}$ and $|J| = \frac{1}{2v}$, and the region is $1 \le u \le 4$, $1 \le v \le 4$. The area is $3 \cdot \frac{1}{2}\ln 4 = 3\ln 2$.'
+          - problem: 'Find the area of the region bounded by the lines $y = x$, $y = x + 3$, $y = -x$ and $y = -x + 4$.'
             answer: '6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Take $u = y - x$ and $v = y + x$, so the region is $0 \le u \le 3$ and $0 \le v \le 4$. The Jacobian is $\frac{1}{2}$ in absolute value, so the area is $3 \cdot 4 \cdot \frac{1}{2} = 6$.'
-          - problem: 'Use $u = x + y$ and $v = x - y$ on the region bounded by $x + y = 1$, $x + y = 4$, $x - y = 0$ and $x - y = 3$. Find the area of the region.'
+          - problem: 'Find the area of the region bounded by the lines $x + y = 1$, $x + y = 4$, $x - y = 0$ and $x - y = 3$.'
             answer: '9/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The region is $1 \le u \le 4$ and $0 \le v \le 3$, a rectangle of area $9$. The map $x = \frac{u+v}{2}$, $y = \frac{u-v}{2}$ has $|J| = \frac{1}{2}$, so the area is $\frac{9}{2}$.'
-          - problem: 'Use $u = x + y$ and $v = x - y$ on the region bounded by $x + y = 0$, $x + y = 2$, $x - y = 0$ and $x - y = 4$. Evaluate the double integral of $(x + y)^2$ over the region.'
+            solution_sketch: 'Take $u = x + y$ and $v = x - y$. The region is $1 \le u \le 4$ and $0 \le v \le 3$, a rectangle of area $9$. The map $x = \frac{u+v}{2}$, $y = \frac{u-v}{2}$ has $|J| = \frac{1}{2}$, so the area is $\frac{9}{2}$.'
+          - problem: 'Evaluate the double integral of $(x + y)^2$ over the region bounded by the lines $x + y = 0$, $x + y = 2$, $x - y = 0$ and $x - y = 4$.'
             answer: '16/3'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'The region is $0 \le u \le 2$ and $0 \le v \le 4$, and $|J| = \frac{1}{2}$. So the integral is $\int_0^4\int_0^2 u^2 \cdot \frac{1}{2}\,du\,dv = \frac{1}{2} \cdot \frac{8}{3} \cdot 4 = \frac{16}{3}$.'
-          - problem: 'A garden bed is bounded by fences along the lines $y = 2x$, $y = 2x + 4$, $y = -x$ and $y = -x + 2$, with lengths in metres. Choose new variables that turn the fences into constant coordinate lines, and find the area of the bed.'
+            solution_sketch: 'Take $u = x + y$ and $v = x - y$. The region is $0 \le u \le 2$ and $0 \le v \le 4$, and $|J| = \frac{1}{2}$. So the integral is $\int_0^4\int_0^2 u^2 \cdot \frac{1}{2}\,du\,dv = \frac{1}{2} \cdot \frac{8}{3} \cdot 4 = \frac{16}{3}$.'
+          - problem: 'A garden bed is bounded by fences along the lines $y = 2x$, $y = 2x + 4$, $y = -x$ and $y = -x + 2$, with lengths in metres. Find the area of the bed.'
             answer: '8/3'
             answer_contract: {"kind":"unit","quantity":"area","unit":"m^2","allow_omitted":true}
             solution_sketch: 'Take $u = y - 2x$ and $v = y + x$, so the bed is $0 \le u \le 4$ and $0 \le v \le 2$. Solving gives $x = \frac{v - u}{3}$, $y = \frac{u + 2v}{3}$ with $|J| = \frac{1}{3}$, so the area is $8 \cdot \frac{1}{3} = \frac{8}{3}$ square metres.'
@@ -1663,14 +1663,14 @@ topics:
             answer: '20'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Take $u = y - x$ and $v = y + x$, so the field is $0 \le u \le 5$ and $0 \le v \le 4$ with $|J| = \frac{1}{2}$. The area is $20 \cdot \frac{1}{2} = 10$ square kilometres, and dividing by $\frac{1}{2}$ gives $20$ bags.'
-          - problem: 'Use polar coordinates $x = r\cos\theta$, $y = r\sin\theta$ on the disk $x^2 + y^2 \le 9$. Evaluate the double integral of $x^2 + y^2$ over the disk.'
+          - problem: 'Evaluate the double integral of $x^2 + y^2$ over the disk $x^2 + y^2 \le 9$.'
             answer: '81pi/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'In polar coordinates $x^2 + y^2 = r^2$ and $dA = r\,dr\,d\theta$. So the integral is $\int_0^{2\pi}\int_0^3 r^3\,dr\,d\theta = \frac{81}{4} \cdot 2\pi = \frac{81\pi}{2}$.'
-          - problem: 'A round plate $x^2 + y^2 \le 4$, with lengths in metres, has density $x^2 + y^2$ kilograms per square metre. Use polar coordinates to find its mass.'
+            solution_sketch: 'Polar coordinates fit the disk. Then $x^2 + y^2 = r^2$ and $dA = r\,dr\,d\theta$. So the integral is $\int_0^{2\pi}\int_0^3 r^3\,dr\,d\theta = \frac{81}{4} \cdot 2\pi = \frac{81\pi}{2}$.'
+          - problem: 'A round plate $x^2 + y^2 \le 4$, with lengths in metres, has density $x^2 + y^2$ kilograms per square metre. Find its mass.'
             answer: '8pi'
             answer_contract: {"kind":"unit","quantity":"mass","unit":"kg","allow_omitted":true}
-            solution_sketch: 'In polar coordinates the density is $r^2$ and $dA = r\,dr\,d\theta$. So $m = \int_0^{2\pi}\int_0^2 r^3\,dr\,d\theta = 4 \cdot 2\pi = 8\pi$ kilograms.'
+            solution_sketch: 'Polar coordinates fit the plate. The density is $r^2$ and $dA = r\,dr\,d\theta$. So $m = \int_0^{2\pi}\int_0^2 r^3\,dr\,d\theta = 4 \cdot 2\pi = 8\pi$ kilograms.'
         constraints: 'boundary curves become u = const, v = const; final answers involve at most one logarithm; word problems give a garden bed, a field or a plate bounded by the curves'
     diagnostic_exemplar:
       problem: 'Compute the Jacobian $\frac{\partial(x, y)}{\partial(u, v)}$ for $x = 4u + v$, $y = u + 2v$.'

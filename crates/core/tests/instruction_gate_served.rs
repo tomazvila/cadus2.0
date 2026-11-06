@@ -470,13 +470,16 @@ fn every_shipped_knowledge_point_whose_exemplar_shows_its_answer_gates() {
     // 2026-10-28, VBE skill wave 1: (1435, 12) overall (was (1381, 12)).
     // 2026-10-29, VBE wave 2b (the six exam sets): (1436, 12) overall (was (1435, 12)).
     // 2026-11-05, the public exam papers and the part I sets (D-VBE4): (1451, 12) overall (was (1436, 12)).
-    assert_eq!((exempted, blind), (1451, 12));
+    // 2026-11-06, no handed values (D-AP1): (1448, 12) overall (was (1451, 12)).
+    // 2026-11-06, no handed steps (D-AP1): (1441, 12) overall (was (1448, 12)).
+    assert_eq!((exempted, blind), (1441, 12));
     // Foundations: (231, 5) (was (145, 12)).
     // 2026-10-07, courses rewrite (later): (232, 6).
     // 2026-10-08, story framing removed: (222, 6) (was (232, 6)).
     // 2026-10-12, Foundations merge (D-C1): (215, 6) (was (222, 6)).
     // 2026-10-28, VBE skill wave 1: (242, 6) (was (215, 6)).
-    assert_eq!((foundations_exempted, foundations_blind), (242, 6));
+    // 2026-11-06, no handed steps (D-AP1): (243, 6) (was (242, 6)).
+    assert_eq!((foundations_exempted, foundations_blind), (243, 6));
 }
 
 /// A sample that does not instantiate and a draw that does not evaluate

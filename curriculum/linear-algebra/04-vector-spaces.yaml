@@ -174,14 +174,14 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it contains the zero vector", "contains the zero vector"], ["no", "it does not contain the zero vector", "does not contain the zero vector"]]}
             solution_sketch: 'At $(0, 0)$ we have $y = 0$ and $5x = 5(0) = 0$. The two sides are equal, so $(0, 0)$ is in $W$.'
-          - problem: 'To test whether $W = \{(x, y, z) : z = 2x - y + 5\}$ contains the zero vector, substitute $(0, 0, 0)$. What value does the right side $2x - y + 5$ take there?'
-            answer: '5'
+          - problem: 'Let $W = \{(x, y, z) : z = 2x - y + c\}$ for a constant $c$. The set $W$ contains the zero vector. What is $c$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'At $(0, 0, 0)$ the right side is $2(0) - 0 + 5 = 5$. The left side $z$ is $0$, and $0 \neq 5$, so the zero vector is not in $W$.'
-          - problem: 'A taxi charges $3$ dollars per kilometre plus a fixed fee, so a trip of $x$ kilometres costs $y = 3x + 4$ dollars. What value of $y$ does this line give at $x = 0$?'
-            answer: '4'
+            solution_sketch: 'The zero vector $(0, 0, 0)$ is in $W$, so $0 = 2(0) - 0 + c$. This gives $c = 0$. For $c = 5$ the right side would be $5 \ne 0$ at the zero vector, so the zero vector would not be in $W$.'
+          - problem: 'A taxi charges $3$ dollars per kilometer plus a fixed fee $f$, so a trip of $x$ kilometers costs $y = 3x + f$ dollars. The set of points $(x, y)$ on this line contains the zero vector. What is $f$?'
+            answer: '0'
             answer_contract: {"kind": "unit", "quantity": "dollar", "unit": "dollar", "allow_omitted": true}
-            solution_sketch: 'At $x = 0$ the formula gives $y = 3(0) + 4 = 4$. So the point $(0, 0)$ is not on the line, which means the line does not contain the zero vector.'
+            solution_sketch: 'The zero vector is the point $(0, 0)$. At $x = 0$ the formula gives $y = 3(0) + f = f$. The point is on the line only when $f = 0$.'
           - problem: 'For which value of $k$ does the plane $x + 2y - 3z = k + 5$ contain the zero vector of $\mathbb{R}^3$?'
             answer: '-5'
             answer_contract: {"kind": "exact"}
@@ -199,18 +199,18 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is a subspace", "a subspace", "it is", "yes it is", "yes, it is"], ["no", "it is not a subspace", "not a subspace", "it is not", "no it is not", "no, it is not"]]}
             solution_sketch: 'The zero vector $(0, 0)$ satisfies $0 = 2 \cdot 0$. If $x_1 = 2y_1$ and $x_2 = 2y_2$, then $x_1 + x_2 = 2(y_1 + y_2)$, and $c x_1 = 2(c y_1)$. All three conditions hold, so $W$ is a subspace.'
-          - problem: 'The vectors $u = (2, 0)$ and $v = (0, 3)$ both lie in $W = \{(x, y) : xy \leq 0\}$. What is the value of $xy$ for the vector $u + v$?'
-            answer: '6'
+          - problem: 'Let $W = \{(x, y) : xy \leq 0\}$. Find the smallest positive integer $a$ for which $(a, 0)$ and $(0, 3)$ lie in $W$ but their sum does not.'
+            answer: '1'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $u + v = (2, 3)$. Its product is $xy = 2 \cdot 3 = 6 > 0$, so $u + v$ is not in $W$ and $W$ is not closed under addition.'
-          - problem: 'Let $W = \{(x, y) : x^2 + y^2 \leq 1\}$. The vectors $u = (1, 0)$ and $v = (0, 1)$ lie in $W$. What is the value of $x^2 + y^2$ at $u + v$?'
-            answer: '2'
+            solution_sketch: 'Both $(a, 0)$ and $(0, 3)$ have $xy = 0$, so they lie in $W$ for every $a$. The sum is $(a, 3)$ with $xy = 3a$, and $3a > 0$ for every positive $a$. So the smallest positive integer is $a = 1$.'
+          - problem: 'Let $W = \{(x, y) : x^2 + y^2 \leq 1\}$. Two vectors $u$ and $v$ in $W$ are added. What is the largest value of $x^2 + y^2$ at $u + v$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $u + v = (1, 1)$. Then $x^2 + y^2 = 1 + 1 = 2 > 1$, so $u + v$ is outside $W$ and $W$ is not closed under addition.'
-          - problem: 'The vector $u = (1, -5)$ lies in $W = \{(x, y) : y \leq 0\}$. What is $-2u$?'
-            answer: '(-2, 10)'
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Multiply each component of $u$ by $-2$: $-2(1, -5) = (-2, 10)$. The second component $10$ is positive, so $-2u$ is not in $W$.'
+            solution_sketch: 'The length of $u + v$ is at most the length of $u$ plus the length of $v$, so at most $1 + 1 = 2$. The value $2$ is reached for $u = v = (1, 0)$, where $u + v = (2, 0)$. So the largest value of $x^2 + y^2$ is $4$, which is more than $1$.'
+          - problem: 'Let $W = \{(x, y) : y \leq 0\}$. What is the smallest integer $c$ for which $c\,u$ lies in $W$ for every $u$ in $W$?'
+            answer: '0'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'For $u = (x, y)$ in $W$ we have $cu = (cx, cy)$, and $cy \leq 0$ for every $y \leq 0$ only when $c \geq 0$. So a negative $c$ fails, for example $-2(1, -5) = (-2, 10)$. The smallest integer is $c = 0$.'
           - problem: 'Is $W = \{(x, y) : y \leq 0\}$ a subspace of $\mathbb{R}^2$?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is a subspace", "a subspace", "it is", "yes it is", "yes, it is"], ["no", "it is not a subspace", "not a subspace", "it is not", "no it is not", "no, it is not"]]}
@@ -219,14 +219,14 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A subspace contains $(0, 0)$, which needs $0 = 2 \cdot 0 + b$, so $b = 0$. With $b = 0$ the set is the line $y = 2x$ through the origin, which is closed under sums and scalar multiples.'
-          - problem: 'A warehouse holds stock levels $(x, y)$ of two products, and a level is allowed when $x + y \leq 10$. The levels $(6, 2)$ and $(1, 7)$ are both allowed. If the two stocks are merged, what is the value of $x + y$ for the merged stock?'
-            answer: '16'
+          - problem: 'A warehouse holds stock levels $(x, y)$ of two products, and a level is allowed when $x + y \leq 10$. Two allowed stocks are merged by adding their levels. What is the largest value of $x + y$ for the merged stock?'
+            answer: '20'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The merged stock is $(6, 2) + (1, 7) = (7, 9)$. Then $x + y = 7 + 9 = 16 > 10$, so the merged stock is not allowed and the allowed levels are not closed under addition.'
-          - problem: 'A tank system has valid settings $(x, y)$ with $x = 3y$. The valid settings $(6, 2)$ and $(9, 3)$ are applied together by adding them. What setting results?'
+            solution_sketch: 'Each allowed stock has $x + y \leq 10$. Adding two of them gives $x + y \leq 10 + 10 = 20$, and $20$ is reached for $(5, 5)$ and $(5, 5)$. So the merged stock can have $x + y = 20 > 10$, and the allowed levels are not closed under addition.'
+          - problem: 'A tank system has valid settings $(x, y)$ with $x = 3y$. Two valid settings have the $y$-values $2$ and $3$. The tank adds the two settings. What setting results?'
             answer: '(15, 5)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Add the settings component by component: $(6 + 9, 2 + 3) = (15, 5)$. Since $15 = 3 \cdot 5$, the result is again a valid setting.'
+            solution_sketch: 'The valid settings are $(6, 2)$ and $(9, 3)$ because $x = 3y$. Add the settings component by component: $(6 + 9, 2 + 3) = (15, 5)$. Since $15 = 3 \cdot 5$, the result is again a valid setting.'
         constraints: "one linear or mildly nonlinear condition; failures shown by an explicit counterexample"
       - id: kp3
         name: Lines and planes through the origin
@@ -293,7 +293,7 @@ topics:
         name: Spans are subspaces
         key_prerequisites: [span-linear-combinations, subspace-test]
         exemplars:
-          - problem: 'Let $W = \mathrm{span}\{(1, 2), (0, 1)\}$, and let $u = 2(1, 2) + 3(0, 1)$ and $v = 1(1, 2) + 2(0, 1)$. The sum $u + v$ is again in $W$. Find $a$ and $b$ such that $u + v = a(1, 2) + b(0, 1)$.'
+          - problem: 'Let $W = \mathrm{span}\{(1, 2), (0, 1)\}$, and let $u = 2(1, 2) + 3(0, 1)$ and $v = 1(1, 2) + 2(0, 1)$. Write $u + v$ as a combination of $(1, 2)$ and $(0, 1)$. Give the two coefficients $a$ and $b$.'
             answer: 'a = 3; b = 5'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
             solution_sketch: 'Adding the coefficients of each spanning vector gives $u + v = (2 + 1)(1, 2) + (3 + 2)(0, 1)$. So $a = 3$ and $b = 5$, and $u + v = (3, 11)$ is again in $W$.'
@@ -301,10 +301,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is a subspace", "a subspace", "it is", "yes it is", "yes, it is"], ["no", "it is not a subspace", "not a subspace", "it is not", "no it is not", "no, it is not"]]}
             solution_sketch: 'The set contains $0(1, 2, 0) + 0(0, 1, 3) = (0, 0, 0)$. A sum of two combinations, and a scalar multiple of a combination, is again a combination of the same two vectors, so the set is a subspace.'
-          - problem: 'The set of all scalar multiples of $(2, 5)$ is $\mathrm{span}\{(2, 5)\}$. Let $u = 7(2, 5)$ and $v = -3(2, 5)$. Find the number $t$ with $u + v = t(2, 5)$.'
+          - problem: 'Let $u = 7(2, 5)$ and $v = -3(2, 5)$. What multiple of $(2, 5)$ is the sum $u + v$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Add the coefficients: $u + v = (7 - 3)(2, 5) = 4(2, 5)$. So $t = 4$, and $u + v = (8, 20)$ is again a multiple of $(2, 5)$.'
+            solution_sketch: 'Add the coefficients: $u + v = (7 - 3)(2, 5) = 4(2, 5)$. So the multiple is $4$, and $u + v = (8, 20)$ is again a multiple of $(2, 5)$.'
           - problem: 'A box of type X holds $(2, 0, 1)$ units of cyan, magenta and yellow ink, and a box of type Y holds $(0, 3, 1)$. Two orders, each made of boxes of X and Y, are combined into one order that holds $(8, 9, 7)$ units of ink in all. How many boxes of X (call it $a$) and of Y (call it $b$) does the combined order contain?'
             answer: 'a = 4; b = 3'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
@@ -313,7 +313,7 @@ topics:
             answer: '0'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Every span contains the zero vector, so the line must pass through $(0, 0)$. That needs $0 = 5 \cdot 0 + c$, so $c = 0$, and then the line is $\mathrm{span}\{(1, 5)\}$.'
-          - problem: 'Let $W = \mathrm{span}\{(4, 1), (1, 2)\}$, and let $u = 2(4, 1) - 1(1, 2)$ and $w = 1(4, 1) + 3(1, 2)$. Write $2u - w$ as $a(4, 1) + b(1, 2)$. Find $a$ and $b$.'
+          - problem: 'Let $W = \mathrm{span}\{(4, 1), (1, 2)\}$, and let $u = 2(4, 1) - 1(1, 2)$ and $w = 1(4, 1) + 3(1, 2)$. Express $2u - w$ as a combination of $(4, 1)$ and $(1, 2)$. Give the coefficient $a$ of $(4, 1)$ and the coefficient $b$ of $(1, 2)$.'
             answer: 'a = 3; b = -5'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
             solution_sketch: 'Here $2u = 4(4, 1) - 2(1, 2)$. Subtracting $w$ gives $(4 - 1)(4, 1) + (-2 - 3)(1, 2)$. So $a = 3$ and $b = -5$.'
@@ -321,10 +321,10 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it is a subspace", "a subspace", "it is", "yes it is", "yes, it is"], ["no", "it is not a subspace", "not a subspace", "it is not", "no it is not", "no, it is not"]]}
             solution_sketch: 'A subspace must contain $(0, 0, 0)$. At the origin the equation needs $0 = 3 \cdot 0 + 2 \cdot 0 + 1 = 1$, which is false, so the set is not a subspace and is not a span.'
-          - problem: 'In $\mathbb{R}^3$, the set $W = \{(x, y, z) : z = 3x + 2y\}$ is a span of two vectors. Write $W = \mathrm{span}\{p, q\}$, where $p$ has second coordinate $0$ and $q$ has first coordinate $0$. Find $p$ and $q$.'
+          - problem: 'In $\mathbb{R}^3$, let $W = \{(x, y, z) : z = 3x + 2y\}$. Find two vectors $p$ and $q$ in $W$ such that every vector $(x, y, z)$ of $W$ equals $xp + yq$.'
             answer: 'p = (1, 0, 3); q = (0, 1, 2)'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "coordinates", "arity": 3}, "name": "p"}, {"contract": {"kind": "coordinates", "arity": 3}, "name": "q"}]}
-            solution_sketch: 'A general element of $W$ is $(x, y, 3x + 2y) = x(1, 0, 3) + y(0, 1, 2)$. Setting $y = 0$ gives $p = (1, 0, 3)$, and setting $x = 0$ gives $q = (0, 1, 2)$.'
+            solution_sketch: 'A general element of $W$ is $(x, y, 3x + 2y) = x(1, 0, 3) + y(0, 1, 2)$. So $p = (1, 0, 3)$ and $q = (0, 1, 2)$. Both vectors lie in $W$.'
           - problem: 'A factory has two production lines. Line A makes $(2, 0, 1)$ units of products P, Q and R per hour, and line B makes $(0, 3, 1)$ units per hour. Monday output was $(10, 6, 7)$ and Tuesday output was $(2, 12, 5)$. To make both days of output in one run, how many hours of line A (call it $a$) and of line B (call it $b$) are needed?'
             answer: 'a = 6; b = 6'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
@@ -521,18 +521,18 @@ topics:
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set is dependent exactly when $(h, 4)$ is a multiple of $(1, 2)$. The second components give the multiplier $4/2 = 2$, so $h = 2 \cdot 1 = 2$.'
-          - problem: 'Let $v_1 = (1, 0, 2)$, $v_2 = (1, 3, 0)$ and $v_3 = (1, -3, 4)$. The relation $c\,v_1 + d\,v_2 - v_3 = 0$ holds for some numbers $c$ and $d$. Find $c$ and $d$.'
+          - problem: 'Let $v_1 = (1, 0, 2)$, $v_2 = (1, 3, 0)$ and $v_3 = (1, -3, 4)$. Find the coefficient $c$ of $v_1$ and the coefficient $d$ of $v_2$ when $v_3$ is written as a combination of $v_1$ and $v_2$.'
             answer: 'c = 2; d = -1'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "c"}, {"contract": {"kind": "exact"}, "name": "d"}]}
-            solution_sketch: 'The relation says $c(1, 0, 2) + d(1, 3, 0) = (1, -3, 4)$. The second components give $3d = -3$, so $d = -1$, and the third give $2c = 4$, so $c = 2$. The first components agree since $2 - 1 = 1$.'
+            solution_sketch: 'Write $c(1, 0, 2) + d(1, 3, 0) = (1, -3, 4)$. The second components give $3d = -3$, so $d = -1$, and the third give $2c = 4$, so $c = 2$. The first components agree since $2 - 1 = 1$.'
           - problem: 'Find $h$ so that $(3, 4)$ and $(h, 8)$ are linearly dependent.'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Two vectors are dependent exactly when one is a scalar multiple of the other. Writing $(h, 8) = k(3, 4)$, the second components give $k = 2$, so $h = 2 \cdot 3 = 6$.'
-          - problem: 'The vectors $u = (1, 1)$, $v = (2, 3)$ and $w = (5, 7)$ satisfy a relation $a\,u + b\,v - w = 0$. Find $a$ and $b$.'
+          - problem: 'Let $u = (1, 1)$, $v = (2, 3)$ and $w = (5, 7)$. Find the coefficient $a$ of $u$ and the coefficient $b$ of $v$ when $w$ is written as a combination of $u$ and $v$.'
             answer: 'a = 1; b = 2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "a"}, {"contract": {"kind": "exact"}, "name": "b"}]}
-            solution_sketch: 'The relation reads $a(1, 1) + b(2, 3) = (5, 7)$, so $a + 2b = 5$ and $a + 3b = 7$. Subtracting the equations gives $b = 2$, and then $a = 5 - 2 \cdot 2 = 1$.'
+            solution_sketch: 'Write $a(1, 1) + b(2, 3) = (5, 7)$, so $a + 2b = 5$ and $a + 3b = 7$. Subtracting the equations gives $b = 2$, and then $a = 5 - 2 \cdot 2 = 1$.'
           - problem: 'For which $h$ are the vectors $(1, 2, 1)$, $(2, 3, 1)$ and $(1, 1, h)$ linearly dependent?'
             answer: '0'
             answer_contract: {"kind": "exact"}
@@ -1077,10 +1077,10 @@ topics:
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The three dye vectors are the columns of $A = \begin{pmatrix}1&2&3\\2&4&6\end{pmatrix}$, and every column is a multiple of $(1, 2)$. The second row is twice the first row and reduces to zero, so $A$ has $1$ pivot, and the rank, which is the dimension of the column space, is $1$.'
-          - problem: 'A teacher stores the marks of three students in a table with the columns Test $1$, Test $2$ and Total, where Total is the sum of the two tests. The table is $A = \begin{pmatrix}3&5&8\\4&2&6\\1&6&7\end{pmatrix}$. What is the rank of $A$?'
+          - problem: 'A teacher stores the marks of three students in a table with the columns Test $1$, Test $2$ and Total. The table is $A = \begin{pmatrix}3&5&8\\4&2&6\\1&6&7\end{pmatrix}$. What is the rank of $A$?'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The third column equals the sum of the first two, so it adds nothing to the column space. The first two columns are independent, so $A$ has $2$ pivots and the rank is $2$.'
+            solution_sketch: 'In each row the third entry equals the sum of the first two, so the third column is the sum of the first two columns. It adds nothing to the column space. The first two columns are independent, so $A$ has $2$ pivots and the rank is $2$.'
           - problem: 'For which value of $k$ does $A = \begin{pmatrix}1&2\\3&k\end{pmatrix}$ have rank $1$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -2315,10 +2315,10 @@ topics:
             answer: '(2/3, -2/3, 2/3)'
             answer_contract: {"kind": "coordinates", "arity": 3}
             solution_sketch: 'First $\mathbf{v}_2 = (0, 1, 1) - \frac{1}{2}(1, 1, 0) = \left(-\frac{1}{2}, \frac{1}{2}, 1\right)$. Then the coefficients for $\mathbf{x}_3$ are $\frac{1}{2}$ and $\frac{1/2}{3/2} = \frac{1}{3}$, which give $\mathbf{v}_3 = \left(\frac{2}{3}, -\frac{2}{3}, \frac{2}{3}\right)$.'
-          - problem: 'The Gram-Schmidt process is applied to $\mathbf{x}_1 = (1, 0, 1)$, $\mathbf{x}_2 = (1, 1, 0)$ and $\mathbf{x}_3 = (0, 1, 1)$. The last step has the form $\mathbf{v}_3 = \mathbf{x}_3 - a\mathbf{v}_1 - b\mathbf{v}_2$. Find $a$ and $b$.'
-            answer: '(1/2, 1/3)'
-            answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Here $\mathbf{v}_1 = (1, 0, 1)$ and $\mathbf{v}_2 = \left(\frac{1}{2}, 1, -\frac{1}{2}\right)$. Then $a = \frac{1}{2}$ and $b = \frac{1/2}{3/2} = \frac{1}{3}$.'
+          - problem: 'The Gram-Schmidt process is applied to $\mathbf{x}_1 = (1, 0, 1)$, $\mathbf{x}_2 = (1, 1, 0)$ and $\mathbf{x}_3 = (0, 1, 1)$ and gives $\mathbf{v}_1$, $\mathbf{v}_2$, $\mathbf{v}_3$. Find $\mathbf{v}_3$.'
+            answer: '(-2/3, 2/3, 2/3)'
+            answer_contract: {"kind":"coordinates","arity":3}
+            solution_sketch: 'Here $\mathbf{v}_1 = (1, 0, 1)$ and $\mathbf{v}_2 = \left(\frac{1}{2}, 1, -\frac{1}{2}\right)$. Subtract both projections from $\mathbf{x}_3$: $a = \frac{1}{2}$ and $b = \frac{1/2}{3/2} = \frac{1}{3}$. So $\mathbf{v}_3 = \mathbf{x}_3 - a\mathbf{v}_1 - b\mathbf{v}_2 = \left(-\frac{2}{3}, \frac{2}{3}, \frac{2}{3}\right)$.'
           - problem: 'A surveyor has three sight lines from one point along $(2, 1, 1)$, $(0, 3, 3)$ and $(2, 0, 3)$. A program replaces them by perpendicular lines with the Gram-Schmidt process, in this order. What is the direction of the third line?'
             answer: '(0, -3/2, 3/2)'
             answer_contract: {"kind": "coordinates", "arity": 3}
@@ -2421,10 +2421,10 @@ topics:
             answer: '(1, 1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'In matrix form $A = \begin{pmatrix} 1 & 0 \\ 0 & 1 \\ 1 & 1 \end{pmatrix}$ and $\mathbf{b} = (2, 2, 1)$. The normal equations are $2x_1 + x_2 = 3$ and $x_1 + 2x_2 = 3$, so $\hat{\mathbf{x}} = (1, 1)$.'
-          - problem: 'Let $A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $\mathbf{b} = (3, 3, 3)$. Solve the normal equations $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$.'
+          - problem: 'Let $A = \begin{pmatrix} 1 & 0 \\ 1 & 1 \\ 0 & 1 \end{pmatrix}$ and $\mathbf{b} = (3, 3, 3)$. Find the least-squares solution of $A\mathbf{x} = \mathbf{b}$.'
             answer: '(2, 2)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Here $A^TA = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ and $A^T\mathbf{b} = (6, 6)$. The equations $2x_1 + x_2 = 6$ and $x_1 + 2x_2 = 6$ give $\hat{\mathbf{x}} = (2, 2)$.'
+            solution_sketch: 'The least-squares solution solves $A^TA\hat{\mathbf{x}} = A^T\mathbf{b}$. Here $A^TA = \begin{pmatrix} 2 & 1 \\ 1 & 2 \end{pmatrix}$ and $A^T\mathbf{b} = (6, 6)$. The equations $2x_1 + x_2 = 6$ and $x_1 + 2x_2 = 6$ give $\hat{\mathbf{x}} = (2, 2)$.'
           - problem: 'Two parts are weighed on a scale. Part $A$ alone reads $5$ kg, part $B$ alone reads $4$ kg, and both together read $10$ kg. The readings cannot all be exact. Find the least-squares estimates of the masses of $A$ and $B$, in kilograms.'
             answer: '(16/3, 13/3)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -2507,10 +2507,10 @@ topics:
             answer: 'sqrt(30)'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The product is $A\hat{\mathbf{x}} = (2, 3, 4)$, so the residual is $(5, -2, -1)$. Its length is $\sqrt{25 + 4 + 1} = \sqrt{30}$.'
-          - problem: 'A technician fits the least-squares line $y = 1 + x$ to the points $(0, 2)$, $(1, 0)$ and $(2, 4)$. Find the least-squares error, which is the length of the vector of the three vertical gaps between the data and the line.'
+          - problem: 'A technician fits the least-squares line $y = 1 + x$ to the points $(0, 2)$, $(1, 0)$ and $(2, 4)$. Find the least-squares error.'
             answer: 'sqrt(6)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The line gives the values $1, 2, 3$ at the three points, so the gaps are $2 - 1 = 1$, $0 - 2 = -2$ and $4 - 3 = 1$. The error is $\sqrt{1 + 4 + 1} = \sqrt{6}$.'
+            solution_sketch: 'The line gives the values $1, 2, 3$ at the three points, so the vertical gaps are $2 - 1 = 1$, $0 - 2 = -2$ and $4 - 3 = 1$. The error is the length of the gap vector, $\sqrt{1 + 4 + 1} = \sqrt{6}$.'
           - problem: 'Two parts are weighed on a scale. Part $A$ alone reads $5$ kg, part $B$ alone reads $4$ kg, and both together read $10$ kg. The least-squares estimates of the masses are $\frac{16}{3}$ kg and $\frac{13}{3}$ kg. Find the least-squares error.'
             answer: 'sqrt(3)/3'
             answer_contract: {"kind": "exact"}

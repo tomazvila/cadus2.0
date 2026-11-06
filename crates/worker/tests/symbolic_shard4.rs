@@ -26,7 +26,10 @@ fn varied_slope_representations_and_answers_are_pinned() {
         "two points listed in a table: $x=-2$, $y=1$",
         "A second point is $6$ units to the right of it and $3$ units higher.",
         // 2026-10-08, story framing removed: the item now says "The opposite order gives".
-        "The opposite order gives $\\frac{3-9}{1-4}$",
+        // 2026-11-06, no handed values (D-AP1): the item no longer shows that
+        // quotient; it names the order in words. The old text was
+        // "The opposite order gives $\\frac{3-9}{1-4}$".
+        "Subtract the coordinates of $(4,9)$ from the coordinates of $(1,3)$.",
         "$4x+5y=20$",
     ] {
         assert!(source.contains(representation), "{representation}");

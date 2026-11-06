@@ -975,10 +975,10 @@ topics:
             answer: 'ln(x^2+2x+5) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
             solution_sketch: 'The numerator $2x + 2$ is exactly the derivative of the denominator. With $u = x^2 + 2x + 5$ we get $\int \frac{du}{u} = \ln u$, and $u$ is always positive. The answer is $\ln(x^2 + 2x + 5) + C$.'
-          - problem: 'Find $A$ and $B$ so that $6x - 2 = A(2x - 2) + B$ for every $x$.'
+          - problem: 'Write the numerator of $\frac{6x-2}{x^2-2x+5}$ as $A\cdot\frac{d}{dx}\left(x^2-2x+5\right)+B$. Find $A$ and $B$.'
             answer: 'A = 3; B = 4'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Compare the coefficients of $x$: $2A = 6$, so $A = 3$. Compare the constant terms: $-2A + B = -2$, so $B = -2 + 6 = 4$. So $A = 3$ and $B = 4$.'
+            solution_sketch: 'The derivative of the denominator is $2x-2$. Compare the coefficients of $x$ in $6x-2=A(2x-2)+B$: $2A=6$, so $A=3$. Compare the constant terms: $-2A+B=-2$, so $B=4$.'
           - problem: 'Evaluate $\int_1^3 \frac{2x + 2}{x^2 - 2x + 5}\,dx$.'
             answer: 'ln(2) + pi/2'
             answer_contract: {"kind": "exact"}
@@ -1069,10 +1069,10 @@ topics:
             answer: 'pi/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'The integral $\int_0^2 \sqrt{4 - x^2}\,dx$ is $\pi$. The average is this integral divided by the length $2$ of the interval. So the average height is $\frac{\pi}{2}$ metres.'
-          - problem: 'Find the value of $\int_0^1 \sqrt{1 - x^2}\,dx$ with the substitution $x = \sin\theta$.'
+          - problem: 'Find the value of $\int_0^1 \sqrt{1 - x^2}\,dx$.'
             answer: 'pi/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The old bounds belong to $x$. When $x = \sin\theta$, the bounds $0$ and $1$ become $\theta = 0$ and $\theta = \frac{\pi}{2}$, and $dx = \cos\theta\,d\theta$ gives $\int_0^{\pi/2} \cos^2\theta\,d\theta = \frac{\pi}{4}$.'
+            solution_sketch: 'Put $x = \sin\theta$ because of the pattern $1-x^2$. The bounds $0$ and $1$ become $\theta = 0$ and $\theta = \frac{\pi}{2}$, and $dx = \cos\theta\,d\theta$ gives $\int_0^{\pi/2} \cos^2\theta\,d\theta = \frac{\pi}{4}$.'
         constraints: 'a^2 - x^2 under a root or in a power, a in {1, 2, 3, 5}; substitute x = a sin(theta); indefinite integrals (state the interval where needed), definite integrals, and area contexts; the answer back-substitutes through a reference triangle'
       - id: kp2
         name: "The pattern $a^2 + x^2$ ($x = a\\tan\\theta$)"
@@ -1110,10 +1110,10 @@ topics:
             answer: '1/2'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "cm", "allow_omitted": true}
             solution_sketch: 'An antiderivative is $\frac{x}{\sqrt{1 + x^2}}$, so the integral over the interval is $\frac{\sqrt{3}}{2} - 0$. The average is this integral divided by the length $\sqrt{3}$ of the interval. So the average thickness is $\frac{1}{2}$ centimetre.'
-          - problem: 'Find the antiderivative of $\frac{1}{(x^2 + 4)^{3/2}}$ with the substitution $x = 2\tan\theta$.'
+          - problem: 'Find the antiderivative of $\frac{1}{(x^2 + 4)^{3/2}}$.'
             answer: 'x/(4sqrt(x^2+4)) + C'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true}
-            solution_sketch: 'The derivative of $\tan\theta$ is $\sec^2\theta$, so $dx = 2\sec^2\theta\,d\theta$. Then $(x^2 + 4)^{3/2} = 8\sec^3\theta$ and the integral is $\frac{1}{4}\int \cos\theta\,d\theta = \frac{\sin\theta}{4}$. The answer is $\frac{x}{4\sqrt{x^2 + 4}} + C$.'
+            solution_sketch: 'Put $x = 2\tan\theta$ because of the pattern $x^2+4$. Then $dx = 2\sec^2\theta\,d\theta$ and $(x^2 + 4)^{3/2} = 8\sec^3\theta$, so the integral is $\frac{1}{4}\int \cos\theta\,d\theta = \frac{\sin\theta}{4}$. The answer is $\frac{x}{4\sqrt{x^2 + 4}} + C$.'
           - problem: 'A particle moves along a line with velocity $v(t) = \frac{1}{(t^2 + 9)^{3/2}}$ metres per second. How far does it move between $t = 0$ and $t = 3\sqrt{3}$ seconds?'
             answer: 'sqrt(3)/18'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
@@ -1163,10 +1163,10 @@ topics:
             answer: '(3*sqrt(3) - pi)/3'
             answer_contract: {"kind": "unit", "quantity": "length", "unit": "m", "allow_omitted": true}
             solution_sketch: 'An antiderivative is $\sqrt{x^2 - 9} - 3\arccos\frac{3}{x}$. At $x = 6$ it is $3\sqrt{3} - 3 \cdot \frac{\pi}{3}$, and at $x = 3$ it is $0$. So the integral is $3\sqrt{3} - \pi$, and dividing by the length $3$ gives $\frac{3\sqrt{3} - \pi}{3}$ metres.'
-          - problem: 'Find the value of $\int_3^{3\sqrt{2}} \frac{\sqrt{x^2 - 9}}{x}\,dx$ with the substitution $x = 3\sec\theta$.'
+          - problem: 'Find the value of $\int_3^{3\sqrt{2}} \frac{\sqrt{x^2 - 9}}{x}\,dx$.'
             answer: '3 - 3*pi/4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The root of a sum is not the sum of roots: $\sqrt{9\sec^2\theta - 9} = 3\tan\theta$ by the identity $\sec^2\theta - 1 = \tan^2\theta$. The integrand becomes $3\tan^2\theta$, and the bounds are $\theta = 0$ and $\theta = \frac{\pi}{4}$. The value is $3\tan\theta - 3\theta$ there, which is $3 - \frac{3\pi}{4}$.'
+            solution_sketch: 'Put $x = 3\sec\theta$ because of the pattern $x^2-9$. Then $\sqrt{9\sec^2\theta - 9} = 3\tan\theta$, the integrand becomes $3\tan^2\theta$, and the bounds are $\theta = 0$ and $\theta = \frac{\pi}{4}$. The value is $3\tan\theta - 3\theta$ there, which is $3 - \frac{3\pi}{4}$.'
         constraints: 'sqrt(x^2 - a^2) with x = a sec(theta) on a stated domain x > a; completed squares with integer centre and radius reduce to this pattern or to a^2 + u^2; each interval or domain is stated so the root is real'
     diagnostic_exemplar:
       problem: 'Evaluate $\int \frac{dx}{(x^2 - 4x + 8)^{3/2}}$.'
@@ -1206,42 +1206,42 @@ topics:
           answer: '2'
           reveal: '$\frac{1}{x - 1} - \frac{1}{x + 1} = \frac{(x + 1) - (x - 1)}{(x - 1)(x + 1)} = \frac{2}{(x - 1)(x + 1)}$. A partial fraction decomposition runs this addition backwards: it splits one fraction into simpler ones.'
         exemplars:
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{3x + 5}{(x + 1)(x + 3)} = \frac{A}{x + 1} + \frac{B}{x + 3}$.'
+          - problem: 'Write $\frac{3x + 5}{(x + 1)(x + 3)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 1; B = 2'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $3x + 5 = A(x + 3) + B(x + 1)$. Setting $x = -1$ removes the $B$ term and leaves $A = 1$. Setting $x = -3$ removes the $A$ term and leaves $B = 2$. So $A = 1$ and $B = 2$.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{1}{x(x + 1)} = \frac{A}{x} + \frac{B}{x + 1}$.'
+            solution_sketch: 'Write $\frac{3x + 5}{(x + 1)(x + 3)} = \frac{A}{x + 1} + \frac{B}{x + 3}$, so $3x + 5 = A(x + 3) + B(x + 1)$. Setting $x = -1$ leaves $A = 1$. Setting $x = -3$ leaves $B = 2$.'
+          - problem: 'Write $\frac{1}{x(x + 1)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 1; B = -1'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $1 = A(x + 1) + Bx$. Setting $x = 0$ removes the $B$ term and leaves $A = 1$. Setting $x = -1$ removes the $A$ term and leaves $B = -1$. So $A = 1$ and $B = -1$.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{7x - 11}{(x - 1)(x - 3)} = \frac{A}{x - 1} + \frac{B}{x - 3}$.'
+            solution_sketch: 'Write $\frac{1}{x(x + 1)} = \frac{A}{x} + \frac{B}{x + 1}$, so $1 = A(x + 1) + Bx$. Setting $x = 0$ leaves $A = 1$. Setting $x = -1$ leaves $B = -1$.'
+          - problem: 'Write $\frac{7x - 11}{(x - 1)(x - 3)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 2; B = 5'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $7x - 11 = A(x - 3) + B(x - 1)$. Setting $x = 1$ removes the $B$ term and leaves $A = 2$. Setting $x = 3$ removes the $A$ term and leaves $B = 5$. So $A = 2$ and $B = 5$.'
-          - problem: 'A population $P$ (in thousands) satisfies $\frac{dP}{dt} = P(10 - P)$. Separating the variables gives $\int \frac{dP}{P(10 - P)} = \int dt$. To integrate the left side, write $\frac{1}{P(10 - P)} = \frac{A}{P} + \frac{B}{10 - P}$. Find $A$ and $B$.'
+            solution_sketch: 'Write $\frac{7x - 11}{(x - 1)(x - 3)} = \frac{A}{x - 1} + \frac{B}{x - 3}$, so $7x - 11 = A(x - 3) + B(x - 1)$. Setting $x = 1$ leaves $A = 2$. Setting $x = 3$ leaves $B = 5$.'
+          - problem: 'A population $P$ (in thousands) satisfies $\frac{dP}{dt} = P(10 - P)$. Separating the variables gives $\int \frac{dP}{P(10 - P)} = \int dt$. Write the integrand on the left as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 1/10; B = 1/10'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $1 = A(10 - P) + BP$. Setting $P = 0$ gives $1 = 10A$, so $A = \frac{1}{10}$. Setting $P = 10$ gives $1 = 10B$, so $B = \frac{1}{10}$.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{x + 13}{(x - 5)(x - 2)} = \frac{A}{x - 5} + \frac{B}{x - 2}$.'
+            solution_sketch: 'Write $\frac{1}{P(10 - P)} = \frac{A}{P} + \frac{B}{10 - P}$, so $1 = A(10 - P) + BP$. Setting $P = 0$ gives $1 = 10A$, so $A = \frac{1}{10}$. Setting $P = 10$ gives $1 = 10B$, so $B = \frac{1}{10}$.'
+          - problem: 'Write $\frac{x + 13}{(x - 5)(x - 2)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 6; B = -5'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $x + 13 = A(x - 2) + B(x - 5)$. Setting $x = 5$ removes the $B$ term and leaves $A = 6$. Setting $x = 2$ removes the $A$ term and leaves $B = -5$. So $A = 6$ and $B = -5$.'
-          - problem: 'Find the constants $A$ and $B$ in $\frac{4x + 1}{(x - 1)(x + 2)} = \frac{A}{x - 1} + \frac{B}{x + 2}$.'
+            solution_sketch: 'Write $\frac{x + 13}{(x - 5)(x - 2)} = \frac{A}{x - 5} + \frac{B}{x - 2}$, so $x + 13 = A(x - 2) + B(x - 5)$. Setting $x = 5$ leaves $A = 6$. Setting $x = 2$ leaves $B = -5$.'
+          - problem: 'Write $\frac{4x + 1}{(x - 1)(x + 2)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 5/3; B = 7/3'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'The numerator coefficients are not the constants $A$ and $B$. Clearing the denominators gives $4x + 1 = A(x + 2) + B(x - 1)$. Setting $x = 1$ gives $5 = 3A$, so $A = \frac{5}{3}$. Setting $x = -2$ gives $-7 = -3B$, so $B = \frac{7}{3}$.'
-          - problem: 'In a second-order reaction the amount $x$ of product satisfies $\frac{dx}{dt} = k(2 - x)(5 - x)$. Separating the variables leads to $\int \frac{dx}{(2 - x)(5 - x)}$. Write $\frac{1}{(2 - x)(5 - x)} = \frac{A}{2 - x} + \frac{B}{5 - x}$ and find $A$ and $B$.'
+            solution_sketch: 'Write $\frac{4x + 1}{(x - 1)(x + 2)} = \frac{A}{x - 1} + \frac{B}{x + 2}$, so $4x + 1 = A(x + 2) + B(x - 1)$. Setting $x = 1$ gives $5 = 3A$, so $A = \frac{5}{3}$. Setting $x = -2$ gives $-7 = -3B$, so $B = \frac{7}{3}$.'
+          - problem: 'In a second-order reaction the amount $x$ of product satisfies $\frac{dx}{dt} = k(2 - x)(5 - x)$. Separating the variables leads to $\int \frac{dx}{(2 - x)(5 - x)}$. Write the integrand as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 1/3; B = -1/3'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $1 = A(5 - x) + B(2 - x)$. Setting $x = 2$ gives $1 = 3A$, so $A = \frac{1}{3}$. Setting $x = 5$ gives $1 = -3B$, so $B = -\frac{1}{3}$.'
-          - problem: 'Find the sum $\frac{1}{1 \cdot 2} + \frac{1}{2 \cdot 3} + \frac{1}{3 \cdot 4} + \cdots + \frac{1}{99 \cdot 100}$. Each term has the form $\frac{1}{n(n + 1)}$ and splits into two fractions.'
+            solution_sketch: 'Write $\frac{1}{(2 - x)(5 - x)} = \frac{A}{2 - x} + \frac{B}{5 - x}$, so $1 = A(5 - x) + B(2 - x)$. Setting $x = 2$ gives $1 = 3A$, so $A = \frac{1}{3}$. Setting $x = 5$ gives $1 = -3B$, so $B = -\frac{1}{3}$.'
+          - problem: 'Find the sum $\frac{1}{1 \cdot 2} + \frac{1}{2 \cdot 3} + \frac{1}{3 \cdot 4} + \cdots + \frac{1}{99 \cdot 100}$.'
             answer: '99/100'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Splitting gives $\frac{1}{n(n + 1)} = \frac{1}{n} - \frac{1}{n + 1}$. In the sum, each $-\frac{1}{n + 1}$ cancels the next term $+\frac{1}{n + 1}$. Only the first and last pieces remain: $1 - \frac{1}{100} = \frac{99}{100}$.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{2x - 14}{(x + 2)(x - 4)} = \frac{A}{x + 2} + \frac{B}{x - 4}$.'
+            solution_sketch: 'Each term is $\frac{1}{n(n + 1)} = \frac{1}{n} - \frac{1}{n + 1}$. In the sum, each $-\frac{1}{n + 1}$ cancels the next term $+\frac{1}{n + 1}$. Only the first and last pieces remain: $1 - \frac{1}{100} = \frac{99}{100}$.'
+          - problem: 'Write $\frac{2x - 14}{(x + 2)(x - 4)}$ as partial fractions. Give the numerators in the order the factors appear in the denominator.'
             answer: 'A = 3; B = -1'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Clearing the denominators gives $2x - 14 = A(x - 4) + B(x + 2)$. Setting $x = -2$ removes the $B$ term and leaves $A = 3$. Setting $x = 4$ removes the $A$ term and leaves $B = -1$. So $A = 3$ and $B = -1$.'
+            solution_sketch: 'Write $\frac{2x - 14}{(x + 2)(x - 4)} = \frac{A}{x + 2} + \frac{B}{x - 4}$, so $2x - 14 = A(x - 4) + B(x + 2)$. Setting $x = -2$ leaves $A = 3$. Setting $x = 4$ leaves $B = -1$.'
         constraints: "two distinct linear factors with integer roots; numerator degree <= 1; coefficients found by plugging in roots (cover-up)"
       - id: kp2
         name: Integrating distinct linear factors
@@ -1365,10 +1365,10 @@ topics:
             answer: '-ln(x) - 1/x + ln(x+1)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["0.3", "9.3"]}}
             solution_sketch: 'Because $x$ is repeated, write $\frac{1}{x^2(x + 1)} = \frac{A}{x} + \frac{B}{x^2} + \frac{D}{x + 1}$, so $1 = Ax(x + 1) + B(x + 1) + Dx^2$. Setting $x = 0$ gives $B = 1$, and setting $x = -1$ gives $D = 1$. Matching the $x^2$ coefficients gives $A + D = 0$, so $A = -1$. Integrating each term gives $-\ln x - \frac{1}{x} + \ln(x + 1) + C$.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{5x + 6}{(x + 2)^2} = \frac{A}{x + 2} + \frac{B}{(x + 2)^2}$.'
+          - problem: 'Write $\frac{5x + 6}{(x + 2)^2}$ as partial fractions. Give the numerators in order of increasing power of $x + 2$ in the denominator.'
             answer: 'A = 5; B = -4'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Write $\frac{5x + 6}{(x + 2)^2} = \frac{A}{x + 2} + \frac{B}{(x + 2)^2}$, so $5x + 6 = A(x + 2) + B$. Matching the $x$ coefficients gives $A = 5$, and setting $x = -2$ gives $B = -4$. So $A = 5$ and $B = -4$.'
+            solution_sketch: 'Write $\frac{5x + 6}{(x + 2)^2} = \frac{A}{x + 2} + \frac{B}{(x + 2)^2}$, so $5x + 6 = A(x + 2) + B$. Matching the $x$ coefficients gives $A = 5$, and setting $x = -2$ gives $B = -4$. The numerators are $5$ and $-4$.'
           - problem: 'A particle moves along a line with velocity $v(t) = \frac{4t + 5}{(t + 1)^2}$ metres per second for $t \ge 0$, and $s(0) = 0$. Find its position $s(t)$ in metres.'
             answer: '4 ln(t+1) - 1/(t+1) + 1'
             answer_contract: {"kind": "function", "vars": ["t"], "domain": {"t": ["1.1", "9.3"]}}
@@ -1377,10 +1377,10 @@ topics:
             answer: '3 ln(x + 2) + 2/(x + 2)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["-1.6", "9.3"]}}
             solution_sketch: 'Write $\frac{3x + 4}{(x + 2)^2} = \frac{A}{x + 2} + \frac{B}{(x + 2)^2}$, so $3x + 4 = A(x + 2) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = -2$ gives $B = -2$. Then $\int \frac{3}{x + 2}\,dx = 3\ln(x + 2)$ and $\int \frac{-2}{(x + 2)^2}\,dx = \frac{2}{x + 2}$, so the antiderivative is $3\ln(x + 2) + \frac{2}{x + 2} + C$.'
-          - problem: 'Find the constants $A$ and $B$ in $\frac{3x + 4}{(x - 1)^2} = \frac{A}{x - 1} + \frac{B}{(x - 1)^2}$.'
+          - problem: 'Write $\frac{3x + 4}{(x - 1)^2}$ as partial fractions. Give the numerators in order of increasing power of $x - 1$ in the denominator.'
             answer: 'A = 3; B = 7'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Write $3x + 4 = A(x - 1) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = 1$ gives $B = 7$. So $A = 3$ and $B = 7$.'
+            solution_sketch: 'Write $\frac{3x + 4}{(x - 1)^2} = \frac{A}{x - 1} + \frac{B}{(x - 1)^2}$, so $3x + 4 = A(x - 1) + B$. Matching the $x$ coefficients gives $A = 3$, and setting $x = 1$ gives $B = 7$. The numerators are $3$ and $7$.'
           - problem: 'Find $\int \frac{2x + 1}{x(x + 1)^2}\,dx$ for $x > 0$.'
             answer: 'ln(x) - ln(x+1) - 1/(x+1)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["0.3", "9.3"]}}
@@ -1389,10 +1389,10 @@ topics:
             answer: '1.579'
             answer_contract: {"kind": "approx", "decimals": 3}
             solution_sketch: 'The amount is the integral of the rate. Since $3t + 4 = 3(t + 2) - 2$, the rate equals $\frac{3}{t + 2} - \frac{2}{(t + 2)^2}$, with antiderivative $3\ln(t + 2) + \frac{2}{t + 2}$. From $t = 0$ to $t = 2$ this gives $\left(3\ln 4 + \frac{1}{2}\right) - \left(3\ln 2 + 1\right) = 3\ln 2 - \frac{1}{2}$, about $1.579$ milligrams.'
-          - problem: 'Find the constants $A$ and $B$ for which $\frac{5x - 1}{(x - 3)^2} = \frac{A}{x - 3} + \frac{B}{(x - 3)^2}$.'
+          - problem: 'Write $\frac{5x - 1}{(x - 3)^2}$ as partial fractions. Give the numerators in order of increasing power of $x - 3$ in the denominator.'
             answer: 'A = 5; B = 14'
             answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}]}
-            solution_sketch: 'Write $\frac{5x - 1}{(x - 3)^2} = \frac{A}{x - 3} + \frac{B}{(x - 3)^2}$, so $5x - 1 = A(x - 3) + B$. Matching the $x$ coefficients gives $A = 5$, and setting $x = 3$ gives $B = 14$. So $A = 5$ and $B = 14$.'
+            solution_sketch: 'Write $\frac{5x - 1}{(x - 3)^2} = \frac{A}{x - 3} + \frac{B}{(x - 3)^2}$, so $5x - 1 = A(x - 3) + B$. Matching the $x$ coefficients gives $A = 5$, and setting $x = 3$ gives $B = 14$. The numerators are $5$ and $14$.'
         constraints: "one repeated linear factor of multiplicity 2; total denominator degree <= 3"
       - id: kp2
         name: Improper fractions (divide first)
@@ -1439,10 +1439,10 @@ topics:
             answer: '0.2350'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'Because $x^2 + 1$ is irreducible, write $\frac{1}{x(x^2 + 1)} = \frac{A}{x} + \frac{Bx + C}{x^2 + 1}$. This gives $A = 1$, $B = -1$ and $C = 0$, so the integrand is $\frac{1}{x} - \frac{x}{x^2 + 1}$. The antiderivative is $\ln x - \frac{1}{2}\ln(x^2 + 1)$, and from $1$ to $2$ it gives $\frac{3}{2}\ln 2 - \frac{1}{2}\ln 5$, about 0.2350.'
-          - problem: 'Find the constants $A$, $B$ and $C$ for which $\frac{5}{(x + 2)(x^2 + 1)} = \frac{A}{x + 2} + \frac{Bx + C}{x^2 + 1}$.'
-            answer: 'A = 1; B = -1; C = 2'
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
-            solution_sketch: 'Clearing the denominators gives $5 = A(x^2 + 1) + (Bx + C)(x + 2)$. Setting $x = -2$ gives $5 = 5A$, so $A = 1$. Matching the $x^2$ coefficients gives $A + B = 0$, so $B = -1$, and matching the constant terms gives $A + 2C = 5$, so $C = 2$.'
+          - problem: 'Write $\frac{5}{(x + 2)(x^2 + 1)}$ as partial fractions. Give the numerator over the linear factor, then the numerator over the quadratic factor.'
+            answer: 'linear = 1; quadratic = -x + 2'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"linear"},{"contract":{"kind":"function","vars":["x"]},"name":"quadratic"}]}
+            solution_sketch: 'The numerator over $x^2 + 1$ is $Bx + C$. Write $5 = A(x^2 + 1) + (Bx + C)(x + 2)$. Setting $x = -2$ gives $A = 1$, matching $x^2$ gives $B = -1$, and matching constants gives $C = 2$. The numerators are $1$ and $-x + 2$.'
           - problem: 'Find $\int \frac{dx}{x(x^2 + 1)}$ for $x > 0$.'
             answer: 'ln(x) - (1/2) ln(x^2+1)'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["0.3", "9.3"]}}
@@ -1455,10 +1455,10 @@ topics:
             answer: '0.8664'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'Write $\frac{x^2 + 1}{x(x^2 + 4)} = \frac{A}{x} + \frac{Bx + C}{x^2 + 4}$. Setting $x = 0$ gives $A = \frac{1}{4}$, then $A + B = 1$ gives $B = \frac{3}{4}$, and $C = 0$. The antiderivative is $\frac{1}{4}\ln x + \frac{3}{8}\ln(x^2 + 4)$, and from $1$ to $4$ it gives $\frac{5}{4}\ln 2$, about 0.8664.'
-          - problem: 'Find the constants $A$, $B$ and $C$ for which $\frac{2x}{(x - 1)(x^2 + 4)} = \frac{A}{x - 1} + \frac{Bx + C}{x^2 + 4}$.'
-            answer: 'A = 2/5; B = -2/5; C = 8/5'
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
-            solution_sketch: 'Clearing the denominators gives $2x = A(x^2 + 4) + (Bx + C)(x - 1)$. Setting $x = 1$ gives $2 = 5A$, so $A = \frac{2}{5}$. Matching the $x^2$ coefficients gives $A + B = 0$, so $B = -\frac{2}{5}$. Matching the constant terms gives $4A - C = 0$, so $C = \frac{8}{5}$.'
+          - problem: 'Write $\frac{2x}{(x - 1)(x^2 + 4)}$ as partial fractions. Give the numerator over the linear factor, then the numerator over the quadratic factor.'
+            answer: 'linear = 2/5; quadratic = (-2x + 8)/5'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"linear"},{"contract":{"kind":"function","vars":["x"]},"name":"quadratic"}]}
+            solution_sketch: 'The numerator over $x^2 + 4$ is $Bx + C$. Write $2x = A(x^2 + 4) + (Bx + C)(x - 1)$. Setting $x = 1$ gives $A = \frac{2}{5}$, matching $x^2$ gives $B = -\frac{2}{5}$, and matching constants gives $C = \frac{8}{5}$. The numerators are $\frac{2}{5}$ and $\frac{-2x + 8}{5}$.'
           - problem: 'Evaluate $\int_2^4 \frac{2x^2 + 4}{x(x^2 + 4)}\,dx$ to four decimal places.'
             answer: '1.1513'
             answer_contract: {"kind": "approx", "decimals": 4}
@@ -1471,10 +1471,10 @@ topics:
             answer: '1.2417'
             answer_contract: {"kind": "approx", "decimals": 4}
             solution_sketch: 'The mass is the integral of the rate. Write $\frac{8}{t(t^2 + 4)} = \frac{2}{t} - \frac{2t}{t^2 + 4}$, with antiderivative $2\ln t - \ln(t^2 + 4)$. From $t = 1$ to $t = 3$ this gives $2\ln 3 - \ln 13 + \ln 5 = \ln\frac{45}{13}$, about 1.2417 kilograms.'
-          - problem: 'Find $A$, $B$ and $C$ in $\frac{1}{x(x^2 + 1)} = \frac{A}{x} + \frac{Bx + C}{x^2 + 1}$.'
-            answer: 'A = 1; B = -1; C = 0'
-            answer_contract: {"kind": "multipart", "parts": [{"contract": {"kind": "exact"}, "name": "A"}, {"contract": {"kind": "exact"}, "name": "B"}, {"contract": {"kind": "exact"}, "name": "C"}]}
-            solution_sketch: 'A constant over $x^2 + 1$ cannot supply the $x$ term, so the numerator must be $Bx + C$. Clearing the denominators gives $1 = A(x^2 + 1) + (Bx + C)x$. Setting $x = 0$ gives $A = 1$. Matching the $x^2$ coefficients gives $A + B = 0$, so $B = -1$, and matching the $x$ coefficients gives $C = 0$.'
+          - problem: 'Write $\frac{1}{x(x^2 + 1)}$ as partial fractions. Give the numerator over the linear factor, then the numerator over the quadratic factor.'
+            answer: 'linear = 1; quadratic = -x'
+            answer_contract: {"kind":"multipart","parts":[{"contract":{"kind":"exact"},"name":"linear"},{"contract":{"kind":"exact"},"name":"quadratic"}]}
+            solution_sketch: 'A constant over $x^2 + 1$ cannot supply the $x$ term, so that numerator is $Bx + C$. Write $1 = A(x^2 + 1) + (Bx + C)x$. Setting $x = 0$ gives $A = 1$, matching $x^2$ gives $B = -1$, and matching $x$ gives $C = 0$. The numerators are $1$ and $-x$.'
         constraints: "at most one irreducible quadratic factor (x^2 + 1 or x^2 + 4); Bx + C numerator handled by u = the quadratic"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_2^3 \frac{dx}{x^2-1}$.'
@@ -1585,10 +1585,10 @@ topics:
             answer: 'ln(2)/3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Let $t = \tan(x/2)$. Then $4 + 5\sin x = \frac{4t^2 + 10t + 4}{1 + t^2}$, and the integral becomes $\int_0^1 \frac{dt}{2t^2 + 5t + 2} = \int_0^1 \frac{dt}{(2t + 1)(t + 2)}$. Partial fractions give $\frac{1}{(2t + 1)(t + 2)} = \frac{2/3}{2t + 1} - \frac{1/3}{t + 2}$, with antiderivative $\frac{1}{3}\ln(2t + 1) - \frac{1}{3}\ln(t + 2)$. From $t = 0$ to $t = 1$ this gives $0 + \frac{1}{3}\ln 2 = \frac{\ln 2}{3}$.'
-          - problem: 'With $t = \tan(x/2)$, the integral $\int \frac{dx}{3 + \cos x}$ becomes $\int g(t)\,dt$. Find $g(t)$.'
-            answer: '1/(2+t^2)'
+          - problem: 'Find the value of $\int_0^{\pi} \frac{dx}{3 + \cos x}$.'
+            answer: 'pi*sqrt(2)/4'
             answer_contract: {"kind": "function", "vars": ["t"]}
-            solution_sketch: 'Replace $\cos x$ by $\frac{1 - t^2}{1 + t^2}$ and $dx$ by $\frac{2\,dt}{1 + t^2}$. The denominator is $3 + \frac{1 - t^2}{1 + t^2} = \frac{4 + 2t^2}{1 + t^2}$. So $g(t) = \frac{2}{1 + t^2}\cdot\frac{1 + t^2}{4 + 2t^2} = \frac{2}{4 + 2t^2} = \frac{1}{2 + t^2}$.'
+            solution_sketch: 'Put $t = \tan(x/2)$, so $\cos x = \frac{1 - t^2}{1 + t^2}$ and $dx = \frac{2\,dt}{1 + t^2}$. The integrand becomes $\frac{1}{2 + t^2}$ and the bounds become $0$ and $\infty$. The value is $\frac{1}{\sqrt2}\cdot\frac{\pi}{2}=\frac{\pi\sqrt2}{4}$.'
           - problem: 'Find $\int \frac{dx}{2 + \sin x + \cos x}$ for $-\pi < x < \pi$.'
             answer: 'sqrt(2) atan((tan(x/2) + 1)/sqrt(2))'
             answer_contract: {"kind": "function", "vars": ["x"], "up_to_constant": true, "domain": {"x": ["-1.3", "1.4"]}}
@@ -1888,10 +1888,10 @@ topics:
             answer: '9'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The integrand is undefined at $x=0$, which lies inside the interval, so split there. Each piece uses $\int x^{-2/3}\,dx=3x^{1/3}$: on $[-1,0]$ the limit gives $3\cdot1=3$, and on $[0,8]$ it gives $3\cdot2=6$. The sum is $3+6=9$.'
-          - problem: 'Applying the Fundamental Theorem of Calculus directly to $\int_{-1}^{1} \frac{dx}{x^2}$ gives $-2$. Does this integral converge or diverge?'
+          - problem: 'Does $\int_{-1}^{1} \frac{dx}{x^2}$ converge or diverge?'
             answer: 'diverges'
             answer_contract: {"kind":"label","options":[["diverges","it diverges","divergent","diverge","does not converge","doesn't converge","diverges to infinity","infinite"],["converges","it converges","convergent","converge","finite","the integral converges","converges to a finite value","it is convergent"]]}
-            solution_sketch: 'The integrand is undefined at $x=0$, inside the interval, so the Fundamental Theorem cannot be used across it. Split at $0$: $\int_0^1 x^{-2}\,dx=\lim_{a\to0^+}\left(\frac1a-1\right)$ is infinite. One divergent half makes the whole integral diverge, and the value $-2$ is meaningless for a positive integrand.'
+            solution_sketch: 'The integrand is undefined at $x=0$, inside the interval, so split at $0$. Then $\int_0^1 x^{-2}\,dx=\lim_{a\to0^+}\left(\frac1a-1\right)$ is infinite. One divergent half makes the whole integral diverge.'
           - problem: 'Evaluate $\int_0^3 \frac{dx}{(x-1)^{1/3}}$.'
             answer: '3/2*2^(2/3) - 3/2'
             answer_contract: {"kind":"exact"}
@@ -2030,34 +2030,34 @@ topics:
             answer: 'converges'
             answer_contract: {"kind":"label","options":[["converges","it converges","convergent","converge","finite","the integral converges","converges to a finite value","it is convergent"],["diverges","it diverges","divergent","diverge","does not converge","doesn't converge","diverges to infinity","infinite"]]}
             solution_sketch: 'For $x\geq1$ we have $x^3+4>x^3$, so $0<\frac{1}{x^3+4}<\frac{1}{x^3}$ on the whole interval. The integral $\int_1^{\infty}\frac{dx}{x^3}$ converges because $p=3>1$. By direct comparison the given integral converges.'
-          - problem: 'Compare $\frac{1}{x^3+1}$ with $\frac{1}{x^3}$ on $[1,\infty)$. What upper bound does the comparison test give for $\int_1^{\infty}\frac{dx}{x^3+1}$?'
+          - problem: 'Let $p$ be the largest number such that $\frac{1}{x^3+1}\le x^{-p}$ for all $x\ge1$. Find $\int_1^{\infty}x^{-p}\,dx$, an upper bound for $\int_1^{\infty}\frac{dx}{x^3+1}$.'
             answer: '1/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'For $x\geq1$ we have $0<\frac{1}{x^3+1}<\frac{1}{x^3}$. Then $\int_1^{\infty}\frac{dx}{x^3}=\left[-\frac{1}{2x^2}\right]_1^{\infty}=\frac12$. So the integral is at most $\frac12$.'
-          - problem: 'Since $x^2\geq x$ for $x\geq1$, the comparison test bounds $\int_1^{\infty}e^{-x^2}\,dx$ above by $\int_1^{\infty}e^{-x}\,dx$. What is that bound?'
+            solution_sketch: 'The inequality means $x^p\le x^3+1$ for $x\ge1$. The value $p=3$ works, and a larger $p$ fails for large $x$. Then $\int_1^{\infty}x^{-3}\,dx=\left[-\frac{1}{2x^2}\right]_1^{\infty}=\frac12$.'
+          - problem: 'Let $c$ be the largest number such that $e^{-x^2}\le e^{-cx}$ for all $x\ge1$. Find $\int_1^{\infty}e^{-cx}\,dx$, an upper bound for $\int_1^{\infty}e^{-x^2}\,dx$.'
             answer: 'e^(-1)'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We have $0<e^{-x^2}\leq e^{-x}$ for $x\geq1$ because $x^2\geq x$. The bounding integral is $\int_1^{\infty}e^{-x}\,dx=\left[-e^{-x}\right]_1^{\infty}=e^{-1}$. So $\int_1^{\infty}e^{-x^2}\,dx\leq e^{-1}$.'
-          - problem: 'Water flows into a reservoir at the rate $r(t)=\frac{3}{t^2+5}$ litres per minute, $t$ minutes after a pump starts. Compare with $\frac{3}{t^2}$ on $[1,\infty)$. What upper bound does this give for the total volume that flows in from $t=1$ on?'
+            solution_sketch: 'The inequality means $x^2\ge cx$, that is $x\ge c$ for all $x\ge1$. So $c=1$. Then $\int_1^{\infty}e^{-x}\,dx=\left[-e^{-x}\right]_1^{\infty}=e^{-1}$.'
+          - problem: 'Water flows into a reservoir at the rate $r(t)=\frac{3}{t^2+5}$ litres per minute, $t$ minutes after a pump starts. Let $p$ be the largest number such that $r(t)\le\frac{3}{t^p}$ for all $t\ge1$. Find $\int_1^{\infty}3t^{-p}\,dt$, an upper bound for the total volume that flows in from $t=1$ on.'
             answer: '3'
             answer_contract: {"kind":"unit","quantity":"volume","unit":"L","allow_omitted":true}
-            solution_sketch: 'For $t\geq1$ we have $0<\frac{3}{t^2+5}<\frac{3}{t^2}$. Then $\int_1^{\infty}3t^{-2}\,dt=\left[-3t^{-1}\right]_1^{\infty}=3$. So no more than $3$ litres flow in after $t=1$.'
+            solution_sketch: 'The inequality means $t^p\le t^2+5$ for $t\ge1$. The value $p=2$ works, and a larger $p$ fails for large $t$. Then $\int_1^{\infty}3t^{-2}\,dt=\left[-3t^{-1}\right]_1^{\infty}=3$, so no more than $3$ litres flow in after $t=1$.'
           - problem: 'A server receives requests at the rate $r(t)=\frac{2+\sin t}{t}$ per second, $t$ seconds after a test begins, for $t\geq1$. Does the total number of requests over all time stay finite, or does it grow without bound?'
             answer: 'grows without bound'
             answer_contract: {"kind":"label","options":[["grows without bound","it grows without bound","diverges","it diverges","unbounded","infinite","does not stay finite"],["stays finite","it stays finite","converges","it converges","finite","bounded"]]}
             solution_sketch: 'Since $\sin t\geq-1$, we have $2+\sin t\geq1$, so $r(t)\geq\frac1t$ for $t\geq1$. The integral $\int_1^{\infty}\frac{dt}{t}$ diverges because $p=1$. By comparison the total number of requests grows without bound.'
-          - problem: 'For $x\geq4$ we have $\frac{1}{\sqrt{x}-1}\geq\frac{1}{\sqrt{x}}$, and $\int_4^{b}\frac{dx}{\sqrt{x}}=2\sqrt{b}-4$. For which value of $b$ does this lower bound for $\int_4^{b}\frac{dx}{\sqrt{x}-1}$ equal $100$?'
+          - problem: 'Let $c$ be the largest number such that $\frac{1}{\sqrt{x}-1}\ge\frac{c}{\sqrt{x}}$ for all $x\ge4$. For which value of $b$ does $\int_4^{b}\frac{c}{\sqrt{x}}\,dx$, a lower bound for $\int_4^{b}\frac{dx}{\sqrt{x}-1}$, equal $100$?'
             answer: '2704'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'We need $2\sqrt{b}-4=100$, so $2\sqrt{b}=104$ and $\sqrt{b}=52$. Then $b=52^2=2704$. Since $2\sqrt b$ grows without bound, the integral of $\frac{1}{\sqrt{x}-1}$ over $[4,\infty)$ diverges.'
-          - problem: 'Compare $\frac{1}{x^3+x}$ with $\frac{1}{x^3}$ on $[2,\infty)$. What upper bound does the comparison test give for $\int_2^{\infty}\frac{dx}{x^3+x}$?'
+            solution_sketch: 'The inequality means $c\le\frac{\sqrt{x}}{\sqrt{x}-1}$. This fraction decreases toward $1$, so $c=1$. Then $\int_4^{b}x^{-1/2}\,dx=2\sqrt{b}-4=100$, so $\sqrt{b}=52$ and $b=2704$.'
+          - problem: 'Let $p$ be the largest number such that $\frac{1}{x^3+x}\le x^{-p}$ for all $x\ge2$. Find $\int_2^{\infty}x^{-p}\,dx$, an upper bound for $\int_2^{\infty}\frac{dx}{x^3+x}$.'
             answer: '1/8'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'For $x\geq2$ we have $0<\frac{1}{x^3+x}<\frac{1}{x^3}$. Then $\int_2^{\infty}x^{-3}\,dx=\left[-\frac{1}{2x^2}\right]_2^{\infty}=\frac18$. So the integral is at most $\frac18$.'
-          - problem: 'Since $\cos x\leq1$, we have $\frac{2+\cos x}{x^3}\leq\frac{3}{x^3}$ for $x\geq1$. What upper bound does the comparison test give for $\int_1^{\infty}\frac{2+\cos x}{x^3}\,dx$?'
+            solution_sketch: 'The inequality means $x^p\le x^3+x$ for $x\ge2$. The value $p=3$ works, and a larger $p$ fails for large $x$. Then $\int_2^{\infty}x^{-3}\,dx=\left[-\frac{1}{2x^2}\right]_2^{\infty}=\frac18$.'
+          - problem: 'Let $M$ be the smallest number such that $\frac{2+\cos x}{x^3}\le\frac{M}{x^3}$ for all $x\ge1$. Find $\int_1^{\infty}\frac{M}{x^3}\,dx$, an upper bound for $\int_1^{\infty}\frac{2+\cos x}{x^3}\,dx$.'
             answer: '3/2'
             answer_contract: {"kind":"exact"}
-            solution_sketch: 'For $x\geq1$ we have $0<\frac{2+\cos x}{x^3}\leq\frac{3}{x^3}$. Then $\int_1^{\infty}3x^{-3}\,dx=\left[-\frac{3}{2x^2}\right]_1^{\infty}=\frac32$. So the integral is at most $\frac32$.'
+            solution_sketch: 'The inequality means $2+\cos x\le M$ for all $x\ge1$. The value $\cos x=1$ occurs at $x=2\pi$, so $M=3$. Then $\int_1^{\infty}3x^{-3}\,dx=\left[-\frac{3}{2x^2}\right]_1^{\infty}=\frac32$.'
         constraints: "comparisons against p-integrals or e^{-x}; the inequality must hold on the whole interval and be stated; questions ask for the verdict, the comparison bound, or a quantity read from the bound; context items: reservoir and server"
     diagnostic_exemplar:
       problem: 'Evaluate $\int_1^{\infty} \frac{8}{x^5}\,dx$.'

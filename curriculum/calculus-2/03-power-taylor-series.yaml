@@ -362,10 +362,10 @@ topics:
             answer: '-2 < x <= 2'
             answer_contract: {"kind": "inequality_union"}
             solution_sketch: 'The series converges for $-2<x<2$ because the radius is $2$. It converges at the right endpoint $x=2$, and it diverges at the left endpoint $x=-2$. So the interval is $-2<x\le2$.'
-          - problem: 'A power series $\sum c_n x^n$ has radius of convergence $3$. At $x=3$ it becomes $\sum\frac{1}{n^2}$, and at $x=-3$ it becomes $\sum\frac{(-1)^n}{n^2}$. What is its interval of convergence?'
+          - problem: 'A power series $\sum_{n=1}^{\infty}\frac{x^n}{n^2\,3^n}$ has radius of convergence $3$. What is its interval of convergence?'
             answer: '-3 <= x <= 3'
             answer_contract: {"kind": "inequality_union"}
-            solution_sketch: 'The series converges for $-3<x<3$ because the radius is $3$. At $x=3$ it is a $p$-series with $p=2$, which converges. At $x=-3$ it converges absolutely. So the interval is $-3\le x\le3$.'
+            solution_sketch: 'The series converges for $-3<x<3$ because the radius is $3$. At $x=3$ the series is $\sum\frac{1}{n^2}$, a $p$-series with $p=2$, which converges. At $x=-3$ the series is $\sum\frac{(-1)^n}{n^2}$, which converges absolutely. So the interval is $-3\le x\le3$.'
         constraints: 'endpoint series must reduce to p-series, alternating p-series, or geometric; include both-endpoints-converge and neither cases, one yes/no endpoint verdict and two setup items from a given radius and endpoint behavior'
       - id: kp2
         name: Intervals for centered series
@@ -494,14 +494,14 @@ topics:
             answer: '1/(1-x)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The derivative of the left side is $\frac{1}{(1-x)^2}$. The derivative of the right side, term by term, is $\sum_{n=1}^{\infty} n\,x^{n-1}$. The two sides are equal for $|x|<1$, so the series equals $\frac{1}{(1-x)^2}$.'
-          - problem: 'Use $\sum_{n=1}^{\infty} n\,x^{n-1}=\frac{1}{(1-x)^2}$ to evaluate $\sum_{n=1}^{\infty} \frac{n}{4^{\,n-1}}$.'
+          - problem: 'For $|x|<1$, $\sum_{n=0}^{\infty} x^n=\frac{1}{1-x}$. Use this series to evaluate $\sum_{n=1}^{\infty} \frac{n}{4^{\,n-1}}$.'
             answer: '16/9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The sum is $\sum n\left(\frac14\right)^{n-1}$, so put $x=\frac14$ in the formula. This gives $\frac{1}{(1-\frac14)^2}=\frac{1}{(3/4)^2}$. The value is $\frac{16}{9}$.'
-          - problem: 'A fair coin is tossed until the first head appears. The probability that this happens on toss $n$ is $\left(\frac12\right)^n$, so the expected number of tosses is $\sum_{n=1}^{\infty} n\left(\frac12\right)^n$. Use $\sum_{n=1}^{\infty} n\,x^n=\frac{x}{(1-x)^2}$ to find the expected number of tosses.'
+            solution_sketch: 'Differentiate both sides term by term. This gives $\sum_{n=1}^{\infty} n\,x^{n-1}=\frac{1}{(1-x)^2}$. The given sum is this series at $x=\frac14$, so its value is $\frac{1}{(3/4)^2}=\frac{16}{9}$.'
+          - problem: 'A fair coin is tossed until the first head appears. The probability that this happens on toss $n$ is $\left(\frac12\right)^n$. For $|x|<1$, $\sum_{n=0}^{\infty} x^n=\frac{1}{1-x}$. Find the expected number of tosses.'
             answer: '2'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Put $x=\frac12$ in the formula. This gives $\frac{1/2}{(1-1/2)^2}=\frac{1/2}{1/4}$. The expected number of tosses is $2$.'
+            solution_sketch: 'The expected number of tosses is $\sum_{n=1}^{\infty} n\left(\frac12\right)^n$. Differentiate the geometric series to get $\sum n\,x^{n-1}=\frac{1}{(1-x)^2}$, then multiply by $x$. At $x=\frac12$ this gives $\frac{1/2}{1/4}=2$.'
           - problem: 'Find the coefficient of $x^9$ in the power series of $\frac{1}{(1-x)^2}$ about $0$.'
             answer: '10'
             answer_contract: {"kind": "exact"}
@@ -510,10 +510,10 @@ topics:
             answer: '1 - 2x + 3x^2 - 4x^3'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'The series of $\frac{1}{1+x}$ is $1-x+x^2-x^3+x^4-\cdots$. Its derivative is $-1+2x-3x^2+4x^3-\cdots$, and this equals $-\frac{1}{(1+x)^2}$. Changing every sign gives $1-2x+3x^2-4x^3$ for $\frac{1}{(1+x)^2}$.'
-          - problem: 'Use $\sum_{n=1}^{\infty} n\,x^{n-1}=\frac{1}{(1-x)^2}$ to find the function that is equal to $\sum_{n=1}^{\infty} n\,x^n$ for $|x|<1$.'
+          - problem: 'For $|x|<1$, $\sum_{n=0}^{\infty} x^n=\frac{1}{1-x}$. Find the function that is equal to $\sum_{n=1}^{\infty} n\,x^n$ for $|x|<1$.'
             answer: 'x/(1-x)^2'
             answer_contract: {"kind": "function", "vars": ["x"]}
-            solution_sketch: 'Multiplying each term $n\,x^{n-1}$ by $x$ gives $n\,x^n$. Multiplying the right side by $x$ gives $\frac{x}{(1-x)^2}$. So $\sum_{n=1}^{\infty} n\,x^n=\frac{x}{(1-x)^2}$.'
+            solution_sketch: 'Differentiate the geometric series term by term. This gives $\sum_{n=1}^{\infty} n\,x^{n-1}=\frac{1}{(1-x)^2}$. Multiply both sides by $x$ to get $\sum n\,x^n=\frac{x}{(1-x)^2}$.'
           - problem: 'A fair die is rolled until the first six appears. The probability that this happens on roll $n$ is $\left(\frac56\right)^{n-1}\cdot\frac16$, so the expected number of rolls is $\frac16\sum_{n=1}^{\infty} n\left(\frac56\right)^{n-1}$. Find the expected number of rolls.'
             answer: '6'
             answer_contract: {"kind": "exact"}
@@ -559,14 +559,14 @@ topics:
             answer: '3 + x + x^2/2 + x^3/3'
             answer_contract: {"kind": "function", "vars": ["x"]}
             solution_sketch: 'Integrating $1+x+x^2+x^3+\cdots$ term by term gives $C+x+\frac{x^2}{2}+\frac{x^3}{3}+\cdots$. The condition $F(0)=3$ gives $C=3$. So the first four terms are $3+x+\frac{x^2}{2}+\frac{x^3}{3}$.'
-          - problem: 'Use the first four nonzero terms of the series $\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\cdots$ to approximate $\ln 1.5$ to three decimal places.'
+          - problem: 'For $|x|<1$, $\frac{1}{1+x}=1-x+x^2-x^3+\cdots$. Use this series to estimate $\ln 1.5$ with the first four nonzero terms of a series for $\ln(1+x)$. Give three decimal places.'
             answer: '0.401'
             answer_contract: {"kind": "approx", "decimals": 3}
-            solution_sketch: 'Put $x=0.5$ in the first four terms. This gives $0.5-0.125+0.0416667-0.015625=0.4010417$. To three decimal places the approximation is $0.401$.'
-          - problem: 'The series $-\ln(1-x)=\sum_{n=1}^{\infty}\frac{x^n}{n}$ holds for $-1\le x<1$. Use it to find the value of $\sum_{n=1}^{\infty} \frac{1}{n\,2^n}$.'
+            solution_sketch: 'Integrate the series term by term from $0$ to $x$. This gives $\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\frac{x^4}{4}+\cdots$, and the constant is $0$ because $\ln 1=0$. Put $x=0.5$ in the first four terms to get $0.4010417$, which rounds to $0.401$.'
+          - problem: 'For $|x|<1$, $\frac{1}{1-x}=\sum_{n=0}^{\infty} x^n$. Use this series to find the exact value of $\sum_{n=1}^{\infty} \frac{1}{n\,2^n}$.'
             answer: 'ln(2)'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Put $x=\frac12$ in the series. The left side is $-\ln\left(1-\frac12\right)=-\ln\frac12=\ln 2$. So the sum is $\ln 2$.'
+            solution_sketch: 'Integrate the series term by term from $0$ to $x$. This gives $-\ln(1-x)=\sum_{n=1}^{\infty}\frac{x^n}{n}$. At $x=\frac12$ the left side is $-\ln\frac12=\ln 2$, so the sum is $\ln 2$.'
           - problem: 'What is the coefficient of $x^7$ in the series for $\int_0^x \sum_{n=0}^{\infty} t^n\,dt$?'
             answer: '1/7'
             answer_contract: {"kind": "exact"}
@@ -891,7 +891,7 @@ topics:
             answer: '1/6'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $\sin x=x-\frac{x^3}{6}+\frac{x^5}{120}-\cdots$, we get $x-\sin x=\frac{x^3}{6}-\frac{x^5}{120}+\cdots$. Dividing by $x^3$ leaves $\frac{1}{6}-\frac{x^2}{120}+\cdots$, which tends to $\frac{1}{6}$.'
-          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{n!}$ by recognizing a standard series.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{n!}$.'
             answer: 'e^2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The series $\sum\frac{x^n}{n!}$ equals $e^x$. Putting $x=2$ gives $\sum\frac{2^n}{n!}=e^2$.'
@@ -915,11 +915,11 @@ topics:
             answer: '-1/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'Since $\ln(1+x)=x-\frac{x^2}{2}+\frac{x^3}{3}-\cdots$, we get $\ln(1+x)-x=-\frac{x^2}{2}+\frac{x^3}{3}-\cdots$. Dividing by $x^2$ leaves $-\frac{1}{2}+\frac{x}{3}-\cdots$, which tends to $-\frac{1}{2}$.'
-          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{(n+1)!}$ by recognizing a standard series.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{2^n}{(n+1)!}$.'
             answer: '(e^2-1)/2'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The series $e^2=\sum_{k=0}^{\infty}\frac{2^k}{k!}=1+2+\frac{2^2}{2!}+\cdots$ gives $e^2-1=\sum_{k=1}^{\infty}\frac{2^k}{k!}=\sum_{n=0}^{\infty}\frac{2^{n+1}}{(n+1)!}$. Dividing by $2$ gives the sum $\frac{e^2-1}{2}$.'
-          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$ by recognizing a standard series.'
+          - problem: 'Evaluate $\sum_{n=0}^{\infty} \frac{(-1)^n}{n!}$.'
             answer: '1/e'
             answer_contract: {"kind":"exact"}
             solution_sketch: 'The series $\sum\frac{x^n}{n!}$ equals $e^x$. Putting $x=-1$ gives $\sum\frac{(-1)^n}{n!}=e^{-1}=\frac{1}{e}$.'
@@ -1040,18 +1040,18 @@ topics:
             answer: '1.115'
             answer_contract: {"kind":"approx","decimals":3}
             solution_sketch: 'With $1-x=0.8$ we have $x=0.2$. The three terms $1+\frac{x}{2}+\frac{3x^2}{8}$ give $1+0.1+0.015=1.115$.'
-          - problem: 'Integrate the series for $\frac{1}{\sqrt{1 - x^2}}$ term by term to find the Maclaurin series of $\arcsin x$ through the $x^5$ term.'
+          - problem: 'Find the Maclaurin series of $\arcsin x$ through the $x^5$ term.'
             answer: 'x + x^3/6 + 3x^5/40'
             answer_contract: {"kind":"function","vars":["x"]}
-            solution_sketch: 'Integrate $1+\frac{x^2}{2}+\frac{3x^4}{8}$ term by term to get $x+\frac{x^3}{6}+\frac{3x^5}{40}$. The constant is $\arcsin 0=0$.'
-          - problem: 'A lamp is moved from a distance $d$ to a distance $1.1d$, so its brightness falls to the fraction $(1.1)^{-2}=(1+x)^{-2}$ with $x=0.1$ of the original. Use the first three terms of the binomial series for $(1+x)^{-2}$ to approximate this fraction to two decimal places.'
+            solution_sketch: 'The derivative of $\arcsin x$ is $(1-x^2)^{-1/2}=1+\frac{x^2}{2}+\frac{3x^4}{8}+\cdots$. Integrate term by term to get $x+\frac{x^3}{6}+\frac{3x^5}{40}$. The constant is $\arcsin 0=0$.'
+          - problem: 'A lamp is moved from a distance $d$ to a distance $1.1d$, so its brightness falls to the fraction $(1.1)^{-2}$ of the original. Use the first three terms of a binomial series to approximate this fraction to two decimal places.'
             answer: '0.83'
             answer_contract: {"kind":"approx","decimals":2}
-            solution_sketch: 'The first three terms $1-2x+3x^2$ at $x=0.1$ give $1-0.2+0.03=0.83$.'
-          - problem: 'A particle moves at $0.2$ of the speed of light, so $u=\frac{v^2}{c^2}=0.04$. Use the first three terms of the binomial series for $(1-u)^{-1/2}$ to approximate $\gamma=(1-u)^{-1/2}$ to four decimal places.'
+            solution_sketch: 'Write $(1.1)^{-2}=(1+x)^{-2}$ with $x=0.1$. The first three terms $1-2x+3x^2$ give $1-0.2+0.03=0.83$.'
+          - problem: 'A particle moves at $0.2$ of the speed of light $c$. Use the first three terms of a binomial series to approximate $\gamma=\left(1-\frac{v^2}{c^2}\right)^{-1/2}$ to four decimal places.'
             answer: '1.0206'
             answer_contract: {"kind":"approx","decimals":4}
-            solution_sketch: 'The first three terms $1+\frac{u}{2}+\frac{3u^2}{8}$ at $u=0.04$ give $1+0.02+0.0006=1.0206$.'
+            solution_sketch: 'Here $u=\frac{v^2}{c^2}=0.2^2=0.04$ and $\gamma=(1-u)^{-1/2}$. The first three terms $1+\frac{u}{2}+\frac{3u^2}{8}$ give $1+0.02+0.0006=1.0206$.'
           - problem: 'Use the first three terms of the binomial series for $(1-x)^{1/2}$ to approximate $\sqrt{0.98}$ to five decimal places.'
             answer: '0.98995'
             answer_contract: {"kind":"approx","decimals":5}
@@ -1386,39 +1386,39 @@ topics:
         name: Expressing integrals as numerical series
         key_prerequisites: [taylor-maclaurin-series, differentiating-integrating-power-series]
         exemplars:
-          - problem: 'The integral $\displaystyle\int_0^1 e^{-x^2}\,dx$ has no elementary antiderivative. Replace $e^{-x^2}$ by its Maclaurin series and integrate term by term to write the integral as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_2$.'
+          - problem: 'The integral $\displaystyle\int_0^1 e^{-x^2}\,dx$ has no elementary antiderivative. Write it as an infinite series of numbers $\displaystyle\sum_{n=0}^{\infty} a_n$ from the power series of the integrand. Find $a_2$.'
             answer: '1/10'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The series is $e^{-x^2} = 1 - x^2 + \frac{x^4}{2} - \frac{x^6}{6} + \cdots$. The term $n = 2$ is $\frac{x^4}{2}$, and $\int_0^1 \frac{x^4}{2}\,dx = \frac{1}{2 \cdot 5}$. So $a_2 = \frac{1}{10}$.'
-          - problem: 'Integrate the Maclaurin series of $\dfrac{\sin x}{x}$ term by term to write $\displaystyle\int_0^1 \dfrac{\sin x}{x}\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_2$.'
+            solution_sketch: 'The series of the integrand is $e^{-x^2} = 1 - x^2 + \frac{x^4}{2} - \frac{x^6}{6} + \cdots$. The term $n = 2$ is $\frac{x^4}{2}$, and $\int_0^1 \frac{x^4}{2}\,dx = \frac{1}{2 \cdot 5}$. So $a_2 = \frac{1}{10}$.'
+          - problem: 'Write $\displaystyle\int_0^1 \dfrac{\sin x}{x}\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_2$.'
             answer: '1/600'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\frac{\sin x}{x} = 1 - \frac{x^2}{6} + \frac{x^4}{120} - \cdots$. The term $n = 2$ is $\frac{x^4}{120}$, and $\int_0^1 \frac{x^4}{120}\,dx = \frac{1}{120 \cdot 5}$. So $a_2 = \frac{1}{600}$.'
-          - problem: 'Integrate the Maclaurin series of $\cos(x^2)$ term by term to write $\displaystyle\int_0^1 \cos(x^2)\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_3$.'
+          - problem: 'Write $\displaystyle\int_0^1 \cos(x^2)\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_3$.'
             answer: '-1/9360'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\cos(x^2) = 1 - \frac{x^4}{2} + \frac{x^8}{24} - \frac{x^{12}}{720} + \cdots$. The term $n = 3$ is $-\frac{x^{12}}{720}$, and its integral over $[0,1]$ is $-\frac{1}{720 \cdot 13}$. So $a_3 = -\frac{1}{9360}$.'
-          - problem: 'Integrate the Maclaurin series of $e^{-x^2}$ term by term to write $\displaystyle\int_0^2 e^{-x^2}\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_3$.'
+          - problem: 'Write $\displaystyle\int_0^2 e^{-x^2}\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_3$.'
             answer: '-64/21'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The term $n = 3$ of the series of $e^{-x^2}$ is $-\frac{x^6}{6}$. Its integral over $[0,2]$ is $-\frac{2^7}{6 \cdot 7} = -\frac{128}{42}$. So $a_3 = -\frac{64}{21}$.'
-          - problem: 'Integrate the Maclaurin series of $\sin(x^2)$ term by term to write $\displaystyle\int_0^1 \sin(x^2)\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_2$.'
+          - problem: 'Write $\displaystyle\int_0^1 \sin(x^2)\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_2$.'
             answer: '1/1320'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\sin(x^2) = x^2 - \frac{x^6}{6} + \frac{x^{10}}{120} - \cdots$. The term $n = 2$ is $\frac{x^{10}}{120}$, and its integral over $[0,1]$ is $\frac{1}{120 \cdot 11}$. So $a_2 = \frac{1}{1320}$.'
-          - problem: 'Integrate the Maclaurin series of $\dfrac{\arctan x}{x}$ term by term to write $\displaystyle\int_0^1 \dfrac{\arctan x}{x}\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_2$.'
+          - problem: 'Write $\displaystyle\int_0^1 \dfrac{\arctan x}{x}\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_2$.'
             answer: '1/25'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\frac{\arctan x}{x} = 1 - \frac{x^2}{3} + \frac{x^4}{5} - \cdots$. The term $n = 2$ is $\frac{x^4}{5}$, and $\int_0^1 \frac{x^4}{5}\,dx = \frac{1}{5 \cdot 5}$. So $a_2 = \frac{1}{25}$.'
-          - problem: 'Integrate the Maclaurin series of $\dfrac{\ln(1+x)}{x}$ term by term to write $\displaystyle\int_0^{1/2} \dfrac{\ln(1+x)}{x}\,dx$ as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_2$.'
+          - problem: 'Write $\displaystyle\int_0^{1/2} \dfrac{\ln(1+x)}{x}\,dx$ as an infinite series of numbers $\sum_{n=0}^{\infty}a_n$ from the power series of the integrand. Find $a_2$.'
             answer: '1/72'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\frac{\ln(1+x)}{x} = 1 - \frac{x}{2} + \frac{x^2}{3} - \cdots$. The term $n = 2$ is $\frac{x^2}{3}$, and $\int_0^{1/2} \frac{x^2}{3}\,dx = \frac{(1/2)^3}{9}$. So $a_2 = \frac{1}{72}$.'
-          - problem: 'The area under the curve $y = e^{-x^2}$ between $x = 0$ and $x = 1$ cannot be found with an elementary antiderivative. Integrate the Maclaurin series of $e^{-x^2}$ term by term to write the area as $\displaystyle\sum_{n=0}^{\infty} a_n$. Find $a_3$.'
+          - problem: 'The area under the curve $y = e^{-x^2}$ between $x = 0$ and $x = 1$ cannot be found with an elementary antiderivative. Write the area as an infinite series of numbers $\displaystyle\sum_{n=0}^{\infty} a_n$ from the power series of $y$. Find $a_3$.'
             answer: '-1/42'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The term $n = 3$ of the series of $e^{-x^2}$ is $-\frac{x^6}{6}$. Its integral over $[0,1]$ is $-\frac{1}{6 \cdot 7}$. So $a_3 = -\frac{1}{42}$.'
-          - problem: 'In optics the sine integral $\displaystyle\int_0^1 \dfrac{\sin t}{t}\,dt$ measures the light reaching the center of a diffraction pattern. Integrate the series of $\dfrac{\sin t}{t}$ term by term and find the sum of the first three terms of the result.'
+          - problem: 'In optics the sine integral $\displaystyle\int_0^1 \dfrac{\sin t}{t}\,dt$ measures the light reaching the center of a diffraction pattern. Write it as an infinite series of numbers from the power series of the integrand. Find the sum of the first three terms of this series.'
             answer: '1703/1800'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The series is $\frac{\sin t}{t} = 1 - \frac{t^2}{6} + \frac{t^4}{120} - \cdots$. Integrating over $[0,1]$ gives $1 - \frac{1}{18} + \frac{1}{600} - \cdots$. The sum of the first three terms is $\frac{1800 - 100 + 3}{1800} = \frac{1703}{1800}$.'

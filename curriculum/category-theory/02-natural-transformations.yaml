@@ -49,7 +49,7 @@ topics:
             answer: '(2, 3)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The component at an object $X$ is a morphism of $\mathcal{D}$ from $F(X)$ to $G(X)$. At $B$ we have $F(B)=2$ and $G(B)=3$, so $\alpha_B$ is the morphism from $2$ to $3$, with source $2$ and target $3$.'
-          - problem: 'Let $\mathcal{C}$ be the chain $1<2<3<4$ and $P$ the chain $0<1<2$, both viewed as categories with a morphism from $x$ to $y$ exactly when $x\le y$. Let $F,G\colon\mathcal{C}\to P$ send $1,2,3,4$ to $0,2,2,2$ for $F$ and to $0,1,1,2$ for $G$. Find the least object $i$ of $\mathcal{C}$ at which no component $F(i)\to G(i)$ exists, so that there is no natural transformation $F\Rightarrow G$.'
+          - problem: 'Let $\mathcal{C}$ be the chain $1<2<3<4$ and $P$ the chain $0<1<2$, both viewed as categories with a morphism from $x$ to $y$ exactly when $x\le y$. Let $F,G\colon\mathcal{C}\to P$ send $1,2,3,4$ to $0,2,2,2$ for $F$ and to $0,1,1,2$ for $G$. Find the least object $i$ of $\mathcal{C}$ at which no component $F(i)\to G(i)$ exists.'
             answer: '2'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'A component at $i$ is a morphism $F(i)\to G(i)$ in $P$, which exists exactly when $F(i)\le G(i)$. At $i=1$ we have $0\le 0$, so the component exists. At $i=2$ we have $2\le 1$, which is false, so the least object with no component is $2$.'
@@ -82,18 +82,18 @@ topics:
             answer: '(8, 4)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The right edge is $Gf=\mathcal{P}(f)$, a function from $\mathcal{P}(A)$ to $\mathcal{P}(B)$. A set with $3$ elements has $2^3=8$ subsets, so the domain has $8$ elements. A set with $2$ elements has $2^2=4$ subsets, so the codomain has $4$ elements.'
-          - problem: 'In a program, $L(f)$ applies the function $f$ to every entry of a list, and $\rho_X$ reverses a list of entries from $X$. Take $f\colon\{1,2,3\}\to\{5,7\}$ with $f(1)=5$, $f(2)=7$, $f(3)=5$. The two legs of the naturality square of $\rho$ at $f$, namely $L(f)\circ\rho_X$ and $\rho_Y\circ L(f)$, send the list $[1,2,3]$ to the same list. What is its first entry?'
+          - problem: 'In a program, $L(f)$ applies the function $f$ to every entry of a list, and $\rho_X$ reverses a list of entries from $X$. Take $f\colon\{1,2,3\}\to\{5,7\}$ with $f(1)=5$, $f(2)=7$, $f(3)=5$. Apply the leg $L(f)\circ\rho_X$ of the naturality square of $\rho$ at $f$ to the list $[1,2,3]$. What is the first entry of the result?'
             answer: '5'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The leg $L(f)\circ\rho_X$ reverses to $[3,2,1]$ and then applies $f$, giving $[5,7,5]$. The leg $\rho_Y\circ L(f)$ applies $f$ to get $[5,7,5]$ and then reverses, which is the same list. Its first entry is $5$.'
+            solution_sketch: 'The leg $L(f)\circ\rho_X$ reverses to $[3,2,1]$ and then applies $f$, giving $[5,7,5]$. The other leg $\rho_Y\circ L(f)$ applies $f$ to get $[5,7,5]$ and then reverses, which gives the same list. The first entry is $5$.'
           - problem: 'Let $\mathcal{C}$ be the chain $1<2<3$ and $\mathcal{D}$ the chain $0<1<2<3<4<5$, both viewed as categories with a morphism from $x$ to $y$ exactly when $x\le y$. Let $F,G\colon\mathcal{C}\to\mathcal{D}$ send $1,2,3$ to $0,2,4$ for $F$ and to $1,3,5$ for $G$, and let $\alpha\colon F\Rightarrow G$ be a natural transformation. In the naturality square of $\alpha$ at the morphism $1\to 3$, what are the source and the target of the bottom edge?'
             answer: '(4, 5)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'The corners of the square are $F(1)$, $G(1)$ on top and $F(3)$, $G(3)$ below. The bottom edge is the component $\alpha_3\colon F(3)\to G(3)$. Since $F(3)=4$ and $G(3)=5$, its source is $4$ and its target is $5$.'
-          - problem: 'In a program, $L(X)$ is the set of lists over $X$ and the length of a list is a natural number. The length maps $\ell_X\colon L(X)\to\mathbb{N}$ form a natural transformation from $L$ to the constant functor $\mathbb{N}$, which sends every map to the identity of $\mathbb{N}$. Take $f\colon\{1,2,3\}\to\{7,8,9\}$ with $f(x)=x+6$. The two legs of the naturality square at $f$ send the list $[1,2,3,1]$ to the same number. What is it?'
+          - problem: 'In a program, $L(X)$ is the set of lists over $X$, and $L(f)$ applies $f$ to every entry of a list. The length maps $\ell_X\colon L(X)\to\mathbb{N}$ form a natural transformation from $L$ to the constant functor $\mathbb{N}$, which sends every map to the identity of $\mathbb{N}$. Take $f\colon\{1,2,3\}\to\{7,8,9\}$ with $f(x)=x+6$. Apply the leg $\ell_Y\circ L(f)$ of the naturality square at $f$ to the list $[1,2,3,1]$. What number results?'
             answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'One leg applies $f$ to every entry, giving $[7,8,9,7]$, and then takes the length, which is $4$. The other leg takes the length of $[1,2,3,1]$, which is also $4$, and then applies the identity of $\mathbb{N}$. Both legs give $4$.'
+            solution_sketch: 'The leg $\ell_Y\circ L(f)$ applies $f$ to every entry, giving $[7,8,9,7]$, and then takes the length, which is $4$. The other leg takes the length of $[1,2,3,1]$, which is also $4$, and then applies the identity of $\mathbb{N}$. Both legs give $4$.'
           - problem: 'For $\alpha\colon F\Rightarrow G$ and $f\colon A\to B$, take the equation $Gf\circ\alpha_B=\alpha_A\circ Ff$. Does this equation make sense, that is, are both composites defined?'
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it makes sense", "they are defined"], ["no", "it does not make sense", "not defined", "they are not defined", "it is not defined"]]}
@@ -107,10 +107,10 @@ topics:
         key_prerequisites: [diagram-chasing]
         constraints: "Require the learner to use checking a square elementwise in set. Closed items must construct the relevant maps, test categorical laws, or supply the essential proof steps. A supplied characterization followed only by counting or evaluation is insufficient. Preserve one full-proof exemplar."
         exemplars:
-          - problem: 'Let $P(X)=X\times X$ with $P(f)=f\times f$, and let $\pi_X\colon P(X)\to X$ be given by $\pi_X(x,y)=x$. Take $f\colon\{1,2,3\}\to\{5,7\}$ with $f(1)=5$, $f(2)=7$, $f(3)=5$. The two legs of the naturality square of $\pi$ at $f$, namely $f\circ\pi_X$ and $\pi_Y\circ P(f)$, send the pair $(2,3)$ to the same element of $\{5,7\}$. Which element?'
+          - problem: 'Let $P(X)=X\times X$ with $P(f)=f\times f$, and let $\pi_X\colon P(X)\to X$ be given by $\pi_X(x,y)=x$. Take $f\colon\{1,2,3\}\to\{5,7\}$ with $f(1)=5$, $f(2)=7$, $f(3)=5$. Apply the leg $\pi_Y\circ P(f)$ of the naturality square of $\pi$ at $f$ to the pair $(2,3)$. What element results?'
             answer: '7'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The leg $f\circ\pi_X$ sends $(2,3)$ to $f(2)=7$. The leg $\pi_Y\circ P(f)$ sends $(2,3)$ to $(f(2),f(3))=(7,5)$ and then keeps the first coordinate, which is $7$. Both legs give $7$.'
+            solution_sketch: 'The leg $\pi_Y\circ P(f)$ sends $(2,3)$ to $(f(2),f(3))=(7,5)$ and then keeps the first coordinate, which is $7$. The other leg $f\circ\pi_X$ sends $(2,3)$ to $f(2)=7$. Both legs give $7$.'
           - problem: 'For each set $X$ choose an element $c_X$ and put $t_X(x)=(x,c_X)$, a candidate transformation from the identity functor to $P$, where $P(X)=X\times X$ and $P(g)=g\times g$. Take $X=\{1,2,3\}$ with $c_X=2$, $Y=\{4,5,6\}$ with $c_Y=6$, and $f\colon X\to Y$ with $f(1)=4$, $f(2)=5$, $f(3)=5$. What is $P(f)(t_X(3))$?'
             answer: '(5, 5)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
@@ -119,11 +119,11 @@ topics:
             answer: 'no'
             answer_contract: {"kind": "label", "options": [["yes", "it commutes", "it does commute", "it is natural", "natural"], ["no", "it does not commute", "it fails", "it is not natural", "not natural"]]}
             solution_sketch: 'One leg gives $P(f)(t_X(1))=P(f)(1,3)=(4,6)$. The other leg gives $t_Y(f(1))=t_Y(4)=(4,5)$. The two results differ, so the square fails at $1$, it does not commute, and $t$ is not natural.'
-          - problem: 'A list program has a function `head` that returns the first entry of a nonempty list, and a function that applies $f(x)=2x+3$ to every entry of a list. On the list $[3,1,2]$, applying `head` first and then $f$ gives the same number as applying $f$ to every entry first and then `head`. What is that number?'
+          - problem: 'A list program has a function `head` that returns the first entry of a nonempty list, and a function that applies $f(x)=2x+3$ to every entry of a list. Apply $f$ to every entry of the list $[3,1,2]$ and then take `head`. What number results?'
             answer: '9'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Taking `head` first gives $3$, and then $f(3)=2\cdot 3+3=9$. Applying $f$ first gives the list $[9,5,7]$, whose first entry is $9$. Both orders give $9$.'
-          - problem: 'A league table stores each match as a pair (home score, away score). The function swap reverses a pair, and the function $g$ converts a score to points with $g(0)=0$, $g(1)=1$, $g(2)=1$, $g(3)=3$; converting a match converts both scores. Swapping then converting, or converting then swapping, gives the same pair for the match $(3,1)$. What is that pair?'
+            solution_sketch: 'Applying $f$ to every entry gives the list $[9,5,7]$, whose first entry is $9$. Taking `head` first gives $3$, and then $f(3)=2\cdot 3+3=9$. Both orders give $9$.'
+          - problem: 'A league table stores each match as a pair (home score, away score). The function swap reverses a pair, and the function $g$ converts a score to points with $g(0)=0$, $g(1)=1$, $g(2)=1$, $g(3)=3$. Converting a match converts both scores. Swap the match $(3,1)$ and then convert it. What is the resulting pair?'
             answer: '(1, 3)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
             solution_sketch: 'Swapping $(3,1)$ gives $(1,3)$, and converting gives $(g(1),g(3))=(1,3)$. Converting $(3,1)$ first gives $(3,1)$, and swapping gives $(1,3)$. Both orders give the pair $(1,3)$.'
@@ -131,10 +131,10 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is natural", "natural", "it is a natural transformation"], ["no", "it is not natural", "not natural"]]}
             solution_sketch: 'For $f\colon X\to Y$ and a general pair $(x,y)$ the leg $\epsilon_Y\circ P(f)$ gives $\epsilon_Y(f(x),f(y))=(f(y),f(y))$. The leg $P(f)\circ\epsilon_X$ gives $P(f)(y,y)=(f(y),f(y))$. The two legs agree for every pair, so $\epsilon$ is natural.'
-          - problem: 'Let $P(X)=X\times X$ with $P(f)=f\times f$ and let $\epsilon_X(x,y)=(y,y)$. Take $f\colon\{1,2\}\to\{7,9\}$ with $f(1)=7$, $f(2)=9$. Both legs of the naturality square of $\epsilon$ at $f$ send the pair $(1,2)$ to the same pair. What is it?'
+          - problem: 'Let $P(X)=X\times X$ with $P(f)=f\times f$ and let $\epsilon_X(x,y)=(y,y)$. Take $f\colon\{1,2\}\to\{7,9\}$ with $f(1)=7$, $f(2)=9$. Apply the leg $\epsilon_Y\circ P(f)$ of the naturality square of $\epsilon$ at $f$ to the pair $(1,2)$. What pair results?'
             answer: '(9, 9)'
             answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: 'One leg gives $\epsilon_Y(f(1),f(2))=\epsilon_Y(7,9)=(9,9)$. The other leg gives $P(f)(\epsilon_X(1,2))=P(f)(2,2)=(9,9)$. Both legs give $(9,9)$.'
+            solution_sketch: 'The leg $\epsilon_Y\circ P(f)$ gives $\epsilon_Y(f(1),f(2))=\epsilon_Y(7,9)=(9,9)$. The other leg gives $P(f)(\epsilon_X(1,2))=P(f)(2,2)=(9,9)$. Both legs give $(9,9)$.'
           - problem: 'Write the full proof that the family $\mathrm{pr}$, given by $\mathrm{pr}_X(u,v)=v$, is a natural transformation from the functor $P$ with $P(X)=X\times X$ and $P(g)(u,v)=(g(u),g(v))$ to the identity functor on $\mathbf{Set}$, checking the naturality square elementwise on a general pair. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -204,14 +204,14 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The set $\eta_A(1)$ is $\{1\}$, and $\mathcal{P}(f)$ sends it to its image. The image is $\{f(1)\}=\{4\}$, so the element is $4$. The set $\{1\}$ alone leaves out the application of $f$.'
-          - problem: 'A program recodes every entry of a list with $g(x)=x-1$, and another program turns a nonempty list into the pair (first entry, first entry). On the list $[4,6,9]$, recoding first and then forming the pair gives the same pair as forming the pair first and then recoding both entries. What is that pair?'
-            answer: '(3, 3)'
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: 'Recoding $[4,6,9]$ gives $[3,5,8]$, and the pair of its first entry is $(3,3)$. Forming the pair first gives $(4,4)$, and recoding both entries gives $(3,3)$. Both orders give $(3,3)$.'
-          - problem: 'A shop sells the items $1,2,3$ at the prices $3,5,3$. The bundle program turns an item $x$ into the pair $(x,x)$, and the price program replaces each item in a pair by its price. Pricing the bundle of item $2$ gives the same pair as bundling the price of item $2$. What is that pair?'
-            answer: '(5, 5)'
-            answer_contract: {"arity": 2, "kind": "coordinates"}
-            solution_sketch: 'The price of item $2$ is $5$, so bundling the price gives $(5,5)$. Bundling item $2$ gives $(2,2)$, and pricing both entries gives $(5,5)$. Both routes give $(5,5)$.'
+          - problem: 'A program recodes every entry of a list with $g(x)=x-1$, and another program turns a nonempty list into the pair (first entry, first entry). On the list $[4,6,9]$, route one recodes and then forms the pair. Route two forms the pair and then recodes both entries. What is the sum of the four entries of the two pairs?'
+            answer: '12'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Route one: recoding $[4,6,9]$ gives $[3,5,8]$, and the pair is $(3,3)$. Route two: the pair is $(4,4)$, and recoding both entries gives $(3,3)$. The sum of the four entries is $3+3+3+3=12$.'
+          - problem: 'A shop sells the items $1,2,3$ at the prices $3,5,3$. The bundle program turns an item $x$ into the pair $(x,x)$, and the price program replaces each item in a pair by its price. Route one bundles item $2$ and then prices both entries. Route two prices item $2$ and then bundles the price. What is the sum of the four entries of the two pairs?'
+            answer: '20'
+            answer_contract: {"kind":"exact"}
+            solution_sketch: 'Route one: bundling item $2$ gives $(2,2)$, and pricing both entries gives $(5,5)$. Route two: the price of item $2$ is $5$, and bundling gives $(5,5)$. The sum of the four entries is $5+5+5+5=20$.'
           - problem: 'Write the full proof that list reversal $\rho_X$ is a natural transformation from the list functor $L$ on $\mathbf{Set}$ to itself. Then compare with the solution.'
             answer: 'See the solution.'
             answer_contract: {"kind": "none"}
@@ -360,23 +360,23 @@ topics:
             answer: '4'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The leg $c_H\circ f$ sends $2$ to $f(2)=6$ and then to $6+6+6=18\equiv 4 \pmod 7$. The leg $f\circ c_G$ sends $2$ to $2+2+2=6$ and then to $f(6)=18\equiv 4 \pmod 7$. Both legs give $4$.'
-          - problem: 'For abelian groups, written additively, let $Q(G)=G/2G$ and let $q_G\colon G\to Q(G)$ be the quotient map. For a homomorphism $f\colon G\to H$ define $Q(f)$ by sending the class of $x$ to the class of $f(x)$. To see that this is well defined, suppose $x^\prime=x+2z$. Then $f(x^\prime)-f(x)=k\cdot f(z)$ for which integer $k$?'
-            answer: '2'
+          - problem: 'For abelian groups, written additively, let $Q(G)=G/2G$ and let $q_G\colon G\to Q(G)$ be the quotient map. For a homomorphism $f\colon G\to H$ define $Q(f)$ by sending the class of $x$ to the class of $f(x)$. Let $f\colon\mathbb{Z}\to\mathbb{Z}$ be $f(x)=5x$. The integers $3$ and $11$ have the same class in $Q(\mathbb{Z})$. What is the class of $f(11)-f(3)$ in $Q(\mathbb{Z})$?'
+            answer: '0'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Since $f$ is a homomorphism, $f(x^\prime)-f(x)=f(2z)=f(z)+f(z)=2f(z)$. Hence $k=2$, and $f(x^\prime)-f(x)$ lies in $2H$, so the class of $f(x)$ does not depend on the choice of $x$.'
+            solution_sketch: 'We have $Q(\mathbb{Z})=\mathbb{Z}/2\mathbb{Z}$, and $11-3=8=2\cdot4$. Then $f(11)-f(3)=55-15=40=2\cdot20$, which lies in $2\mathbb{Z}$. So its class is $0$, and the classes of $f(3)$ and $f(11)$ agree, as the definition of $Q(f)$ needs.'
           - problem: 'Let $\mathrm{ab}\colon\mathbf{Grp}\to\mathbf{Grp}$ send a group $G$ to $G/[G,G]$, and let $\eta_G\colon G\to G^{\mathrm{ab}}$ be the quotient map. Take $G=S_3$, $H=\mathbb{Z}/2$ (written additively, so $H^{\mathrm{ab}}=H$ and $\eta_H$ is the identity) and the sign homomorphism $f\colon S_3\to\mathbb{Z}/2$ with $f(\text{transposition})=1$. Chase the transposition $(1\,2)$ around the naturality square of $\eta$ at $f$. What common value do both legs give in $\mathbb{Z}/2$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'One leg is $\eta_H\circ f$, which sends $(1\,2)$ to $f(1\,2)=1$ and then to $1$ because $\eta_H$ is the identity. The other leg is $\mathrm{ab}(f)\circ\eta_G$, which sends $(1\,2)$ to its class and then to the class of $f(1\,2)=1$. Both legs give $1$.'
-          - problem: 'The hours of a clock are the elements of $\mathbb{Z}/12$, and a doubling machine sends an hour $x$ to $2x$. A coarser clock with four hours is $\mathbb{Z}/4$, and reduction $f(x)=x \bmod 4$ converts one clock to the other and is a homomorphism. For the hour $4$, doubling then converting gives the same value as converting then doubling on the coarse clock. What is that value?'
-            answer: '0'
+          - problem: 'The hours of a clock are the elements of $\mathbb{Z}/12$, and a doubling machine sends an hour $x$ to $2x$. A coarser clock with four hours is $\mathbb{Z}/4$, and reduction $f(x)=x \bmod 4$ converts one clock to the other and is a homomorphism. For the hour $7$, let $a$ be the value from doubling then converting, and $b$ the value from converting then doubling on the coarse clock. Each value is in $\{0,1,2,3\}$. What is $a+b$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Doubling $4$ on the twelve-hour clock gives $8$, and converting gives $8 \bmod 4=0$. Converting $4$ gives $0$, and doubling on the coarse clock gives $0$. Both orders give $0$.'
-          - problem: 'Days of the week are numbered by $\mathbb{Z}/7$. Tripling a day number is the map $c(x)=3x \bmod 7$, and a rescheduling is the homomorphism $f(x)=5x \bmod 7$ from $\mathbb{Z}/7$ to $\mathbb{Z}/7$. Tripling then rescheduling gives the same day as rescheduling then tripling. Which day results from the day number $2$?'
-            answer: '2'
+            solution_sketch: 'Doubling $7$ on the twelve-hour clock gives $14 \bmod 12=2$, and converting gives $a=2$. Converting $7$ gives $3$, and doubling on the coarse clock gives $6 \bmod 4=2=b$. So $a+b=4$.'
+          - problem: 'Days of the week are numbered by $\mathbb{Z}/7$. Tripling a day number is the map $c(x)=3x \bmod 7$, and a rescheduling is the homomorphism $f(x)=5x \bmod 7$ from $\mathbb{Z}/7$ to $\mathbb{Z}/7$. For the day number $2$, let $a$ be the day from tripling then rescheduling, and $b$ the day from rescheduling then tripling. Each day is in $\{0,\dots,6\}$. What is $a+b$?'
+            answer: '4'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Tripling $2$ gives $6$, and rescheduling gives $5\cdot 6=30\equiv 2 \pmod 7$. Rescheduling $2$ gives $10\equiv 3$, and tripling gives $9\equiv 2 \pmod 7$. Both orders give day $2$.'
-          - problem: 'Let $V\colon\mathbf{Mon}\to\mathbf{Set}$ send a monoid to its set of units, with the inclusion $i_M\colon V(M)\to U(M)$. Let $f\colon(\mathbb{Z},\cdot)\to(\mathbb{Z}/7,\cdot)$ be reduction modulo $7$. The integer $x=-1$ is a unit of $(\mathbb{Z},\cdot)$ with inverse $y=-1$. What is the product $f(x)f(y)$ in $\mathbb{Z}/7$, showing that $f(x)$ is again a unit?'
+            solution_sketch: 'Tripling $2$ gives $6$, and rescheduling gives $5\cdot 6=30\equiv 2 \pmod 7$, so $a=2$. Rescheduling $2$ gives $10\equiv 3$, and tripling gives $9\equiv 2 \pmod 7$, so $b=2$. Then $a+b=4$.'
+          - problem: 'Let $V\colon\mathbf{Mon}\to\mathbf{Set}$ send a monoid to its set of units, with the inclusion $i_M\colon V(M)\to U(M)$. Let $f\colon(\mathbb{Z},\cdot)\to(\mathbb{Z}/7,\cdot)$ be reduction modulo $7$. The integer $x=-1$ is a unit of $(\mathbb{Z},\cdot)$ with inverse $y=-1$. What is the product $f(x)f(y)$ in $\mathbb{Z}/7$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'We have $f(-1)=6$ in $\mathbb{Z}/7$, so $f(x)f(y)=6\cdot 6=36\equiv 1 \pmod 7$. The product is the identity, so $f(x)$ is a unit with inverse $f(y)$. Hence $f$ restricts to a function $V(\mathbb{Z})\to V(\mathbb{Z}/7)$.'
@@ -389,18 +389,18 @@ topics:
         key_prerequisites: [diagram-chasing]
         constraints: "Require naturality is closed under composition. The closed answer must encode the categorical construction, essential proof equations, or a countermodel to an invalid argument. Preserve exactly one full-proof exemplar."
         exemplars:
-          - problem: 'Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathcal{D}$, and let $f\colon A\to B$ be a morphism of $\mathcal{C}$. Using the naturality of $\beta$ at $f$ once, and nothing else, which composite is equal to $Hf\circ\beta_A\circ\alpha_A$?'
+          - problem: 'Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathcal{D}$, and let $f\colon A\to B$ be a morphism of $\mathcal{C}$. Write $Hf\circ\beta_A\circ\alpha_A$ as an equal composite that contains neither $Hf$ nor $Ff$.'
             answer: 'β_B∘Gf∘α_A'
             answer_contract: {"kind": "label", "options": [["β_B∘Gf∘α_A", "β_B Gf α_A", "beta_B Gf alpha_A", "βB∘Gf∘αA", "βB Gf αA", "β_B∘G(f)∘α_A", "$\\beta_B\\circ Gf\\circ\\alpha_A$", "beta_B∘Gf∘alpha_A"], ["β_A∘Hf∘α_A", "β_A Hf α_A"], ["β_B∘α_B∘Ff", "β_B α_B Ff"]]}
-            solution_sketch: 'The naturality square of $\beta$ at $f$ states $Hf\circ\beta_A=\beta_B\circ Gf$. Replacing $Hf\circ\beta_A$ by $\beta_B\circ Gf$ turns the composite into $\beta_B\circ Gf\circ\alpha_A$. The composite $\beta_B\circ\alpha_B\circ Ff$ needs the naturality of $\alpha$ as well, so it takes a second step.'
+            solution_sketch: 'The naturality square of $\beta$ at $f$ states $Hf\circ\beta_A=\beta_B\circ Gf$. Replacing $Hf\circ\beta_A$ by $\beta_B\circ Gf$ turns the composite into $\beta_B\circ Gf\circ\alpha_A$. The composite $\beta_B\circ\alpha_B\circ Ff$ needs the naturality of $\alpha$ as well, and it contains $Ff$.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathbf{Set}$ with $F(A)=F(B)=H(A)=H(B)=\{1,2,3\}$. The map $F(u)$ sends $1\mapsto 2$, $2\mapsto 3$, $3\mapsto 1$, and $H(u)$ sends $1\mapsto 3$, $2\mapsto 1$, $3\mapsto 2$. The composite $\beta\alpha$ has $(\beta\alpha)_A$ given by $1\mapsto 3$, $2\mapsto 2$, $3\mapsto 1$. What is $(\beta\alpha)_B(3)$?'
             answer: '1'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The composite is natural, so $(\beta\alpha)_B(F(u)(x))=H(u)((\beta\alpha)_A(x))$. Choose $x=2$, so that $F(u)(2)=3$ and $(\beta\alpha)_A(2)=2$. Then $(\beta\alpha)_B(3)=H(u)(2)=1$.'
-          - problem: 'In a program, `single` turns a value $x$ into the list $[x]$ and `twice` turns a list $[x_1,\dots,x_n]$ into $[x_1,x_1,\dots,x_n,x_n]$. Both are natural, so their composite is natural. Let $f(x)=2x$ on $\{1,2,3\}$, applied to every entry of a list. Applying `single`, then `twice`, then $f$ gives the same list as applying $f$ first. For the value $3$, what is the sum of the entries of that list?'
-            answer: '12'
+          - problem: 'In a program, `single` turns a value $x$ into the list $[x]$ and `twice` turns a list $[x_1,\dots,x_n]$ into $[x_1,x_1,\dots,x_n,x_n]$. Let $f(x)=2x$ on $\{1,2,3\}$, applied to every entry of a list. Route one applies `single`, then `twice`, then $f$ to the value $3$. Route two applies $f$ first, then `single`, then `twice`. What is the sum of all entries of the two resulting lists?'
+            answer: '24'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The route `single` then `twice` turns $3$ into $[3,3]$, and applying $f$ gives $[6,6]$. The route that applies $f$ first gives $6$, then $[6]$, then $[6,6]$. Both routes give $[6,6]$, whose entries sum to $12$.'
+            solution_sketch: 'Route one turns $3$ into $[3]$, then $[3,3]$, and applying $f$ gives $[6,6]$. Route two gives $6$, then $[6]$, then $[6,6]$. Each list has the sum $12$, so the total is $24$.'
           - problem: 'The work below proves that the vertical composite $\beta\alpha$ of natural transformations $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ is natural. Step 1: for $f\colon A\to B$ we must show $Hf\circ(\beta\alpha)_A=(\beta\alpha)_B\circ Ff$. Step 2: naturality of $\beta$ gives $Hf\circ\beta_A=\beta_B\circ Gf$. Step 3: naturality of $\alpha$ gives $Gf\circ\alpha_A=\alpha_B\circ Ff$. Step 4: combining, $Hf\circ\beta_A\circ\alpha_A=\beta_A\circ\alpha_B\circ Ff$, so the composite is natural. Which step is the first that is not valid, and why?'
             answer: 'Step 4: the combination must end in beta_B after alpha_B after Ff; beta_A after alpha_B is not defined, since alpha_B ends at G(B).'
             answer_contract: {"kind": "written"}
@@ -409,10 +409,10 @@ topics:
             answer: '20'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'Naturality of the composite at $u$ gives $(\beta\alpha)_B(F(u)(x))=H(u)((\beta\alpha)_A(x))$. Take $x=2$, so that $F(u)(2)=2$ and $(\beta\alpha)_A(2)=20$. Then $(\beta\alpha)_B(2)=H(u)(20)=20$.'
-          - problem: 'In a program, `twice` turns a list $[x_1,\dots,x_n]$ into $[x_1,x_1,\dots,x_n,x_n]$ and `reverse` reverses a list. Both are natural, so their composite is natural. Let $f(x)=x+10$ be applied to every entry of a list. Applying `twice` then `reverse` and then $f$ gives the same list as applying $f$ first. For the list $[1,2,3]$, what is the first entry of that list?'
-            answer: '13'
+          - problem: 'In a program, `twice` turns a list $[x_1,\dots,x_n]$ into $[x_1,x_1,\dots,x_n,x_n]$ and `reverse` reverses a list. Let $f(x)=x+10$ be applied to every entry of a list. Route one applies `twice`, then `reverse`, then $f$ to the list $[1,2,3]$. Route two applies $f$ first, then `twice`, then `reverse`. What is the sum of the first entries of the two resulting lists?'
+            answer: '26'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'The route `twice` then `reverse` turns $[1,2,3]$ into $[3,3,2,2,1,1]$, and applying $f$ gives $[13,13,12,12,11,11]$. The route that applies $f$ first gives $[11,12,13]$, then $[11,11,12,12,13,13]$, then the reverse $[13,13,12,12,11,11]$. The first entry is $13$.'
+            solution_sketch: 'Route one turns $[1,2,3]$ into $[1,1,2,2,3,3]$, then $[3,3,2,2,1,1]$, and applying $f$ gives $[13,13,12,12,11,11]$. Route two gives $[11,12,13]$, then $[11,11,12,12,13,13]$, then $[13,13,12,12,11,11]$. The first entries are $13$ and $13$, so the sum is $26$.'
           - problem: 'Let $\mathcal{C}$ be the category with objects $A,B$ and one non-identity morphism $u\colon A\to B$. Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations between functors $\mathcal{C}\to\mathbf{Set}$ with $F(A)=\{1,2,3\}$, $F(B)=\{1,2\}$, $H(A)=\{4,5,6\}$ and $H(B)=\{4,5\}$. The map $F(u)$ sends $1\mapsto 1$, $2\mapsto 2$, $3\mapsto 1$, and $H(u)$ sends $4\mapsto 4$, $5\mapsto 5$, $6\mapsto 4$. The composite $\beta\alpha$ has $(\beta\alpha)_A$ given by $1\mapsto 5$, $2\mapsto 4$, $3\mapsto 5$. What is $(\beta\alpha)_B(1)$?'
             answer: '5'
             answer_contract: {"kind": "exact"}
@@ -782,7 +782,7 @@ topics:
             answer: 'yes'
             answer_contract: {"kind": "label", "options": [["yes", "it is the identity", "it is", "identity"], ["no", "it is not the identity", "it is not", "not the identity", "not identity"]]}
             solution_sketch: 'The component of the composite is $\beta_Y(\alpha_Y(y))=\beta_Y(y,y)=y$ for every set $Y$ and every element $y$. So each component is the identity function of $Y$, and the composite is the identity transformation. The answer is yes.'
-          - problem: 'For natural transformations $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ the vertical composite $(\beta\cdot\alpha)_A$ is a composite of the components. Suppose that the components are the functions $\alpha_A(x)=x+1$ and $\beta_A(x)=2x$ on $\mathbb Z$. What is the value of $(\beta\cdot\alpha)_A(3)$?'
+          - problem: 'Let $\alpha\colon F\Rightarrow G$ and $\beta\colon G\Rightarrow H$ be natural transformations. Their components at $A$ are the functions $\alpha_A(x)=x+1$ and $\beta_A(x)=2x$ on $\mathbb Z$. What is the value of $(\beta\cdot\alpha)_A(3)$?'
             answer: '8'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The vertical composite applies $\alpha_A$ first and then $\beta_A$, so $(\beta\cdot\alpha)_A=\beta_A\circ\alpha_A$. Then $\alpha_A(3)=4$ and $\beta_A(4)=8$. The other order gives $\alpha_A(\beta_A(3))=7$.'
@@ -807,10 +807,10 @@ topics:
             answer: '(3,1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Use $(\beta*\alpha)_X=S(\alpha_X)\circ\beta_{S X}$. The swap $\beta_{SX}$ takes $((1,2),(3,4))$ to $((3,4),(1,2))$. Then $S(\alpha_X)$ takes the first entry of each pair, giving $(3,1)$.'
-          - problem: 'A program stores records as a list of lists. It applies two steps: `safeHead` takes a list to `Just` its first entry, or to `Nothing` for an empty list, and `reverse` turns a list around. These are natural transformations $\alpha\colon L\Rightarrow M$ and $\beta\colon L\Rightarrow L$, where $M(Y)=Y+\{\text{Nothing}\}$. The horizontal composite $\beta*\alpha\colon L\circ L\Rightarrow L\circ M$ reverses the list of records and applies `safeHead` to every record. For the input $[[1,2],[\,],[3],[4]]$, in which position (counting from $1$) of the result list is `Nothing`?'
+          - problem: 'A program stores records as a list of lists. `safeHead` takes a list to `Just` its first entry, or to `Nothing` for an empty list, and `reverse` turns a list around. These are natural transformations $\alpha\colon L\Rightarrow M$ and $\beta\colon L\Rightarrow L$, where $M(Y)=Y+\{\text{Nothing}\}$. Apply the horizontal composite $\beta*\alpha\colon L\circ L\Rightarrow L\circ M$ to the input $[[1,2],[\,],[3],[4]]$. In which position (counting from $1$) of the result list is `Nothing`?'
             answer: '3'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'Reversing the list of records gives $[[4],[3],[\,],[1,2]]$. Applying `safeHead` to each record gives `Just 4`, `Just 3`, `Nothing`, `Just 1`. So `Nothing` is in position $3$. Applying `safeHead` first and reversing afterwards gives the same list.'
+            solution_sketch: 'The horizontal composite reverses the list of records and applies `safeHead` to every record. Reversing gives $[[4],[3],[\,],[1,2]]$. Applying `safeHead` to each record gives `Just 4`, `Just 3`, `Nothing`, `Just 1`. So `Nothing` is in position $3$.'
           - problem: 'Let $S(Y)=Y\times Y$ with $S(u)=u\times u$. Let $\alpha\colon S\Rightarrow S$ be the swap, $\alpha_Y(y,z)=(z,y)$, and let $\beta\colon S\Rightarrow\mathrm{Id}$ be the first projection, $\beta_Y(y,z)=y$. The horizontal composite $\beta*\alpha$ goes from $S\circ S$ to $\mathrm{Id}\circ S=S$. Find its component at a set $X$ on the element $((1,2),(3,4))$.'
             answer: '(2,1)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -823,10 +823,10 @@ topics:
             answer: '54'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The horizontal composite runs from $GF$ to $G''F''$, so the target of the component is $G''(F''(X))=F''(X)\times\{0,1\}$. Here $F''(X)=X^3$ has $27$ elements. So the target has $27\cdot2=54$ elements.'
-          - problem: 'A scoreboard stores two matches, each match as a pair (home goals, away goals), so a board is an element of $S(S(X))$ with $S(Y)=Y\times Y$. The transformation $\beta$ swaps the two entries of a pair, and $\alpha$ takes the away goals out of a pair (the second projection $S\Rightarrow\mathrm{Id}$). The horizontal composite $\beta*\alpha$ swaps the order of the two matches and then keeps only the away goals of each. What does it return for the board $((2,5),(4,1))$?'
+          - problem: 'A scoreboard stores two matches, each match as a pair (home goals, away goals), so a board is an element of $S(S(X))$ with $S(Y)=Y\times Y$. The transformation $\beta$ swaps the two entries of a pair, and $\alpha$ is the second projection $S\Rightarrow\mathrm{Id}$. What does the horizontal composite $\beta*\alpha$ return for the board $((2,5),(4,1))$?'
             answer: '(1,5)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Use the route $S(\alpha_X)\circ\beta_{SX}$. Swapping the two matches gives $((4,1),(2,5))$. Taking the away goals of each match then gives $(1,5)$.'
+            solution_sketch: 'Use the route $S(\alpha_X)\circ\beta_{SX}$. The transformation $\beta$ swaps the two matches and gives $((4,1),(2,5))$. Then $\alpha$ takes the away goals of each match and gives $(1,5)$.'
           - problem: 'Let $\alpha\colon F\Rightarrow F''$ be a natural transformation of functors from $\mathcal{C}$ to $\mathcal{D}$ and $\beta\colon G\Rightarrow G''$ one of functors from $\mathcal{D}$ to $\mathcal{E}$. For an object $A$ of $\mathcal{C}$ the component of $\beta*\alpha$ is $G''(\alpha_A)\circ\beta_{FA}$ by one formula and $\beta_{F''A}\circ G(\alpha_A)$ by another. Which fact shows that the two formulas give the same arrow?'
             answer: 'naturality of β at α_A'
             answer_contract: {"kind": "label", "options": [["naturality of β at α_A", "β at α_A", "beta at alpha_A", "naturality of beta at alpha_A"], ["naturality of α at β_A", "α at β_A", "alpha at beta_A", "naturality of alpha at beta_A"], ["naturality of β at identities", "β at identities", "beta at identities", "naturality of beta at identities"], ["functoriality of G", "G is a functor", "functor G"]]}
@@ -848,22 +848,22 @@ topics:
             answer: '(7,7)'
             answer_contract: {"kind": "coordinates", "arity": 2}
             solution_sketch: 'Right side: $(\beta*\alpha)(0,1)=\alpha(0)=2$, then $(\beta''*\alpha'')(2)=(\alpha''(2),\alpha''(2))=(7,7)$. Left side: $(\alpha''\cdot\alpha)$ sends $0\mapsto7$ and $1\mapsto6$, so $G(\alpha''\cdot\alpha)(0,1)=(7,6)$, and $\beta''\cdot\beta$ sends $(u,v)$ to $(u,u)$, giving $(7,7)$. The two sides agree.'
-          - problem: 'The interchange law $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)=(\beta''*\alpha'')\cdot(\beta*\alpha)$ holds for $\alpha\colon F\Rightarrow F''$, $\alpha''\colon F''\Rightarrow F''''$, $\beta\colon G\Rightarrow G''$ and $\beta''\colon G''\Rightarrow G''''$. Expand both sides at an object $A$. The left side has the middle factors $\beta_{F''''A}\circ G(\alpha''_A)$ and the right side has the middle factors $G''(\alpha''_A)\circ\beta_{F''A}$, and the two sides agree after exchanging them. Which naturality square justifies the exchange?'
+          - problem: 'The interchange law $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)=(\beta''*\alpha'')\cdot(\beta*\alpha)$ holds for $\alpha\colon F\Rightarrow F''$, $\alpha''\colon F''\Rightarrow F''''$, $\beta\colon G\Rightarrow G''$ and $\beta''\colon G''\Rightarrow G''''$. Expand both sides at an object $A$. The two expansions differ only in the middle factors $\beta_{F''''A}\circ G(\alpha''_A)$ and $G''(\alpha''_A)\circ\beta_{F''A}$. Which naturality square makes the two expansions agree?'
             answer: 'naturality of β at α''_A'
             answer_contract: {"kind": "label", "options": [["naturality of β at α'_A", "β at α'_A", "beta at alpha'_A", "naturality of beta at alpha'_A"], ["naturality of β at α_A", "β at α_A", "beta at alpha_A", "naturality of beta at alpha_A"], ["naturality of β' at α'_A", "β' at α'_A", "beta' at alpha'_A", "naturality of beta' at alpha'_A"], ["naturality of α' at α_A", "α' at α_A", "alpha' at alpha_A", "naturality of alpha' at alpha_A"]]}
-            solution_sketch: 'The factors to exchange are $\beta_{F''''A}\circ G(\alpha''_A)$ and $G''(\alpha''_A)\circ\beta_{F''A}$. These are the two sides of the naturality square of $\beta\colon G\Rightarrow G''$ at the arrow $\alpha''_A\colon F''A\to F''''A$ of $\mathcal{D}$. The other options use the wrong transformation or the wrong arrow.'
+            solution_sketch: 'The two middle factors are the two sides of one naturality square. It is the square of $\beta\colon G\Rightarrow G''$ at the arrow $\alpha''_A\colon F''A\to F''''A$ of $\mathcal{D}$. The other options use the wrong transformation or the wrong arrow.'
           - problem: 'The work below argues for the interchange law $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)=(\beta''*\alpha'')\cdot(\beta*\alpha)$. Step 1: at an object $A$, the left side is $(\beta''\cdot\beta)_{F''A}\circ G(\alpha''_A\circ\alpha_A)$. Step 2: at $A$, the right side is $\beta''_{F''A}\circ G''(\alpha''_A)\circ\beta_{F''A}\circ G(\alpha_A)$. Step 3: by naturality of $\beta$ at the arrow $\alpha_A$, the factor $\beta_{F''A}$ can be moved past $G(\alpha''_A)$, so the two sides agree. Step 4: since the components agree at every object, the two transformations are equal. Which step is the first that is not valid, and why?'
             answer: 'Step 3: naturality of beta at alpha_A does not exchange the factors in question; the square needed is the one at alpha-prime_A.'
             answer_contract: {"kind": "written"}
             solution_sketch: 'Step 1 whiskers the vertical composite, using that $G$ preserves composition, and Step 2 expands the right side by the whisker formula. Step 3 is the first invalid step: naturality of $\beta$ at $\alpha_A$ says $\beta_{F''A}\circ G(\alpha_A)=G''(\alpha_A)\circ\beta_{FA}$, which does not exchange the factors in question. The square needed is the one at $\alpha''_A$.'
-          - problem: 'A warehouse relabels items twice. Stage one relabels item $x$ as $(x+1)\bmod5$ and stage two relabels the result $y$ as $2y\bmod5$. Items are shipped in pairs, and a packing machine either keeps a pair $(x,y)$ in order or swaps it to $(y,x)$. Pairs are first swapped, then the pair is relabeled by both stages, then it is swapped again. Using the interchange law with $G=G''=G''''$ the pairing functor and $\beta=\beta''$ the swap, find the final pair for the starting pair $(3,4)$.'
+          - problem: 'A warehouse relabels items twice. Stage one relabels item $x$ as $(x+1)\bmod5$ and stage two relabels the result $y$ as $2y\bmod5$. Items are shipped in pairs. A packing machine swaps a pair $(x,y)$ to $(y,x)$. A pair is first swapped, then both entries are relabeled by stage one and by stage two, then the pair is swapped again. What is the final pair for the starting pair $(3,4)$?'
             answer: '(3,0)'
             answer_contract: {"kind": "coordinates", "arity": 2}
-            solution_sketch: 'Two swaps cancel, since $\beta''\cdot\beta$ is the identity, so the left side is just the relabeling of each entry by $\alpha''\cdot\alpha$. Item $3$ goes to $4$ and then $8\bmod5=3$. Item $4$ goes to $0$ and then $0$, so the pair is $(3,0)$.'
-          - problem: 'Six records labeled $0,\dots,5$ are relabeled twice. Stage one sends record $x$ to $x\bmod3$ and stage two sends the result $y$ to $y\bmod2$. Records are handled in pairs. By the interchange law with the identity transformations $\beta=\beta''$ on the pairing functor, a pair $(x,y)$ ends with the label pair $(\alpha''\alpha(x),\alpha''\alpha(y))$. For how many starting pairs $(x,y)$ of records is the final label pair $(0,0)$?'
+            solution_sketch: 'The two swaps cancel, since the swap composed with itself is the identity, so only the relabeling of each entry by both stages remains (interchange law). Item $3$ goes to $4$ and then $8\bmod5=3$. Item $4$ goes to $0$ and then $0$, so the pair is $(3,0)$.'
+          - problem: 'Six records labeled $0,\dots,5$ are relabeled twice. Stage one sends record $x$ to $x\bmod3$ and stage two sends the result $y$ to $y\bmod2$. Records are handled in pairs, and each stage relabels both entries of a pair. For how many starting pairs $(x,y)$ of records is the final label pair $(0,0)$?'
             answer: '16'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A record ends with label $0$ when $x\bmod3$ is even. That happens for $x=0,2,3,5$, which is $4$ records. A pair needs both entries from these $4$ records, so there are $4\times4=16$ starting pairs.'
+            solution_sketch: 'By the interchange law, a pair $(x,y)$ ends with the label pair $(\alpha''\alpha(x),\alpha''\alpha(y))$. A record ends with label $0$ when $x\bmod3$ is even. That happens for $x=0,2,3,5$, which is $4$ records, so there are $4\times4=16$ starting pairs.'
           - problem: 'Use the one-object category $\mathbf{1}$, so that functors $\mathbf{1}\to\mathbf{Set}$ are sets and natural transformations are functions. Let $F$, $F''$, $F''''$ be the set $\{0,1,2\}$, let $\alpha(x)=x+1 \bmod 3$ and $\alpha''(x)=2x \bmod 3$. On $\mathbf{Set}$ let $G$ and $G''''$ send $Y$ to $Y\times Y$ and let $G''$ be the identity functor. Let $\beta_Y(y,z)=z$ be the second projection $G\Rightarrow G''$ and let $\beta''_Y(y)=(y,y)$ be the diagonal $G''\Rightarrow G''''$. Find the value of $(\beta''\cdot\beta)*(\alpha''\cdot\alpha)$ at the element $(1,2)$ of $G(F)$.'
             answer: '(0,0)'
             answer_contract: {"kind": "coordinates", "arity": 2}
@@ -1121,10 +1121,10 @@ topics:
             answer: '3'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The category $\mathbf{1}$ has only one arrow, so $F$ sends every arrow to it. $\mathbf{B}(\mathbb{Z}/3)$ has $3$ arrows, so $F$ sends $3$ arrows to the identity. A faithful functor is injective on arrows between a given pair of objects, so $F$ is not faithful and is not an equivalence.'
-          - problem: 'Let $\mathbf{Mat}$ be the category whose objects are the numbers $n=0,1,2,\dots$ and whose morphisms $m\to n$ are the $n\times m$ matrices with entries in $\{0,1\}$ (computing modulo $2$). The functor $F$ sends $n$ to the vector space $\mathbb{F}_2^n$ and a matrix to the linear map it defines, and $F$ is fully faithful. How many morphisms from the object $2$ to the object $3$ does $\mathbf{Mat}$ have?'
+          - problem: 'Let $\mathbf{Mat}$ be the category whose objects are the numbers $n=0,1,2,\dots$ and whose morphisms $m\to n$ are the $n\times m$ matrices with entries in $\{0,1\}$ (computing modulo $2$). The functor $F$ sends $n$ to the vector space $\mathbb{F}_2^n$ and a matrix to the linear map it defines. How many morphisms from the object $2$ to the object $3$ does $\mathbf{Mat}$ have?'
             answer: '64'
             answer_contract: {"kind": "exact"}
-            solution_sketch: 'A morphism from $2$ to $3$ is a $3\times2$ matrix with entries in $\{0,1\}$. It has $6$ entries, each with $2$ choices. So there are $2^6=64$ morphisms, matching the $64$ linear maps $\mathbb{F}_2^2\to\mathbb{F}_2^3$.'
+            solution_sketch: 'A morphism from $2$ to $3$ is a $3\times2$ matrix with entries in $\{0,1\}$. It has $6$ entries, each with $2$ choices. So there are $2^6=64$ morphisms. The same number of linear maps $\mathbb{F}_2^2\to\mathbb{F}_2^3$ exists, and $F$ matches them one to one.'
           - problem: 'Let $\mathcal{D}$ be the category whose objects are the four sets $\{a,b,c\}$, $\{1,2,3\}$, $\{x,y\}$ and $\{p\}$, with all functions as morphisms. Let $F$ be the inclusion of the full subcategory on the objects $\{a,b,c\}$, $\{x,y\}$ and $\{p\}$. How many objects of $\mathcal{D}$ are isomorphic to an object in the image of $F$?'
             answer: '4'
             answer_contract: {"kind": "exact"}
@@ -1167,7 +1167,7 @@ topics:
             answer: '32'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'There are $4$ choices of source and $4$ of target, and between any two two-element sets there are $2$ bijections. So $\mathcal{S}$ has $4\times4\times2=32$ morphisms, although it is equivalent to $\mathbf{B}(\mathbb{Z}/2)$ with only $2$.'
-          - problem: 'Let $\mathbf{Mat}$ be the category with objects $0,1,2,\dots$ and with morphisms $m\to n$ the $n\times m$ matrices with entries in $\{0,1\}$, computing modulo $2$. An equivalence preserves the number of automorphisms of an object. How many isomorphisms are there from the object $2$ to itself in $\mathbf{Mat}$?'
+          - problem: 'Let $\mathbf{Mat}$ be the category with objects $0,1,2,\dots$ and with morphisms $m\to n$ the $n\times m$ matrices with entries in $\{0,1\}$, computing modulo $2$. How many isomorphisms are there from the object $2$ to itself in $\mathbf{Mat}$?'
             answer: '6'
             answer_contract: {"kind": "exact"}
             solution_sketch: 'The isomorphisms from $2$ to itself are the invertible $2\times2$ matrices over the field with $2$ elements. A matrix is invertible exactly when its determinant $ad-bc$ is $1$ modulo $2$. Checking the $16$ matrices gives $6$ of them.'
